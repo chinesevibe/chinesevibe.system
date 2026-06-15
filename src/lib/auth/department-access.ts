@@ -66,6 +66,13 @@ export function isOfficerDepartment(
   return department.trim().toLowerCase() === OFFICER_DEPARTMENT_NAME.toLowerCase()
 }
 
+/** แผนก Officer / HR Officer — ต้องใส่รหัสผ่านเมื่อ login ด้วยรหัสพนักงาน */
+export function requiresOfficerPortalPassword(
+  department: string | null | undefined
+): boolean {
+  return isOfficerDepartment(department) || isHrOfficerDepartment(department)
+}
+
 export function isHrOfficerPosition(
   position: string | null | undefined
 ): boolean {

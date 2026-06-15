@@ -51,6 +51,14 @@ export function canAccessAdminPortal(role: AppRole): boolean {
   )
 }
 
+/** พนักงานคลังทั่วไป — จำกัดเมนูคลังเท่านั้น (ไม่ใช่ Inventory Manager) */
+export function isRestrictedInventoryPortalUser(employee: Employee): boolean {
+  return (
+    isInventoryPortalUser(employee) &&
+    !isInventoryManagerStaff(employee.department, employee.position)
+  )
+}
+
 /** Inventory dept — restricted admin portal (คลังสินค้า only) */
 export function isInventoryPortalUser(employee: Employee): boolean {
   if (employee.status !== "active") return false
@@ -101,9 +109,19 @@ export function isManagementDashboardEmployee(employee: Employee): boolean {
   )
 }
 
-/** Worker web portal — active employees + dev (for QA). */
-export function canAccessEmployeePortal(role: AppRole): boolean {
-  return role === "employee" || isDev(role)
+/** Worker web portal — active employees, inventory managers, dev (QA). */
+export function canAccessEmployeePortal(
+  employee: Pick<Employee, "role" | "department" | "position">
+): boolean {
+  if (isDev(employee.role)) return true
+  if (employee.role === "employee") return true
+  if (
+    employee.role === "inventory" &&
+    isInventoryManagerStaff(employee.department, employee.position)
+  ) {
+    return true
+  }
+  return false
 }
 
 export function canManageHr(role: AppRole): boolean {

@@ -4,7 +4,11 @@ import {
   type AdminNavGroup,
   type AdminNavItem,
 } from "@/components/admin/admin-nav"
-import { getInventoryNavGroups } from "@/components/admin/inventory-nav"
+import {
+  getInventoryManagerNavGroups,
+  getInventoryNavGroups,
+} from "@/components/admin/inventory-nav"
+import { isInventoryManagerStaff } from "@/lib/auth/department-access"
 import { isInventoryPortalUser } from "@/lib/auth/roles"
 import type { Employee } from "@/lib/auth/session"
 
@@ -41,6 +45,9 @@ const BRANCH_NAV_GROUPS: AdminNavGroup[] = [
 ]
 
 export function getNavGroupsForEmployee(employee: Employee): AdminNavGroup[] {
+  if (isInventoryManagerStaff(employee.department, employee.position)) {
+    return getInventoryManagerNavGroups()
+  }
   if (isInventoryPortalUser(employee)) return getInventoryNavGroups()
   if (employee.role === "branch_manager") return BRANCH_NAV_GROUPS
   return ADMIN_NAV_GROUPS

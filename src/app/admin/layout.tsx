@@ -21,10 +21,11 @@ import {
 import {
   canEmployeeAccessAdminPortal,
   isBranchManager,
-  isInventoryPortalUser,
+  isRestrictedInventoryPortalUser,
   hasFullDataAccess,
   isDev,
 } from "@/lib/auth/roles"
+import { isInventoryManagerStaff } from "@/lib/auth/department-access"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
 export default async function AdminLayout({
@@ -41,7 +42,10 @@ export default async function AdminLayout({
   const pathname = (await headers()).get("x-pathname") ?? ""
   const dev = isDev(employee.role)
   const branchManager = !dev && isBranchManager(employee.role)
-  const inventoryPortal = !dev && isInventoryPortalUser(employee)
+  const inventoryManager =
+    !dev && isInventoryManagerStaff(employee.department, employee.position)
+  const restrictedInventory =
+    !dev && isRestrictedInventoryPortalUser(employee)
 
   if (!dev) {
     if (
@@ -52,7 +56,7 @@ export default async function AdminLayout({
       redirect("/admin/branch")
     }
     if (
-      inventoryPortal &&
+      restrictedInventory &&
       pathname.startsWith("/admin") &&
       !isInventoryPortalPath(pathname)
     ) {
@@ -93,10 +97,12 @@ export default async function AdminLayout({
       notificationItems={notificationInbox.items}
       showComplianceLink={
         (notificationScope === "hr" || hasFullDataAccess(employee.role)) &&
-        !inventoryPortal
+        !restrictedInventory &&
+        !inventoryManager
       }
       branchMode={navMode?.branchMode ?? branchManager}
-      inventoryMode={inventoryPortal}
+      inventoryMode={restrictedInventory}
+      inventoryManagerMode={inventoryManager}
       devAllMode={navMode?.devAllMode ?? false}
       devView={devView}
       navGroups={navGroups}

@@ -601,6 +601,16 @@ export const myEmployee: Record<string, string> = {
   "auth.login.form.error.employeeCodeRequired": "ဝန်ထမ်းကုဒ် ထည့်ပါ",
   "auth.login.form.error.branchRequired": "ဌာနခွဲ ရွေးပါ",
   "auth.login.form.error.loginFailed": "ဝင်ရောက်မှု မအောင်မြင်ပါ",
+  "auth.login.form.password": "စကားဝှက် *",
+  "auth.login.form.setPassword": "စကားဝှက် သတ်မှတ်ပါ *",
+  "auth.login.form.passwordPlaceholder": "အနည်းဆုံး ၆ လုံး",
+  "auth.login.form.confirmPassword": "စကားဝှက် အတည်ပြုပါ *",
+  "auth.login.form.confirmPasswordPlaceholder": "စကားဝှက် ထပ်ထည့်ပါ",
+  "auth.login.form.passwordSetupHint":
+    "ပထမဆုံး ဝင်ရောက်မှု — portal စကားဝှက် သတ်မှတ်ပါ",
+  "auth.login.form.submitSetup": "စကားဝှက် သတ်မှတ်ပြီး ဝင်ရောက်ပါ",
+  "auth.login.form.error.passwordRequired": "စကားဝှက် ထည့်ပါ",
+  "auth.login.form.error.passwordMismatch": "စကားဝှက် မတူညီပါ",
   "auth.register.title": "ဝန်ထမ်းစာရင်းသွင်းခြင်း",
   "auth.register.intro":
     "အချက်အလက်အပြည့်အစုံ ဖြည့်ပါ။ LINE account (ရှိလျှင်) ချိတ်ဆက်ပြီး HR အတည်ပြုရန် ပို့ပေးမည်",

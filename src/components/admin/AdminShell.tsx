@@ -16,6 +16,7 @@ export function AdminShell({
   navItems,
   branchMode = false,
   inventoryMode = false,
+  inventoryManagerMode = false,
   devAllMode = false,
   devView = null,
 }: {
@@ -29,6 +30,7 @@ export function AdminShell({
   navItems?: AdminNavItem[]
   branchMode?: boolean
   inventoryMode?: boolean
+  inventoryManagerMode?: boolean
   devAllMode?: boolean
   devView?: DevViewAs | null
 }) {
@@ -39,6 +41,7 @@ export function AdminShell({
         items={navItems}
         branchMode={branchMode}
         inventoryMode={inventoryMode}
+        inventoryManagerMode={inventoryManagerMode}
         devAllMode={devAllMode}
       />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -52,6 +55,7 @@ export function AdminShell({
           navItems={navItems}
           branchMode={branchMode}
           inventoryMode={inventoryMode}
+          inventoryManagerMode={inventoryManagerMode}
           devAllMode={devAllMode}
           devView={devView}
         />

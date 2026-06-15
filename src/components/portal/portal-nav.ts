@@ -17,6 +17,29 @@ export const PORTAL_NAV_ITEMS: AdminNavItem[] = [
   { labelKey: "portal.nav.stock", href: "/portal/stock", icon: "list-checks" },
 ]
 
+/** Thai labels for admin sidebar (no LocaleProvider) */
+export const PORTAL_WORKER_NAV_ITEMS: AdminNavItem[] = [
+  { label: "หน้าหลัก", href: "/portal", icon: "layout-dashboard" },
+  { label: "โปรไฟล์", href: "/portal/profile", icon: "users" },
+  { label: "การเข้างาน", href: "/portal/attendance", icon: "clock" },
+  { label: "ตารางงาน", href: "/portal/schedule", icon: "timer" },
+  { label: "ขอลา", href: "/portal/leave", icon: "calendar" },
+  { label: "เอกสาร", href: "/portal/documents", icon: "file-text" },
+  { label: "ประกาศ", href: "/portal/announcements", icon: "megaphone" },
+  { label: "สลิปเงินเดือน", href: "/portal/payslips", icon: "file-text" },
+  { label: "รับเข้า", href: "/portal/inbound", icon: "inventory" },
+  { label: "เช็คสต็อก", href: "/portal/stock", icon: "list-checks" },
+]
+
+export const INVENTORY_ADMIN_NAV_ITEM: AdminNavItem = {
+  label: "คลังสินค้า (Admin)",
+  href: "/admin/inventory",
+  icon: "inventory",
+}
+
 export function isPortalNavActive(pathname: string, href: string): boolean {
+  if (href === "/admin/inventory") {
+    return pathname === "/admin/inventory" || pathname.startsWith("/admin/inventory/")
+  }
   return href === "/portal" ? pathname === "/portal" : pathname.startsWith(href)
 }

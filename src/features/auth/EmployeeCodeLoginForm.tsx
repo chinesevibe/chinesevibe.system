@@ -11,11 +11,21 @@ const inputClassName =
 
 type BranchOption = { id: string; name: string; code: string | null }
 
+type PasswordRequirements = {
+  requiresPassword: boolean
+  needsSetup: boolean
+}
+
 export function EmployeeCodeLoginForm() {
   const router = useRouter()
   const { tx } = useLocale()
   const [employeeCode, setEmployeeCode] = useState("")
   const [branchId, setBranchId] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [passwordRequirements, setPasswordRequirements] =
+    useState<PasswordRequirements | null>(null)
+  const [requirementsLoading, setRequirementsLoading] = useState(false)
   const [branches, setBranches] = useState<BranchOption[]>([])
   const [branchesLoading, setBranchesLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -39,6 +49,51 @@ export function EmployeeCodeLoginForm() {
     }
   }, [])
 
+  useEffect(() => {
+    const code = employeeCode.trim()
+    if (!code || !branchId) {
+      setPasswordRequirements(null)
+      setPassword("")
+      setPasswordConfirm("")
+      return
+    }
+
+    let cancelled = false
+    const timer = window.setTimeout(async () => {
+      setRequirementsLoading(true)
+      try {
+        const res = await fetch("/api/auth/portal/login-requirements", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            employee_code: code,
+            branch_id: branchId,
+          }),
+        })
+        const data = (await res.json().catch(() => null)) as
+          | PasswordRequirements
+          | null
+        if (!cancelled && res.ok && data) {
+          setPasswordRequirements(data)
+          if (!data.requiresPassword) {
+            setPassword("")
+            setPasswordConfirm("")
+          }
+        }
+      } finally {
+        if (!cancelled) setRequirementsLoading(false)
+      }
+    }, 350)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [employeeCode, branchId])
+
+  const needsPassword = passwordRequirements?.requiresPassword ?? false
+  const needsSetup = passwordRequirements?.needsSetup ?? false
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!employeeCode.trim()) {
@@ -47,6 +102,14 @@ export function EmployeeCodeLoginForm() {
     }
     if (!branchId) {
       setError(tx("auth.login.form.error.branchRequired"))
+      return
+    }
+    if (needsPassword && !password) {
+      setError(tx("auth.login.form.error.passwordRequired"))
+      return
+    }
+    if (needsSetup && password !== passwordConfirm) {
+      setError(tx("auth.login.form.error.passwordMismatch"))
       return
     }
 
@@ -60,6 +123,12 @@ export function EmployeeCodeLoginForm() {
         body: JSON.stringify({
           employee_code: employeeCode.trim(),
           branch_id: branchId,
+          ...(needsPassword
+            ? {
+                password,
+                ...(needsSetup ? { password_confirm: passwordConfirm } : {}),
+              }
+            : {}),
         }),
       })
       const data = (await res.json().catch(() => null)) as {
@@ -125,6 +194,52 @@ export function EmployeeCodeLoginForm() {
         </select>
       </label>
 
+      {needsPassword ? (
+        <>
+          {needsSetup ? (
+            <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+              {tx("auth.login.form.passwordSetupHint")}
+            </p>
+          ) : null}
+          <label className="block text-sm">
+            <span className="text-muted-foreground">
+              {needsSetup
+                ? tx("auth.login.form.setPassword")
+                : tx("auth.login.form.password")}
+            </span>
+            <input
+              className={inputClassName}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={tx("auth.login.form.passwordPlaceholder")}
+              required
+              autoComplete={needsSetup ? "new-password" : "current-password"}
+              minLength={6}
+              disabled={requirementsLoading}
+            />
+          </label>
+          {needsSetup ? (
+            <label className="block text-sm">
+              <span className="text-muted-foreground">
+                {tx("auth.login.form.confirmPassword")}
+              </span>
+              <input
+                className={inputClassName}
+                type="password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                placeholder={tx("auth.login.form.confirmPasswordPlaceholder")}
+                required
+                autoComplete="new-password"
+                minLength={6}
+                disabled={requirementsLoading}
+              />
+            </label>
+          ) : null}
+        </>
+      ) : null}
+
       {error ? (
         <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
@@ -133,12 +248,14 @@ export function EmployeeCodeLoginForm() {
 
       <Button
         type="submit"
-        disabled={submitting || branchesLoading}
+        disabled={submitting || branchesLoading || requirementsLoading}
         className="w-full bg-brand-red text-white hover:bg-brand-red/90"
       >
         {submitting
           ? tx("auth.login.form.submitting")
-          : tx("auth.login.form.submit")}
+          : needsSetup
+            ? tx("auth.login.form.submitSetup")
+            : tx("auth.login.form.submit")}
       </Button>
     </form>
   )

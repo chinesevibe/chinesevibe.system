@@ -22,6 +22,7 @@ export function AdminHeader({
   navItems,
   branchMode = false,
   inventoryMode = false,
+  inventoryManagerMode = false,
   devAllMode = false,
   devView = null,
 }: {
@@ -34,6 +35,7 @@ export function AdminHeader({
   navItems?: AdminNavItem[]
   branchMode?: boolean
   inventoryMode?: boolean
+  inventoryManagerMode?: boolean
   devAllMode?: boolean
   devView?: DevViewAs | null
 }) {
@@ -47,6 +49,7 @@ export function AdminHeader({
           items={navItems}
           branchMode={branchMode}
           inventoryMode={inventoryMode}
+          inventoryManagerMode={inventoryManagerMode}
           devAllMode={devAllMode}
         />
         <AdminEmployeeSearch />

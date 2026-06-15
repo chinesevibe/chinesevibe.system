@@ -38,6 +38,16 @@ const th: MessageCatalog = {
   "auth.login.form.error.employeeCodeRequired": "กรุณากรอกรหัสพนักงาน",
   "auth.login.form.error.branchRequired": "กรุณาเลือกสาขา",
   "auth.login.form.error.loginFailed": "เข้าสู่ระบบไม่สำเร็จ",
+  "auth.login.form.password": "รหัสผ่าน *",
+  "auth.login.form.setPassword": "ตั้งรหัสผ่าน *",
+  "auth.login.form.passwordPlaceholder": "อย่างน้อย 6 ตัวอักษร",
+  "auth.login.form.confirmPassword": "ยืนยันรหัสผ่าน *",
+  "auth.login.form.confirmPasswordPlaceholder": "พิมพ์รหัสผ่านอีกครั้ง",
+  "auth.login.form.passwordSetupHint":
+    "ครั้งแรกที่เข้าใช้งาน — กรุณาตั้งรหัสผ่านสำหรับเข้าระบบ",
+  "auth.login.form.submitSetup": "ตั้งรหัสผ่านและเข้าสู่ระบบ",
+  "auth.login.form.error.passwordRequired": "กรุณากรอกรหัสผ่าน",
+  "auth.login.form.error.passwordMismatch": "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน",
   "auth.register.title": "ลงทะเบียนพนักงาน",
   "auth.register.intro":
     "กรอกข้อมูลให้ครบ ระบบจะผูกบัญชี LINE (ถ้ามี) แล้วส่งให้ HR อนุมัติ",
@@ -771,6 +781,16 @@ const en: MessageCatalog = {
   "auth.login.form.error.employeeCodeRequired": "Please enter employee code",
   "auth.login.form.error.branchRequired": "Please select a branch",
   "auth.login.form.error.loginFailed": "Sign-in failed",
+  "auth.login.form.password": "Password *",
+  "auth.login.form.setPassword": "Set password *",
+  "auth.login.form.passwordPlaceholder": "At least 6 characters",
+  "auth.login.form.confirmPassword": "Confirm password *",
+  "auth.login.form.confirmPasswordPlaceholder": "Re-enter password",
+  "auth.login.form.passwordSetupHint":
+    "First sign-in — please set your portal password",
+  "auth.login.form.submitSetup": "Set password and sign in",
+  "auth.login.form.error.passwordRequired": "Please enter your password",
+  "auth.login.form.error.passwordMismatch": "Passwords do not match",
   "auth.register.title": "Employee registration",
   "auth.register.intro":
     "Complete all fields. Your LINE account (if any) will be linked and sent to HR for approval.",
