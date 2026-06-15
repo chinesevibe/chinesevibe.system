@@ -577,6 +577,7 @@ export const zhEmployee: Record<string, string> = {
   "lang.label": "语言",
   "auth.login.title": "HR 员工门户",
   "auth.login.subtitle": "请使用 HR 提供的员工编号和分店登录",
+  "auth.login.officerSubtitle": "Officer 部门 — 请先确认密码再进入 Dashboard",
   "auth.login.dashboard": "进入 Dashboard",
   "auth.login.notRegisteredHint": "请再次点击「使用 LINE 登录」前往注册页面",
   "auth.login.registerLink": "新员工 — 使用 LINE 注册",
@@ -589,6 +590,7 @@ export const zhEmployee: Record<string, string> = {
   "auth.login.error.portal_login_failed": "登录失败，请重试",
   "auth.login.error.session_failed":
     "会话无效（cookie 过期或账户未绑定员工）— 请清除 session 后重新登录",
+  "auth.login.error.password_required": "请先确认密码再进入 Dashboard",
   "auth.login.form.employeeCode": "员工编号 *",
   "auth.login.form.employeeCodePlaceholder": "例如 CHV001",
   "auth.login.form.branch": "分店 *",
@@ -605,6 +607,7 @@ export const zhEmployee: Record<string, string> = {
   "auth.login.form.confirmPassword": "确认密码 *",
   "auth.login.form.confirmPasswordPlaceholder": "再次输入密码",
   "auth.login.form.passwordSetupHint": "首次登录 — 请设置门户密码",
+  "auth.login.form.officerPasswordHint": "此账户进入 Dashboard 前须输入密码",
   "auth.login.form.submitSetup": "设置密码并登录",
   "auth.login.form.error.passwordRequired": "请输入密码",
   "auth.login.form.error.passwordMismatch": "两次输入的密码不一致",

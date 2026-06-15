@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { mintLineUserSession } from "@/lib/auth/line-session"
 import {
+  setOfficerPasswordVerifiedCookie,
+} from "@/lib/auth/officer-password-session"
+import {
   getPortalPasswordRequirements,
   lookupPortalLoginEmployee,
 } from "@/lib/auth/portal-login-lookup"
@@ -157,6 +160,10 @@ export async function POST(request: NextRequest) {
       { error: "เข้าสู่ระบบไม่สำเร็จ — กรุณาลองใหม่อีกครั้ง" },
       { status: 500 }
     )
+  }
+
+  if (requiresPassword) {
+    setOfficerPasswordVerifiedCookie(response, employee.id)
   }
 
   return response

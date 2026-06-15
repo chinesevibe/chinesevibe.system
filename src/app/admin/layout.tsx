@@ -18,6 +18,11 @@ import {
   getDevNavMode,
   parseDevViewAs,
 } from "@/lib/auth/dev-view"
+import { requiresOfficerPortalPassword } from "@/lib/auth/department-access"
+import {
+  OFFICER_PORTAL_VERIFIED_COOKIE,
+  isOfficerPasswordVerified,
+} from "@/lib/auth/officer-password-session"
 import {
   canEmployeeAccessAdminPortal,
   isBranchManager,
@@ -37,6 +42,20 @@ export default async function AdminLayout({
   if (!employee) redirect("/login?error=session_failed")
   if (!canEmployeeAccessAdminPortal(employee)) {
     redirect("/login?error=forbidden")
+  }
+
+  if (
+    !isDev(employee.role) &&
+    requiresOfficerPortalPassword(employee.department)
+  ) {
+    const cookieStore = await cookies()
+    const verified = isOfficerPasswordVerified(
+      cookieStore.get(OFFICER_PORTAL_VERIFIED_COOKIE)?.value,
+      employee.id
+    )
+    if (!verified) {
+      redirect("/login?error=password_required")
+    }
   }
 
   const pathname = (await headers()).get("x-pathname") ?? ""

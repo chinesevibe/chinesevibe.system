@@ -578,6 +578,8 @@ export const myEmployee: Record<string, string> = {
   "auth.login.title": "HR ဝန်ထမ်းပေါ်တယ်",
   "auth.login.subtitle":
     "HR ကပေးထားသော ဝန်ထမ်းကုဒ်နှင့် ဌာနခွဲဖြင့် ဝင်ရောက်ပါ",
+  "auth.login.officerSubtitle":
+    "Officer ဌာန — Dashboard သို့မဝင်မီ စကားဝှက် အတည်ပြုပါ",
   "auth.login.dashboard": "Dashboard သို့သွားပါ",
   "auth.login.notRegisteredHint":
     "「LINE ဖြင့် ဝင်ရောက်ပါ」ကို ထပ်နှိပ်ပြီး စာရင်းသွင်းစာမျက်နှာသို့ သွားပါ",
@@ -591,6 +593,8 @@ export const myEmployee: Record<string, string> = {
   "auth.login.error.portal_login_failed": "ဝင်ရောက်မှု မအောင်မြင်ပါ — ထပ်ကြိုးစားပါ",
   "auth.login.error.session_failed":
     "session မပြည့်စုံ (cookie ဟောင်း သို့မဟုတ် account မချိတ်ရသေး) — session ရှင်းပြီး ထပ်ဝင်ပါ",
+  "auth.login.error.password_required":
+    "Dashboard သို့မဝင်မီ စကားဝှက် အတည်ပြုပါ",
   "auth.login.form.employeeCode": "ဝန်ထမ်းကုဒ် *",
   "auth.login.form.employeeCodePlaceholder": "ဥ. CHV001",
   "auth.login.form.branch": "ဌာနခွဲ *",
@@ -608,6 +612,8 @@ export const myEmployee: Record<string, string> = {
   "auth.login.form.confirmPasswordPlaceholder": "စကားဝှက် ထပ်ထည့်ပါ",
   "auth.login.form.passwordSetupHint":
     "ပထမဆုံး ဝင်ရောက်မှု — portal စကားဝှက် သတ်မှတ်ပါ",
+  "auth.login.form.officerPasswordHint":
+    "ဤ account သည် Dashboard သို့မဝင်မီ စကားဝှက် လိုအပ်သည်",
   "auth.login.form.submitSetup": "စကားဝှက် သတ်မှတ်ပြီး ဝင်ရောက်ပါ",
   "auth.login.form.error.passwordRequired": "စကားဝှက် ထည့်ပါ",
   "auth.login.form.error.passwordMismatch": "စကားဝှက် မတူညီပါ",

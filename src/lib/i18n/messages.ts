@@ -13,6 +13,7 @@ const th: MessageCatalog = {
 
   "auth.login.title": "HR Admin Portal",
   "auth.login.subtitle": "เข้าสู่ระบบด้วยรหัสพนักงานและสาขาที่ HR แจ้งให้",
+  "auth.login.officerSubtitle": "แผนก Officer — กรุณายืนยันรหัสผ่านเพื่อเข้า Dashboard",
   "auth.login.dashboard": "เข้าสู่ Dashboard",
   "auth.login.notRegisteredHint":
     "กรุณากด \"เข้าสู่ระบบด้วย LINE\" อีกครั้งเพื่อไปหน้าลงทะเบียน",
@@ -28,6 +29,8 @@ const th: MessageCatalog = {
     "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
   "auth.login.error.session_failed":
     "เซสชันไม่สมบูรณ์ (cookie เก่าหรือบัญชียังไม่ผูกกับพนักงาน) — กดล้าง session แล้ว login ใหม่",
+  "auth.login.error.password_required":
+    "กรุณายืนยันรหัสผ่านก่อนเข้า Dashboard",
   "auth.login.form.employeeCode": "รหัสพนักงาน *",
   "auth.login.form.employeeCodePlaceholder": "เช่น CHV001",
   "auth.login.form.branch": "สาขา *",
@@ -45,6 +48,8 @@ const th: MessageCatalog = {
   "auth.login.form.confirmPasswordPlaceholder": "พิมพ์รหัสผ่านอีกครั้ง",
   "auth.login.form.passwordSetupHint":
     "ครั้งแรกที่เข้าใช้งาน — กรุณาตั้งรหัสผ่านสำหรับเข้าระบบ",
+  "auth.login.form.officerPasswordHint":
+    "บัญชีนี้ต้องใส่รหัสผ่านทุกครั้งก่อนเข้า Dashboard",
   "auth.login.form.submitSetup": "ตั้งรหัสผ่านและเข้าสู่ระบบ",
   "auth.login.form.error.passwordRequired": "กรุณากรอกรหัสผ่าน",
   "auth.login.form.error.passwordMismatch": "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน",
@@ -758,6 +763,8 @@ const en: MessageCatalog = {
 
   "auth.login.title": "HR Admin Portal",
   "auth.login.subtitle": "Sign in with the employee code and branch provided by HR",
+  "auth.login.officerSubtitle":
+    "Officer department — confirm your password to access the dashboard",
   "auth.login.dashboard": "Go to Dashboard",
   "auth.login.notRegisteredHint":
     'Tap "Sign in with LINE" again to go to registration',
@@ -771,6 +778,8 @@ const en: MessageCatalog = {
   "auth.login.error.portal_login_failed": "Sign-in failed. Please try again.",
   "auth.login.error.session_failed":
     "Invalid session (stale cookie or unlinked account) — clear session and sign in again",
+  "auth.login.error.password_required":
+    "Please confirm your password before accessing the dashboard",
   "auth.login.form.employeeCode": "Employee code *",
   "auth.login.form.employeeCodePlaceholder": "e.g. CHV001",
   "auth.login.form.branch": "Branch *",
@@ -788,6 +797,8 @@ const en: MessageCatalog = {
   "auth.login.form.confirmPasswordPlaceholder": "Re-enter password",
   "auth.login.form.passwordSetupHint":
     "First sign-in — please set your portal password",
+  "auth.login.form.officerPasswordHint":
+    "This account requires a password before accessing the dashboard",
   "auth.login.form.submitSetup": "Set password and sign in",
   "auth.login.form.error.passwordRequired": "Please enter your password",
   "auth.login.form.error.passwordMismatch": "Passwords do not match",

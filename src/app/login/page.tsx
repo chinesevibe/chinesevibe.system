@@ -1,9 +1,15 @@
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
 import {
   ERROR_KEYS,
   LoginPageContent,
 } from "@/features/auth/LoginPageContent"
+import { requiresOfficerPortalPassword } from "@/lib/auth/department-access"
+import {
+  OFFICER_PORTAL_VERIFIED_COOKIE,
+  isOfficerPasswordVerified,
+} from "@/lib/auth/officer-password-session"
 import { adminLoginPath } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { coerceLocale, LOCALE_COOKIE } from "@/lib/i18n/types"
@@ -20,7 +26,7 @@ export default async function LoginPage({
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  const employee = user && !error ? await getCurrentEmployee() : null
+  const employee = user ? await getCurrentEmployee() : null
   const dashboardPath = employee
     ? adminLoginPath(
         employee.role,
@@ -31,6 +37,27 @@ export default async function LoginPage({
     : null
 
   const cookieStore = await cookies()
+  const officerPasswordRequired = employee
+    ? requiresOfficerPortalPassword(employee.department)
+    : false
+  const officerPasswordVerified = employee
+    ? isOfficerPasswordVerified(
+        cookieStore.get(OFFICER_PORTAL_VERIFIED_COOKIE)?.value,
+        employee.id
+      )
+    : false
+  const showOfficerPasswordForm =
+    Boolean(employee) && officerPasswordRequired && !officerPasswordVerified
+
+  if (
+    employee &&
+    !error &&
+    dashboardPath &&
+    (!officerPasswordRequired || officerPasswordVerified)
+  ) {
+    redirect(dashboardPath)
+  }
+
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value
   const initialLocale = coerceLocale(
     cookieLocale ?? employee?.preferred_locale
@@ -50,10 +77,10 @@ export default async function LoginPage({
       initialLocale={initialLocale}
       error={error}
       errorMessageKey={errorMessageKey}
-      dashboardPath={dashboardPath}
       hasEmployee={Boolean(employee)}
       hasUser={Boolean(user)}
       lineStartUrl={lineStartUrl}
+      showOfficerPasswordForm={showOfficerPasswordForm}
     />
   )
 }
