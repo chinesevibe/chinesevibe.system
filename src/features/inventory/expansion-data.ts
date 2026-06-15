@@ -121,6 +121,28 @@ async function getBranchWarehouseMaps() {
   }
 }
 
+export async function getInventoryFilterOptions() {
+  const supabase = await createClient()
+  const [{ data: branches, error: branchError }, { data: warehouses, error: warehouseError }] =
+    await Promise.all([
+      supabase.from("inv_branches").select("id, name").eq("is_active", true).order("name"),
+      supabase.from("inv_warehouses").select("id, name, branch_id").eq("is_active", true).order("name"),
+    ])
+  if (branchError) throw new Error(branchError.message)
+  if (warehouseError) throw new Error(warehouseError.message)
+  return {
+    branches: (branches ?? []).map((row) => ({
+      id: row.id as string,
+      name: row.name as string,
+    })),
+    warehouses: (warehouses ?? []).map((row) => ({
+      id: row.id as string,
+      name: row.name as string,
+      branch_id: row.branch_id as string,
+    })),
+  }
+}
+
 export async function getInventoryAlerts(filters: InventoryReportFilters & { type?: InventoryAlertType | "" }) {
   const supabase = await createClient()
   const today = new Date()

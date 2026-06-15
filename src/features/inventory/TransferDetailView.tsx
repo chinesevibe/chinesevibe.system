@@ -13,7 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { receiveTransfer, sendTransfer, type InvTransferDetail } from "@/features/inventory/actions/transfer"
+import {
+  cancelTransfer,
+  receiveTransfer,
+  sendTransfer,
+  type InvTransferDetail,
+} from "@/features/inventory/actions/transfer"
 import { formatThaiDate } from "@/lib/datetime/thailand"
 
 function formatQuantity(value: number) {
@@ -138,9 +143,19 @@ export function TransferDetailView({
             <span className="mb-1 block text-muted-foreground">ผู้ขนส่ง</span>
             <input className="h-10 w-full rounded-lg border border-input px-3 text-sm" value={shipper} onChange={(e) => setShipper(e.target.value)} />
           </label>
-          <Button type="button" className="mt-3" disabled={pending} onClick={() => runAction(() => sendTransfer({ transfer_id: detail.transfer.id, shipper }))}>
-            ส่งสินค้า
-          </Button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" disabled={pending} onClick={() => runAction(() => sendTransfer({ transfer_id: detail.transfer.id, shipper }))}>
+              ส่งสินค้า
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={pending}
+              onClick={() => runAction(() => cancelTransfer({ transfer_id: detail.transfer.id }))}
+            >
+              ยกเลิกใบโอน
+            </Button>
+          </div>
         </section>
       ) : null}
 

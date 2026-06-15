@@ -1,11 +1,17 @@
 import { InventoryReportPage } from "@/features/inventory/InventoryReportPage"
+import { parseInventoryFilters } from "@/features/inventory/inventory-filter-utils"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 
-export default async function InventoryReportAuditPage() {
+type PageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function InventoryReportAuditPage({ searchParams }: PageProps) {
   await requireInventoryPortal()
   return InventoryReportPage({
     kind: "audit",
-    title: "Inventory Audit Trail",
-    description: "ทุก movement จาก inbound, requisition, consumption, damage, transfer และ adjustment",
+    title: "Audit Trail Report",
+    description: "ประวัติการเคลื่อนไหวสต็อกทั้งหมด",
+    filters: parseInventoryFilters(await searchParams),
   })
 }

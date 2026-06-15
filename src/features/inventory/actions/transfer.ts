@@ -15,10 +15,12 @@ import type {
   InvWarehouse,
 } from "@/features/inventory/types"
 import {
+  cancelTransferSchema,
   createTransferSchema,
   receiveTransferSchema,
   sendTransferSchema,
   transferIdSchema,
+  type CancelTransferInput,
   type CreateTransferInput,
   type ReceiveTransferInput,
   type SendTransferInput,
@@ -346,6 +348,22 @@ export async function receiveTransfer(input: ReceiveTransferInput): Promise<Inve
     const { error } = await supabase.rpc("inv_receive_transfer", {
       p_transfer_id: payload.transfer_id,
       p_items: payload.items,
+    })
+    if (error) return { success: false, error: mapSupabaseInventoryError(error) }
+    revalidateTransfer(payload.transfer_id)
+    return { success: true, id: payload.transfer_id }
+  } catch (error) {
+    return { success: false, error: formatInventoryError(error) }
+  }
+}
+
+export async function cancelTransfer(input: CancelTransferInput): Promise<InventoryActionState> {
+  try {
+    await assertInventoryOperate()
+    const payload = cancelTransferSchema.parse(input)
+    const supabase = await createClient()
+    const { error } = await supabase.rpc("inv_cancel_transfer", {
+      p_transfer_id: payload.transfer_id,
     })
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidateTransfer(payload.transfer_id)

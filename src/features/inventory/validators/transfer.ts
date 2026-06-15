@@ -52,6 +52,11 @@ export const receiveTransferSchema = z.object({
     .min(1, "กรุณาระบุรายการรับสินค้า"),
 })
 
+export const cancelTransferSchema = z.object({
+  transfer_id: transferIdSchema,
+})
+
 export type CreateTransferInput = z.infer<typeof createTransferSchema>
 export type SendTransferInput = z.infer<typeof sendTransferSchema>
 export type ReceiveTransferInput = z.infer<typeof receiveTransferSchema>
+export type CancelTransferInput = z.infer<typeof cancelTransferSchema>

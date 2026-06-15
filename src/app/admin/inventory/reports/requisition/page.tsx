@@ -1,11 +1,17 @@
 import { InventoryReportPage } from "@/features/inventory/InventoryReportPage"
+import { parseInventoryFilters } from "@/features/inventory/inventory-filter-utils"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 
-export default async function InventoryReportRequisitionPage() {
+type PageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function InventoryReportRequisitionPage({ searchParams }: PageProps) {
   await requireInventoryPortal()
   return InventoryReportPage({
     kind: "requisition",
     title: "Requisition Report",
-    description: "รายงานใบเบิกตั้งแต่ขอ อนุมัติ จ่าย และรับ",
+    description: "รายการเบิกสินค้าตามสาขาและสถานะ",
+    filters: parseInventoryFilters(await searchParams),
   })
 }

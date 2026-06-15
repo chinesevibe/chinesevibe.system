@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useLocale } from "@/features/portal/LocaleProvider"
@@ -23,13 +23,24 @@ export function EmployeeCodeLoginForm() {
   const [branchId, setBranchId] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
-  const [passwordRequirements, setPasswordRequirements] =
-    useState<PasswordRequirements | null>(null)
-  const [requirementsLoading, setRequirementsLoading] = useState(false)
+  const [requirementsByKey, setRequirementsByKey] = useState<
+    Record<string, PasswordRequirements>
+  >({})
+  const [loadingKey, setLoadingKey] = useState<string | null>(null)
   const [branches, setBranches] = useState<BranchOption[]>([])
   const [branchesLoading, setBranchesLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const lookupKey = useMemo(() => {
+    const code = employeeCode.trim()
+    return code && branchId ? `${code}:${branchId}` : ""
+  }, [employeeCode, branchId])
+
+  const passwordRequirements = lookupKey
+    ? (requirementsByKey[lookupKey] ?? null)
+    : null
+  const requirementsLoading = loadingKey === lookupKey
 
   useEffect(() => {
     let cancelled = false
@@ -50,38 +61,31 @@ export function EmployeeCodeLoginForm() {
   }, [])
 
   useEffect(() => {
-    const code = employeeCode.trim()
-    if (!code || !branchId) {
-      setPasswordRequirements(null)
-      setPassword("")
-      setPasswordConfirm("")
-      return
-    }
+    if (!lookupKey) return
 
     let cancelled = false
     const timer = window.setTimeout(async () => {
-      setRequirementsLoading(true)
+      setLoadingKey(lookupKey)
       try {
+        const [code, branch] = lookupKey.split(":")
         const res = await fetch("/api/auth/portal/login-requirements", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             employee_code: code,
-            branch_id: branchId,
+            branch_id: branch,
           }),
         })
         const data = (await res.json().catch(() => null)) as
           | PasswordRequirements
           | null
         if (!cancelled && res.ok && data) {
-          setPasswordRequirements(data)
-          if (!data.requiresPassword) {
-            setPassword("")
-            setPasswordConfirm("")
-          }
+          setRequirementsByKey((current) => ({ ...current, [lookupKey]: data }))
         }
       } finally {
-        if (!cancelled) setRequirementsLoading(false)
+        if (!cancelled) {
+          setLoadingKey((current) => (current === lookupKey ? null : current))
+        }
       }
     }, 350)
 
@@ -89,7 +93,7 @@ export function EmployeeCodeLoginForm() {
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [employeeCode, branchId])
+  }, [lookupKey])
 
   const needsPassword = passwordRequirements?.requiresPassword ?? false
   const needsSetup = passwordRequirements?.needsSetup ?? false
@@ -195,7 +199,7 @@ export function EmployeeCodeLoginForm() {
       </label>
 
       {needsPassword ? (
-        <>
+        <div key={lookupKey} className="flex flex-col gap-4">
           {needsSetup ? (
             <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
               {tx("auth.login.form.passwordSetupHint")}
@@ -237,7 +241,7 @@ export function EmployeeCodeLoginForm() {
               />
             </label>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       {error ? (

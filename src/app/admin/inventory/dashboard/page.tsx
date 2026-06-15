@@ -1,17 +1,34 @@
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { InventoryExecutiveDashboard } from "@/features/inventory/InventoryExecutiveDashboard"
-import { getInventoryDashboardData } from "@/features/inventory/expansion-data"
+import {
+  getInventoryDashboardData,
+  getInventoryFilterOptions,
+} from "@/features/inventory/expansion-data"
+import { InventoryFilterBar } from "@/features/inventory/InventoryFilterBar"
+import { parseInventoryFilters } from "@/features/inventory/inventory-filter-utils"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 
-export default async function InventoryDashboardPage() {
+type PageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function InventoryDashboardPage({ searchParams }: PageProps) {
   await requireInventoryPortal()
-  const data = await getInventoryDashboardData()
+  const filters = parseInventoryFilters(await searchParams)
+  const [data, options] = await Promise.all([
+    getInventoryDashboardData(filters),
+    getInventoryFilterOptions(),
+  ])
+
   return (
     <AdminPageShell
       title="Inventory Dashboard"
       description="KPI และกราฟแนวโน้มของคลังสินค้าแบบภาพรวม"
     >
-      <InventoryExecutiveDashboard data={data} />
+      <div className="space-y-4">
+        <InventoryFilterBar options={options} showDates />
+        <InventoryExecutiveDashboard data={data} />
+      </div>
     </AdminPageShell>
   )
 }
