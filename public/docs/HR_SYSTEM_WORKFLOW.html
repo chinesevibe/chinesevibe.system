@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HR Payroll System — Workflow Guide</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8f7f4;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --border: #e5e2dc;
+      --brand: #c41e3a;
+      --brand-soft: #fdecee;
+      --blue: #1e4f8a;
+      --blue-soft: #eef4fb;
+      --green: #1a6b45;
+      --green-soft: #ecf7f0;
+      --amber: #9a6700;
+      --amber-soft: #fff8e6;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Sarabun", "IBM Plex Sans Thai", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #a01830 0%, #c41e3a 100%);
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+    }
+
+    header .wrap { max-width: 960px; margin: 0 auto; }
+
+    header h1 {
+      margin: 0 0 .5rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    header p {
+      margin: 0;
+      opacity: .92;
+      font-size: 1rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1.25rem;
+    }
+
+    .meta a, .meta span {
+      display: inline-block;
+      padding: .35rem .75rem;
+      border-radius: 999px;
+      font-size: .85rem;
+      text-decoration: none;
+      background: rgba(255,255,255,.15);
+      color: #fff;
+    }
+
+    .meta a:hover { background: rgba(255,255,255,.28); }
+
+    nav.toc {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(248,247,244,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      overflow-x: auto;
+    }
+
+    nav.toc .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    nav.toc a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: .875rem;
+      padding: .35rem .65rem;
+      border-radius: 6px;
+    }
+
+    nav.toc a:hover { background: var(--blue-soft); }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      margin: 0 0 1rem;
+      font-size: 1.25rem;
+      color: var(--brand);
+      border-bottom: 2px solid var(--brand-soft);
+      padding-bottom: .5rem;
+    }
+
+    section h3 {
+      margin: 1.5rem 0 .75rem;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    section h3:first-of-type { margin-top: 0; }
+
+    p { margin: 0 0 .85rem; color: var(--text); }
+    .muted { color: var(--muted); font-size: .925rem; }
+
+    ul, ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+    li { margin-bottom: .35rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .925rem;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: .55rem .75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f3f1ec;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td { background: #faf9f7; }
+
+    .flow {
+      background: #faf9f7;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: .85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 1rem 0;
+    }
+
+    .diagram {
+      background: #faf9f7;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: .15rem .5rem;
+      border-radius: 4px;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+
+    .badge-hr { background: var(--brand-soft); color: var(--brand); }
+    .badge-emp { background: var(--blue-soft); color: var(--blue); }
+    .badge-odoo { background: var(--amber-soft); color: var(--amber); }
+
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+      padding: .85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: .925rem;
+    }
+
+    .callout.info {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .callout.ok {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.4rem; }
+    }
+
+    code {
+      background: #eeebe4;
+      padding: .1rem .35rem;
+      border-radius: 4px;
+      font-size: .88em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>HR Payroll System — Workflow Guide</h1>
+      <p>Chinese Vibe · HR App + LINE + Supabase + Odoo 19</p>
+      <div class="meta">
+        <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">Production HR App</a>
+        <a href="https://chinese-vibe2.odoo.com" target="_blank" rel="noopener">Odoo</a>
+        <span>อัปเดต: มิ.ย. 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <div class="wrap">
+      <a href="#overview">ภาพรวม</a>
+      <a href="#register">ลงทะเบียน</a>
+      <a href="#daily">งานประจำวัน</a>
+      <a href="#hr">งาน HR</a>
+      <a href="#payroll">Payroll</a>
+      <a href="#odoo">Odoo Sync</a>
+      <a href="#roles">สิทธิ์</a>
+      <a href="#month">Flow รายเดือน</a>
+      <a href="#ops">Ops</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="overview">
+      <h2>1. ภาพรวมสถาปัตยกรรม</h2>
+      <p>
+        ระบบนี้ใช้ <strong>HR App (Next.js + Supabase)</strong> เป็นศูนย์กลางข้อมูลพนักงาน
+        พนักงานใช้งานผ่าน <strong>LINE</strong> ส่วน <strong>Odoo 19</strong> เป็นเครื่องมือคำนวณเงินเดือน
+      </p>
+      <div class="callout info">
+        <strong>ทิศทางข้อมูล Payroll:</strong> HR App <strong>push</strong> ไป Odoo ผ่าน XML-RPC
+        — Odoo ไม่ดึงข้อมูลจากเว็บเอง
+      </div>
+      <div class="diagram mermaid">
+flowchart TB
+  subgraph users [ผู้ใช้งาน]
+    EMP[พนักงาน]
+    HR[HR Officer]
+    BM[Branch Manager]
+  end
+  subgraph channels [ช่องทาง]
+    LINE[LINE OA + LIFF]
+    WEB[Web Admin / Portal]
+  end
+  subgraph app [HR App]
+    API[API Routes]
+    ADMIN[Admin Dashboard]
+  end
+  subgraph data [ข้อมูล]
+    SB[(Supabase)]
+  end
+  subgraph external [ภายนอก]
+    ODOO[Odoo 19 Payroll]
+  end
+  EMP --> LINE
+  HR --> WEB
+  BM --> WEB
+  LINE --> API
+  WEB --> API
+  API --> SB
+  API -->|push| ODOO
+      </div>
+    </section>
+
+    <section id="register">
+      <h2>2. ลงทะเบียนและเข้าระบบ</h2>
+
+      <h3>2.1 พนักงานใหม่ (Self-register)</h3>
+      <div class="flow">LINE Login → /register → กรอกชื่อ / เบอร์ / สาขา
+  → สร้าง hr_employees (รออนุมัติ)
+  → แจ้ง HR ผ่าน LINE Group
+  → HR อนุมัติใน Admin → status: active
+  → ได้ Rich Menu LINE</div>
+      <ul>
+        <li>Auth: <strong>LINE Login</strong> → Supabase session (JWT มี <code>line_user_id</code>)</li>
+        <li>สาขา Head Office (รหัส <code>000</code>) → default <code>pay_type = monthly</code></li>
+        <li>สาขาอื่น → default <code>pay_type = hourly</code></li>
+      </ul>
+
+      <h3>2.2 HR สร้างพนักงานเอง</h3>
+      <p><code>/admin/employees/new</code> — กรอกโปรไฟล์ครบ: ชื่อ, สาขา, pay_type, เงินเดือน/ชม., สัญชาติ, วันจ่าย, บัญชีธนาคาร</p>
+
+      <h3>2.3 Login ตาม Role</h3>
+      <table>
+        <thead>
+          <tr><th>Role</th><th>เข้าได้</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>employee</code></td><td>LINE / Portal</td></tr>
+          <tr><td><code>branch_manager</code></td><td>Admin สาขา</td></tr>
+          <tr><td><code>hr</code></td><td>Admin เต็ม + อนุมัติทุกอย่าง</td></tr>
+          <tr><td><code>admin</code>, <code>ceo</code>, <code>dev</code></td><td>Admin ตามสิทธิ์</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="daily">
+      <h2>3. งานประจำวันของพนักงาน (LINE)</h2>
+      <p class="muted">Rich Menu: เช็คอิน · OT · เอกสาร · คลัง · ร้องเรียน · ติดต่อ HR</p>
+
+      <h3>3.1 เช็คอิน / เช็คเอาท์</h3>
+      <div class="flow">LINE แชร์ตำแหน่ง หรือ QR (/liff/checkin)
+  → ตรวจ geofence 200m จากสาขา (ถ้าเปิด)
+  → บันทึก hr_attendance
+  → คำนวณ late / work_hours</div>
+
+      <h3>3.2 ยื่น OT</h3>
+      <div class="flow">/liff/overtime → กรอกวันที่/เวลา/เหตุผล
+  → status: pending_hr
+  → แจ้ง HR LINE Group
+  → HR อนุมัติที่ /admin/overtime
+  → approved → นับชม. OT ตอน payroll</div>
+      <p><span class="badge badge-hr">กฎปัจจุบัน</span> อนุมัติโดย <strong>HR Officer (role = hr) เท่านั้น</strong> — ไม่ผ่าน Branch Manager</p>
+
+      <h3>3.3 ลา (Leave)</h3>
+      <div class="flow">/liff/leave หรือ Portal
+  → pending_hr → HR อนุมัติ /admin/leaves
+  → ชม.ลา (sick / annual) ไป payroll</div>
+
+      <h3>3.4 Attendance รายวัน</h3>
+      <p>พนักงาน submit ชม. → <code>pending_hr</code> → HR อนุมัติ → ชม.เข้า <code>hr_payroll_hour_lines</code> (ledger) — ใช้กับพนักงาน <strong>hourly</strong></p>
+
+      <h3>3.5 อื่นๆ</h3>
+      <ul>
+        <li><strong>เอกสาร</strong> — ยื่น/อนุมัติเอกสาร HR</li>
+        <li><strong>ร้องเรียน</strong> — ส่ง complaint</li>
+        <li><strong>Portal</strong> (<code>/portal/*</code>) — ดู attendance, ลา, ประกาศ</li>
+      </ul>
+    </section>
+
+    <section id="hr">
+      <h2>4. งานของ HR / Admin</h2>
+
+      <h3>4.1 จัดการพนักงาน</h3>
+      <p><code>/admin/employees</code> — เงินเดือน, pay_type, สัญชาติ, วันจ่าย, สัญญา, visa, บัญชีธนาคาร</p>
+
+      <table>
+        <thead>
+          <tr><th>สัญชาติ</th><th>วันจ่าย (เดือนถัดไป)</th><th>Odoo Tag</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ไทย, พม่า</td><td>วันที่ <strong>4</strong></td><td><code>Pay-04</code></td></tr>
+          <tr><td>จีน</td><td>วันที่ <strong>5</strong></td><td><code>Pay-05</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>4.2 คิวอนุมัติ (HR เท่านั้น)</h3>
+      <ul>
+        <li><code>/admin/overtime</code></li>
+        <li><code>/admin/leaves</code></li>
+        <li><code>/admin/attendance</code></li>
+        <li><code>/admin/branches/[id]</code> — hub รายสาขา</li>
+      </ul>
+
+      <h3>4.3 สาขาและ Geofence</h3>
+      <p><code>/admin/branches</code> — ตั้ง latitude / longitude, geofence 200m</p>
+
+      <h3>4.4 Cron / แจ้งเตือนอัตโนมัติ</h3>
+      <ul>
+        <li><code>morning-push</code> — แจ้งเตือนเช้า</li>
+        <li><code>evening-summary</code> — สรุปเย็น</li>
+        <li><code>probation-alert</code>, <code>visa-alert</code>, <code>contract-alert</code></li>
+        <li><code>approval-expiry</code> — คำขอค้างเกินกำหนด</li>
+        <li><code>announcement-scheduler</code> — ประกาศตามเวลา</li>
+      </ul>
+    </section>
+
+    <section id="payroll">
+      <h2>5. Payroll Workflow</h2>
+
+      <h3>5.1 ประเภทการจ่าย</h3>
+      <table>
+        <thead>
+          <tr><th>pay_type</th><th>ใคร</th><th>ฟิลด์ salary</th><th>ชม.ที่ sync</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>monthly</strong></td>
+            <td>Office (สาขา 000)</td>
+            <td>เงินเดือน/เดือน</td>
+            <td>OT + ลา (base จาก wage)</td>
+          </tr>
+          <tr>
+            <td><strong>hourly</strong></td>
+            <td>หน้าร้าน</td>
+            <td>บาท/ชม.</td>
+            <td>ชม.จาก ledger ที่อนุมัติแล้ว</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>5.2 สิ้นเดือน — ใน HR App</h3>
+      <ol>
+        <li>ปิด OT / ลา / attendance — อนุมัติให้ครบ</li>
+        <li><code>/admin/payroll</code> — ดูสรุปชม.เดือนนั้น</li>
+        <li><code>/admin/payroll/odoo</code>:
+          <ul>
+            <li><strong>Sync รายชื่อพนักงาน → Odoo</strong> (โปรไฟล์ + wage + structure)</li>
+            <li><strong>Sync Payroll</strong> เลือกเดือน (payslip + batch)</li>
+          </ul>
+        </li>
+        <li><code>/admin/payroll/settings</code> — SSO, OT multiplier, ชื่อ Odoo structure</li>
+      </ol>
+    </section>
+
+    <section id="odoo">
+      <h2>6. Odoo Sync (Push)</h2>
+      <div class="diagram mermaid">
+sequenceDiagram
+  participant HR as HR กด Sync
+  participant API as sync-payroll API
+  participant SB as Supabase
+  participant O as Odoo 19
+  HR->>API: POST period YYYY-MM
+  API->>SB: พนักงาน + OT/ลา/ledger
+  loop แต่ละคน
+    API->>O: hr.employee + tag Pay-04/05
+    API->>O: hr.version wage + structure
+    API->>O: hr.payslip + compute
+  end
+  API->>O: Payslip Batch แยก วันที่ 4 vs 5
+  API->>HR: สรุปผล
+      </div>
+
+      <h3>ข้อมูลที่ sync จาก HR App → Odoo</h3>
+      <table>
+        <thead>
+          <tr><th>HR App</th><th>Odoo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ชื่อ</td><td><code>hr.employee.name</code></td></tr>
+          <tr><td>UUID</td><td><code>identification_id</code> (จับคู่รอบถัดไป)</td></tr>
+          <tr><td>รหัสพนักงาน</td><td><code>barcode</code></td></tr>
+          <tr><td>อีเมล / ตำแหน่ง</td><td><code>work_email</code> / <code>job_title</code></td></tr>
+          <tr><td>เงินเดือน / อัตราชม.</td><td><code>hr.version.wage</code> / <code>hourly_wage</code></td></tr>
+          <tr><td>วันจ่าย 4/5</td><td>tag <code>Pay-04</code> / <code>Pay-05</code></td></tr>
+          <tr><td>ชม.ทำงาน / OT / ลา</td><td>payslip worked days lines</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Odoo 19:</strong> ใช้ <code>hr.version</code> แทน <code>hr.contract</code> เก่า
+      </div>
+
+      <h3>Salary Structures ใน Odoo</h3>
+      <ul>
+        <li><code>Monthly Salary - Thailand</code> — Office</li>
+        <li><code>Hourly Wage - Thailand</code> — หน้าร้าน</li>
+        <li>Rules: BASIC, OT, SSO (+ default Odoo rules)</li>
+      </ul>
+
+      <h3>หลัง Sync — ใน Odoo</h3>
+      <div class="flow">Payroll → Payslips / Batches
+  → Review ยอด
+  → Confirm
+  → โอนเงิน วันที่ 4 (ไทย/พม่า) หรือ 5 (จีน)</div>
+    </section>
+
+    <section id="roles">
+      <h2>7. บทบาทและสิทธิ์</h2>
+      <table>
+        <thead>
+          <tr><th>งาน</th><th>พนักงาน</th><th>Branch Mgr</th><th>HR</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>เช็คอิน / OT / ลา</td><td>✓</td><td>proxy OT ได้</td><td>✓</td></tr>
+          <tr><td>อนุมัติ OT / ลา / attendance</td><td>✗</td><td>✗</td><td>✓</td></tr>
+          <tr><td>จัดการพนักงาน</td><td>✗</td><td>จำกัด</td><td>✓</td></tr>
+          <tr><td>Payroll / Odoo sync</td><td>✗</td><td>✗</td><td>✓</td></tr>
+          <tr><td>ตั้งค่า geofence / สาขา</td><td>✗</td><td>บางส่วน</td><td>✓</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="month">
+      <h2>8. Flow ครบวงจร (หนึ่งเดือน)</h2>
+      <div class="diagram mermaid">
+flowchart LR
+  A[HR สร้าง/อนุมัติพนักงาน] --> B[พนักงานเช็คอินทุกวัน]
+  B --> C[ยื่น OT/ลา]
+  C --> D[HR อนุมัติทุกคำขอ]
+  D --> E[Sync Employees → Odoo]
+  E --> F[Sync Payroll]
+  F --> G[Odoo Review Payslip]
+  G --> H[โอนเงิน วันที่ 4 หรือ 5]
+      </div>
+
+      <div class="callout ok">
+        <strong>จำไว้:</strong>
+        <ul style="margin:.5rem 0 0;padding-left:1.2rem">
+          <li>Supabase = source of truth (พนักงาน, เช็คอิน, OT, ลา)</li>
+          <li>Odoo = payroll engine (รับ push จาก HR App)</li>
+          <li>Hourly ต้องมีชม.ใน ledger อนุมัติแล้ว ถึง sync payroll ได้</li>
+          <li>Monthly ต้องมีเงินเดือนในโปรไฟล์</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="inventory">
+      <h2>9. Inventory (โมดูลแยก)</h2>
+      <p class="muted">ไม่เกี่ยว payroll โดยตรง — สำหรับทีมคลัง/สาขา</p>
+      <ul>
+        <li><code>/admin/inventory/*</code> — SKU, สต็อก, inbound, requisition, damage</li>
+        <li><code>/liff/inbound-scan</code> — สแกนรับของ</li>
+      </ul>
+    </section>
+
+    <section id="ops">
+      <h2>10. Ops / Dev Commands</h2>
+      <div class="flow">cd hr-app
+npm run dev:http              # dev ที่ :3001
+npm run odoo:setup-sync       # setup Odoo + sync พนักงานทั้งหมด
+npm run odoo:ensure-rules     # อัปเดต salary rules ใน Odoo</div>
+      <p class="muted">API endpoints: <code>GET/POST /api/odoo/sync-payroll</code> · <code>POST /api/odoo/sync-employees</code></p>
+    </section>
+  </main>
+
+  <footer>
+    HR Payroll Client · docs/HR_SYSTEM_WORKFLOW.html · เปิดไฟล์นี้ใน browser เพื่อตรวจสอบ
+  </footer>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "neutral",
+      flowchart: { curve: "basis" },
+      securityLevel: "loose",
+    });
+  </script>
+</body>
+</html>

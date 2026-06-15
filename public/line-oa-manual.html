@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คู่มือการใช้ LINE OA ระบบ HR</title>
+<style>
+  :root {
+    --red: #B71C1C;
+    --red-light: #FFF5F5;
+    --green: #06C755;
+    --blue: #1E6FD9;
+    --orange: #E65100;
+    --purple: #7B1FA2;
+    --indigo: #4F46E5;
+    --teal: #00897B;
+    --slate-50: #F8FAFC;
+    --slate-100: #F1F5F9;
+    --slate-200: #E2E8F0;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-900: #0F172A;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai", Roboto, sans-serif;
+    background: var(--slate-50);
+    color: var(--slate-900);
+    line-height: 1.7;
+  }
+  .container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, #B71C1C 0%, #D32F2F 50%, #E53935 100%);
+    color: #fff;
+    text-align: center;
+    padding: 60px 20px 48px;
+  }
+  .hero h1 { font-size: 2rem; margin-bottom: 8px; letter-spacing: -.5px; }
+  .hero p { font-size: 1.05rem; opacity: .85; }
+  .hero .logo { font-size: 48px; margin-bottom: 12px; }
+
+  /* TOC */
+  .toc {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 28px 32px;
+    margin: -32px auto 32px;
+    max-width: 880px;
+  }
+  .toc h2 { font-size: 1.1rem; color: var(--slate-600); margin-bottom: 14px; }
+  .toc ol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li { counter-increment: toc; font-size: .93rem; }
+  .toc li::before {
+    content: counter(toc);
+    display: inline-block;
+    width: 22px; height: 22px;
+    line-height: 22px;
+    text-align: center;
+    background: var(--red);
+    color: #fff;
+    border-radius: 50%;
+    font-size: .75rem;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .toc a {
+    color: var(--slate-700);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .15s;
+  }
+  .toc a:hover { border-color: var(--red); color: var(--red); }
+
+  /* SECTION */
+  section { margin-bottom: 36px; }
+  .section-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 28px;
+    cursor: default;
+  }
+  .section-header .emoji { font-size: 26px; }
+  .section-header h2 { font-size: 1.2rem; font-weight: 700; }
+  .section-body { padding: 0 28px 24px; }
+
+  /* SLASH TABLE */
+  .slash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .slash-item {
+    background: var(--slate-100);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: .88rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .slash-item code {
+    background: #fff;
+    border: 1px solid var(--slate-200);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-family: "SF Mono", "Cascadia Code", monospace;
+    font-size: .82rem;
+    white-space: nowrap;
+  }
+
+  /* STEP LIST */
+  .steps { padding-left: 24px; margin: 10px 0; }
+  .steps li { margin-bottom: 6px; font-size: .93rem; }
+  .steps li strong { color: var(--red); }
+
+  /* NOTES */
+  .note {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: .88rem;
+    color: var(--slate-700);
+  }
+  .note strong { color: var(--red); }
+
+  .tip {
+    background: #F0FDF4;
+    border-left: 4px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: .88rem;
+    color: var(--slate-700);
+  }
+  .tip strong { color: #065F46; }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: .9rem;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  th { background: var(--slate-100); font-weight: 600; color: var(--slate-600); }
+  tr:last-child td { border-bottom: none; }
+
+  /* SECTION COLORS */
+  .c-checkin .section-header { background: #F0FDF4; }
+  .c-checkin h2 { color: #065F46; }
+  .c-leave .section-header { background: #EFF6FF; }
+  .c-leave h2 { color: #1E40AF; }
+  .c-ot .section-header { background: #FFF7ED; }
+  .c-ot h2 { color: #9A3412; }
+  .c-doc .section-header { background: #FAF5FF; }
+  .c-doc h2 { color: #6B21A8; }
+  .c-complaint .section-header { background: #FFF7ED; }
+  .c-complaint h2 { color: #C2410C; }
+  .c-announce .section-header { background: #F0FDFA; }
+  .c-announce h2 { color: #065F46; }
+  .c-stock .section-header { background: #EEF2FF; }
+  .c-stock h2 { color: #3730A3; }
+  .c-contact .section-header { background: #EEF2FF; }
+  .c-contact h2 { color: #4338CA; }
+  .c-lang .section-header { background: var(--red-light); }
+  .c-lang h2 { color: var(--red); }
+  .c-register .section-header { background: var(--red-light); }
+  .c-register h2 { color: var(--red); }
+  .c-portal .section-header { background: var(--slate-100); }
+  .c-portal h2 { color: var(--slate-700); }
+  .c-admin .section-header { background: var(--slate-100); }
+  .c-admin h2 { color: var(--slate-700); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--slate-600);
+    font-size: .85rem;
+  }
+  hr { border: none; border-top: 1px solid var(--slate-200); margin: 14px 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.5rem; }
+    .toc ol { grid-template-columns: 1fr; }
+    .slash-grid { grid-template-columns: 1fr; }
+    .section-header, .section-body { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== HERO ========== -->
+<div class="hero">
+  <div class="logo">🐼</div>
+  <h1>คู่มือการใช้ LINE OA ระบบ HR</h1>
+  <p>สำหรับพนักงาน — เช็คอิน ขอลา ขอเอกสาร ตรวจสอบสต็อก และอื่น ๆ ผ่าน LINE</p>
+</div>
+
+<div class="container">
+
+<!-- ========== TOC ========== -->
+<div class="toc">
+  <h2>📋 สารบัญ</h2>
+  <ol>
+    <li><a href="#checkin">การเข้างาน / เลิกงาน</a></li>
+    <li><a href="#leave">ขอลา</a></li>
+    <li><a href="#ot">ขอ OT</a></li>
+    <li><a href="#document">ขอเอกสาร</a></li>
+    <li><a href="#complaint">ร้องเรียน</a></li>
+    <li><a href="#announce">ประกาศ</a></li>
+    <li><a href="#stock">สต็อก / รับเข้า</a></li>
+    <li><a href="#contact">ติดต่อ HR</a></li>
+    <li><a href="#language">เปลี่ยนภาษา</a></li>
+    <li><a href="#register">ลงทะเบียน</a></li>
+    <li><a href="#portal">Employee Portal</a></li>
+    <li><a href="#admin">สำหรับ HR / Admin</a></li>
+  </ol>
+</div>
+
+<!-- ========== 1. CHECKIN ========== -->
+<section id="checkin" class="c-checkin">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">🟢</span>
+  <h2>1. การเข้างาน / เลิกงาน</h2>
+</div>
+<div class="section-body">
+
+  <h3>📍 เช็คอิน (เข้างาน)</h3>
+  <ol class="steps">
+    <li>กดปุ่ม <strong>เช็คอิน 🟢</strong> ใน Rich Menu (เมนูด้านล่างของแชท)</li>
+    <li>ระบบจะขอ <strong>แชร์ตำแหน่ง</strong> — กดอนุญาตเพื่อยืนยันว่าคุณอยู่ที่ทำงาน</li>
+    <li>กดยืนยันเช็คอิน → รับข้อความ <strong>"✅ เข้างานสำเร็จ"</strong></li>
+  </ol>
+
+  <h3>🔴 เช็คเอาท์ (เลิกงาน)</h3>
+  <ol class="steps">
+    <li>กดปุ่ม <strong>เช็คเอาท์ 🔴</strong> ใน Rich Menu</li>
+    <li>แชร์ตำแหน่งเพื่อยืนยัน</li>
+    <li>กดยืนยัน → รับข้อความ <strong>"🔴 เลิกงานสำเร็จ"</strong> พร้อมสรุปเวลาเข้างาน/เลิกงาน</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 Tips:</strong>
+    <ul class="steps">
+      <li>เข้าก่อน 08:00 → <strong>ตรงเวลา</strong> / หลัง 08:00 → ขึ้นว่า <strong>"สาย X นาที"</strong></li>
+      <li>เช็คอินซ้ำ → ระบบแจ้งว่าเช็คอินแล้ว พร้อมเวลา</li>
+      <li>เช็คเอาท์โดยที่ยังไม่เช็คอิน → แจ้งเตือนให้เช็คอินก่อน</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <strong>⚠ ข้อควรรู้:</strong> ระบบใช้ GPS ตรวจสอบว่าคุณอยู่ในรัศมีของสาขา หากอยู่นอกพื้นที่ ระบบจะแจ้งว่าอยู่นอกระยะและไม่สามารถเช็คอินได้
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 2. LEAVE ========== -->
+<section id="leave" class="c-leave">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📅</span>
+  <h2>2. ขอลา</h2>
+</div>
+<div class="section-body">
+
+  <h3>วิธีใช้</h3>
+  <ol class="steps">
+    <li>พิมพ์ <strong>/leave</strong> หรือ <strong>/ลา</strong> ในแชท (หรือกดเมนู ขอลา)</li>
+    <li>ระบบจะส่งลิงก์ไปยัง <strong>ฟอร์มขอลา</strong> (LIFF) ให้กรอก:</li>
+    <ul class="steps">
+      <li>ประเภทลา: <strong>ลาป่วย / ลากิจ / ลาพักร้อน / ลาคลอด ฯลฯ</strong></li>
+      <li>วันที่เริ่มต้น – สิ้นสุด</li>
+      <li>เหตุผล (เพิ่มเติม)</li>
+    </ul>
+    <li>กดส่ง → HR จะได้รับเรื่องและดำเนินการ</li>
+    <li>เมื่อ HR อนุมัติหรือไม่อนุมัติ คุณจะได้รับ <strong>ข้อความแจ้งผล</strong> ผ่าน LINE ทันที</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 Tips:</strong> พิมพ์ <strong>/leave</strong> ได้เลยในแชท OA ไม่ต้องหาเมนู
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 3. OVERTIME ========== -->
+<section id="ot" class="c-ot">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">⏰</span>
+  <h2>3. ขอ OT</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li>พิมพ์ <strong>/ot</strong> หรือ <strong>/overtime</strong> (หรือกดเมนู ขอ OT)</li>
+    <li>กรอกฟอร์มผ่าน LIFF:</li>
+    <ul class="steps">
+      <li>วันที่ต้องการทำ OT</li>
+      <li>เวลาเริ่มต้น – สิ้นสุด</li>
+      <li>เหตุผล / งานที่ทำ</li>
+    </ul>
+    <li>ส่งคำขอ → HR พิจารณา → แจ้งผลทาง LINE</li>
+  </ol>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 4. DOCUMENT ========== -->
+<section id="document" class="c-doc">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📄</span>
+  <h2>4. ขอเอกสาร</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li>พิมพ์ <strong>/doc</strong>, <strong>/document</strong> หรือ <strong>/เอกสาร</strong></li>
+    <li>กรอกรายละเอียดผ่าน LIFF:</li>
+    <ul class="steps">
+      <li>ประเภทเอกสาร: <strong>หนังสือรับรองเงินเดือน / รับรองการทำงาน / สลิปเงินเดือน / อื่น ๆ</strong></li>
+      <li>จำนวนชุดที่ต้องการ</li>
+      <li>วัตถุประสงค์</li>
+    </ul>
+    <li>ส่งคำขอ → HR ดำเนินการจัดทำ → แจ้งเมื่อเอกสารพร้อมรับ</li>
+  </ol>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 5. COMPLAINT ========== -->
+<section id="complaint" class="c-complaint">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📢</span>
+  <h2>5. ร้องเรียน / แจ้งเรื่อง</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li>พิมพ์ <strong>/complaint</strong> หรือ <strong>/ร้องเรียน</strong></li>
+    <li>เลือก <strong>โหมด</strong> ที่ต้องการ:</li>
+    <ul class="steps">
+      <li><strong>🔓 เปิดเผยตัวตน</strong> — HR รู้ว่า你是谁</li>
+      <li><strong>🔒 ไม่เปิดเผยตัวตน</strong> — ส่งแบบ匿名</li>
+    </ul>
+    <li>กรอกหัวข้อและรายละเอียด → ส่ง</li>
+    <li>HR จะตอบกลับทาง LINE เมื่อตรวจสอบเรื่อง</li>
+  </ol>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 6. ANNOUNCEMENT ========== -->
+<section id="announce" class="c-announce">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📣</span>
+  <h2>6. ดูประกาศ</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li>พิมพ์ <strong>/announce</strong> หรือ <strong>/ประกาศ</strong></li>
+    <li>ระบบจะเปิดลิงก์ไปที่ <strong>หน้า Portal ประกาศ</strong></li>
+    <li>ดูประกาศทั้งหมดที่ HR ส่งถึงพนักงาน</li>
+  </ol>
+
+  <div class="note">
+    <strong>⚠ หมายเหตุ:</strong> การแจ้งประกาศสำคัญ (เช่น เปลี่ยนแปลงวันหยุด, กิจกรรมบริษัท) HR จะ <strong>Push ข้อความ</strong> ไปหา พนักงานทุกคนโดยตรงทาง LINE
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 7. STOCK ========== -->
+<section id="stock" class="c-stock">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📦</span>
+  <h2>7. เช็คสต็อก / รับเข้าสินค้า</h2>
+</div>
+<div class="section-body">
+
+  <h3>🔍 เช็คสต็อก</h3>
+  <ol class="steps">
+    <li>พิมพ์ <strong>/stock</strong> หรือ <strong>/สต็อก</strong></li>
+    <li>ระบบจะเปิดหน้า <strong>Portal เช็คสต็อก</strong></li>
+    <li>ดูจำนวนสินค้าคงคลัง ณ ปัจจุบัน</li>
+  </ol>
+
+  <h3>📥 รับเข้าสินค้า</h3>
+  <ol class="steps">
+    <li>พิมพ์ <strong>/inbound</strong> หรือ <strong>/รับเข้า</strong></li>
+    <li>เปิด LIFF Scanner เพื่อ <strong>สแกน QR/Barcode</strong> สินค้า</li>
+    <li>ยืนยันจำนวนที่รับเข้า → ระบบบันทึกสต็อกอัตโนมัติ</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 Tips:</strong> คำสั่ง <strong>/stock</strong> และ <strong>/inbound</strong> ใช้ได้เฉพาะพนักงานที่เกี่ยวข้องกับงานสต็อกเท่านั้น ขึ้นอยู่กับสิทธิ์ที่ Admin กำหนด
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 8. CONTACT HR ========== -->
+<section id="contact" class="c-contact">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">🎧</span>
+  <h2>8. ติดต่อ HR</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li>กด <strong>ติดต่อ HR</strong> ใน Rich Menu</li>
+    <li>ระบบจะส่งข้อความแจ้งไปยัง HR (ไม่ต้องโทร — สะดวกและเป็นทางการ)</li>
+    <li>HR จะตอบกลับคุณทาง LINE โดยตรง</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 Tips:</strong> เหมาะสำหรับเรื่องที่ไม่เร่งด่วน เช่น สอบถามสวัสดิการ, การลงเวลา, เอกสารต่างๆ
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 9. LANGUAGE ========== -->
+<section id="language" class="c-lang">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">🌐</span>
+  <h2>9. เปลี่ยนภาษา</h2>
+</div>
+<div class="section-body">
+
+  <p>ระบบ HR รองรับ <strong>4 ภาษา</strong> พิมพ์คำสั่งด้านล่างเพื่อเปลี่ยน:</p>
+
+  <div class="slash-grid">
+    <div class="slash-item"><code>/th</code> หรือ <code>/thai</code> หรือ <code>/ไทย</code> → 🇹🇭 ภาษาไทย</div>
+    <div class="slash-item"><code>/en</code> หรือ <code>/english</code> → 🇬🇧 English</div>
+    <div class="slash-item"><code>/zh</code> หรือ <code>/chinese</code> หรือ <code>/中文</code> → 🇨🇳 中文</div>
+    <div class="slash-item"><code>/my</code> หรือ <code>/burmese</code> → 🇲🇲 မြန်မာ</div>
+  </div>
+
+  <p>หรือกดดูเมนูภาษา:</p>
+  <div class="slash-grid">
+    <div class="slash-item"><code>/lang</code> หรือ <code>/language</code> หรือ <code>/ภาษา</code> → 📋 แสดงเมนูเลือกภาษา</div>
+  </div>
+
+  <div class="note">
+    <strong>🔄 เปลี่ยนภาษา LINE App อัตโนมัติ:</strong> เมื่อคุณเปิด LIFF (ฟอร์มต่าง ๆ) จาก LINE ระบบจะ <strong>อ่านภาษาของ LINE App</strong> และปรับภาษาให้อัตโนมัติ ถ้าคุณพิมพ์ <code>/en</code> หรือ <code>/zh</code> มาก่อน ระบบจะคงภาษาที่คุณเลือกไว้ — ไม่เปลี่ยนตาม LINE App
+  </div>
+
+  <div class="tip">
+    <strong>💡 Tips:</strong> เมนู, ข้อความแจ้งผล, และฟอร์มทั้งหมดจะเปลี่ยนเป็นภาษาที่คุณเลือก!
+  </div>
+
+  <hr>
+
+  <h4>🔤 Slash Commands ทั้งหมด (พิมพ์ในแชทได้เลย)</h4>
+
+  <table>
+    <thead>
+      <tr><th>คำสั่ง</th><th>ความหมาย</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/leave</code> / <code>/ลา</code></td><td>ขอลา</td></tr>
+      <tr><td><code>/ot</code> / <code>/overtime</code></td><td>ขอทำงานล่วงเวลา</td></tr>
+      <tr><td><code>/doc</code> / <code>/document</code> / <code>/เอกสาร</code></td><td>ขอเอกสาร</td></tr>
+      <tr><td><code>/complaint</code> / <code>/ร้องเรียน</code></td><td>ร้องเรียน / แจ้งเรื่อง</td></tr>
+      <tr><td><code>/announce</code> / <code>/ประกาศ</code></td><td>ดูประกาศ</td></tr>
+      <tr><td><code>/stock</code> / <code>/สต็อก</code></td><td>เช็คสต็อกสินค้า</td></tr>
+      <tr><td><code>/inbound</code> / <code>/รับเข้า</code></td><td>รับเข้าสินค้า (สแกนบาร์โค้ด)</td></tr>
+      <tr><td><code>/th</code> / <code>/en</code> / <code>/zh</code> / <code>/my</code></td><td>เปลี่ยนภาษา</td></tr>
+      <tr><td><code>/lang</code> / <code>/language</code> / <code>/ภาษา</code></td><td>เมนูเปลี่ยนภาษา</td></tr>
+    </tbody>
+  </table>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 10. REGISTRATION ========== -->
+<section id="register" class="c-register">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">📝</span>
+  <h2>10. การลงทะเบียนพนักงานใหม่</h2>
+</div>
+<div class="section-body">
+
+  <ol class="steps">
+    <li><strong>เพิ่ม LINE OA</strong> เป็นเพื่อน (Follow)</li>
+    <li>ระบบจะส่งข้อความต้อนรับพร้อม <strong>ลิงก์ลงทะเบียน</strong></li>
+    <li>กดลิงก์ → เข้าสู่ระบบด้วย <strong>LINE Login</strong></li>
+    <li>กรอก <strong>รหัสพนักงาน</strong> และเลือก <strong>สาขา</strong></li>
+    <li>ส่งข้อมูล → รอ <strong>HR อนุมัติ</strong></li>
+    <li>เมื่อ HR อนุมัติแล้ว → ใช้บริการ LINE OA ได้เต็มรูปแบบ</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 ระหว่างรออนุมัติ:</strong> คุณจะเห็นหน้า "รอ HR ตรวจสอบ" และยังไม่สามารถใช้เมนูต่าง ๆ ได้ รอ HR อนุมัติก่อนนะครับ
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 11. PORTAL ========== -->
+<section id="portal" class="c-portal">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">🌐</span>
+  <h2>11. Employee Portal (เว็บสำหรับพนักงาน)</h2>
+</div>
+<div class="section-body">
+
+  <p>นอกจาก LINE OA แล้ว พนักงานยังสามารถเข้าใช้งานผ่านเว็บเบราว์เซอร์ได้ที่ <strong>Employee Portal</strong>:</p>
+
+  <table>
+    <thead>
+      <tr><th>หน้า</th><th>รายละเอียด</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🏠 หน้าแรก</td><td>แดชบอร์ด แสดงสถานะเช็คอินวันนี้, วันลาคงเหลือ, ประกาศล่าสุด, ทางลัดไปฟังก์ชันต่าง ๆ</td></tr>
+      <tr><td>👤 โปรไฟล์</td><td>ดูและแก้ไขข้อมูลส่วนตัว, อัปโหลดรูปโปรไฟล์, เช็ค QR Code สำหรับเช็คอิน</td></tr>
+      <tr><td>⏱️ การเข้างาน</td><td>ประวัติการเช็คอิน-เช็คเอาท์, บันทึกเวลาทำงาน</td></tr>
+      <tr><td>📅 ตารางงาน</td><td>ตารางกะ / เวรทำงาน</td></tr>
+      <tr><td>📄 ขอลา</td><td>ส่งคำขอลา และดูประวัติ</td></tr>
+      <tr><td>📋 เอกสาร</td><td>ขอเอกสาร และตรวจสอบสถานะ</td></tr>
+      <tr><td>📣 ประกาศ</td><td>ดูประกาศทั้งหมดจาก HR</td></tr>
+      <tr><td>💰 สลิปเงินเดือน</td><td>ดาวน์โหลดสลิปเงินเดือนย้อนหลัง</td></tr>
+      <tr><td>📦 รับเข้า</td><td>สแกนรับสินค้า (สำหรับพนักงานสต็อก)</td></tr>
+      <tr><td>📦 เช็คสต็อก</td><td>ดูจำนวนสินค้าคงคลัง</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>🔑 เข้าสู่ระบบ:</strong> ใช้ <strong>รหัสพนักงาน + LINE Login</strong> หรือ Login ผ่าน LINE OA
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== 12. ADMIN ========== -->
+<section id="admin" class="c-admin">
+<div class="section-card">
+<div class="section-header">
+  <span class="emoji">⚙️</span>
+  <h2>12. สำหรับ HR / Admin</h2>
+</div>
+<div class="section-body">
+
+  <p>HR และ Admin สามารถจัดการระบบผ่านหน้า <strong>HR Admin Dashboard</strong>:</p>
+
+  <table>
+    <thead>
+      <tr><th>เมนู</th><th>รายละเอียด</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>📊 Dashboard</td><td>ภาพรวม KPI: พนักงานทั้งหมด, สายวันนี้, ขาดงาน, อนุมัติรอดำเนินการ</td></tr>
+      <tr><td>👥 พนักงาน</td><td>จัดการข้อมูลพนักงาน (เพิ่ม, แก้ไข, ดูโปรไฟล์)</td></tr>
+      <tr><td>⏱️ การเข้างาน</td><td>ดูประวัติเข้างานของพนักงาน, แก้ไขเวลา, อนุมัติบันทึกเวลาย้อนหลัง</td></tr>
+      <tr><td>📅 วันลา</td><td>อนุมัติ / ไม่อนุมัติคำขอลาทั้งหมด</td></tr>
+      <tr><td>⏰ OT</td><td>อนุมัติ / ไม่อนุมัติคำขอ OT</td></tr>
+      <tr><td>📄 เอกสาร</td><td>จัดการคำขอเอกสาร, อัปโหลดเอกสารให้พนักงาน</td></tr>
+      <tr><td>📢 ร้องเรียน</td><td>ดูและตอบกลับเรื่องร้องเรียน</td></tr>
+      <tr><td>📣 ประกาศ</td><td>สร้างและส่งประกาศถึงพนักงานทุกคน (Push Notification ผ่าน LINE)</td></tr>
+      <tr><td>📦 สินค้าคงคลัง</td><td>จัดการ SKU, สต็อก, ซัพพลายเออร์, คลังสินค้า, รับเข้า, เบิกจ่าย, ขาด, Consumption</td></tr>
+      <tr><td>📊 รายงาน</td><td>ส่งออกรายงานการเข้างาน, OT, การลา</td></tr>
+      <tr><td>💰 เงินเดือน</td><td>ตั้งค่าการคำนวณ Payroll, รัน Payroll, สร้าง PDF สลิปเงินเดือน</td></tr>
+      <tr><td>🏢 สาขา</td><td>จัดการสาขา, แผนก, ตำแหน่ง</td></tr>
+      <tr><td>⚙️ ตั้งค่า</td><td>ตั้งค่าระบบทั่วไป (เวลาทำงาน, กะ, GEOFENCE)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>🔑 การเข้าถึง:</strong> แดชบอร์ด Admin ใช้ได้เฉพาะผู้ที่มีสิทธิ์ <strong>Owner / Manager / HR</strong> เท่านั้น
+  </div>
+
+  <div class="tip">
+    <strong>💡 Push ประกาศ:</strong> เมื่อ HR สร้างประกาศ ระบบจะ Push ข้อความไปยัง LINE OA ของพนักงานทุกคนโดยอัตโนมัติ พนักงานไม่ต้องกดดูเอง
+  </div>
+
+</div>
+</div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <p>🐼 LINE OA HR System — จัดทำโดยทีมพัฒนา<br>
+  รองรับภาษา: 🇹🇭 ไทย · 🇬🇧 English · 🇨🇳 中文 · 🇲🇲 မြန်မာ</p>
+</footer>
+
+</div><!-- /container -->
+</body>
+</html>

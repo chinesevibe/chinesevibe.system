@@ -1,0 +1,33 @@
+// Registers the HR rich menu and sets it as default for all users.
+//
+// Usage:
+//   LINE_CHANNEL_ACCESS_TOKEN=<token> npx tsx scripts/register-rich-menu.ts [imagePath]
+//   (ต้องใช้ tsx — โค้ดใช้ "@/" path alias ซึ่ง node รันตรงๆ resolve ไม่ได้)
+//
+// imagePath defaults to public/rich-menu.png — 1200x810 PNG/JPEG, max 1MB.
+import { existsSync } from "node:fs"
+
+import { registerRichMenu } from "../src/lib/line/rich-menu"
+
+async function main() {
+  if (!process.env.LINE_CHANNEL_ACCESS_TOKEN) {
+    console.error("LINE_CHANNEL_ACCESS_TOKEN is not set")
+    process.exit(1)
+  }
+
+  const imagePath = process.argv[2] ?? "public/rich-menu.png"
+  if (!existsSync(imagePath)) {
+    console.error(
+      `Rich menu image not found: ${imagePath} (expected 1200x810 PNG/JPEG, max 1MB)`
+    )
+    process.exit(1)
+  }
+
+  const richMenuId = await registerRichMenu(imagePath)
+  console.log(`Rich menu registered and set as default: ${richMenuId}`)
+}
+
+main().catch((error) => {
+  console.error("Failed to register rich menu:", error)
+  process.exit(1)
+})

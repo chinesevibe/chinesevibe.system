@@ -1,0 +1,148 @@
+// Dashboard aggregation — read-only through the caller's session client so
+// RLS (hr_is_hr_admin) is the authorization layer. No service role here.
+import { ictDayRangeUtc } from "@/lib/attendance/late"
+import { getPayrollHourReport } from "@/features/payroll/data"
+import { createClient } from "@/lib/supabase/server"
+
+const DAY_MS = 86_400_000
+const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
+const EXPIRY_WINDOW_DAYS = 30
+
+export type DashboardStats = {
+  totalActiveEmployees: number
+  checkedInToday: number
+  lateToday: number
+  absentToday: number
+  pendingLeaves: number
+  expiring: {
+    probation: number
+    visa: number
+    workPermit: number
+  }
+  attendanceByDay: Array<{ day: string; count: number }>
+  leavesByStatus: Array<{ status: string; count: number }>
+  payrollEmployeeCount: number
+  payrollTotalHours: number
+}
+
+// "YYYY-MM-DD" of the ICT day containing `instant`, for date-column compares.
+function ictDateString(instant: Date): string {
+  return new Date(instant.getTime() + ICT_OFFSET_MS).toISOString().slice(0, 10)
+}
+
+// "DD/MM" label for the ICT day starting at `dayStartUtc`.
+function ictDayLabel(dayStartUtc: Date): string {
+  const ict = new Date(dayStartUtc.getTime() + ICT_OFFSET_MS)
+  const dd = String(ict.getUTCDate()).padStart(2, "0")
+  const mm = String(ict.getUTCMonth() + 1).padStart(2, "0")
+  return `${dd}/${mm}`
+}
+
+export async function getDashboardStats(
+  now: Date = new Date()
+): Promise<DashboardStats> {
+  const supabase = await createClient()
+
+  const { start: todayStart, end: todayEnd } = ictDayRangeUtc(now)
+  const windowStart = new Date(todayStart.getTime() - 6 * DAY_MS)
+  const todayIct = ictDateString(now)
+  const expiryLimit = ictDateString(
+    new Date(now.getTime() + EXPIRY_WINDOW_DAYS * DAY_MS)
+  )
+
+  const payrollYear = now.getFullYear()
+  const payrollMonth = now.getMonth() + 1
+
+  const [activeRes, weekRes, pendingRes, leavesRes, expiryRes, payrollReport] =
+    await Promise.all([
+      supabase
+        .from("hr_employees")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
+      supabase
+        .from("hr_attendance")
+        .select("check_in_at, is_late")
+        .gte("check_in_at", windowStart.toISOString())
+        .lt("check_in_at", todayEnd.toISOString()),
+      supabase
+        .from("hr_leaves")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase.from("hr_leaves").select("status"),
+      supabase
+        .from("hr_employees")
+        .select("probation_end, visa_expiry, work_permit_expiry")
+        .eq("status", "active"),
+      getPayrollHourReport(payrollYear, payrollMonth),
+    ])
+
+  const totalActiveEmployees = activeRes.count ?? 0
+  const pendingLeaves = pendingRes.count ?? 0
+
+  // Bucket the 7-day window per ICT day; today is the last bucket.
+  const weekRows = (weekRes.data ?? []) as Array<{
+    check_in_at: string
+    is_late: boolean
+  }>
+  const buckets = Array.from({ length: 7 }, (_, i) => ({
+    day: ictDayLabel(new Date(windowStart.getTime() + i * DAY_MS)),
+    count: 0,
+  }))
+  let checkedInToday = 0
+  let lateToday = 0
+  for (const row of weekRows) {
+    const t = new Date(row.check_in_at).getTime()
+    const index = Math.floor((t - windowStart.getTime()) / DAY_MS)
+    if (index >= 0 && index < 7) {
+      buckets[index].count += 1
+    }
+    if (t >= todayStart.getTime()) {
+      checkedInToday += 1
+      if (row.is_late) {
+        lateToday += 1
+      }
+    }
+  }
+  const absentToday = Math.max(0, totalActiveEmployees - checkedInToday)
+
+  const statusCounts = new Map<string, number>()
+  for (const row of (leavesRes.data ?? []) as Array<{ status: string }>) {
+    statusCounts.set(row.status, (statusCounts.get(row.status) ?? 0) + 1)
+  }
+  const leavesByStatus = Array.from(statusCounts, ([status, count]) => ({
+    status,
+    count,
+  })).sort((a, b) => b.count - a.count)
+
+  // Date columns are "YYYY-MM-DD" strings — string compare is date compare.
+  const withinWindow = (date: string | null): boolean =>
+    date !== null && date >= todayIct && date <= expiryLimit
+  const expiring = { probation: 0, visa: 0, workPermit: 0 }
+  for (const row of (expiryRes.data ?? []) as Array<{
+    probation_end: string | null
+    visa_expiry: string | null
+    work_permit_expiry: string | null
+  }>) {
+    if (withinWindow(row.probation_end)) expiring.probation += 1
+    if (withinWindow(row.visa_expiry)) expiring.visa += 1
+    if (withinWindow(row.work_permit_expiry)) expiring.workPermit += 1
+  }
+
+  let payrollTotalHours = 0
+  for (const row of payrollReport) {
+    payrollTotalHours += row.regular + row.overtime + row.sick
+  }
+
+  return {
+    totalActiveEmployees,
+    checkedInToday,
+    lateToday,
+    absentToday,
+    pendingLeaves,
+    expiring,
+    attendanceByDay: buckets,
+    leavesByStatus,
+    payrollEmployeeCount: payrollReport.length,
+    payrollTotalHours: Math.round(payrollTotalHours * 10) / 10,
+  }
+}

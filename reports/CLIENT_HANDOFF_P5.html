@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Handoff — Phase 5 | 中国名堂 HR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-red: #E80012;
+      --brand-red-soft: #FFF0F1;
+      --brand-red-gradient: linear-gradient(135deg, #FFF6F6 0%, #FFF0F0 50%, #FFE4E4 100%);
+      --background: #F5F5F5;
+      --foreground: #1a1a1a;
+      --card: #ffffff;
+      --muted: #737373;
+      --border: #e5e5e5;
+      --success: #16a34a;
+      --warning: #d97706;
+      --radius: 0.625rem;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Prompt", system-ui, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-mark {
+      width: 40px; height: 40px;
+      background: var(--brand-red);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 14px;
+    }
+    .brand-text h1 { font-size: 1rem; font-weight: 700; line-height: 1.2; }
+    .brand-text span { font-size: 0.75rem; color: var(--muted); }
+    .topbar-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.5rem 1rem;
+      border-radius: calc(var(--radius) * 0.8);
+      font-family: inherit; font-size: 0.8125rem; font-weight: 600;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--brand-red); color: #fff; }
+    .btn-outline { background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 57px);
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    .sidebar {
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky; top: 57px;
+      height: calc(100vh - 57px);
+      overflow-y: auto;
+    }
+    .nav-label {
+      font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 0.5rem 1.25rem 0.35rem;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--foreground); text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background .12s, color .12s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: var(--brand-red-soft);
+      color: var(--brand-red);
+    }
+    .nav-link.active { border-left-color: var(--brand-red); font-weight: 600; }
+    .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; }
+    .sidebar-promo {
+      margin: 1rem 0.75rem 0; padding: 1rem;
+      border-radius: 1rem;
+      background: var(--brand-red-gradient);
+      font-size: 0.8125rem; font-weight: 700; line-height: 1.35;
+      color: var(--brand-red);
+    }
+
+    .main { padding: 1.5rem; max-width: 960px; }
+
+    .hero {
+      background: var(--brand-red); color: #fff;
+      border-radius: 1rem; padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem; position: relative; overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.25) 0, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.15) 0, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; }
+    .hero h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .hero p { font-size: 0.9rem; opacity: 0.92; }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      margin-top: 1rem; font-size: 0.8125rem;
+    }
+    .hero-meta span {
+      background: rgba(255,255,255,.15);
+      padding: 0.25rem 0.65rem; border-radius: 999px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem; margin-bottom: 1.5rem;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid rgba(229,229,229,.8);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem; box-shadow: var(--shadow);
+    }
+    .kpi-label {
+      font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .kpi-value {
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--brand-red); margin-top: 0.15rem;
+    }
+    .kpi-sub { font-size: 0.75rem; color: var(--muted); }
+
+    section { scroll-margin-top: 5rem; margin-bottom: 1.5rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(229,229,229,.8);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header h3 { font-size: 1.05rem; font-weight: 700; }
+    .card-header h4 {
+      font-size: 0.95rem; font-weight: 600;
+      margin-top: 1.25rem; margin-bottom: 0.35rem;
+      color: var(--brand-red);
+    }
+    .card-header p, .card-header .sub-desc {
+      font-size: 0.8125rem; color: var(--muted); margin-top: 0.15rem;
+    }
+    .card-body { padding: 1.25rem; }
+
+    .note {
+      background: var(--brand-red-soft);
+      border-left: 3px solid var(--brand-red);
+      padding: 0.75rem 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td {
+      text-align: left; padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border); vertical-align: top;
+    }
+    th {
+      font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); background: #fafafa;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.15rem 0.55rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-ok { background: #dcfce7; color: var(--success); }
+    .badge-warn { background: #fef3c7; color: var(--warning); }
+    .badge-lock { background: var(--brand-red-soft); color: var(--brand-red); }
+
+    code, .mono {
+      font-family: ui-monospace, "SF Mono", monospace;
+      font-size: 0.8125rem;
+      background: #f4f4f5;
+      padding: 0.1rem 0.4rem; border-radius: 4px;
+    }
+    a { color: var(--brand-red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .link-list { list-style: none; }
+    .link-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap;
+      justify-content: space-between; gap: 0.5rem;
+      align-items: baseline;
+    }
+    .link-list li:last-child { border-bottom: none; }
+    .link-list .hint { font-size: 0.75rem; color: var(--muted); width: 100%; margin-top: -0.25rem; }
+
+    .steps { counter-reset: step; list-style: none; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 2.5rem;
+      padding-bottom: 1rem;
+      border-left: 2px solid var(--border);
+      margin-left: 0.75rem;
+    }
+    .steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
+    .steps li::before {
+      content: counter(step);
+      position: absolute; left: -0.85rem; top: 0;
+      width: 1.5rem; height: 1.5rem;
+      background: var(--brand-red); color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .flow-pill {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      background: #f4f4f5; color: #525252;
+      margin: 0 0.15rem;
+    }
+
+    pre {
+      background: #18181b; color: #e4e4e7;
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 0.78rem; line-height: 1.5;
+      margin-top: 0.75rem;
+    }
+
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer; user-select: none;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist input {
+      width: 1.15rem; height: 1.15rem;
+      accent-color: var(--brand-red);
+      margin-top: 0.15rem; flex-shrink: 0;
+    }
+    .checklist li.done span { text-decoration: line-through; color: var(--muted); }
+
+    .footer {
+      text-align: center; padding: 2rem 1rem;
+      font-size: 0.8125rem; color: var(--muted);
+    }
+
+    .role-pill {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      background: #f4f4f5; color: #525252;
+    }
+
+    ul.bullets { margin-left: 1.25rem; font-size: 0.875rem; }
+    ul.bullets li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">名堂</div>
+      <div class="brand-text">
+        <h1>中国名堂 HR Admin</h1>
+        <span>Client Handoff — Phase 5</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <a class="btn btn-outline" href="CLIENT_HANDOFF_P5.md">Markdown</a>
+      <a class="btn btn-primary" href="https://hr-app-two-iota.vercel.app/login" target="_blank" rel="noopener">เปิด Production →</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-label">เอกสาร</div>
+      <nav>
+        <a class="nav-link active" href="#overview"><span class="nav-icon">📋</span> ภาพรวม</a>
+        <a class="nav-link" href="#delivered"><span class="nav-icon">✅</span> สิ่งที่ส่งมอบ</a>
+        <a class="nav-link" href="#release-20260618"><span class="nav-icon">🆕</span> Release 2026-06-18</a>
+        <a class="nav-link" href="#urls"><span class="nav-icon">🔗</span> URL สำคัญ</a>
+        <a class="nav-link" href="#roles"><span class="nav-icon">👤</span> Roles</a>
+        <a class="nav-link" href="#onboarding"><span class="nav-icon">📝</span> Onboarding</a>
+        <a class="nav-link" href="#bm-setup"><span class="nav-icon">🏢</span> ตั้ง BM</a>
+        <a class="nav-link" href="#line"><span class="nav-icon">💬</span> LINE OA</a>
+        <a class="nav-link" href="#supabase"><span class="nav-icon">⚙️</span> Supabase</a>
+        <a class="nav-link" href="#gaps"><span class="nav-icon">⚠️</span> Known gaps</a>
+        <a class="nav-link" href="#support"><span class="nav-icon">📁</span> Support</a>
+        <a class="nav-link" href="#signoff"><span class="nav-icon">✍️</span> Sign-off</a>
+      </nav>
+      <div class="sidebar-promo">
+        Together, We<br />Build a Stronger<br />Team!
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <div class="hero" id="overview">
+        <div class="hero-inner">
+          <h2>ส่งมอบ Phase 5 (MVP)</h2>
+          <p>LINE OA HR &amp; Payroll Platform — พร้อมใช้งาน production</p>
+          <div class="hero-meta">
+            <span>📅 11 มิ.ย. 2026</span>
+            <span>🗄️ oouswalwqhojpzqwwdvs</span>
+            <span>🏷️ hr-payroll-v1.0+</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-label">Production</div>
+          <div class="kpi-value" style="font-size:0.85rem">hr-app-two-iota</div>
+          <div class="kpi-sub">Vercel</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Onboarding</div>
+          <div class="kpi-value">HR gate</div>
+          <div class="kpi-sub">register → approve</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Approval</div>
+          <div class="kpi-value">2-tier</div>
+          <div class="kpi-sub">ลา · เข้างาน · OT</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">SLA</div>
+          <div class="kpi-value">48h</div>
+          <div class="kpi-sub">auto-expire cron</div>
+        </div>
+      </div>
+
+      <!-- §1 -->
+      <section id="delivered">
+        <div class="card">
+          <div class="card-header">
+            <h3>1. สิ่งที่ส่งมอบ (Phase 5)</h3>
+            <p>ฟีเจอร์หลักที่พร้อมใช้งานบน production</p>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>ฟีเจอร์</th><th>สถานะ</th></tr></thead>
+              <tbody>
+                <tr><td>โครงสร้างสาขา / แผนก</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>Branch Manager (BM) — อนุมัติลา + OT สาขา + ลงเวลา</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>CEO Dashboard — ภาพรวมองค์กร</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>อนุมัติ 2 ขั้น (BM → HR) ลา + สรุปวันเข้างาน</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>SLA 48 ชม. — คำขอค้างหมดอายุอัตโนมัติ</td><td><span class="badge badge-ok">✓ cron</span></td></tr>
+                <tr><td>LINE แจ้ง BM เมื่อมีคิวรออนุมัติ</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>Badge จำนวนค้างบน sidebar BM</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td>Payroll รายงานชั่วโมง (ไม่ใช่สลิปเงินเดือน)</td><td><span class="badge badge-ok">✓</span></td></tr>
+                <tr><td><strong>LINE self-registration</strong> — พนักงานใหม่ลงทะเบียนเอง</td><td><span class="badge badge-ok">✓ T78</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="padding:0.75rem 1.25rem;font-size:0.8125rem;color:var(--muted);border-top:1px solid var(--border)">
+            Audit: <code>DELIVERY_READINESS_AUDIT_P5.md</code> · Security: <code>SECURITY_REVIEW_P5_1.md</code> · Smoke: <code>E2E_P5_1_RESULTS.md</code>
+          </p>
+        </div>
+      </section>
+
+      <!-- §1.1 Release -->
+      <section id="release-20260618">
+        <div class="card">
+          <div class="card-header">
+            <h3>1.1 Release update (2026-06-18)</h3>
+            <p>Deploy ถัดจาก <code>ff3ec4b</code></p>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>หมวด</th><th>รายการ</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Head Office</strong></td><td>สาขา default <code>Head Office</code> รหัส <code>000</code> (เดิม MAIN)</td></tr>
+                <tr><td>Organization</td><td>แผนก <strong>IT</strong> · ตำแหน่ง master <strong>Developers</strong> (<code>hr_positions</code>)</td></tr>
+                <tr><td>Sidebar</td><td>จุดแดง + badge ตามแจ้งเตือนแต่ละเมนู (HR + BM)</td></tr>
+                <tr><td>การแจ้งเตือน</td><td>Bell แสดงสูงสุด 10 รายการล่าสุด</td></tr>
+                <tr><td>Organization API</td><td>แก้ forbidden เพิ่มแผนก · รองรับ role dev</td></tr>
+                <tr><td>Employee profile</td><td>Leave Blacklist · ลบพนักงานถาวร · Auto-save ฟอร์ม</td></tr>
+                <tr><td>Register</td><td>บล็อก blacklist ลงทะเบียนซ้ำ</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-body" style="border-top:1px solid var(--border);padding-top:1rem">
+            <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:0.5rem">Head Office — master data</h4>
+            <table>
+              <thead><tr><th>รายการ</th><th>ค่า</th></tr></thead>
+              <tbody>
+                <tr><td>สาขา</td><td>Head Office</td></tr>
+                <tr><td>รหัสสาขา</td><td><code>000</code></td></tr>
+                <tr><td>แผนก</td><td>IT</td></tr>
+                <tr><td>ตำแหน่ง (master)</td><td>Developers</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- §2 -->
+      <section id="urls">
+        <div class="card">
+          <div class="card-header">
+            <h3>2. URL สำคัญ</h3>
+            <p>จุดเข้าใช้งานหลัก — คลิกเพื่อเปิด production</p>
+          </div>
+          <div class="card-body">
+            <ul class="link-list">
+              <li>
+                <strong>Web login (LINE)</strong>
+                <a href="https://hr-app-two-iota.vercel.app/login" target="_blank" rel="noopener">/login</a>
+              </li>
+              <li>
+                <div>
+                  <strong>ลงทะเบียนพนักงานใหม่</strong>
+                  <div class="hint">หลัง LINE login ครั้งแรก redirect อัตโนมัติ</div>
+                </div>
+                <a href="https://hr-app-two-iota.vercel.app/register" target="_blank" rel="noopener">/register</a>
+              </li>
+              <li>
+                <strong>HR / Admin home</strong>
+                <a href="https://hr-app-two-iota.vercel.app/admin" target="_blank" rel="noopener">/admin</a>
+              </li>
+              <li>
+                <strong>CEO dashboard</strong>
+                <a href="https://hr-app-two-iota.vercel.app/admin/ceo" target="_blank" rel="noopener">/admin/ceo</a>
+              </li>
+              <li>
+                <strong>Branch Manager home</strong>
+                <a href="https://hr-app-two-iota.vercel.app/admin/branch" target="_blank" rel="noopener">/admin/branch</a>
+              </li>
+              <li><span>BM — อนุมัติลงเวลา</span><code>/admin/branch/attendance</code></li>
+              <li><span>BM — อนุมัติลา</span><code>/admin/branch/leaves</code></li>
+              <li><span>BM — อนุมัติ OT</span><code>/admin/branch/overtime</code></li>
+              <li><span>BM — ทีมสาขา</span><code>/admin/branch/team</code></li>
+              <li>
+                <strong>จัดการสาขา (HR)</strong>
+                <a href="https://hr-app-two-iota.vercel.app/admin/branches" target="_blank" rel="noopener">/admin/branches</a>
+              </li>
+              <li><span>LIFF — ขอลา</span><code>/liff/leave</code></li>
+              <li><span>LIFF — ยื่นสรุปวัน</span><code>/liff/attendance</code></li>
+              <li><span>LIFF — OT</span><code>/liff/overtime</code></li>
+              <li>
+                <strong>LINE Webhook (Messaging API)</strong>
+                <code>https://hr-app-two-iota.vercel.app/api/line/webhook</code>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- §3 -->
+      <section id="roles">
+        <div class="card">
+          <div class="card-header">
+            <h3>3. Roles &amp; หน้าเริ่มต้นหลัง login</h3>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>Role</th><th>คำอธิบาย</th><th>Landing</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="role-pill">employee</span></td>
+                  <td>พนักงานทั่วไป — LINE / LIFF</td>
+                  <td><code>/liff/leave</code></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">hr / admin</span></td>
+                  <td>HR อนุมัติขั้นสุดท้าย, รายงาน, ตั้งค่า</td>
+                  <td><code>/admin</code></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">branch_manager</span></td>
+                  <td>หัวหน้าสาขา — อนุมัติในสาขา</td>
+                  <td><code>/admin/branch</code></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">ceo</span></td>
+                  <td>ภาพรวมองค์กร (จำกัด path)</td>
+                  <td><code>/admin/ceo</code></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">dev</span></td>
+                  <td>ทดสอบ — สลับมุมมอง CEO / BM / HR</td>
+                  <td><code>/admin/ceo</code> + Dev switcher</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="padding:0.75rem 1.25rem;font-size:0.8125rem;color:var(--muted);border-top:1px solid var(--border)">
+              CEO เข้าได้เฉพาะ: <code>/admin/ceo</code>, <code>/admin/branches</code>, <code>/admin/employees</code>, <code>/admin/reports</code>, <code>/admin/organization</code>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- §4 Onboarding -->
+      <section id="onboarding">
+        <div class="card">
+          <div class="card-header">
+            <h3>4. Onboarding พนักงานใหม่ (Self-register)</h3>
+
+            <h4>4.0 พนักงานลงทะเบียนเอง (ครั้งแรก) — รอ HR อนุมัติ</h4>
+          </div>
+          <div class="card-body">
+            <ol class="steps">
+              <li>แอดเพื่อน <strong>LINE OA</strong> หรือเปิด <code>/login</code> → Login LINE</li>
+              <li>ถ้ายังไม่มีในระบบ → <code>/register</code> กรอก <strong>ชื่อ, เบอร์, สาขา</strong> (+ แผนก/ตำแหน่ง optional)</li>
+              <li>สถานะ <code>inactive</code> (รออนุมัติ) → <code>/register/pending</code> — <strong>ยังใช้เมนู HR ใน LINE ไม่ได้</strong></li>
+              <li><strong>HR</strong> เปิด <code>/admin/employees?status=onboarding</code> → โปรไฟล์ → กด <strong>อนุมัติเข้าใช้งาน</strong></li>
+              <li>หลังอนุมัติ (<code>active</code>) → พนักงานใช้ <strong>LINE OA + LIFF เท่านั้น</strong> (ไม่มี Web Dashboard — <code>/employee</code> เป็นหน้าข้อมูลสั้นๆ)</li>
+            </ol>
+            <div class="note">
+              ไม่ต้อง copy LINE User ID สำหรับพนักงานทั่วไป · HR/BM/CEO ยังใช้ Dashboard ตาม role
+            </div>
+          </div>
+
+          <div class="card-header" style="border-top:1px solid var(--border)">
+            <h4>4.1 ขอ OT (พนักงานยื่นเอง — BM → HR)</h4>
+          </div>
+          <div class="card-body">
+            <ol class="steps">
+              <li>พนักงาน (active) เปิด <strong>LINE → ขอ OT</strong> หรือ <code>/liff/overtime</code> → กรอกวันที่/เวลา/เหตุผล</li>
+              <li>สถานะ <span class="flow-pill">pending_manager</span> → แจ้ง <strong>BM สาขา</strong></li>
+              <li><strong>BM</strong> เปิด <code>/admin/branch/overtime</code> → อนุมัติ/ปฏิเสธ → <span class="flow-pill">pending_hr</span></li>
+              <li><strong>HR</strong> เปิด <code>/admin/overtime</code> → อนุมัติ/ปฏิเสธ → <span class="flow-pill">approved</span> (ชั่วโมง OT เข้า payroll)</li>
+              <li>แจ้งผลทาง LINE ทุกขั้น · คำขอที่ค้างเกินกำหนด → <span class="flow-pill">expired</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- §5 BM -->
+      <section id="bm-setup">
+        <div class="card">
+          <div class="card-header">
+            <h3>5. ตั้ง Branch Manager (ขั้นตอนลูกค้า)</h3>
+            <p class="sub-desc">5.1 สร้าง/กำหนด role · 5.2 ผูกสาขา · 5.3 ทดสอบ</p>
+          </div>
+          <div class="card-body">
+            <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:0.5rem">5.1 สร้าง/กำหนด role ให้พนักงาน</h4>
+            <ol class="steps" style="margin-bottom:1.25rem">
+              <li>Login เป็น <strong>HR/Admin</strong> → <code>/admin/employees</code></li>
+              <li>แก้พนักงานที่จะเป็นหัวหน้าสาขา → ตั้ง <strong>role = <code>branch_manager</code></strong></li>
+              <li>กำหนด <strong>สาขา (<code>branch_id</code>)</strong> ให้พนักงานในสาขานั้น</li>
+            </ol>
+            <pre>cd hr-app
+node scripts/seed-admin.mjs &lt;LINE_USER_ID&gt; "ชื่อ นามสกุล" branch_manager</pre>
+
+            <h4 style="font-size:0.9rem;font-weight:600;margin:1.25rem 0 0.5rem">5.2 ผูก BM กับสาขา (1 BM : 1 สาขา)</h4>
+            <p style="font-size:0.875rem;margin-bottom:0.5rem"><strong>ทาง UI:</strong> <code>/admin/branches</code> → สร้างสาขา หรือแก้สาขา → เลือก <strong>Manager</strong></p>
+            <p style="font-size:0.875rem;margin-bottom:0.35rem"><strong>ทาง API</strong> (HR token):</p>
+            <pre>POST /api/branches
+Content-Type: application/json
+
+{
+  "name": "Head Office",
+  "code": "000",
+  "managerEmployeeId": "&lt;uuid พนักงาน role branch_manager&gt;"
+}</pre>
+            <ul class="bullets" style="margin-top:0.75rem">
+              <li>Manager ต้องมี role <code>branch_manager</code> แล้ว</li>
+              <li>1 manager ผูกได้ 1 สาขาเท่านั้น</li>
+            </ul>
+
+            <h4 style="font-size:0.9rem;font-weight:600;margin:1.25rem 0 0.5rem">5.3 ทดสอบ</h4>
+            <ol class="steps">
+              <li>BM login ผ่าน LINE → ควรไป <code>/admin/branch</code></li>
+              <li>ส่งคำขอลา / ยื่นสรุปวันจากพนักงานในสาขา → BM เห็นคิว + badge sidebar</li>
+              <li>BM อนุมัติ → คิวไป HR (ขั้นที่ 2)</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- §6 LINE -->
+      <section id="line">
+        <div class="card">
+          <div class="card-header">
+            <h3>6. LINE OA setup (สรุป)</h3>
+            <p>LINE Developers Console — Messaging API + LIFF</p>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>รายการ</th><th>ค่า</th></tr></thead>
+              <tbody>
+                <tr><td>Webhook URL</td><td><code>https://hr-app-two-iota.vercel.app/api/line/webhook</code></td></tr>
+                <tr><td>LIFF endpoint (leave)</td><td><code>https://hr-app-two-iota.vercel.app/liff/leave</code></td></tr>
+                <tr><td>LIFF endpoint (attendance)</td><td><code>https://hr-app-two-iota.vercel.app/liff/attendance</code></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:1rem 1.25rem;border-top:1px solid var(--border)">
+              <p style="font-size:0.875rem;font-weight:600;margin-bottom:0.5rem">Vercel env ที่ต้องมี (Production):</p>
+              <ul class="bullets">
+                <li><code>NEXT_PUBLIC_SUPABASE_URL</code> = <code>https://oouswalwqhojpzqwwdvs.supabase.co</code></li>
+                <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> — จาก Supabase Dashboard</li>
+                <li><code>SUPABASE_SERVICE_ROLE_KEY</code> — ห้าม expose ฝั่ง client</li>
+                <li><code>LINE_CHANNEL_ACCESS_TOKEN</code>, <code>LINE_CHANNEL_SECRET</code></li>
+                <li><code>NEXT_PUBLIC_LINE_LIFF_ID</code> (และ LIFF แยกตาม flow ถ้ามี)</li>
+                <li><code>LINE_LOGIN_CHANNEL_ID</code>, <code>LINE_LOGIN_CHANNEL_SECRET</code></li>
+                <li><code>NEXT_PUBLIC_BASE_URL</code> = <code>https://hr-app-two-iota.vercel.app</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- §7 Supabase -->
+      <section id="supabase">
+        <div class="card">
+          <div class="card-header">
+            <h3>7. Supabase &amp; Cron</h3>
+            <p>Project ref: <code>oouswalwqhojpzqwwdvs</code></p>
+          </div>
+          <div class="card-body">
+            <table style="margin-bottom:1rem">
+              <thead><tr><th>รายการ</th><th>ค่า</th></tr></thead>
+              <tbody>
+                <tr><td>Vault <code>project_url</code></td><td><code>https://oouswalwqhojpzqwwdvs.supabase.co</code></td></tr>
+                <tr><td>Vault <code>secret_key</code></td><td>service role key (สำหรับ cron ที่เรียก Edge Function)</td></tr>
+              </tbody>
+            </table>
+
+            <p style="margin-bottom:0.5rem"><strong>Cron <code>approval-expiry</code></strong> — ทุกชั่วโมง (<code>0 * * * *</code>)</p>
+            <ul class="bullets" style="margin-bottom:1rem">
+              <li>หมดอายุคำขอ <strong>ลา</strong>, <strong>สรุปวันเข้างาน</strong> และ <strong>OT</strong> ที่สถานะ <code>pending_manager</code> / <code>pending_hr</code> และเลย <code>expires_at</code> (48 ชม.)</li>
+              <li>รัน <strong>SQL ใน Postgres โดยตรง</strong> — ถ้าจะใช้ HTTP ต้องใส่ <code>sb_secret_...</code> ใน Vault</li>
+            </ul>
+            <pre>select jobname, schedule, active from cron.job where jobname = 'approval-expiry';
+select name from vault.secrets where name in ('project_url', 'secret_key');</pre>
+            <p style="font-size:0.8125rem;color:var(--muted);margin-top:0.75rem">
+              Cron อื่น (morning-push, contract-alert ฯลฯ) — ถ้าได้ 401 ให้ rotate <code>secret_key</code> เป็น <strong>sb_secret</strong> จาก Dashboard → API Keys
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- §8 Gaps -->
+      <section id="gaps">
+        <div class="card">
+          <div class="card-header">
+            <h3>8. Known gaps / ข้อจำกัด MVP</h3>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>หัวข้อ</th><th>หมายเหตุ</th></tr></thead>
+              <tbody>
+                <tr><td>มอบหมาย BM จริง</td><td>ลูกค้าตั้ง role + ผูกสาขาเอง (ดู §5)</td></tr>
+                <tr><td>สลิปเงินเดือน / baht</td><td><span class="badge badge-warn">นอก scope</span> — มีแค่รายงานชั่วโมง (Phase 9)</td></tr>
+                <tr><td>HR Admin Dashboard หน้าแรก</td><td><span class="badge badge-lock">locked</span> — ห้าม refactor โดย vendor</td></tr>
+                <tr><td>Employee profile pages</td><td><span class="badge badge-lock">locked</span> — HR แก้ role/สาขาได้</td></tr>
+                <tr><td>งานถัดไป</td><td><strong>M38</strong> (T109–T114) Go-Live sign-off → tag <code>hr-payroll-v1.1</code></td></tr>
+                <tr><td>Edge Function cron auth</td><td>บาง job อาจต้อง <code>sb_secret</code> ใน Vault (ดู §7)</td></tr>
+                <tr><td>Rotate API keys</td><td>แนะนำหลัง handoff — อย่า commit keys ลง git</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- §9 Support -->
+      <section id="support">
+        <div class="card">
+          <div class="card-header">
+            <h3>9. Support &amp; repo</h3>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>รายการ</th><th>Path</th></tr></thead>
+              <tbody>
+                <tr><td>App root</td><td><code>PROJECTS/hr-payroll-client/hr-app/</code></td></tr>
+                <tr><td>Migrations</td><td><code>hr-app/supabase/migrations/</code></td></tr>
+                <tr><td>Roadmap</td><td><code>MILESTONES.md</code></td></tr>
+                <tr><td>Phase 12 plan</td><td><code>orchestration/PHASE_12_PLAN.md</code></td></tr>
+                <tr><td>รัน smoke local</td><td><code>node scripts/e2e/smoke-role-routes.mjs</code></td></tr>
+                <tr><td>E2E Phase 5 remote</td><td><code>npm run test:e2e:p5:remote</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- §10 Sign-off -->
+      <section id="signoff">
+        <div class="card">
+          <div class="card-header">
+            <h3>10. Sign-off checklist (ลูกค้า)</h3>
+            <p>คลิกเพื่อติ๊ก — บันทึกใน browser ของคุณ</p>
+          </div>
+          <div class="card-body">
+            <ul class="checklist" id="checklist">
+              <li><input type="checkbox" id="c1" /><label for="c1"><span>Login LINE → role ถูกต้อง</span></label></li>
+              <li><input type="checkbox" id="c2" /><label for="c2"><span><strong>พนักงานใหม่ลงทะเบียนผ่าน LINE ได้</strong> (§4.0)</span></label></li>
+              <li><input type="checkbox" id="c3" /><label for="c3"><span>สร้างสาขา + ผูก BM อย่างน้อย 1 สาขา</span></label></li>
+              <li><input type="checkbox" id="c4" /><label for="c4"><span>Flow ลา 2 ขั้น (BM → HR) ทดสอบแล้ว</span></label></li>
+              <li><input type="checkbox" id="c5" /><label for="c5"><span>Flow สรุปวันเข้างาน + BM approve ทดสอบแล้ว</span></label></li>
+              <li><input type="checkbox" id="c6" /><label for="c6"><span>CEO dashboard เปิดได้</span></label></li>
+              <li><input type="checkbox" id="c7" /><label for="c7"><span>LINE webhook ตอบกลับใน production</span></label></li>
+            </ul>
+            <div class="note" style="margin-top:1rem">
+              <strong>HEAD-OFFICE</strong> — งานถัดไป: <strong>M38</strong> Go-Live &amp; sign-off → tag <code>hr-payroll-v1.1</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer">
+        HEAD-OFFICE · LINE OA HR &amp; Payroll · Phase 5 Handoff<br />
+        <a href="https://hr-app-two-iota.vercel.app">hr-app-two-iota.vercel.app</a>
+      </p>
+
+    </main>
+  </div>
+
+  <script>
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            navLinks.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === "#" + e.target.id));
+          }
+        });
+      },
+      { rootMargin: "-30% 0px -60% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+
+    const KEY = "hr-handoff-p5-checklist-v2";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll(".checklist input").forEach((cb) => {
+      cb.checked = !!saved[cb.id];
+      cb.closest("li").classList.toggle("done", cb.checked);
+      cb.addEventListener("change", () => {
+        saved[cb.id] = cb.checked;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+        cb.closest("li").classList.toggle("done", cb.checked);
+      });
+    });
+  </script>
+</body>
+</html>

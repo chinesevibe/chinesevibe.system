@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คู่มือ Demo HR Workflow</title>
+  <style>
+    :root {
+      --bg: #f8f7f4;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --border: #e5e2dc;
+      --brand: #c41e3a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Sarabun", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #a01830 0%, #c41e3a 100%);
+      color: #fff;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
+    header p { margin: 0; opacity: 0.9; }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    a.btn {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    a.btn-primary {
+      background: var(--brand);
+      color: #fff;
+    }
+    a.btn-secondary {
+      background: #fff;
+      color: var(--brand);
+      border: 1px solid var(--brand);
+    }
+    iframe {
+      width: 100%;
+      height: 80vh;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>คู่มือ Demo HR Workflow</h1>
+    <p>Chinese Vibe · HR App + LINE + Supabase + Odoo 19</p>
+  </header>
+  <main>
+    <div class="card">
+      <p>คู่มือ workflow สำหรับ demo ระบบ HR Payroll — รูปแบบ PDF แนวนอน (A4 landscape)</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="DEMO_HR_WORKFLOW.pdf" target="_blank" rel="noopener">เปิด PDF ในแท็บใหม่</a>
+        <a class="btn btn-secondary" href="DEMO_HR_WORKFLOW.pdf" download>ดาวน์โหลด PDF</a>
+        <a class="btn btn-secondary" href="HR_SYSTEM_WORKFLOW.html">ดู HTML เวอร์ชันเต็ม</a>
+      </div>
+      <p class="muted">Production: <a href="https://hr-app-two-iota.vercel.app">hr-app-two-iota.vercel.app</a></p>
+    </div>
+    <div class="card">
+      <iframe src="DEMO_HR_WORKFLOW.pdf" title="คู่มือ Demo HR Workflow PDF"></iframe>
+    </div>
+  </main>
+</body>
+</html>
