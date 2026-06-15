@@ -8,7 +8,7 @@ import { requireRole } from "@/lib/auth/require-role"
 import { createClient } from "@/lib/supabase/server"
 
 export default async function AdminPayrollPage() {
-  await requireRole("hr", "admin", "dev")
+  await requireRole("hr", "dev")
 
   const now = new Date()
   const year = now.getFullYear()

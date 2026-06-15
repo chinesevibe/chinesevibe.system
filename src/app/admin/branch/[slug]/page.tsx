@@ -18,7 +18,7 @@ export default async function HrBranchDetailPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  const employee = await requireRole("hr", "admin", "ceo", "dev")
+  const employee = await requireRole("hr", "ceo", "dev")
   const { slug } = await params
   const readOnly = isCeo(employee.role) && !isDev(employee.role)
 

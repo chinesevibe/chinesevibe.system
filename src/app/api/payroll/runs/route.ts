@@ -4,7 +4,7 @@ import { getCurrentEmployee } from "@/lib/auth/session"
 import { createOrRefreshRun, getRunByPeriod } from "@/lib/payroll/run"
 
 function canManagePayroll(role: string): boolean {
-  return ["hr", "admin", "dev"].includes(role)
+  return ["hr", "dev"].includes(role)
 }
 
 export async function POST(req: NextRequest) {

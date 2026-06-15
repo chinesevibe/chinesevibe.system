@@ -4,7 +4,7 @@ import { getCurrentEmployee } from "@/lib/auth/session"
 import { getRunWithPayslips } from "@/lib/payroll/run"
 
 function canManagePayroll(role: string): boolean {
-  return ["hr", "admin", "dev"].includes(role)
+  return ["hr", "dev"].includes(role)
 }
 
 export async function GET(

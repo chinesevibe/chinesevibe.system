@@ -17,7 +17,7 @@ export default async function HrBranchLeavesPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  await requireRole("hr", "admin", "ceo", "dev")
+  await requireRole("hr", "ceo", "dev")
   const { slug } = await params
   const branch = await getBranchBySlug(slug)
   if (!branch) notFound()

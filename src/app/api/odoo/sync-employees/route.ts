@@ -25,7 +25,7 @@ type EmployeeRow = {
 export async function POST() {
   try {
     const caller = await getCurrentEmployee()
-    if (!caller || !["hr", "admin", "dev"].includes(caller.role)) {
+    if (!caller || !["hr", "dev"].includes(caller.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

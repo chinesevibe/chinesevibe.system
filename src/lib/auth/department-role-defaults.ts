@@ -10,8 +10,8 @@ const HEAD_OFFICE_DEPARTMENT_ROLES: Record<
   { defaultRole: AssignableRole; allowed: readonly AssignableRole[] }
 > = {
   Management: {
-    defaultRole: "admin",
-    allowed: ["ceo", "admin"],
+    defaultRole: "ceo",
+    allowed: ["ceo"],
   },
   "HR Officer": {
     defaultRole: "hr",
@@ -26,16 +26,16 @@ const HEAD_OFFICE_DEPARTMENT_ROLES: Record<
     allowed: ["dev"],
   },
   Admin: {
-    defaultRole: "admin",
-    allowed: ["admin", "hr"],
+    defaultRole: "hr",
+    allowed: ["hr"],
   },
   Accounting: {
-    defaultRole: "admin",
-    allowed: ["admin", "employee"],
+    defaultRole: "employee",
+    allowed: ["employee", "hr"],
   },
   Inventory: {
-    defaultRole: "admin",
-    allowed: ["admin", "employee"],
+    defaultRole: "inventory",
+    allowed: ["inventory", "employee"],
   },
 }
 
@@ -57,7 +57,7 @@ export function defaultRoleForDepartment(
   position?: string | null
 ): AssignableRole {
   if (isHrOfficerStaff(department, position)) return "hr"
-  if (isInventoryManagerStaff(department, position)) return "employee"
+  if (isInventoryManagerStaff(department, position)) return "inventory"
   return configForDepartment(department).defaultRole
 }
 
@@ -66,7 +66,7 @@ export function allowedRolesForDepartment(
   position?: string | null
 ): readonly AssignableRole[] {
   if (isHrOfficerStaff(department, position)) return ["hr"]
-  if (isInventoryManagerStaff(department, position)) return ["employee"]
+  if (isInventoryManagerStaff(department, position)) return ["inventory", "employee"]
   return configForDepartment(department).allowed
 }
 

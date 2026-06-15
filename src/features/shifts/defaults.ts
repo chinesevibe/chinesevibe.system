@@ -28,7 +28,7 @@ export function suggestWorkShiftCode(input: {
     return WORK_SHIFT_CODES.BRANCH_MGR
   }
 
-  if (OFFICE_DEPARTMENTS.has(department) || role === "hr" || role === "admin" || role === "ceo") {
+  if (OFFICE_DEPARTMENTS.has(department) || role === "hr" || role === "inventory" || role === "ceo") {
     return WORK_SHIFT_CODES.OFFICE
   }
 

@@ -31,7 +31,7 @@ export const DAMAGE_APPROVAL_ROLE_LABELS: Record<
 > = {
   auto: "อัตโนมัติ",
   hr: "ต้อง HR",
-  admin: "ต้อง Admin",
+  inventory: "ต้อง Inventory",
 }
 
 function statusVariant(status: InvDamageStatus) {

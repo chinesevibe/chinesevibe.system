@@ -13,8 +13,8 @@ type PageProps = {
   params: Promise<{ id: string }>
 }
 
-function canApproveAdmin(role: Parameters<typeof canManageHr>[0]) {
-  return role === "admin" || isDev(role)
+function canApproveInventory(role: Parameters<typeof canManageHr>[0]) {
+  return role === "inventory" || isDev(role)
 }
 
 export default async function DamageDetailPage({ params }: PageProps) {
@@ -25,8 +25,8 @@ export default async function DamageDetailPage({ params }: PageProps) {
 
   const canApproveNormal = canAccessInventoryPortal(employee)
   const canDecide =
-    detail.approval_required_role === "admin"
-      ? canApproveAdmin(employee.role)
+    detail.approval_required_role === "inventory"
+      ? canApproveInventory(employee.role)
       : canApproveNormal
 
   return (

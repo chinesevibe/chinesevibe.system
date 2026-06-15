@@ -9,7 +9,7 @@ type PageProps = {
 }
 
 export default async function LiffInventoryTransferReceivePage({ params }: PageProps) {
-  await requireRole("employee", "branch_manager", "hr", "admin", "dev")
+  await requireRole("employee", "branch_manager", "hr", "inventory", "dev")
   const { id } = await params
   const detail = await getTransferDetail(id)
   if (!detail) notFound()

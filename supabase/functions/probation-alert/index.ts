@@ -146,7 +146,7 @@ const handler = {
       const { data: hrRows, error: hrError } = await admin
         .from("hr_employees")
         .select("line_user_id")
-        .in("role", ["hr", "admin"])
+        .in("role", ["hr"])
         .eq("status", "active")
         .not("line_user_id", "is", null);
       if (hrError) throw hrError;

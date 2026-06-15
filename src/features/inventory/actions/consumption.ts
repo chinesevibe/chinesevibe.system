@@ -65,8 +65,8 @@ function canApproveDamageRole(employee: Awaited<ReturnType<typeof assertActiveIn
   return canManageHr(employee.role) || isDev(employee.role) || canAccessInventoryPortal(employee)
 }
 
-function canApproveAdminDamageRole(role: Parameters<typeof canManageHr>[0]) {
-  return role === "admin" || isDev(role)
+function canApproveInventoryDamageRole(role: Parameters<typeof canManageHr>[0]) {
+  return role === "inventory" || isDev(role)
 }
 
 async function assertActiveInventoryEmployee() {
@@ -335,7 +335,7 @@ export async function getDamageReportDetail(
 
 function approvalRoleForCost(costValue: number) {
   if (costValue <= 500) return "auto" as const
-  if (costValue > 5000) return "admin" as const
+  if (costValue > 5000) return "inventory" as const
   return "hr" as const
 }
 
@@ -384,7 +384,7 @@ export async function createDamageReport(
 
     const insertedRows = (inserted ?? []) as Array<{
       id: string
-      approval_required_role: "auto" | "hr" | "admin"
+      approval_required_role: "auto" | "hr" | "inventory"
     }>
     for (const row of insertedRows) {
       if (row.approval_required_role !== "auto") continue
@@ -431,8 +431,8 @@ export async function approveDamage(
     const detail = await getDamageReportDetail(payload.id)
     if (!detail) return { success: false, error: "ไม่พบรายงานความเสียหาย" }
     if (
-      detail.approval_required_role === "admin" &&
-      !canApproveAdminDamageRole(employee.role)
+      detail.approval_required_role === "inventory" &&
+      !canApproveInventoryDamageRole(employee.role)
     ) {
       return { success: false, error: "ต้องใช้สิทธิ์ Admin เพื่ออนุมัติรายการนี้" }
     }
@@ -462,8 +462,8 @@ export async function rejectDamage(
     const detail = await getDamageReportDetail(payload.id)
     if (!detail) return { success: false, error: "ไม่พบรายงานความเสียหาย" }
     if (
-      detail.approval_required_role === "admin" &&
-      !canApproveAdminDamageRole(employee.role)
+      detail.approval_required_role === "inventory" &&
+      !canApproveInventoryDamageRole(employee.role)
     ) {
       return { success: false, error: "ต้องใช้สิทธิ์ Admin เพื่อปฏิเสธรายการนี้" }
     }

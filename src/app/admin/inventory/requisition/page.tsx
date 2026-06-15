@@ -36,7 +36,7 @@ function parseStatus(status?: string): InvRequisitionStatus | undefined {
 export default async function InventoryRequisitionPage({
   searchParams,
 }: PageProps) {
-  await requireRole("employee", "branch_manager", "hr", "admin", "ceo", "dev")
+  await requireRole("employee", "branch_manager", "hr", "inventory", "ceo", "dev")
   const params = await searchParams
   const status = parseStatus(params.status)
   const branchId = params.branch_id?.trim() || undefined

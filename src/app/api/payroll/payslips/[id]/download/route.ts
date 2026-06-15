@@ -27,7 +27,7 @@ export async function GET(
     if (!slip) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
     const isOwner = slip.employee_id === caller.id
-    const isHr = ["hr", "admin", "dev"].includes(caller.role)
+    const isHr = ["hr", "dev"].includes(caller.role)
     if (!isOwner && !isHr) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }

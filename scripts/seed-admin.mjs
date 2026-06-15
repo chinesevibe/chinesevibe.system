@@ -5,10 +5,10 @@
  * Usage:
  *   node scripts/seed-admin.mjs <LINE_USER_ID> [name] [role]
  *
- * Roles: employee | branch_manager | hr | admin | ceo | dev
+ * Roles: employee | branch_manager | hr | inventory | ceo | dev
  *
  * Example:
- *   node scripts/seed-admin.mjs U1234567890abcdef "Jakarin" admin
+ *   node scripts/seed-admin.mjs U1234567890abcdef "Jakarin" inventory
  */
 
 import { readFileSync } from "node:fs"
@@ -22,7 +22,7 @@ const ALLOWED_ROLES = [
   "employee",
   "branch_manager",
   "hr",
-  "admin",
+  "inventory",
   "ceo",
   "dev",
 ]
@@ -49,7 +49,7 @@ loadEnv()
 
 const lineUserId = process.argv[2]
 const name = process.argv[3] ?? "Admin Owner"
-const role = process.argv[4] ?? "admin"
+const role = process.argv[4] ?? "inventory"
 
 if (!lineUserId || !lineUserId.startsWith("U")) {
   console.error(

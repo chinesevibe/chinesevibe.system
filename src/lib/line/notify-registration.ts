@@ -62,7 +62,7 @@ export async function notifyRegistrationPending(
     const { data: hrRows } = await admin
       .from("hr_employees")
       .select("line_user_id")
-      .in("role", ["hr", "admin", "dev"])
+      .in("role", ["hr", "dev"])
       .eq("status", "active")
       .not("line_user_id", "is", null)
 

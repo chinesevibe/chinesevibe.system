@@ -24,13 +24,17 @@ export function isHrOfficer(role: AppRole): boolean {
   return role === "hr"
 }
 
+export function isInventoryRole(role: AppRole): boolean {
+  return role === "inventory"
+}
+
 /** อนุมัติลา / OT / เข้างาน — HR Officer (role hr) เท่านั้น */
 export function canApproveHrRequests(role: AppRole): boolean {
   return isHrOfficer(role)
 }
 
 export function isHrAdmin(role: AppRole): boolean {
-  return role === "hr" || role === "admin"
+  return role === "hr"
 }
 
 export function isBranchManager(role: AppRole): boolean {
@@ -38,7 +42,13 @@ export function isBranchManager(role: AppRole): boolean {
 }
 
 export function canAccessAdminPortal(role: AppRole): boolean {
-  return isHrAdmin(role) || isCeo(role) || isBranchManager(role) || isDev(role)
+  return (
+    isHrAdmin(role) ||
+    isCeo(role) ||
+    isBranchManager(role) ||
+    isDev(role) ||
+    isInventoryRole(role)
+  )
 }
 
 /** Inventory dept — restricted admin portal (คลังสินค้า only) */
@@ -46,8 +56,8 @@ export function isInventoryPortalUser(employee: Employee): boolean {
   if (employee.status !== "active") return false
   if (isDev(employee.role) || isCeo(employee.role)) return false
   if (isBranchManager(employee.role)) return false
+  if (isInventoryRole(employee.role)) return true
 
-  // Inventory Manager — operational inventory portal (incl. legacy admin role)
   if (isInventoryManagerStaff(employee.department, employee.position)) {
     return employee.role !== "hr"
   }
@@ -67,6 +77,7 @@ export function canAccessInventoryPortal(employee: Employee): boolean {
   if (isDev(employee.role) || isCeo(employee.role) || canManageHr(employee.role)) {
     return true
   }
+  if (isInventoryRole(employee.role)) return true
   return isInventoryPortalUser(employee)
 }
 
@@ -99,7 +110,7 @@ export function canManageHr(role: AppRole): boolean {
   return isHrAdmin(role) || isDev(role)
 }
 
-/** Dev + HR Admin — เข้าถึงข้อมูลและจัดการได้ทั้งหมด */
+/** Dev + HR — เข้าถึงข้อมูลและจัดการได้ทั้งหมด */
 export function hasFullDataAccess(role: AppRole): boolean {
   return isDev(role) || canManageHr(role)
 }
@@ -124,6 +135,7 @@ export function adminLoginPath(
   if (role === "dev") return "/admin"
   if (role === "branch_manager") return "/admin/branch"
   if (role === "ceo") return "/admin/report"
+  if (role === "inventory") return "/admin/inventory"
   if (role === "employee") {
     if (isHrOfficerStaff(department, position)) return "/admin"
     if (

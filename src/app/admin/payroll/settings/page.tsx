@@ -4,7 +4,7 @@ import { getPayrollConfig } from "@/lib/payroll/config"
 import { requireRole } from "@/lib/auth/require-role"
 
 export default async function PayrollSettingsPage() {
-  await requireRole("hr", "admin", "dev")
+  await requireRole("hr", "dev")
 
   const config = await getPayrollConfig()
 

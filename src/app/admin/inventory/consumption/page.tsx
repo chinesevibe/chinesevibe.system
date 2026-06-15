@@ -8,7 +8,7 @@ import { requireRole } from "@/lib/auth/require-role"
 import { cn } from "@/lib/utils"
 
 export default async function InventoryConsumptionPage() {
-  await requireRole("employee", "branch_manager", "hr", "admin", "dev")
+  await requireRole("employee", "branch_manager", "hr", "inventory", "dev")
   const options = await getConsumptionCreateOptions()
 
   return (

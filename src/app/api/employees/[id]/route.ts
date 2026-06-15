@@ -320,9 +320,9 @@ export async function DELETE(
     return NextResponse.json({ error: "not found" }, { status: 404 })
   }
 
-  if (target.role === "admin" || target.role === "dev") {
+  if (target.role === "inventory" || target.role === "dev") {
     return NextResponse.json(
-      { error: "ไม่สามารถลบบัญชี Admin/Dev ได้" },
+      { error: "ไม่สามารถลบบัญชี Inventory/Dev ได้" },
       { status: 400 }
     )
   }

@@ -8,7 +8,7 @@ export type Employee = {
   name: string
   position: string | null
   department: string | null
-  role: "employee" | "hr" | "admin" | "branch_manager" | "ceo" | "dev"
+  role: "employee" | "hr" | "inventory" | "branch_manager" | "ceo" | "dev"
   status: "active" | "inactive"
   avatar_path: string | null
   avatarUrl: string | null

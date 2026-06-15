@@ -6,7 +6,7 @@ export default async function PayrollLayout({
 }: {
   children: React.ReactNode
 }) {
-  await requireRole("hr", "admin", "dev")
+  await requireRole("hr", "dev")
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">

@@ -187,7 +187,7 @@ export type InvDamageType =
 
 export type InvDamageStatus = "pending" | "approved" | "rejected"
 
-export type InvDamageApprovalRole = "auto" | "hr" | "admin"
+export type InvDamageApprovalRole = "auto" | "hr" | "inventory"
 
 export type InvConsumption = {
   id: string

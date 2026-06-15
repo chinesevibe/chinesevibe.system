@@ -3,7 +3,7 @@ import { getDamageCreateOptions } from "@/features/inventory/actions/consumption
 import { requireRole } from "@/lib/auth/require-role"
 
 export default async function LiffInventoryDamageCreatePage() {
-  await requireRole("employee", "branch_manager", "hr", "admin", "dev")
+  await requireRole("employee", "branch_manager", "hr", "inventory", "dev")
   const options = await getDamageCreateOptions()
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-background p-4">

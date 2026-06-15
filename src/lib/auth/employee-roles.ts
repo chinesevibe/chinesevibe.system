@@ -2,7 +2,7 @@ import type { Employee } from "@/lib/auth/session"
 
 export const ASSIGNABLE_ROLES = [
   "employee",
-  "admin",
+  "inventory",
   "hr",
   "branch_manager",
   "dev",

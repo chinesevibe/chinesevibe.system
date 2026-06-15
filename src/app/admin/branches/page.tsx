@@ -6,7 +6,7 @@ import { isCeo, isDev } from "@/lib/auth/roles"
 import { requireRole } from "@/lib/auth/require-role"
 
 export default async function AdminBranchesPage() {
-  const employee = await requireRole("hr", "admin", "ceo", "dev")
+  const employee = await requireRole("hr", "ceo", "dev")
   const [branches, managerCandidates] = await Promise.all([
     listBranches(),
     listBranchManagerCandidates(),
