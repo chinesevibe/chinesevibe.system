@@ -850,7 +850,7 @@ export function EmployeeProfileForm({
           ดาวน์โหลด QR เช็คอิน
         </a>
         <a
-          href={`/admin/attendance?employee=${profile.id}`}
+          href={`/admin/employees/${profile.id}/attendance`}
           className="text-sm font-medium text-brand-red hover:underline"
         >
           ดูประวัติการเข้างาน

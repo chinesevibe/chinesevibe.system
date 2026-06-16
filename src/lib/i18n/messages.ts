@@ -217,6 +217,8 @@ const th: MessageCatalog = {
     "คำสั่ง /stock ปิดใช้งานชั่วคราว — ใช้ Rich Menu หรือติดต่อ HR",
 
   "line.welcome.alt": "ยินดีต้อนรับสู่ระบบ HR",
+  "line.welcome.greeting":
+    "🐼 ยินดีต้อนรับสู่ CNV WorkHub\nทีม HR พร้อมดูแลและตอบทุกคำถามของคุณ\n\n🕚 เปิดให้บริการ จันทร์–ศุกร์ เวลา 11.00–20.00 น.\n\n欢迎来到 CNV WorkHub\n我们的 HR 团队将竭诚为您服务，并解答您的各类问题。\n\n服务时间： 周一至周五 11:00–20:00\n\n🔗 ลิงก์ลงทะเบียนสำหรับพนักงานใหม่\n(新员工注册链接)\n\n{registerUrl}",
   "line.welcome.title": "ยินดีต้อนรับ!",
   "line.welcome.subtitle": "CNV WorkHub — HR & Payroll",
   "line.welcome.intro":
@@ -967,6 +969,8 @@ const en: MessageCatalog = {
     "/stock is temporarily disabled — use Rich Menu or contact HR.",
 
   "line.welcome.alt": "Welcome to HR system",
+  "line.welcome.greeting":
+    "🐼 Welcome to CNV WorkHub\nOur HR team is here to help with your questions.\n\n🕚 Hours: Mon–Fri, 11:00–20:00 (ICT)\n\n欢迎来到 CNV WorkHub\n我们的 HR 团队将竭诚为您服务，并解答您的各类问题。\n\n服务时间： 周一至周五 11:00–20:00\n\n🔗 New employee registration\n(新员工注册链接)\n\n{registerUrl}",
   "line.welcome.title": "Welcome!",
   "line.welcome.subtitle": "CNV WorkHub — HR & Payroll",
   "line.welcome.intro":

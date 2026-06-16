@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
+import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 
 function csvEscape(value: string) {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
   if (type === "attendance") {
     const query = supabase
       .from("hr_attendance")
-      .select("check_in_at, is_late, work_hours, hr_employees(name, department)")
+      .select(`check_in_at, is_late, work_hours, ${EMPLOYEE_VIA_ATTENDANCE}(name, department)`)
       .gte("check_in_at", since)
       .order("check_in_at", { ascending: false })
       .limit(5000)

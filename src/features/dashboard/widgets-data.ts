@@ -2,6 +2,7 @@ import { DOC_TYPE_LABELS, type DocType } from "@/features/documents/types"
 import { ictDayRangeUtc, formatIctTime } from "@/lib/attendance/late"
 import { createClient } from "@/lib/supabase/server"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
+import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 
 export type PendingLeaveItem = {
   id: string
@@ -107,7 +108,7 @@ export async function getDashboardWidgets() {
     supabase
       .from("hr_attendance")
       .select(
-        "id, check_in_at, check_out_at, is_late, hr_employees!inner(name)"
+        `id, check_in_at, check_out_at, is_late, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name)`
       )
       .gte("check_in_at", todayStart.toISOString())
       .lt("check_in_at", todayEnd.toISOString())

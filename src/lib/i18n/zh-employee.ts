@@ -501,6 +501,8 @@ export const zhEmployee: Record<string, string> = {
   "line.submit.notCheckedOut": "请先签退再记录时间。",
   "line.submit.saved": "时间已成功记录。",
   "line.welcome.alt": "欢迎使用 HR 系统",
+  "line.welcome.greeting":
+    "🐼 欢迎来到 CNV WorkHub\n我们的 HR 团队将竭诚为您服务，并解答您的各类问题。\n\n🕚 服务时间：周一至周五 11:00–20:00\n\n🐼 ยินดีต้อนรับสู่ CNV WorkHub\nทีม HR พร้อมดูแลและตอบทุกคำถามของคุณ\n\n🕚 เปิดให้บริการ จันทร์–ศุกร์ เวลา 11.00–20.00 น.\n\n🔗 新员工注册链接\n(ลิงก์ลงทะเบียนสำหรับพนักงานใหม่)\n\n{registerUrl}",
   "line.welcome.checkin": "签到 / 签退",
   "line.welcome.checkinDesc": "记录上班和下班时间",
   "line.welcome.complaint": "投诉",

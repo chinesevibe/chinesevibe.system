@@ -501,6 +501,8 @@ export const myEmployee: Record<string, string> = {
   "line.submit.notCheckedOut": "ကျေးဇူးပြု၍ ဦးစွာ ထွက်ပြီးနောက် အချိန်ကို မှတ်တမ်းတင်ပါ။",
   "line.submit.saved": "အချိန်ကို အောင်မြင်စွာ မှတ်တမ်းတင်နိုင်ခဲ့သည်။",
   "line.welcome.alt": "HR စနစ်မှကြိုဆိုပါတယ်။",
+  "line.welcome.greeting":
+    "🐼 CNV WorkHub သို့ ကြိုဆိုပါတယ်\nHR အဖွဲ့က မေးခွန်းများကို ကူညီဖြေဆိုပေးပါမည်\n\n🕚 ဝန်ဆောင်ချိန် — တနင်္လာ–သောကြာ 11:00–20:00\n\n欢迎来到 CNV WorkHub\n我们的 HR 团队将竭诚为您服务\n\n服务时间： 周一至周五 11:00–20:00\n\n🔗 พนักงานใหม่ลงทะเบียน / 新员工注册\n\n{registerUrl}",
   "line.welcome.checkin": "ဝင်/ထွက်",
   "line.welcome.checkinDesc": "အလုပ်ကို မှတ်တမ်းတင်ပြီး အလုပ်ဆင်းချိန်",
   "line.welcome.complaint": "တိုင်ကြားချက်",

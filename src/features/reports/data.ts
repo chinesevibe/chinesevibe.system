@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 
 export async function getAttendanceReport(days = 30, department?: string) {
   const supabase = await createClient()
@@ -6,7 +7,7 @@ export async function getAttendanceReport(days = 30, department?: string) {
 
   const { data, error } = await supabase
     .from("hr_attendance")
-    .select("check_in_at, is_late, work_hours, hr_employees(name, department)")
+    .select(`check_in_at, is_late, work_hours, ${EMPLOYEE_VIA_ATTENDANCE}(name, department)`)
     .gte("check_in_at", since)
     .order("check_in_at", { ascending: false })
     .limit(200)

@@ -1,3 +1,5 @@
+import { Suspense } from "react"
+
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { AttendanceAddButton } from "@/features/attendance/AttendanceHrActions"
 import { AttendanceFilters } from "@/features/attendance/AttendanceFilters"
@@ -43,19 +45,23 @@ export default async function AdminAttendancePage({
       }
     >
       <div className="flex flex-col gap-4">
-        <AttendanceFilters
-          departments={departments}
-          employees={employees}
-          values={{
-            from: params.from,
-            to: params.to,
-            dept: params.dept,
-            employee: params.employee,
-          }}
-        />
+        <Suspense fallback={null}>
+          <AttendanceFilters
+            departments={departments}
+            employees={employees}
+            values={{
+              from: params.from,
+              to: params.to,
+              dept: params.dept,
+              employee: params.employee,
+            }}
+          />
+        </Suspense>
         <AttendanceSummaryCard summary={summary} />
         <AttendanceTable rows={rows} canManage={canManage} />
-        <AttendancePagination page={params.page} total={total} />
+        <Suspense fallback={null}>
+          <AttendancePagination page={params.page} total={total} />
+        </Suspense>
       </div>
     </AdminPageShell>
   )

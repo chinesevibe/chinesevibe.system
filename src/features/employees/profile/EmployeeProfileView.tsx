@@ -10,6 +10,7 @@ import Link from "next/link"
 
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { StatusPill } from "@/components/brand/StatusPill"
+import { buttonVariants } from "@/components/ui/button"
 import { formatShiftTimeRange } from "@/features/shifts/format"
 import type { EmployeeProfile } from "@/features/employees/profile/data"
 import { paymentMethodLabel } from "@/features/employees/profile/payment-method"
@@ -18,6 +19,12 @@ import {
   ProfileSectionCard,
 } from "@/features/employees/profile/ProfileSectionCard"
 import { formatThaiDateOnly } from "@/lib/datetime/thailand"
+import { cn } from "@/lib/utils"
+
+const profileActionLinkClass = cn(
+  buttonVariants({ size: "sm", variant: "outline" }),
+  "border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+)
 
 const CONTRACT_LABEL: Record<string, string> = {
   full_time: "Full-time",
@@ -44,13 +51,13 @@ export function EmployeeProfileView({
       <div className="shrink-0 overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
         <div className="relative bg-brand-red px-4 py-4 text-white md:px-5">
           <div
-            className="pointer-events-none absolute inset-0 opacity-20"
+            className="pointer-events-none absolute inset-0 z-0 opacity-20"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 20% 30%, #fff 0, transparent 45%), radial-gradient(circle at 80% 70%, #fff 0, transparent 40%)",
             }}
           />
-          <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <EmployeeAvatar
                 name={profile.name}
@@ -81,18 +88,19 @@ export function EmployeeProfileView({
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="relative z-10 flex flex-wrap items-center gap-2">
               {actions}
               <Link
                 href={`/api/checkin/qr?emp_id=${profile.id}`}
                 target="_blank"
-                className="rounded-lg border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-medium hover:bg-white/20"
+                rel="noreferrer"
+                className={profileActionLinkClass}
               >
                 Download QR
               </Link>
               <Link
-                href={`/admin/attendance?employee=${profile.id}`}
-                className="rounded-lg border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-medium hover:bg-white/20"
+                href={`/admin/employees/${profile.id}/attendance`}
+                className={profileActionLinkClass}
               >
                 Attendance
               </Link>

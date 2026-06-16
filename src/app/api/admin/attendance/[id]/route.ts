@@ -6,6 +6,7 @@ import {
   updateAttendanceByHr,
 } from "@/lib/attendance/hr-manage"
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 import { canManageHr } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
@@ -118,7 +119,7 @@ export async function POST(
   const { data: row, error: loadError } = await admin
     .from("hr_attendance")
     .select(
-      "id, employee_id, shift_date, work_hours, check_out_at, location_review_status, hr_employees!inner(branch_id)"
+      `id, employee_id, shift_date, work_hours, check_out_at, location_review_status, ${EMPLOYEE_VIA_ATTENDANCE}!inner(branch_id)`
     )
     .eq("id", id)
     .maybeSingle()

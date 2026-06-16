@@ -8,6 +8,7 @@ import {
 } from "@/features/branches/branch-queues"
 import { fetchBranchById, fetchBranchBySlug } from "@/features/branches/branch-query"
 import {
+  EMPLOYEE_VIA_ATTENDANCE,
   EMPLOYEE_VIA_ATTENDANCE_SUBMISSION,
   EMPLOYEE_VIA_LEAVE,
   EMPLOYEE_VIA_OVERTIME,
@@ -139,7 +140,7 @@ export async function getBranchEmployeesWithAlerts(
       .eq("approval_status", "pending_hr"),
     supabase
       .from("hr_attendance")
-      .select("employee_id, hr_employees!inner(branch_id)")
+      .select(`employee_id, ${EMPLOYEE_VIA_ATTENDANCE}!inner(branch_id)`)
       .eq("hr_employees.branch_id", branchId)
       .gte("check_in_at", `${monthStart}T00:00:00+07:00`),
     supabase

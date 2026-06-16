@@ -8,6 +8,7 @@ import type {
 } from "@/features/attendance/types"
 
 import { ATTENDANCE_PAGE_SIZE } from "@/features/attendance/types"
+import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 
 export { ATTENDANCE_PAGE_SIZE } from "@/features/attendance/types"
 export type { AttendanceRow, AttendanceSummary } from "@/features/attendance/types"
@@ -127,7 +128,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   let query = supabase
     .from("hr_attendance")
     .select(
-      "id, employee_id, check_in_at, check_out_at, is_late, work_hours, location_review_status, location_review_flags, location_review_note, hr_employees!inner(name, department)",
+      `id, employee_id, check_in_at, check_out_at, is_late, work_hours, location_review_status, location_review_flags, location_review_note, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name, department)`,
       { count: "exact" }
     )
     .gte("check_in_at", rangeStart.toISOString())
