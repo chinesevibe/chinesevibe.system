@@ -1,6 +1,7 @@
 import { ictDayRangeUtc, formatIctTime } from "@/lib/attendance/late"
 import { createClient } from "@/lib/supabase/server"
 import type {
+  AttendanceLocationReviewStatus,
   AttendanceRow,
   AttendanceStatus,
   AttendanceSummary,
@@ -23,6 +24,13 @@ const STATUS_LABEL: Record<AttendanceStatus, string> = {
   normal: "ปกติ",
   late: "สาย",
   in_progress: "กำลังทำงาน",
+}
+
+const LOCATION_REVIEW_LABEL: Record<AttendanceLocationReviewStatus, string> = {
+  clear: "ตำแหน่งปกติ",
+  pending_hr: "รอ HR ตรวจพิกัด",
+  approved: "HR อนุมัติพิกัด",
+  rejected: "พิกัดถูกปฏิเสธ",
 }
 
 function ictDateFromIso(iso: string): string {
@@ -119,7 +127,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   let query = supabase
     .from("hr_attendance")
     .select(
-      "id, employee_id, check_in_at, check_out_at, is_late, work_hours, hr_employees!inner(name, department)",
+      "id, employee_id, check_in_at, check_out_at, is_late, work_hours, location_review_status, location_review_flags, location_review_note, hr_employees!inner(name, department)",
       { count: "exact" }
     )
     .gte("check_in_at", rangeStart.toISOString())
@@ -143,6 +151,9 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     check_out_at: string | null
     is_late: boolean
     work_hours: number | null
+    location_review_status: AttendanceLocationReviewStatus | null
+    location_review_flags: string[] | null
+    location_review_note: string | null
     hr_employees:
       | { name: string; department: string | null }
       | Array<{ name: string; department: string | null }>
@@ -170,6 +181,10 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       workHours: row.work_hours,
       status,
       statusLabel: STATUS_LABEL[status],
+      locationReviewStatus: row.location_review_status ?? "clear",
+      locationReviewLabel: LOCATION_REVIEW_LABEL[row.location_review_status ?? "clear"],
+      locationReviewFlags: row.location_review_flags ?? [],
+      locationReviewNote: row.location_review_note ?? null,
     }
   })
 

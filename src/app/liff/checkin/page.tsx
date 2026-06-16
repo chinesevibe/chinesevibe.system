@@ -41,12 +41,28 @@ function CheckinForm() {
   const token = useSearchParams().get("token")
   const [state, setState] = useState<CheckinState>({ phase: "idle" })
 
-  async function submit(latitude: number, longitude: number) {
+  async function submit(position: GeolocationPosition) {
     setState({ phase: "submitting" })
     const response = await fetch("/api/checkin", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ token, latitude, longitude }),
+      body: JSON.stringify({
+        token,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy_m: position.coords.accuracy,
+        captured_at: new Date(position.timestamp).toISOString(),
+        source: "liff_geolocation",
+        speed_mps:
+          typeof position.coords.speed === "number" && Number.isFinite(position.coords.speed)
+            ? position.coords.speed
+            : null,
+        heading:
+          typeof position.coords.heading === "number" && Number.isFinite(position.coords.heading)
+            ? position.coords.heading
+            : null,
+        device_platform: navigator.userAgent,
+      }),
     })
     const data = await response.json().catch(() => ({}))
 
@@ -84,6 +100,36 @@ function CheckinForm() {
     }
   }
 
+  async function captureBestPosition() {
+    const attempts = 3
+    let best: GeolocationPosition | null = null
+
+    const getPosition = () =>
+      new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        })
+      })
+
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      const position = await getPosition()
+      if (!best || position.coords.accuracy < best.coords.accuracy) {
+        best = position
+      }
+      if (position.coords.accuracy <= 80) {
+        return position
+      }
+      if (attempt < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+      }
+    }
+
+    if (!best) throw new Error("no_position")
+    return best
+  }
+
   function start() {
     if (!navigator.geolocation) {
       setState({
@@ -95,17 +141,16 @@ function CheckinForm() {
       return
     }
     setState({ phase: "locating" })
-    navigator.geolocation.getCurrentPosition(
-      (pos) => submit(pos.coords.latitude, pos.coords.longitude),
-      () =>
+    captureBestPosition()
+      .then((pos) => submit(pos))
+      .catch(() =>
         setState({
           phase: "done",
           ok: false,
           title: tx("liff.checkin.permissionTitle"),
           detail: tx("liff.checkin.permissionDetail"),
-        }),
-      { enableHighAccuracy: true, timeout: 15000 }
-    )
+        })
+      )
   }
 
   if (!token) {
@@ -129,7 +174,7 @@ function CheckinForm() {
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
-            {tx("liff.checkin.intro")}
+            {tx("liff.checkin.intro")} ระบบจะพยายามจับพิกัดความละเอียดสูงก่อนส่งเช็กอิน
           </p>
           <Button
             onClick={start}

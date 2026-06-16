@@ -6,6 +6,7 @@ import { ictToday } from "@/lib/datetime/thailand"
 export type FinalizeAttendanceResult =
   | { status: "finalized"; submissionId: string }
   | { status: "already_approved"; submissionId: string }
+  | { status: "pending_location_review" }
 
 export async function finalizeAttendanceRecord({
   attendanceId,
@@ -24,6 +25,23 @@ export async function finalizeAttendanceRecord({
 }): Promise<FinalizeAttendanceResult> {
   const admin = getAdminClient()
   const date = workDate ?? ictToday()
+
+  const { data: attendance, error: attendanceError } = await admin
+    .from("hr_attendance")
+    .select("location_review_status")
+    .eq("id", attendanceId)
+    .maybeSingle()
+
+  if (attendanceError) throw attendanceError
+
+  if (
+    attendance &&
+    ["pending_hr", "rejected"].includes(
+      (attendance.location_review_status as string | null) ?? "clear"
+    )
+  ) {
+    return { status: "pending_location_review" }
+  }
 
   const { data: existing, error: fetchError } = await admin
     .from("hr_attendance_submissions")

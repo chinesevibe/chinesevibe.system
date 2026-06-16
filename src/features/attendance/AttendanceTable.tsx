@@ -8,7 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { AttendanceEditButton } from "@/features/attendance/AttendanceHrActions"
+import {
+  AttendanceEditButton,
+  AttendanceLocationReviewActions,
+} from "@/features/attendance/AttendanceHrActions"
 import type { AttendanceRow } from "@/features/attendance/types"
 
 const STATUS_VARIANT: Record<
@@ -18,6 +21,16 @@ const STATUS_VARIANT: Record<
   normal: "approved",
   late: "warning",
   in_progress: "info",
+}
+
+const REVIEW_VARIANT: Record<
+  AttendanceRow["locationReviewStatus"],
+  "approved" | "warning" | "info" | "rejected"
+> = {
+  clear: "approved",
+  approved: "approved",
+  pending_hr: "info",
+  rejected: "rejected",
 }
 
 export function AttendanceTable({
@@ -47,7 +60,8 @@ export function AttendanceTable({
             <TableHead>ออก</TableHead>
             <TableHead>ชม.</TableHead>
             <TableHead>สถานะ</TableHead>
-            {canManage ? <TableHead className="w-[88px]" /> : null}
+            <TableHead>ตรวจพิกัด</TableHead>
+            {canManage ? <TableHead className="w-[220px]" /> : null}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,9 +81,25 @@ export function AttendanceTable({
                   variant={STATUS_VARIANT[row.status]}
                 />
               </TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <StatusPill
+                    label={row.locationReviewLabel}
+                    variant={REVIEW_VARIANT[row.locationReviewStatus]}
+                  />
+                  {row.locationReviewFlags.length > 0 ? (
+                    <p className="max-w-xs text-xs text-muted-foreground">
+                      {row.locationReviewFlags.join(", ")}
+                    </p>
+                  ) : null}
+                </div>
+              </TableCell>
               {canManage ? (
                 <TableCell>
-                  <AttendanceEditButton row={row} />
+                  <div className="space-y-2">
+                    <AttendanceEditButton row={row} />
+                    <AttendanceLocationReviewActions row={row} />
+                  </div>
                 </TableCell>
               ) : null}
             </TableRow>

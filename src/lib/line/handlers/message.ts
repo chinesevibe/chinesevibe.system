@@ -71,6 +71,14 @@ function checkInMessages(
           locale,
         }),
       ]
+    case "suspicious_location":
+      return [
+        pendingApprovalFlex(locale),
+        {
+          type: "text",
+          text: result.message,
+        },
+      ]
     case "pending_approval":
       return [pendingApprovalFlex(locale)]
     case "not_registered":
@@ -104,6 +112,14 @@ function checkOutMessages(
           locale,
         }),
       ]
+    case "suspicious_location":
+      return [
+        pendingApprovalFlex(locale),
+        {
+          type: "text",
+          text: result.message,
+        },
+      ]
     case "not_checked_in":
       return [notCheckedInFlex(locale)]
     case "pending_approval":
@@ -134,11 +150,27 @@ async function locationMessages(
     case "not_registered":
       return [notRegisteredFlex(locale)]
     case "none": {
-      const result = await checkIn({ lineUserId, location, now })
+      const result = await checkIn({
+        lineUserId,
+        location: {
+          ...location,
+          source: "line_location_message",
+          captured_at: now.toISOString(),
+        },
+        now,
+      })
       return checkInMessages(result, locale)
     }
     case "checked_in": {
-      const result = await checkOut({ lineUserId, location, now })
+      const result = await checkOut({
+        lineUserId,
+        location: {
+          ...location,
+          source: "line_location_message",
+          captured_at: now.toISOString(),
+        },
+        now,
+      })
       if (result.status === "not_checked_in") {
         return [alreadyCheckedInFlex(formatIctTime(today.checkInAt), locale)]
       }

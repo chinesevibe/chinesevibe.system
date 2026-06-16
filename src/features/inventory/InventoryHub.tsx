@@ -6,6 +6,7 @@ import {
   ClipboardList,
   Package,
   PackagePlus,
+  ScanSearch,
   Truck,
   Warehouse,
 } from "lucide-react"
@@ -36,6 +37,11 @@ const OPERATIONAL_ITEMS: HubItem[] = [
     title: "โอนสินค้า",
     href: "/admin/inventory/transfer",
     icon: Truck,
+  },
+  {
+    title: "ตรวจนับสต๊อก",
+    href: "/admin/inventory/stock-count",
+    icon: ScanSearch,
   },
   {
     title: "ใช้จริง",

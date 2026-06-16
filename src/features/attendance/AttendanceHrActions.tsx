@@ -323,3 +323,58 @@ export function AttendanceEditButton({ row }: { row: AttendanceRow }) {
     </>
   )
 }
+
+export function AttendanceLocationReviewActions({ row }: { row: AttendanceRow }) {
+  const router = useRouter()
+  const [busy, setBusy] = useState<"approve" | "reject" | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  async function decide(action: "approve" | "reject") {
+    const note =
+      action === "reject"
+        ? window.prompt("เหตุผลที่ปฏิเสธพิกัด (อย่างน้อย 3 ตัวอักษร)") ?? ""
+        : window.prompt("หมายเหตุ (ไม่บังคับ)") ?? ""
+
+    if (action === "reject" && note.trim().length < 3) {
+      setError("ต้องระบุเหตุผลการปฏิเสธพิกัด")
+      return
+    }
+
+    setBusy(action)
+    setError(null)
+    try {
+      const res = await fetch(`/api/admin/attendance/${row.id}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action, note }),
+      })
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null
+        throw new Error(body?.error ?? "บันทึกผลตรวจพิกัดไม่สำเร็จ")
+      }
+      router.refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "บันทึกผลตรวจพิกัดไม่สำเร็จ")
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  if (row.locationReviewStatus !== "pending_hr") {
+    return null
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Button size="sm" disabled={busy !== null} onClick={() => decide("approve")}>
+          อนุมัติพิกัด
+        </Button>
+        <Button size="sm" variant="outline" disabled={busy !== null} onClick={() => decide("reject")}>
+          ปฏิเสธพิกัด
+        </Button>
+      </div>
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
+    </div>
+  )
+}

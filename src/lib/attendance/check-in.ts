@@ -3,14 +3,14 @@
 // (no user session); RLS is bypassed by design (T02).
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDayRangeUtc, lateMinutes } from "@/lib/attendance/late"
-import { assertWithinBranchGeofence } from "@/lib/geofence/branch-geofence"
+import {
+  evaluateAttendanceLocation,
+  suspiciousLocationMessage,
+  type AttendanceLocationInput,
+} from "@/lib/attendance/location-security"
 import { getWorkStart } from "@/lib/runtime-config"
 
-export type CheckInLocation = {
-  latitude: number
-  longitude: number
-  address?: string
-}
+export type CheckInLocation = AttendanceLocationInput
 
 export type CheckInResult =
   | {
@@ -24,6 +24,11 @@ export type CheckInResult =
       status: "outside_geofence"
       distanceM: number
       limitM: number
+    }
+  | {
+      status: "suspicious_location"
+      flags: string[]
+      message: string
     }
   | { status: "pending_approval" }
   | { status: "not_registered" }
@@ -76,34 +81,47 @@ export async function checkIn({
     }
   }
 
-  if (employee.branch_id) {
-    const geofence = await assertWithinBranchGeofence({
-      branchId: employee.branch_id as string,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      admin,
-    })
-    if (!geofence.ok && geofence.reason === "outside") {
-      return {
-        status: "outside_geofence",
-        distanceM: geofence.distanceM,
-        limitM: geofence.limitM,
-      }
+  const locationDecision = await evaluateAttendanceLocation({
+    employeeId: employee.id as string,
+    branchId: (employee.branch_id as string | null) ?? null,
+    location,
+    now,
+  })
+
+  if (locationDecision.status === "outside_geofence") {
+    return {
+      status: "outside_geofence",
+      distanceM: locationDecision.distanceM,
+      limitM: locationDecision.limitM,
     }
   }
 
   const { hour, minute } = await getWorkStart()
   const late = lateMinutes(now, hour, minute)
+  const suspicious = locationDecision.status === "suspicious_location"
 
   const { error: insertError } = await admin.from("hr_attendance").insert({
     employee_id: employee.id,
     check_in_at: now.toISOString(),
-    check_in_location: location,
+    check_in_location: locationDecision.payload,
     is_late: late > 0,
+    location_review_status: suspicious ? "pending_hr" : "clear",
+    location_review_flags: locationDecision.flags,
+    location_review_note: suspicious ? suspiciousLocationMessage(locationDecision.flags) : null,
+    location_reviewed_by: null,
+    location_reviewed_at: null,
   })
 
   if (insertError) {
     throw insertError
+  }
+
+  if (suspicious) {
+    return {
+      status: "suspicious_location",
+      flags: locationDecision.flags,
+      message: suspiciousLocationMessage(locationDecision.flags),
+    }
   }
 
   return {

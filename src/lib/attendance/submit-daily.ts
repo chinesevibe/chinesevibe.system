@@ -59,6 +59,9 @@ export async function submitDailyAttendance({
   if (result.status === "already_approved") {
     return { status: "already_submitted" }
   }
+  if (result.status === "pending_location_review") {
+    return { status: "pending_approval" }
+  }
 
   return {
     status: "success",

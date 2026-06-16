@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 
 import { checkIn } from "@/lib/attendance/check-in"
+import type { AttendanceLocationSource } from "@/lib/attendance/location-security"
 import { formatIctTime } from "@/lib/attendance/late"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { verifyCheckinToken } from "@/lib/checkin/qr-token"
@@ -13,7 +14,18 @@ function outsideGeofenceMessage(distanceM: number, limitM: number): string {
 // QR check-in: verifies the day-bound token, then runs the same T07
 // pipeline (duplicate guard + late calc) — imported, never modified.
 export async function POST(request: NextRequest) {
-  let body: { token?: string; latitude?: number; longitude?: number }
+  let body: {
+    token?: string
+    latitude?: number
+    longitude?: number
+    accuracy_m?: number
+    captured_at?: string
+    source?: AttendanceLocationSource
+    is_mocked?: boolean
+    speed_mps?: number
+    heading?: number
+    device_platform?: string
+  }
   try {
     body = await request.json()
   } catch {
@@ -55,7 +67,17 @@ export async function POST(request: NextRequest) {
 
   const result = await checkIn({
     lineUserId: employee.line_user_id,
-    location: { latitude: body.latitude, longitude: body.longitude },
+    location: {
+      latitude: body.latitude,
+      longitude: body.longitude,
+      accuracy_m: Number.isFinite(body.accuracy_m) ? body.accuracy_m : undefined,
+      captured_at: typeof body.captured_at === "string" ? body.captured_at : undefined,
+      source: body.source,
+      is_mocked: body.is_mocked === true,
+      speed_mps: Number.isFinite(body.speed_mps) ? body.speed_mps : undefined,
+      heading: Number.isFinite(body.heading) ? body.heading : undefined,
+      device_platform: typeof body.device_platform === "string" ? body.device_platform : undefined,
+    },
   })
 
   switch (result.status) {
@@ -83,6 +105,15 @@ export async function POST(request: NextRequest) {
       )
     case "pending_approval":
       return NextResponse.json({ error: "pending_approval" }, { status: 403 })
+    case "suspicious_location":
+      return NextResponse.json(
+        {
+          error: "suspicious_location",
+          flags: result.flags,
+          message: result.message,
+        },
+        { status: 403 }
+      )
     case "not_registered":
       return NextResponse.json({ error: "not_registered" }, { status: 404 })
   }

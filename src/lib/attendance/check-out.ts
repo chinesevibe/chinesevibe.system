@@ -5,7 +5,11 @@ import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDayRangeUtc } from "@/lib/attendance/late"
 import type { CheckInLocation } from "@/lib/attendance/check-in"
 import { ictToday } from "@/lib/datetime/thailand"
-import { assertWithinBranchGeofence } from "@/lib/geofence/branch-geofence"
+import {
+  evaluateAttendanceLocation,
+  mergeLocationFlags,
+  suspiciousLocationMessage,
+} from "@/lib/attendance/location-security"
 
 // Phase 1: display-only OT threshold (8h). No pay calculation.
 const STANDARD_WORK_MINUTES = 480
@@ -25,6 +29,11 @@ export type CheckOutResult =
       status: "outside_geofence"
       distanceM: number
       limitM: number
+    }
+  | {
+      status: "suspicious_location"
+      flags: string[]
+      message: string
     }
   | { status: "pending_approval" }
   | { status: "not_registered" }
@@ -60,7 +69,7 @@ export async function checkOut({
   const { start, end } = ictDayRangeUtc(now)
   const { data: record, error: recordError } = await admin
     .from("hr_attendance")
-    .select("id, check_in_at, check_out_at")
+    .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
     .eq("employee_id", employee.id)
     .gte("check_in_at", start.toISOString())
     .lt("check_in_at", end.toISOString())
@@ -80,19 +89,35 @@ export async function checkOut({
     }
   }
 
-  if (location && employee.branch_id) {
-    const geo = await assertWithinBranchGeofence({
-      branchId: employee.branch_id as string,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      admin,
+  let suspiciousFlags = mergeLocationFlags(
+    (record.location_review_flags as string[] | null) ?? [],
+  )
+  const reviewStatus = (record.location_review_status as string | null) ?? "clear"
+  let nextReviewStatus = reviewStatus
+  let hasNewSuspiciousSignal = reviewStatus === "pending_hr"
+  let checkoutPayload: Record<string, unknown> | null = null
+
+  if (location) {
+    const decision = await evaluateAttendanceLocation({
+      employeeId: employee.id as string,
+      branchId: (employee.branch_id as string | null) ?? null,
+      location,
+      now,
     })
-    if (!geo.ok && "reason" in geo && geo.reason === "outside") {
+    checkoutPayload = decision.payload
+
+    if (decision.status === "outside_geofence") {
       return {
         status: "outside_geofence",
-        distanceM: geo.distanceM,
-        limitM: geo.limitM,
+        distanceM: decision.distanceM,
+        limitM: decision.limitM,
       }
+    }
+
+    suspiciousFlags = mergeLocationFlags(suspiciousFlags, decision.flags)
+    if (decision.status === "suspicious_location") {
+      hasNewSuspiciousSignal = true
+      nextReviewStatus = "pending_hr"
     }
   }
 
@@ -108,7 +133,22 @@ export async function checkOut({
   // Conditional update: a concurrent check-out loses the race and matches 0 rows.
   const { data: updated, error: updateError } = await admin
     .from("hr_attendance")
-    .update({ check_out_at: now.toISOString(), work_hours: workHours })
+    .update({
+      check_out_at: now.toISOString(),
+      work_hours: workHours,
+      check_out_location: checkoutPayload,
+      location_review_status:
+        nextReviewStatus === "rejected"
+          ? "rejected"
+          : hasNewSuspiciousSignal
+            ? "pending_hr"
+            : nextReviewStatus,
+      location_review_flags: suspiciousFlags,
+      location_review_note:
+        hasNewSuspiciousSignal ? suspiciousLocationMessage(suspiciousFlags) : undefined,
+      location_reviewed_by: hasNewSuspiciousSignal ? null : undefined,
+      location_reviewed_at: hasNewSuspiciousSignal ? null : undefined,
+    })
     .eq("id", record.id)
     .is("check_out_at", null)
     .select("id")
@@ -120,14 +160,22 @@ export async function checkOut({
     return { status: "already_checked_out", checkOutAt: now }
   }
 
-  await finalizeAttendanceRecord({
+  const finalizeResult = await finalizeAttendanceRecord({
     attendanceId: record.id as string,
     employeeId: employee.id as string,
     branchId: (employee.branch_id as string | null) ?? null,
-    workDate: ictToday(),
+    workDate: (record.shift_date as string | null) ?? ictToday(),
     workHours,
     now,
   })
+
+  if (hasNewSuspiciousSignal || finalizeResult.status === "pending_location_review") {
+    return {
+      status: "suspicious_location",
+      flags: suspiciousFlags,
+      message: suspiciousLocationMessage(suspiciousFlags),
+    }
+  }
 
   return {
     status: "success",
