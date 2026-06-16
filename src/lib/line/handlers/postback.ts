@@ -8,6 +8,7 @@ import {
   tryParseRegistrationPostback,
 } from "@/lib/line/handlers/registration-postback"
 import { lineAccessGateMessages } from "@/lib/line/line-access-gate"
+import { resolveLineUserIdFromSource } from "@/lib/line/handlers/source"
 import { parseApprovalPostback, parsePostbackAction } from "@/lib/line/types"
 import { resolveLocaleForLineUser } from "@/lib/i18n/employee-locale"
 import { t } from "@/lib/i18n/translate"
@@ -30,8 +31,7 @@ export async function handlePostback(
     return
   }
 
-  const lineUserId =
-    event.source?.type === "user" ? event.source.userId : undefined
+  const lineUserId = resolveLineUserIdFromSource(event.source)
 
   const registration = tryParseRegistrationPostback(event.postback.data)
   const approval = parseApprovalPostback(event.postback.data)
