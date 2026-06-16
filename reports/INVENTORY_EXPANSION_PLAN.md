@@ -430,16 +430,16 @@ After adding tasks to Taskmaster, sync to Linear:
 ```bash
 # Use Linear MCP (preferred)
 # Linear MCP tools:
-# - list_issues: query=[HRP] project="LINE OA HR & Payroll"
+# - list_issues: query=[HRP] project="CNV WorkHub"
 # - save_issue: title, description, state=Todo, project
 # - save_comment: issue ID + body
 
 # For each task T136-T149:
-# 1. Create Linear issue: title="[HRP] T{N} — {title}", project="LINE OA HR & Payroll", state=Todo
+# 1. Create Linear issue: title="[HRP] T{N} — {title}", project="CNV WorkHub", state=Todo
 # 2. Link in Taskmaster: task-master update-task {N} --prompt="Linear: JAK-XXX"
 ```
 
-**Linear Project:** `LINE OA HR & Payroll`  
+**Linear Project:** `CNV WorkHub`  
 **Milestone:** M43 Inventory (existing) or create M44 Inventory Expansion
 
 ---

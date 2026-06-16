@@ -2,7 +2,7 @@
 
 **Status:** Scoped — awaiting PLAN (T154)  
 **Confirmed by client:** 2026-06-15  
-**App:** HR Payroll LINE OA — `hr-app/`
+**App:** CNV WorkHub — `hr-app/`
 
 ---
 

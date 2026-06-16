@@ -26,7 +26,7 @@ export function PendingRegistrationCard({
         </p>
         <ul className="mt-4 list-inside list-disc space-y-1 text-xs text-muted-foreground">
           <li>ยังไม่สามารถเช็คอิน / ขอลาได้จนกว่าจะอนุมัติ</li>
-          <li>พนักงานใช้งานผ่าน LINE OA — ไม่มี Web Dashboard</li>
+          <li>พนักงานใช้งานผ่าน CNV WorkHub บน LINE — ไม่มี Web Dashboard</li>
         </ul>
         {showLoginHint ? (
           <Button

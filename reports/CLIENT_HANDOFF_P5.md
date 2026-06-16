@@ -2,7 +2,7 @@
 
 > **HTML (Dashboard style):** [CLIENT_HANDOFF_P5.html](./CLIENT_HANDOFF_P5.html) — เปิดใน browser ได้เลย
 
-**Project:** LINE OA HR & Payroll Platform  
+**Project:** CNV WorkHub  
 **Date:** 2026-06-11  
 **Production:** https://hr-app-two-iota.vercel.app  
 **Supabase project:** `oouswalwqhojpzqwwdvs` (hr-payroll, Singapore)
@@ -102,11 +102,11 @@ CEO เข้าได้เฉพาะ prefix: `/admin/ceo`, `/admin/branches`
 
 ### 4.0 พนักงานลงทะเบียนเอง (ครั้งแรก) — รอ HR อนุมัติ
 
-1. แอดเพื่อน **LINE OA** หรือเปิด `/login` → Login LINE
+1. แอดเพื่อน **CNV WorkHub** บน LINE หรือเปิด `/login` → Login LINE
 2. ถ้ายังไม่มีในระบบ → `/register` กรอก **ชื่อ, เบอร์, สาขา** (+ แผนก/ตำแหน่ง optional)
 3. สถานะ **`inactive` (รออนุมัติ)** → `/register/pending` — **ยังใช้เมนู HR ใน LINE ไม่ได้**
 4. **HR** เปิด `/admin/employees?status=onboarding` → โปรไฟล์ → กด **อนุมัติเข้าใช้งาน**
-5. หลังอนุมัติ (`active`) → พนักงานใช้ **LINE OA + LIFF เท่านั้น** (ไม่มี Web Dashboard — `/employee` เป็นหน้าข้อมูลสั้นๆ)
+5. หลังอนุมัติ (`active`) → พนักงานใช้ **CNV WorkHub บน LINE + LIFF เท่านั้น** (ไม่มี Web Dashboard — `/employee` เป็นหน้าข้อมูลสั้นๆ)
 
 > ไม่ต้อง copy LINE User ID สำหรับพนักงานทั่วไป · HR/BM/CEO ยังใช้ Dashboard ตาม role
 
@@ -164,7 +164,7 @@ Content-Type: application/json
 
 ---
 
-## 6. LINE OA setup (สรุป)
+## 6. CNV WorkHub setup (LINE) (สรุป)
 
 ตั้งค่าใน **LINE Developers Console** (channel Messaging API + LIFF):
 

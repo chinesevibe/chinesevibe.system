@@ -6,7 +6,7 @@ import { initLiffClient } from "@/lib/line/liff-client"
 
 /**
  * On LIFF load: read LINE app language (liff.getLanguage) and sync to DB
- * so LINE OA webhook messages use the same language.
+ * so CNV WorkHub webhook messages use the same language.
  */
 export function LiffLocaleSync() {
   useEffect(() => {

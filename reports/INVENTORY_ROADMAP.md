@@ -34,7 +34,7 @@
 | **4** | T134 | Inbound orders + LIFF barcode scan | ✅ DONE |
 | **4.1** | T135 | Portal inbound hub + LINE menu swap | ✅ DONE |
 
-**Linear:** `[HRP] T130`–`T135` under project **LINE OA HR & Payroll**, milestone **M43 Inventory**
+**Linear:** `[HRP] T130`–`T135` under project **CNV WorkHub**, milestone **M43 Inventory**
 
 ---
 

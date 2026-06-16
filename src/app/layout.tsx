@@ -21,8 +21,8 @@ const prompt = Prompt({
 })
 
 export const metadata: Metadata = {
-  title: "中国名堂 — HR Admin",
-  description: "HR Admin dashboard for workforce, attendance, and leave management",
+  title: "CNV WorkHub — HR Admin",
+  description: "CNV WorkHub — HR Admin dashboard for workforce, attendance, and leave management",
 }
 
 export default function RootLayout({

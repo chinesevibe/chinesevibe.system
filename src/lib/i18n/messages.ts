@@ -11,7 +11,7 @@ const th: MessageCatalog = {
   "lang.my": "မြန်မာ",
   "lang.label": "ภาษา",
 
-  "auth.login.title": "HR Admin Portal",
+  "auth.login.title": "CNV WorkHub",
   "auth.login.subtitle": "เข้าสู่ระบบด้วยรหัสพนักงานและสาขาที่ HR แจ้งให้",
   "auth.login.officerSubtitle": "แผนก Officer — กรุณายืนยันรหัสผ่านเพื่อเข้า Dashboard",
   "auth.login.dashboard": "เข้าสู่ Dashboard",
@@ -218,7 +218,7 @@ const th: MessageCatalog = {
 
   "line.welcome.alt": "ยินดีต้อนรับสู่ระบบ HR",
   "line.welcome.title": "ยินดีต้อนรับ!",
-  "line.welcome.subtitle": "ระบบ HR & Payroll — ChineseVibe",
+  "line.welcome.subtitle": "CNV WorkHub — HR & Payroll",
   "line.welcome.intro":
     "เลือกเมนูด้านล่างเพื่อใช้งานได้ทันที ระบบจะช่วยบันทึกเวลา จัดการลา และติดต่อ HR ให้สะดวกขึ้น",
   "line.welcome.menuTitle": "เมนูหลัก",
@@ -266,7 +266,7 @@ const th: MessageCatalog = {
 
   "line.menuHint.alt": "เลือกเมนู HR ด้านล่าง",
   "line.menuHint.title": "สวัสดีครับ",
-  "line.menuHint.subtitle": "ระบบ HR & Payroll",
+  "line.menuHint.subtitle": "CNV WorkHub",
   "line.menuHint.desc":
     "กรุณาเลือกบริการจากเมนู \"เมนู HR\" ด้านล่างแชท — 6 ปุ่ม: เช็คอิน, OT, เอกสาร, ลา, ร้องเรียน, ติดต่อ HR",
   "line.menuHint.step1": "กดปุ่ม \"เมนู HR\" ด้านล่างแชท แล้วเลือกบริการ",
@@ -276,7 +276,7 @@ const th: MessageCatalog = {
   "line.menuHint.tip": "คลังสินค้าใช้ /stock หรือ /inbound (เมื่อ HR เปิดใช้)",
 
   "line.lang.menu":
-    "เปลี่ยนภาษา LINE OA:\n/th — ไทย\n/en — English\n/zh หรือ /ch — 中文\n/my — မြန်မာ\n\nพิมพ์คำสั่งแล้วกดเมนูเช็คอินอีกครั้งเพื่อดูข้อความใหม่",
+    "เปลี่ยนภาษา CNV WorkHub:\n/th — ไทย\n/en — English\n/zh หรือ /ch — 中文\n/my — မြန်မာ\n\nพิมพ์คำสั่งแล้วกดเมนูเช็คอินอีกครั้งเพื่อดูข้อความใหม่",
   "line.lang.changed": "✅ ตั้งภาษาเป็น {lang} แล้ว — ลองกดเมนูเช็คอินอีกครั้ง",
   "line.lang.notRegistered":
     "ยังไม่ได้ลงทะเบียน — ลงทะเบียนก่อนจึงจะเปลี่ยนภาษาได้",
@@ -444,7 +444,7 @@ const th: MessageCatalog = {
   "line.contactHrGuide.title": "ติดต่อ HR",
   "line.contactHrGuide.subtitle": "ช่องทางติดต่อทีม HR",
   "line.contactHrGuide.desc":
-    "สอบถาม HR หรือลงทะเบียนพนักงานใหม่ — ระบบจะแจ้งทีม HR และติดต่อกลับผ่าน LINE OA นี้",
+    "สอบถาม HR หรือลงทะเบียนพนักงานใหม่ — ระบบจะแจ้งทีม HR และติดต่อกลับผ่าน CNV WorkHub",
   "line.contactHrGuide.step1": "ยังไม่เคยลงทะเบียน? กด \"ลงทะเบียนพนักงาน\" ด้านล่าง",
   "line.contactHrGuide.step2": "ต้องการคุยกับ HR? กด \"แจ้งทีม HR\"",
   "line.contactHrGuide.step3": "เรื่องเร่งด่วน แจ้งหัวหน้างานโดยตรงด้วย",
@@ -761,7 +761,7 @@ const en: MessageCatalog = {
   "lang.my": "မြန်မာ",
   "lang.label": "Language",
 
-  "auth.login.title": "HR Admin Portal",
+  "auth.login.title": "CNV WorkHub",
   "auth.login.subtitle": "Sign in with the employee code and branch provided by HR",
   "auth.login.officerSubtitle":
     "Officer department — confirm your password to access the dashboard",
@@ -968,7 +968,7 @@ const en: MessageCatalog = {
 
   "line.welcome.alt": "Welcome to HR system",
   "line.welcome.title": "Welcome!",
-  "line.welcome.subtitle": "HR & Payroll — ChineseVibe",
+  "line.welcome.subtitle": "CNV WorkHub — HR & Payroll",
   "line.welcome.intro":
     "Choose a menu below to record time, manage leave, and contact HR easily.",
   "line.welcome.menuTitle": "Main menu",
@@ -1016,7 +1016,7 @@ const en: MessageCatalog = {
 
   "line.menuHint.alt": "Choose HR menu below",
   "line.menuHint.title": "Hello",
-  "line.menuHint.subtitle": "HR & Payroll system",
+  "line.menuHint.subtitle": "CNV WorkHub",
   "line.menuHint.desc":
     "Choose a service from \"HR Menu\" below — 6 buttons: check-in, OT, documents, leave, complaint, contact HR",
   "line.menuHint.step1": "Tap \"HR Menu\" below and choose a service",
@@ -1026,7 +1026,7 @@ const en: MessageCatalog = {
   "line.menuHint.tip": "Inventory: /stock or /inbound (when enabled by HR)",
 
   "line.lang.menu":
-    "Change LINE OA language:\n/th — Thai\n/en — English\n/zh or /ch — Chinese\n/my — Myanmar\n\nThen open Check-in menu again to see the new language.",
+    "Change CNV WorkHub language:\n/th — Thai\n/en — English\n/zh or /ch — Chinese\n/my — Myanmar\n\nThen open Check-in menu again to see the new language.",
   "line.lang.changed": "✅ Language set to {lang} — open Check-in menu again.",
   "line.lang.notRegistered":
     "Not registered yet — register before changing language.",
@@ -1193,7 +1193,7 @@ const en: MessageCatalog = {
   "line.contactHrGuide.title": "Contact HR",
   "line.contactHrGuide.subtitle": "HR contact channels",
   "line.contactHrGuide.desc":
-    "Ask HR or register as a new employee — HR team will be notified via this LINE OA",
+    "Ask HR or register as a new employee — HR team will be notified via CNV WorkHub",
   "line.contactHrGuide.step1": "Not registered? Tap \"Employee registration\" below",
   "line.contactHrGuide.step2": "Need to talk to HR? Tap \"Notify HR team\"",
   "line.contactHrGuide.step3": "For urgent matters, contact your supervisor directly",

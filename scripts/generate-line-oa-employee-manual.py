@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate full Employee LINE OA user manual PDF with real project images."""
+"""Generate full Employee CNV WorkHub user manual PDF with real project images."""
 
 from __future__ import annotations
 
@@ -204,10 +204,10 @@ def build_story(styles) -> list:
     if IMAGE_PATHS["mascot"].exists():
         story.append(img(IMAGE_PATHS["mascot"], 4.5 * cm))
     story.append(Spacer(1, 0.4 * cm))
-    story.append(Paragraph("คู่มือการใช้งาน LINE OA", styles["title"]))
+    story.append(Paragraph("คู่มือ CNV WorkHub", styles["title"]))
     story.append(Paragraph("สำหรับพนักงาน (Employee)", styles["title"]))
     story.append(Spacer(1, 0.2 * cm))
-    story.append(Paragraph("中国名堂 · Zhongguo Mingtang", styles["subtitle"]))
+    story.append(Paragraph("CNV WorkHub", styles["subtitle"]))
     story.append(Paragraph("ระบบ HR & Payroll — ฝั่งพนักงาน", styles["subtitle"]))
     story.append(Spacer(1, 0.6 * cm))
     story.append(
@@ -265,7 +265,7 @@ def build_story(styles) -> list:
     if IMAGE_PATHS["icon_welcome"].exists():
         story.append(Spacer(1, 8))
         story.append(img(IMAGE_PATHS["icon_welcome"], content_w * 0.55, 8 * cm))
-        story.append(Paragraph("หน้าต้อนรับเมื่อเพิ่มเพื่อน LINE OA", styles["caption"]))
+        story.append(Paragraph("หน้าต้อนรับเมื่อเพิ่มเพื่อน CNV WorkHub", styles["caption"]))
     story.append(PageBreak())
 
     # 2 Registration
@@ -273,7 +273,7 @@ def build_story(styles) -> list:
     story.extend(
         step_block(
             1,
-            "เพิ่มเพื่อน LINE OA",
+            "เพิ่มเพื่อน CNV WorkHub บน LINE",
             "สแกน QR Code ด้านล่าง หรือค้นหา Official Account ของบริษัท แล้วกด Add Friend",
             styles,
         )
@@ -622,7 +622,7 @@ def add_page_number(canvas, doc):
     canvas.setFont(FONT_REG, 8)
     canvas.setFillColor(colors.HexColor("#9CA3AF"))
     canvas.drawCentredString(A4[0] / 2, 12 * mm, f"หน้า {canvas.getPageNumber()}")
-    canvas.drawString(2 * cm, 12 * mm, "LINE OA Employee Manual — 中国名堂")
+    canvas.drawString(2 * cm, 12 * mm, "CNV WorkHub Employee Manual")
     canvas.restoreState()
 
 
@@ -638,7 +638,7 @@ def main() -> None:
         rightMargin=2 * cm,
         topMargin=2 * cm,
         bottomMargin=2.2 * cm,
-        title="LINE OA Employee Manual",
+        title="CNV WorkHub Employee Manual",
         author="Zhongguo Mingtang HR",
     )
     doc.build(build_story(styles), onFirstPage=add_page_number, onLaterPages=add_page_number)

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Readiness Audit — CNV WorkHub</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface2: #243044;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --green-bg: rgba(34, 197, 94, 0.12);
+      --yellow-bg: rgba(234, 179, 8, 0.12);
+      --red-bg: rgba(239, 68, 68, 0.12);
+      --blue-bg: rgba(59, 130, 246, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "IBM Plex Sans Thai", "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .meta a { color: var(--blue); text-decoration: none; }
+    .meta a:hover { text-decoration: underline; }
+
+    .verdict-banner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--yellow-bg);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .verdict-icon { font-size: 2rem; line-height: 1; }
+
+    .verdict-banner h2 {
+      font-size: 1.125rem;
+      color: var(--yellow);
+      margin-bottom: 0.25rem;
+    }
+
+    .verdict-banner p { color: var(--muted); font-size: 0.9rem; }
+
+    section { margin-bottom: 2.5rem; }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-left: 0.75rem;
+      border-left: 3px solid var(--purple);
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1.25rem 0 0.75rem;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--surface);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    th, td {
+      padding: 0.65rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface2);
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+    .badge-red { background: var(--red-bg); color: var(--red); }
+    .badge-blue { background: var(--blue-bg); color: var(--blue); }
+    .badge-muted { background: rgba(148, 163, 184, 0.15); color: var(--muted); }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    .card-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-value { font-size: 1.1rem; font-weight: 600; }
+
+    .deploy-gap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      color: var(--muted);
+    }
+
+    .deploy-gap .highlight { color: var(--yellow); }
+
+    ul.checklist {
+      list-style: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.5rem 0;
+    }
+
+    ul.checklist li {
+      padding: 0.5rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    ul.checklist li:last-child { border-bottom: none; }
+
+    ul.checklist li::before {
+      content: "☐ ";
+      color: var(--muted);
+      margin-right: 0.35rem;
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      color: #a5f3fc;
+      margin: 0.75rem 0;
+    }
+
+    .module-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+
+    .flow-step {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+    }
+
+    .flow-arrow { color: var(--muted); }
+
+    .out-of-scope {
+      background: var(--red-bg);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    .out-of-scope ul { margin: 0.5rem 0 0 1.25rem; color: var(--muted); }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media print {
+      body { background: #fff; color: #111; padding: 1rem; }
+      .verdict-banner { border-color: #ccc; }
+      table, .card, pre, ul.checklist { border-color: #ddd; background: #f9f9f9; }
+      th { background: #eee; color: #333; }
+      .badge-green { color: #15803d; }
+      .badge-yellow { color: #a16207; }
+      .badge-red { color: #b91c1c; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Delivery Readiness Audit</h1>
+      <p style="color: var(--muted); margin-bottom: 1rem;">CNV WorkHub — ความพร้อมส่งมอบ Demo / UAT</p>
+      <div class="meta">
+        <span><strong>วันที่:</strong> 2026-06-15</span>
+        <span><strong>Production:</strong> <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">hr-app-two-iota.vercel.app</a></span>
+        <span><strong>Supabase:</strong> oouswalwqhojpzqwwdvs</span>
+        <span><strong>Gates:</strong> build ✅ · typecheck ✅ · lint ✅</span>
+      </div>
+    </header>
+
+    <div class="verdict-banner">
+      <div class="verdict-icon">🟡</div>
+      <div>
+        <h2>Verdict: พร้อม Demo ได้ — ยังไม่พร้อม Sign-off ส่งมอบ</h2>
+        <p>Core HR + CNV WorkHub + Inventory (T136–T149) deploy แล้วบน <code>origin/main</code> — แต่ local ahead 2 commits, UAT production ยังไม่ sign-off, เอกสาร handoff ยังไม่ sync</p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="card">
+        <div class="card-label">Remote (origin/main)</div>
+        <div class="card-value"><code>49bda1c</code></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Local main</div>
+        <div class="card-value"><code>93a72d3</code></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Commits รอ push</div>
+        <div class="card-value" style="color: var(--yellow);">2 commits</div>
+      </div>
+      <div class="card">
+        <div class="card-label">UAT LINE production</div>
+        <div class="card-value" style="color: var(--red);">ยังไม่ sign-off</div>
+      </div>
+    </div>
+
+    <section>
+      <h2>สรุปภาพรวม</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>มิติ</th>
+            <th>สถานะ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Core HR + CNV WorkHub</td>
+            <td><span class="badge badge-green">🟢 Demo ready</span></td>
+            <td>Rich Menu, LIFF, Portal, approval policy ใหม่</td>
+          </tr>
+          <tr>
+            <td>Inventory (T136–T149)</td>
+            <td><span class="badge badge-green">🟢 Demo ready</span></td>
+            <td>Transfer, alerts, dashboard, reports บน origin/main</td>
+          </tr>
+          <tr>
+            <td>งานใหม่ยังไม่ขึ้น prod</td>
+            <td><span class="badge badge-yellow">🟡 Deploy ก่อน</span></td>
+            <td>Morning push edge + location security + stock count web</td>
+          </tr>
+          <tr>
+            <td>UAT จริงบน LINE</td>
+            <td><span class="badge badge-red">🔴 ยังไม่ sign-off</span></td>
+            <td>ต้องทดสอบด้วยบัญชีพนักงาน production</td>
+          </tr>
+          <tr>
+            <td>เอกสาร handoff</td>
+            <td><span class="badge badge-yellow">🟡 ไม่ sync</span></td>
+            <td>CLIENT_HANDOFF_FINAL.md ยังเขียน BM→HR</td>
+          </tr>
+          <tr>
+            <td>Payroll บาท</td>
+            <td><span class="badge badge-muted">🔒 Out of scope</span></td>
+            <td>M39 — ต้อง CR ลงนาม</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Deploy Gap</h2>
+      <div class="deploy-gap">
+        origin/main  →  <span class="highlight">49bda1c</span>  (T143–T149 approved)<br>
+        local main   →  <span class="highlight">93a72d3</span>  (+2 commits ahead)
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Commit</th>
+            <th>ฟีเจอร์</th>
+            <th>บน prod?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>d6a18a0</code></td>
+            <td>Morning push edge — runtime config 8 keys, cron */15, แยก Employee/Officer</td>
+            <td><span class="badge badge-yellow">🟡 Edge อาจ deploy แยก — Vercel ยังไม่ push</span></td>
+          </tr>
+          <tr>
+            <td><code>93a72d3</code></td>
+            <td>Attendance location anti-spoof + HR approve/reject พิกัด + Stock Count Web (T141)</td>
+            <td><span class="badge badge-red">❌ ยังไม่ prod</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.75rem;">
+        หมายเหตุ: LINE_OA_WORK_LOG.md อ้าง deploy <code>c09f486</code> — ล้าสมัย ควรอัปเดตเป็น 49bda1c / 93a72d3 หลัง deploy
+      </p>
+    </section>
+
+    <section>
+      <h2>ความพร้อมราย Module</h2>
+
+      <div class="module-header">
+        <h3>1. CNV WorkHub &amp; ช่องทางพนักงาน</h3>
+        <span class="badge badge-green">🟢 Demo ready</span>
+      </div>
+      <table>
+        <thead><tr><th>ฟีเจอร์</th><th>Deploy</th><th>UAT</th></tr></thead>
+        <tbody>
+          <tr><td>Rich Menu v3 (เช็คอิน, OT, เอกสาร, ลา, ร้องเรียน)</td><td>✅</td><td>⏳</td></tr>
+          <tr><td>Location check-in/out + geofence</td><td>✅</td><td>⏳ ตั้ง lat/lng สาขา</td></tr>
+          <tr><td>QR check-in (Portal profile)</td><td>✅</td><td>⏳</td></tr>
+          <tr><td>LIFF: leave, OT, documents, complaint, manual attendance</td><td>✅</td><td>⏳</td></tr>
+          <tr><td>Slash commands + locale (/th /en /zh /my)</td><td>✅</td><td>⏳ /stock ต้อง env flag</td></tr>
+          <tr><td>Self-register → HR approve</td><td>✅</td><td>⏳</td></tr>
+          <tr><td>Portal v2 + i18n (th/en/zh/my)</td><td>✅</td><td>⏳ my partial (T151)</td></tr>
+          <tr><td>Employee manual PDF (16 หน้า)</td><td>✅</td><td>✅ ส่ง client ได้</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">
+        Policy: Attendance → บันทึกทันที · Leave/OT → HR อนุมัติคนเดียว (pending_hr)
+      </p>
+
+      <div class="module-header">
+        <h3>2. Attendance &amp; Payroll Hours</h3>
+        <span class="badge badge-yellow">🟡 มีงานใหม่รอ deploy</span>
+      </div>
+      <table>
+        <thead><tr><th>ฟีเจอร์</th><th>Prod</th><th>Local (93a72d3)</th></tr></thead>
+        <tbody>
+          <tr><td>Instant finalize + payroll hour lines</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Geofence validation</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Location anti-spoof (accuracy, mock, impossible travel)</td><td>❌</td><td>✅</td></tr>
+          <tr><td>HR approve/reject พิกัด + block finalize</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Migration attendance_location_review</td><td>🟡</td><td>Applied (CLI)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>3. Leave / OT / Documents / Complaints</h3>
+        <span class="badge badge-green">🟢 Demo ready</span>
+      </div>
+      <table>
+        <thead><tr><th>Module</th><th>Admin</th><th>LINE/LIFF</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td>Leave</td><td>/admin/leaves</td><td>LIFF + /leave</td><td>HR-only approval</td></tr>
+          <tr><td>OT</td><td>/admin/overtime</td><td>LIFF + /ot</td><td>HR-only approval</td></tr>
+          <tr><td>Documents</td><td>/admin/documents</td><td>LIFF + /doc</td><td>HR process</td></tr>
+          <tr><td>Complaints</td><td>/admin/complaints</td><td>LIFF</td><td>—</td></tr>
+          <tr><td>Announcements → LINE push</td><td>/admin/announcements</td><td>Portal read</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>4. HR Admin Core</h3>
+        <span class="badge badge-green">🟢 Demo ready</span>
+      </div>
+      <table>
+        <thead><tr><th>หน้า</th><th>Route</th><th>สถานะ</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard</td><td>/admin</td><td>✅</td></tr>
+          <tr><td>พนักงาน</td><td>/admin/employees</td><td>✅</td></tr>
+          <tr><td>การเข้างาน</td><td>/admin/attendance</td><td>✅ (+ location review หลัง deploy)</td></tr>
+          <tr><td>จัดการลา / OT</td><td>/admin/leaves, /admin/overtime</td><td>✅</td></tr>
+          <tr><td>ประกาศ / ร้องเรียน / เอกสาร</td><td>—</td><td>✅</td></tr>
+          <tr><td>การแจ้งเตือน</td><td>/admin/alerts</td><td>✅</td></tr>
+          <tr><td>โครงสร้าง / สาขา</td><td>/admin/organization, /admin/branches</td><td>✅</td></tr>
+          <tr><td>รายงาน</td><td>/admin/report</td><td>✅</td></tr>
+          <tr><td>ตั้งค่า (+ Morning Push T155-B)</td><td>/admin/settings</td><td>✅</td></tr>
+          <tr><td>Officer login + password gate</td><td>—</td><td>✅ (4102d66)</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 0.85rem; color: var(--muted);">Training / Recruitment / Performance — placeholder only ไม่ใน nav หลัก</p>
+
+      <div class="module-header">
+        <h3>5. Payroll</h3>
+        <span class="badge badge-yellow">🟡 ชม.เท่านั้น</span>
+      </div>
+      <table>
+        <thead><tr><th>ฟีเจอร์</th><th>สถานะ</th></tr></thead>
+        <tbody>
+          <tr><td>สรุปชม.จาก attendance/OT ที่อนุมัติ</td><td>✅ /admin/payroll</td></tr>
+          <tr><td>Payroll runs / settings UI</td><td>✅</td></tr>
+          <tr><td>Portal payslips</td><td>⚠️ ขึ้นกับข้อมูลจริง</td></tr>
+          <tr><td>คำนวณบาท / payslip PDF เต็ม</td><td>🔒 M39 locked</td></tr>
+          <tr><td>Odoo integration</td><td>⚠️ แยก scope</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>6. Inventory</h3>
+        <span class="badge badge-green">🟢 ส่วนใหญ่พร้อม</span>
+      </div>
+      <table>
+        <thead><tr><th>Submodule</th><th>Prod (49bda1c)</th><th>หลัง 93a72d3</th></tr></thead>
+        <tbody>
+          <tr><td>Master (SKU, Supplier, Warehouse, Branch)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Stock balances</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Inbound + LIFF barcode</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Kitchen requisition (4-step)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Consumption &amp; Damage</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Unit conversion runtime (T136)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Branch transfer (T143)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Alerts (T144)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Dashboard KPIs (T145)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Reports (T146–148)</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Portal /stock + LINE /stock</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Stock Count Web (T141)</td><td>❌</td><td>✅ migration applied</td></tr>
+          <tr><td>Stock Count Mobile (T142)</td><td>❌</td><td>❌ ยังไม่เริ่ม</td></tr>
+          <tr><td>BOM consumption (T137)</td><td>⚠️ schema only</td><td>Optional P2</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>7. Automation &amp; Cron</h3>
+        <span class="badge badge-yellow">🟡 Verify ก่อน demo</span>
+      </div>
+      <table>
+        <thead><tr><th>Job</th><th>สถานะ</th></tr></thead>
+        <tbody>
+          <tr><td>Probation / Visa alerts</td><td>✅</td></tr>
+          <tr><td>Approval expiry</td><td>✅</td></tr>
+          <tr><td>Morning push (Employee + Officer)</td><td>🟡 T155-A — ตั้งค่า /admin/settings</td></tr>
+          <tr><td>Cron health check</td><td>รัน scripts/cron-health-check.mjs</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>8. Auth &amp; Security</h3>
+        <span class="badge badge-green">🟢 Demo ready</span>
+      </div>
+      <table>
+        <thead><tr><th>หัวข้อ</th><th>สถานะ</th></tr></thead>
+        <tbody>
+          <tr><td>LINE Login + RBAC</td><td>✅</td></tr>
+          <tr><td>Officer password ก่อน admin</td><td>✅</td></tr>
+          <tr><td>RLS Supabase</td><td>✅</td></tr>
+          <tr><td>Location security v1</td><td>🟡 หลัง deploy 93a72d3</td></tr>
+        </tbody>
+      </table>
+
+      <div class="module-header">
+        <h3>9. i18n</h3>
+        <span class="badge badge-yellow">🟡 ใช้ demo ได้</span>
+      </div>
+      <table>
+        <thead><tr><th>Locale</th><th>Portal + LINE</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td>ไทย</td><td>✅</td><td>หลัก</td></tr>
+          <tr><td>English</td><td>✅</td><td>—</td></tr>
+          <tr><td>中文 (zh)</td><td>✅</td><td>~560 keys</td></tr>
+          <tr><td>မြန်မာ (my)</td><td>⚠️ partial</td><td>T151 paused</td></tr>
+          <tr><td>Rich Menu labels ตามภาษา</td><td>❌</td><td>T152 — LINE Console</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Orchestration / งานค้างใน Queue</h2>
+      <table>
+        <thead><tr><th>ID</th><th>งาน</th><th>สถานะ</th><th>ผลต่อ demo</th></tr></thead>
+        <tbody>
+          <tr><td>T141</td><td>Stock Count Web</td><td>EXECUTE done — รอ Cursor review</td><td>🟡 deploy หลัง approve</td></tr>
+          <tr><td>T142</td><td>Stock Count Mobile/LIFF</td><td>ยังไม่เริ่ม</td><td>ไม่บล็อก demo web</td></tr>
+          <tr><td>T150</td><td>Default check-in/out time</td><td>UI มี, backend ไม่ครบ</td><td>🟡 ต่ำ</td></tr>
+          <tr><td>T151</td><td>Burmese i18n เต็ม</td><td>⏸ paused</td><td>ไม่บล็อก TH/EN/ZH</td></tr>
+          <tr><td>M38</td><td>E2E + security + tag v1.1</td><td>ค้าง</td><td>ก่อน sign-off สุดท้าย</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>ลำดับส่งมอบที่แนะนำ</h2>
+      <div class="flow">
+        <span class="flow-step">1. Push + Deploy 93a72d3</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">2. Cursor review T141</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">3. UAT LINE + Inventory</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">4. Sync handoff docs</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">5. M38 sign-off + tag v1.1</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">6. Client demo 正式</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Checklist ก่อน Demo / UAT</h2>
+
+      <h3>A. Deploy</h3>
+      <pre>cd hr-app
+git push origin main
+npx vercel --prod --yes
+npm run build &amp;&amp; npm run typecheck &amp;&amp; npm run lint
+node scripts/e2e/smoke-role-routes.mjs
+node scripts/cron-health-check.mjs</pre>
+
+      <h3>B. Config ฝั่ง Admin</h3>
+      <ul class="checklist">
+        <li>ตั้ง geofence สาขา 001–003 ใน /admin/branches</li>
+        <li>ตรวจ Morning Push settings ที่ /admin/settings</li>
+        <li>ยืนยัน LINE_STOCK_COMMAND_ENABLED=true บน Vercel</li>
+        <li>สร้าง test employee + HR account สำหรับ UAT</li>
+      </ul>
+
+      <h3>C. UAT LINE production</h3>
+      <ul class="checklist">
+        <li>เช็คอิน/เอาท์ในสาขา → ได้เวลา ไม่รออนุมัติ</li>
+        <li>ขอลา / OT → pending_hr → HR approve → LINE แจ้งผล</li>
+        <li>Slash commands + Portal shortcuts</li>
+        <li>Inbound → requisition → issue (inventory E2E)</li>
+        <li>Stock count web (หลัง deploy T141)</li>
+        <li>ลงทะเบียนใหม่ → HR approve</li>
+      </ul>
+
+      <h3>D. เอกสาร</h3>
+      <ul class="checklist">
+        <li>Sync CLIENT_HANDOFF_FINAL.md (OT rule HR-only)</li>
+        <li>อัปเดต LINE_OA_WORK_LOG.md deploy commit</li>
+        <li>ส่ง PDF manual ให้พนักงาน</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Out of Scope — อย่า demo / สัญญาในรอบนี้</h2>
+      <div class="out-of-scope">
+        <ul>
+          <li>Payroll คำนวณบาท / payslip PDF เต็ม (M39)</li>
+          <li>Odoo integration เต็มรูปแบบ</li>
+          <li>BOM auto-consumption (T137 optional)</li>
+          <li>Stock count มือถือ/barcode (T142)</li>
+          <li>Rich Menu หลายภาษา (T152)</li>
+          <li>Training / Recruitment / Performance (placeholder only)</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>Generated by Cursor orchestrator · 2026-06-15</p>
+      <p>Source: hr-app/reports/DELIVERY_READINESS_AUDIT_2026-06-15.html</p>
+      <p>Related: LINE_OA_WORK_LOG.md · GROUND_TRUTH.md · DELIVERY_READINESS_FINAL.md</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -12,7 +12,7 @@
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS (1 pre-existing warning in LeaveForm) |
 | E2E P2 (`run-all-p2.mjs`) | Skipped locally (env → localhost); migration applied prod |
-| **Manual UAT (LINE 1:1)** | **PASS** — 2026-06-11 ChineseVibe OA |
+| **Manual UAT (LINE 1:1)** | **PASS** — 2026-06-11 CNV WorkHub |
 
 ## Feature Matrix (PRD F7–F9)
 

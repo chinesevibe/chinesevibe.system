@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/lib/brand/product"
 import { cn } from "@/lib/utils"
 
 const MASCOT = "/brand/mascot-hd.png"
@@ -15,7 +16,7 @@ function MascotImage({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={MASCOT}
-      alt="中国名堂 mascot"
+      alt={`${PRODUCT_NAME} mascot`}
       width={width}
       height={height}
       className={className}
@@ -58,7 +59,7 @@ export function BrandMark({
           )}
           style={{ fontFamily: "var(--font-noto-sc), sans-serif" }}
         >
-          中国名堂
+          {PRODUCT_NAME}
         </p>
         <p
           className={cn(
@@ -66,7 +67,7 @@ export function BrandMark({
             onDark ? "text-white/80" : "text-muted-foreground"
           )}
         >
-          Zhongguo Mingtang
+          HR &amp; Payroll
         </p>
       </div>
     )
@@ -84,10 +85,10 @@ export function BrandMark({
           className="text-[22px] font-bold leading-none text-foreground"
           style={{ fontFamily: "var(--font-noto-sc), sans-serif" }}
         >
-          中国名堂
+          {PRODUCT_NAME}
         </p>
         <p className="mt-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/65">
-          Zhongguomingtang
+          HR &amp; Payroll
         </p>
       </div>
     </div>

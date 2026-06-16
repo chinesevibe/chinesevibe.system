@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Client Handoff — Phase 5 | 中国名堂 HR</title>
+  <title>Client Handoff — Phase 5 | CNV WorkHub HR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -312,7 +312,7 @@
     <div class="brand">
       <div class="brand-mark">名堂</div>
       <div class="brand-text">
-        <h1>中国名堂 HR Admin</h1>
+        <h1>CNV WorkHub — HR Admin</h1>
         <span>Client Handoff — Phase 5</span>
       </div>
     </div>
@@ -333,7 +333,7 @@
         <a class="nav-link" href="#roles"><span class="nav-icon">👤</span> Roles</a>
         <a class="nav-link" href="#onboarding"><span class="nav-icon">📝</span> Onboarding</a>
         <a class="nav-link" href="#bm-setup"><span class="nav-icon">🏢</span> ตั้ง BM</a>
-        <a class="nav-link" href="#line"><span class="nav-icon">💬</span> LINE OA</a>
+        <a class="nav-link" href="#line"><span class="nav-icon">💬</span> CNV WorkHub</a>
         <a class="nav-link" href="#supabase"><span class="nav-icon">⚙️</span> Supabase</a>
         <a class="nav-link" href="#gaps"><span class="nav-icon">⚠️</span> Known gaps</a>
         <a class="nav-link" href="#support"><span class="nav-icon">📁</span> Support</a>
@@ -349,7 +349,7 @@
       <div class="hero" id="overview">
         <div class="hero-inner">
           <h2>ส่งมอบ Phase 5 (MVP)</h2>
-          <p>LINE OA HR &amp; Payroll Platform — พร้อมใช้งาน production</p>
+          <p>CNV WorkHub &amp; Payroll Platform — พร้อมใช้งาน production</p>
           <div class="hero-meta">
             <span>📅 11 มิ.ย. 2026</span>
             <span>🗄️ oouswalwqhojpzqwwdvs</span>
@@ -552,11 +552,11 @@
           </div>
           <div class="card-body">
             <ol class="steps">
-              <li>แอดเพื่อน <strong>LINE OA</strong> หรือเปิด <code>/login</code> → Login LINE</li>
+              <li>แอดเพื่อน <strong>CNV WorkHub</strong> บน LINE หรือเปิด <code>/login</code> → Login LINE</li>
               <li>ถ้ายังไม่มีในระบบ → <code>/register</code> กรอก <strong>ชื่อ, เบอร์, สาขา</strong> (+ แผนก/ตำแหน่ง optional)</li>
               <li>สถานะ <code>inactive</code> (รออนุมัติ) → <code>/register/pending</code> — <strong>ยังใช้เมนู HR ใน LINE ไม่ได้</strong></li>
               <li><strong>HR</strong> เปิด <code>/admin/employees?status=onboarding</code> → โปรไฟล์ → กด <strong>อนุมัติเข้าใช้งาน</strong></li>
-              <li>หลังอนุมัติ (<code>active</code>) → พนักงานใช้ <strong>LINE OA + LIFF เท่านั้น</strong> (ไม่มี Web Dashboard — <code>/employee</code> เป็นหน้าข้อมูลสั้นๆ)</li>
+              <li>หลังอนุมัติ (<code>active</code>) → พนักงานใช้ <strong>CNV WorkHub บน LINE + LIFF เท่านั้น</strong> (ไม่มี Web Dashboard — <code>/employee</code> เป็นหน้าข้อมูลสั้นๆ)</li>
             </ol>
             <div class="note">
               ไม่ต้อง copy LINE User ID สำหรับพนักงานทั่วไป · HR/BM/CEO ยังใช้ Dashboard ตาม role
@@ -625,7 +625,7 @@ Content-Type: application/json
       <section id="line">
         <div class="card">
           <div class="card-header">
-            <h3>6. LINE OA setup (สรุป)</h3>
+            <h3>6. CNV WorkHub setup (LINE) — สรุป</h3>
             <p>LINE Developers Console — Messaging API + LIFF</p>
           </div>
           <div class="card-body" style="padding:0">
@@ -753,7 +753,7 @@ select name from vault.secrets where name in ('project_url', 'secret_key');</pre
       </section>
 
       <p class="footer">
-        HEAD-OFFICE · LINE OA HR &amp; Payroll · Phase 5 Handoff<br />
+        HEAD-OFFICE · CNV WorkHub &amp; Payroll · Phase 5 Handoff<br />
         <a href="https://hr-app-two-iota.vercel.app">hr-app-two-iota.vercel.app</a>
       </p>
 

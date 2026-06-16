@@ -171,7 +171,7 @@ export function MorningPushSettingsPanel({ rows }: { rows: RuntimeConfigRow[] })
     <section className="rounded-xl border p-4">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold">LINE OA - Morning Push</h3>
+          <h3 className="text-sm font-semibold">CNV WorkHub — Morning Push</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             ตั้งค่าแยกสำหรับ Employee และ Officer ได้จากหน้าเดียว
           </p>

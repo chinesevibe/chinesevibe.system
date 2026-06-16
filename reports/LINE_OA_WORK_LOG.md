@@ -1,9 +1,10 @@
-# LINE OA — บันทึกความคืบหน้างาน (Work Log)
+# CNV WorkHub — บันทึกความคืบหน้างาน (Work Log)
 
-> **อัปเดตล่าสุด:** 2026-06-28  
+> **อัปเดตล่าสุด:** 2026-06-16  
 > **Production:** https://hr-app-two-iota.vercel.app  
 > **Supabase:** `oouswalwqhojpzqwwdvs` (Singapore)  
-> **Deploy ล่าสุด:** commit `c09f486` — `npx vercel --prod --yes`
+> **Product name:** CNV WorkHub  
+> **Deploy ล่าสุด:** 2026-06-16 — rebrand CNV WorkHub + branding deploy (`npx vercel --prod --yes`)
 
 ใช้ไฟล์นี้เป็น **เตือนความจำ** — ทำอะไรไปแล้ว อยู่ตรงไหน ยังค้างอะไร
 
@@ -13,7 +14,7 @@
 
 | หัวข้อ | สถานะ |
 |--------|--------|
-| LINE OA core (Rich Menu, LIFF, webhook) | ✅ Deploy แล้ว |
+| CNV WorkHub core (Rich Menu, LIFF, webhook) | ✅ Deploy แล้ว |
 | Portal พนักงาน v2 (shortcuts, widgets) | ✅ Deploy แล้ว |
 | Slash commands | ✅ Deploy แล้ว |
 | Inventory `/stock` + schema | ✅ Deploy แล้ว (`2a5e06a`) |
@@ -37,14 +38,14 @@
 - Portal `/portal/stock`, handler `check-stock.ts`
 - Vercel env: `LINE_STOCK_COMMAND_ENABLED=true`
 
-### 2026-06-27 — LINE OA handoff polish
+### 2026-06-27 — CNV WorkHub handoff polish
 - **Commit `b099410`**
 - Welcome/menu copy v3 (`menu-guide.ts`)
 - Slash: `/leave` `/ot` `/doc` `/complaint` `/announce` `/stock` `/inbound`
 - Portal nav + complaint/stock shortcuts
-- Login page copy "LINE OA และ Portal พนักงาน"
+- Login page copy "CNV WorkHub และ Portal พนักงาน"
 
-### 2026-06-15 — LINE OA employee i18n rollout
+### 2026-06-15 — CNV WorkHub employee i18n rollout
 - **Commits `2910d3c` → `73ca158`** และ deploy production วันที่ 2026-06-15
 - Slash locale commands: `/th` `/en` `/zh` `/ch` `/my` + บันทึก `preferred_locale`
 - Flex cards พนักงานทุกเมนู + LIFF forms + post-submit cards ส่ง locale ครบ flow
@@ -53,7 +54,7 @@
 
 ### 2026-06-29 — หลายภาษา (i18n)
 - **Portal:** เลือกภาษา ไทย / English / 中文 / မြန်မာ ที่ header → บันทึก `hr_employees.preferred_locale` + cookie
-- **LINE OA:** ข้อความหลัก (welcome, check-in/out, geofence, submit, errors) แสดงตาม `preferred_locale` ของพนักงาน
+- **CNV WorkHub (LINE):** ข้อความหลัก (welcome, check-in/out, geofence, submit, errors) แสดงตาม `preferred_locale` ของพนักงาน
 - **Migration:** `20260629100000_employee_preferred_locale.sql` (applied Supabase)
 - **Code:** `src/lib/i18n/` · `POST /api/portal/locale`
 
@@ -101,14 +102,14 @@
 
 ---
 
-## Commits สำคัญ (LINE OA)
+## Commits สำคัญ (CNV WorkHub)
 
 | Commit | สรุป |
 |--------|------|
 | `73ca158` | Complete Simplified Chinese employee i18n + zh/my fallback chain |
 | `a941177` | Localize LINE flex results, LIFF checkin, portal inbound, decision routes |
-| `3a08fb1` | Localize LINE OA menu flex cards and LIFF forms by locale |
-| `2910d3c` | Add LINE OA language slash commands and locale persistence |
+| `3a08fb1` | Localize CNV WorkHub menu flex cards and LIFF forms by locale |
+| `2910d3c` | Add CNV WorkHub language slash commands and locale persistence |
 | `290d8f7` | Rich Menu v3 + slash `/stock` |
 | `2a5e06a` | Portal stock + inventory migration |
 | `b099410` | Handoff copy, slash commands, portal |
@@ -143,7 +144,7 @@
 | 12 | Payroll baht calculation | M39 — ต้อง CR ลงนาม |
 | 13 | Odoo integration cleanup | แยก scope |
 
-### งานค้างจาก session อื่น (ไม่ใช่ LINE OA โดยตรง)
+### งานค้างจาก session อื่น (ไม่ใช่ CNV WorkHub โดยตรง)
 - **T150** — `default_check_in_time` / `default_check_out_time` backend (UI มีแล้ว, DB/API ยังไม่ครบ) — ดู `orchestration/CURRENT_TASK.md`
 - **Inventory hub UI** — compact tiles (`InventoryHub.tsx`) อาจยัง uncommitted
 
@@ -201,4 +202,4 @@ node scripts/cron-health-check.mjs
 
 ---
 
-*เขียนโดย Cursor session 2026-06-28 — อัปเดตไฟล์นี้ทุกครั้งที่ปิดงาน LINE OA สำคัญ*
+*เขียนโดย Cursor session 2026-06-28 — อัปเดตไฟล์นี้ทุกครั้งที่ปิดงาน CNV WorkHub สำคัญ*

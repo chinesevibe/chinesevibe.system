@@ -1,7 +1,7 @@
 # Security Review — T26
 
 **Date:** 2026-06-11  
-**Project:** `hr-app` (LINE OA HR & Payroll)  
+**Project:** `hr-app` (CNV WorkHub)  
 **Reviewer:** Cursor (EXECUTE per skill 10)
 
 ## Verdict

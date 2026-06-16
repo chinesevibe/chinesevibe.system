@@ -24,7 +24,7 @@ export default async function AdminSettingsPage() {
   ]
 
   return (
-    <AdminPageShell title="Settings" description="สถานะการตั้งค่าระบบและ LINE OA">
+    <AdminPageShell title="Settings" description="สถานะการตั้งค่าระบบและ CNV WorkHub">
       <div className="grid gap-4">
         <SettingsPanel
           rows={configRows ?? []}

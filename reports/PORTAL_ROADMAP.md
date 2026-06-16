@@ -25,7 +25,7 @@ Inventory (M43) และ M38 sign-off ทำคู่ขนานได้ — 
 | Item | Today |
 |------|--------|
 | `canAccessEmployeePortal()` | **`dev` only** — `roles.ts` |
-| `/employee` | ข้อความ "ใช้ LINE OA เท่านั้น" |
+| `/employee` | ข้อความ "ใช้ CNV WorkHub บน LINE เท่านั้น" |
 | `/portal/*` | dashboard, leave, attendance, docs, schedule, **inbound (คลังสินค้า)**; ประกาศ via home widget + `/portal/announcements` (ไม่มี nav) |
 | LINE Rich Menu | ปุ่ม「คลังสินค้า」แทน「ประกาศ」 — ประกาศ HR push จาก `/admin/announcements` |
 | Login redirect | `employee` → `/employee` ไม่ใช่ `/portal` |
@@ -34,7 +34,7 @@ Inventory (M43) และ M38 sign-off ทำคู่ขนานได้ — 
 
 ## M40 — Portal v2 (T121–T124)
 
-**Goal:** พนักงาน `role=employee` (active) เข้า `/portal` ได้จริง — คู่กับ LINE OA ไม่แทนที่
+**Goal:** พนักงาน `role=employee` (active) เข้า `/portal` ได้จริง — คู่กับ CNV WorkHub บน LINE ไม่แทนที่
 
 ### T121 — Scope & UX spec
 

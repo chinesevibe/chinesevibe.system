@@ -1,4 +1,4 @@
-# Cursor Handoff — LINE OA i18n (2026-06-15)
+# Cursor Handoff — CNV WorkHub i18n (2026-06-15)
 
 > **Orchestrator:** Cursor  
 > **Production:** https://hr-app-two-iota.vercel.app  
@@ -9,7 +9,7 @@
 
 ## สรุปงานที่ Cursor ทำแล้ว (session นี้)
 
-### 1. ภาษา LINE OA + LIFF (ครบ flow พนักงาน)
+### 1. ภาษา CNV WorkHub + LIFF (ครบ flow พนักงาน)
 
 | หัวข้อ | สถานะ | Commit |
 |--------|--------|--------|
@@ -117,7 +117,7 @@ cd hr-app && npx vercel --prod --yes
 
 ## Test `/zh` (copy ให้ QA)
 
-1. LINE OA private chat → `/zh` → ข้อความยืนยันภาษาจีน
+1. CNV WorkHub private chat → `/zh` → ข้อความยืนยันภาษาจีน
 2. เช็คอิน → picker + guide + share location → จีน
 3. ขอลา → card จีน → ฟอร์ม LIFF จีน → submit → card ยืนยันจีน
 4. OT / เอกสาร / ร้องเรียน / ติดต่อ HR / สต็อก / รับเข้า — ทำซ้ำ
@@ -133,8 +133,8 @@ cd hr-app && npx vercel --prod --yes
 73ca158 Complete Simplified Chinese i18n for LINE and LIFF flows.
 e9cb27c Add leave overview dashboard donut.
 a941177 Localize UI text: LINE flex cards, LIFF forms, portal inbound, dashboard, and decision routes.
-3a08fb1 Localize LINE OA menu flex cards and LIFF forms by locale.
-2910d3c Add LINE OA language slash commands and translate check-in flex cards.
+3a08fb1 Localize CNV WorkHub menu flex cards and LIFF forms by locale.
+2910d3c Add CNV WorkHub language slash commands and translate check-in flex cards.
 ```
 
 ---

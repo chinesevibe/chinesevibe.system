@@ -1,6 +1,6 @@
 # Client Handoff — Final (T107)
 
-**Project:** LINE OA HR & Payroll Platform  
+**Project:** CNV WorkHub  
 **Date:** 2026-06-11  
 **Production:** https://hr-app-two-iota.vercel.app
 
@@ -63,4 +63,4 @@ node scripts/cron-health-check.mjs
 
 ## Support
 
-See `CLIENT_HANDOFF_P5.md` for LINE OA, Supabase, BM setup details.
+See `CLIENT_HANDOFF_P5.md` for CNV WorkHub (LINE), Supabase, BM setup details.
