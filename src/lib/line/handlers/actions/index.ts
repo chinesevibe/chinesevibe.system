@@ -15,6 +15,7 @@ import { complaintAction } from "@/lib/line/handlers/actions/complaint"
 import { documentAction } from "@/lib/line/handlers/actions/document"
 import { contactHrAction } from "@/lib/line/handlers/actions/contact-hr"
 import { contactHrNotifyAction } from "@/lib/line/handlers/actions/contact-hr-notify"
+import { welcomeAction } from "@/lib/line/handlers/actions/welcome"
 import { inventoryAction } from "@/lib/line/handlers/actions/inventory"
 import { leaveAction } from "@/lib/line/handlers/actions/leave"
 import { overtimeAction } from "@/lib/line/handlers/actions/overtime"
@@ -43,6 +44,7 @@ const ACTION_HANDLERS: Record<
   announcement: announcementAction,
   contact_hr: contactHrAction,
   contact_hr_notify: contactHrNotifyAction,
+  welcome: welcomeAction,
 }
 
 export async function buildActionMessages(

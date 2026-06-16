@@ -13,6 +13,7 @@ export const RICH_MENU_ACTIONS = [
   "announcement",
   "contact_hr",
   "contact_hr_notify",
+  "welcome",
 ] as const
 
 export type RichMenuPostbackAction = (typeof RICH_MENU_ACTIONS)[number]

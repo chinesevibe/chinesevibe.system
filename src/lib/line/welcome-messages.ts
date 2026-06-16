@@ -28,21 +28,34 @@ function imageMessage(url: string): messagingApi.ImageMessage {
   }
 }
 
-/** Welcome reply when a user adds the OA (follow event). */
+function buildGuideImageMessages(): messagingApi.ImageMessage[] {
+  const base = publicBaseUrl()
+  return REGISTER_GUIDE_PATHS.map((path) =>
+    imageMessage(`${base}${path}`)
+  )
+}
+
+/** Follow / unblock — ข้อความต้อนรับ (+ รูป ถ้าไม่ใช้ Console greeting) */
+export function buildWelcomeFollowMessages(
+  locale: AppLocale
+): messagingApi.Message[] {
+  const imagesOnly = process.env.LINE_OA_GREETING_IMAGES_ONLY === "true"
+  if (imagesOnly) {
+    return buildGuideImageMessages()
+  }
+  return buildWelcomeReplyMessages(locale)
+}
+
+/** Reply ทั้งข้อความ + รูปคู่มือ (postback welcome, หรือ add friend) */
 export function buildWelcomeReplyMessages(
   locale: AppLocale
 ): messagingApi.Message[] {
-  const base = publicBaseUrl()
   const text: messagingApi.TextMessage = {
     type: "text",
     text: t("line.welcome.greeting", locale, { registerUrl: registerUrl() }),
   }
 
-  const guides = REGISTER_GUIDE_PATHS.map((path) =>
-    imageMessage(`${base}${path}`)
-  )
-
-  return [text, ...guides]
+  return [text, ...buildGuideImageMessages()]
 }
 
 /** Plain text for LINE Official Account Manager → Greeting message (copy/paste). */

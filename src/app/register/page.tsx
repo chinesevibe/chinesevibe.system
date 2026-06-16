@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 
 import { AuthPageShell } from "@/features/auth/AuthPageShell"
 import { RegisterForm } from "@/features/auth/RegisterForm"
+import { RegisterLineProvider } from "@/features/auth/RegisterLineProvider"
 import { isPendingRegistration } from "@/lib/auth/employee-access"
 import { adminLoginPath } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
@@ -34,7 +35,9 @@ export default async function RegisterPage() {
 
   return (
     <AuthPageShell initialLocale={initialLocale} titleKey="auth.register.title">
-      <RegisterForm />
+      <RegisterLineProvider>
+        <RegisterForm />
+      </RegisterLineProvider>
     </AuthPageShell>
   )
 }

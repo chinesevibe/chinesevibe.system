@@ -25,6 +25,7 @@ import {
 } from "@/lib/line/flex/menu-guide"
 import { buildActionMessages } from "@/lib/line/handlers/actions"
 import { isOneOnOneUserSource } from "@/lib/line/handlers/source"
+import { tryAutoLinkFromEmployeeCode } from "@/lib/line/auto-link-line-user"
 import {
   isStockCommandEnabled,
   parseSlashCommand,
@@ -211,6 +212,15 @@ export async function handleMessage(
   const locale = lineUserId
     ? await resolveLocaleForLineUser(lineUserId)
     : DEFAULT_LOCALE
+
+  const linkMessages = await tryAutoLinkFromEmployeeCode(lineUserId, text)
+  if (linkMessages) {
+    await getLineClient().replyMessage({
+      replyToken: event.replyToken,
+      messages: linkMessages,
+    })
+    return
+  }
 
   const localeCommand = parseLocaleSlashCommand(text)
   if (localeCommand) {

@@ -22,7 +22,8 @@
     "test:e2e:p5": "node scripts/e2e/run-all-p5.mjs",
     "test:e2e:p5:remote": "E2E_REMOTE=1 node scripts/e2e/run-all-p5.mjs",
     "e2e:bootstrap-remote": "node scripts/e2e/bootstrap-remote-env.mjs",
-    "db:push:remote": "bash scripts/db-push-linked.sh"
+    "db:push:remote": "bash scripts/db-push-linked.sh",
+    "line:greeting-setup": "node scripts/line-oa-greeting-setup.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

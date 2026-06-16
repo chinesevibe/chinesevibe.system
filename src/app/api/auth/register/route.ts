@@ -3,7 +3,9 @@ import { NextResponse, type NextRequest } from "next/server"
 import { defaultRoleForDepartment } from "@/lib/auth/department-role-defaults"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { PENDING_REGISTRATION_PATH } from "@/lib/auth/employee-access"
+import { verifyIdToken } from "@/lib/auth/line-login"
 import { mintLineUserSession } from "@/lib/auth/line-session"
+import { canRelinkLineUserId, isRealLineId } from "@/lib/auth/line-user-id"
 import {
   LINE_REGISTER_COOKIE,
   LINE_REGISTER_COOKIE_OPTS,
@@ -22,6 +24,7 @@ type RegisterBody = {
   department?: string
   position_id?: string
   position?: string
+  line_id_token?: string
 }
 
 type EmployeeRow = {
@@ -34,12 +37,27 @@ type EmployeeRow = {
   leave_blacklisted: boolean | null
 }
 
-function isRealLineId(id: string | null | undefined): id is string {
-  return typeof id === "string" && id.startsWith("U")
-}
-
 function buildFullName(firstName: string, lastName: string) {
   return `${firstName} ${lastName}`.trim()
+}
+
+async function resolveRegisterLineUserId(
+  request: NextRequest,
+  body: RegisterBody
+): Promise<string | undefined> {
+  const cookieLineId = request.cookies.get(LINE_REGISTER_COOKIE)?.value
+  if (isRealLineId(cookieLineId)) return cookieLineId
+
+  const idToken = body.line_id_token?.trim()
+  if (!idToken) return undefined
+
+  try {
+    const payload = await verifyIdToken(idToken)
+    return isRealLineId(payload.sub) ? payload.sub : undefined
+  } catch (error) {
+    console.error("register line_id_token verify failed", error)
+    return undefined
+  }
 }
 
 async function validateOrganizationFields(
@@ -195,15 +213,15 @@ async function resolveEmployeeForRegistration(
 }
 
 export async function POST(request: NextRequest) {
-  const cookieLineId = request.cookies.get(LINE_REGISTER_COOKIE)?.value
-  const hasRealLineCookie = isRealLineId(cookieLineId)
-
   let body: RegisterBody
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: "invalid body" }, { status: 400 })
   }
+
+  const cookieLineId = await resolveRegisterLineUserId(request, body)
+  const hasRealLineCookie = isRealLineId(cookieLineId)
 
   const firstName = body.first_name?.trim() ?? ""
   const lastName = body.last_name?.trim() ?? ""
@@ -309,6 +327,8 @@ export async function POST(request: NextRequest) {
 
   const existingLineId = employee.line_user_id
   const employeeHasRealLine = isRealLineId(existingLineId)
+  const employeeNeedsLineLink =
+    canRelinkLineUserId(existingLineId) && hasRealLineCookie
 
   if (
     employeeHasRealLine &&
@@ -341,7 +361,7 @@ export async function POST(request: NextRequest) {
   const hadRealLineBefore = employeeHasRealLine
   let sessionLineUserId = existingLineId
 
-  if (hasRealLineCookie && existingLineId !== cookieLineId) {
+  if (employeeNeedsLineLink) {
     const { error: updateError } = await admin
       .from("hr_employees")
       .update({
@@ -410,7 +430,9 @@ export async function POST(request: NextRequest) {
   }
 
   const shouldNotify =
-    status === "inactive" && hasRealLineCookie && !hadRealLineBefore
+    status === "inactive" &&
+    hasRealLineCookie &&
+    (!hadRealLineBefore || employeeNeedsLineLink)
 
   if (shouldNotify) {
     void notifyRegistrationPending(employee.id).catch((err) => {

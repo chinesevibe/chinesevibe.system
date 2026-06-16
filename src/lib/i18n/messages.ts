@@ -84,6 +84,10 @@ const th: MessageCatalog = {
   "auth.register.error.departmentRequired": "กรุณาเลือกแผนก",
   "auth.register.error.positionRequired": "กรุณาเลือกตำแหน่ง",
   "auth.register.error.submitFailed": "ลงทะเบียนไม่สำเร็จ",
+  "auth.register.lineLoginHint": "เปิดจากเบราว์เซอร์ภายนอก — กรุณาเข้าสู่ระบบ LINE ก่อนลงทะเบียน:",
+  "auth.register.lineLoginAction": "เข้าสู่ระบบด้วย LINE",
+  "auth.register.lineLinked": "✅ ผูกบัญชี LINE กับ {name} แล้ว",
+  "auth.register.lineLinkedPending": "✅ ผูกบัญชี LINE แล้ว — ส่งคำขอลงทะเบียนต่อได้",
 
   "portal.title": "Employee Portal",
   "portal.logout": "ออกจากระบบ",
@@ -281,7 +285,10 @@ const th: MessageCatalog = {
     "เปลี่ยนภาษา CNV WorkHub:\n/th — ไทย\n/en — English\n/zh หรือ /ch — 中文\n/my — မြန်မာ\n\nพิมพ์คำสั่งแล้วกดเมนูเช็คอินอีกครั้งเพื่อดูข้อความใหม่",
   "line.lang.changed": "✅ ตั้งภาษาเป็น {lang} แล้ว — ลองกดเมนูเช็คอินอีกครั้ง",
   "line.lang.notRegistered":
-    "ยังไม่ได้ลงทะเบียน — ลงทะเบียนก่อนจึงจะเปลี่ยนภาษาได้",
+    "ยังไม่ได้ผูก LINE — พิมพ์รหัสพนักงาน (เช่น CHV021) ในแชทนี้ หรือลงทะเบียนผ่านลิงก์ใน OA",
+  "line.link.success": "✅ ผูก LINE กับ {name} แล้ว — ลอง /th /my /zh เปลี่ยนภาษาได้",
+  "line.link.already": "✅ บัญชี LINE นี้ผูกกับพนักงานแล้ว",
+  "line.link.failed": "ผูก LINE ไม่สำเร็จ — ตรวจรหัสพนักงานหรือติดต่อ HR",
 
   "line.attendancePicker.alt": "บันทึกเวลา — เข้างาน / เลิกงาน",
   "line.attendancePicker.title": "เช็คอิน · เข้างาน",
@@ -835,6 +842,10 @@ const en: MessageCatalog = {
   "auth.register.error.departmentRequired": "Please select a department",
   "auth.register.error.positionRequired": "Please select a position",
   "auth.register.error.submitFailed": "Registration failed",
+  "auth.register.lineLoginHint": "Opened outside LINE — sign in with LINE before registering:",
+  "auth.register.lineLoginAction": "Sign in with LINE",
+  "auth.register.lineLinked": "✅ LINE linked to {name}",
+  "auth.register.lineLinkedPending": "✅ LINE linked — you can submit registration",
 
   "portal.title": "Employee Portal",
   "portal.logout": "Sign out",
@@ -1033,7 +1044,10 @@ const en: MessageCatalog = {
     "Change CNV WorkHub language:\n/th — Thai\n/en — English\n/zh or /ch — Chinese\n/my — Myanmar\n\nThen open Check-in menu again to see the new language.",
   "line.lang.changed": "✅ Language set to {lang} — open Check-in menu again.",
   "line.lang.notRegistered":
-    "Not registered yet — register before changing language.",
+    "LINE not linked — send your employee code (e.g. CHV021) in this chat, or register via the OA link",
+  "line.link.success": "✅ LINE linked to {name} — try /th /my /zh to change language",
+  "line.link.already": "✅ This LINE account is already linked",
+  "line.link.failed": "Could not link LINE — check employee code or contact HR",
 
   "line.attendancePicker.alt": "Time record — check in / out",
   "line.attendancePicker.title": "Check-in · Clock in",

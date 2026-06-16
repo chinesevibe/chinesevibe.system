@@ -29,6 +29,7 @@ export type EmployeeListParams = {
 export type EmployeeRow = {
   id: string
   employee_code: string | null
+  line_user_id: string | null
   name: string
   position: string | null
   department: string | null
@@ -87,7 +88,7 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
   let query = supabase
     .from("hr_employees")
     .select(
-      `id, employee_code, name, position, department, role, branch_id, salary, status, contract_start, contract_file_path, probation_end, visa_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name)`,
+      `id, employee_code, line_user_id, name, position, department, role, branch_id, salary, status, contract_start, contract_file_path, probation_end, visa_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name)`,
       { count: "exact" }
     )
 
@@ -144,6 +145,7 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
     return {
       id: row.id as string,
       employee_code: (row.employee_code as string | null) ?? null,
+      line_user_id: (row.line_user_id as string | null) ?? null,
       name: row.name as string,
       position: (row.position as string | null) ?? null,
       department: (row.department as string | null) ?? null,

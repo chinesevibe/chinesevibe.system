@@ -13,6 +13,7 @@ import type { RichMenuPostbackAction } from "@/lib/line/types"
 const OPEN_ACTIONS = new Set<RichMenuPostbackAction>([
   "contact_hr",
   "contact_hr_notify",
+  "welcome",
 ])
 
 export async function lineAccessGateMessages(

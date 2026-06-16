@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { useRegisterLine } from "@/features/auth/RegisterLineProvider"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import { cn } from "@/lib/utils"
 
@@ -59,6 +60,13 @@ function FormSection({
 export function RegisterForm() {
   const router = useRouter()
   const { tx } = useLocale()
+  const {
+    lineReady,
+    idToken,
+    linked,
+    linkedName,
+    linkWithEmployeeCode,
+  } = useRegisterLine()
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [employeeCode, setEmployeeCode] = useState("")
@@ -72,6 +80,22 @@ export function RegisterForm() {
   const [optionsError, setOptionsError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [lineLinkHint, setLineLinkHint] = useState<string | null>(null)
+
+  const lineStartUrl = "/api/auth/line/start"
+
+  useEffect(() => {
+    if (!linked || !linkedName) return
+    setLineLinkHint(tx("auth.register.lineLinked", { name: linkedName }))
+  }, [linked, linkedName, tx])
+
+  async function tryLinkLineBeforeSubmit(code: string) {
+    if (!code.trim() || linked) return
+    const ok = await linkWithEmployeeCode(code)
+    if (ok) {
+      setLineLinkHint(tx("auth.register.lineLinkedPending"))
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -155,6 +179,8 @@ export function RegisterForm() {
     setSaving(true)
     setError(null)
     try {
+      await tryLinkLineBeforeSubmit(employeeCode)
+
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -168,6 +194,7 @@ export function RegisterForm() {
           department: selectedDepartment.name,
           position_id: positionId,
           position: selectedPosition.name,
+          ...(idToken ? { line_id_token: idToken } : {}),
         }),
       })
       const data = (await res.json().catch(() => null)) as {
@@ -199,6 +226,24 @@ export function RegisterForm() {
       <p className="text-sm leading-relaxed text-muted-foreground">
         {tx("auth.register.intro")}
       </p>
+
+      {lineReady && !idToken ? (
+        <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+          {tx("auth.register.lineLoginHint")}{" "}
+          <a
+            href={lineStartUrl}
+            className="font-medium text-brand-red underline-offset-2 hover:underline"
+          >
+            {tx("auth.register.lineLoginAction")}
+          </a>
+        </p>
+      ) : null}
+
+      {lineLinkHint ? (
+        <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-800 dark:text-emerald-200">
+          {lineLinkHint}
+        </p>
+      ) : null}
 
       {optionsError ? (
         <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -247,6 +292,7 @@ export function RegisterForm() {
             className={fieldClassName}
             value={employeeCode}
             onChange={(e) => setEmployeeCode(e.target.value)}
+            onBlur={() => void tryLinkLineBeforeSubmit(employeeCode)}
             placeholder={tx("auth.register.employeeCodePlaceholder")}
             required
             autoComplete="username"

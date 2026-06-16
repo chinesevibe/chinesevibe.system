@@ -6,7 +6,7 @@ import { getLineClient } from "@/lib/line/client"
 import { handleMessage } from "@/lib/line/handlers/message"
 import { handlePostback } from "@/lib/line/handlers/postback"
 import { shouldHandleInteractiveEvent } from "@/lib/line/handlers/source"
-import { buildWelcomeReplyMessages } from "@/lib/line/welcome-messages"
+import { buildWelcomeFollowMessages } from "@/lib/line/welcome-messages"
 
 async function handleFollow(event: webhook.FollowEvent): Promise<void> {
   if (!event.replyToken) {
@@ -21,7 +21,7 @@ async function handleFollow(event: webhook.FollowEvent): Promise<void> {
 
   await getLineClient().replyMessage({
     replyToken: event.replyToken,
-    messages: buildWelcomeReplyMessages(locale),
+    messages: buildWelcomeFollowMessages(locale),
   })
 }
 

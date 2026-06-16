@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { EmployeeRow } from "@/features/employees/data"
+import { LineUserIdCell } from "@/features/employees/LineUserIdCell"
 import { formatThaiSlashDate } from "@/lib/datetime/thailand"
 import { cn } from "@/lib/utils"
 
@@ -87,6 +88,9 @@ function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
         </div>
       </TableCell>
       <TableCell className="text-sm">{e.position ?? "—"}</TableCell>
+      <TableCell onClick={stopRowNav}>
+        <LineUserIdCell lineUserId={e.line_user_id} />
+      </TableCell>
       <TableCell>
         {e.branch_name ? (
           <span
@@ -179,6 +183,7 @@ export function EmployeeTable({
             <TableHead className="w-[100px]">รหัสพนักงาน</TableHead>
             <TableHead>ชื่อ-นามสกุล</TableHead>
             <TableHead>ตำแหน่ง</TableHead>
+            <TableHead className="min-w-[240px]">LINE User ID</TableHead>
             <TableHead>สาขา</TableHead>
             <TableHead className="text-right">เงินเดือน</TableHead>
             <TableHead>วันเริ่มงาน</TableHead>
