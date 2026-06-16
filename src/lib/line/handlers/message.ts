@@ -26,11 +26,18 @@ import {
 import { buildActionMessages } from "@/lib/line/handlers/actions"
 import {
   buildPendingQueueMessages,
-  isPendingSlashCommand,
+  isPendingQueueCommand,
 } from "@/lib/line/handlers/actions/pending-queue"
+import {
+  handleHrGroupTextCommand,
+  isKnownHrGroup,
+} from "@/lib/line/handlers/group-hr-commands"
 import { handlePendingActionText } from "@/lib/line/handlers/pending-action-text"
 import { getActivePendingAction } from "@/lib/line/approval/pending-actions"
-import { isOneOnOneUserSource } from "@/lib/line/handlers/source"
+import {
+  isOneOnOneUserSource,
+  resolveLineUserIdFromSource,
+} from "@/lib/line/handlers/source"
 import { tryAutoLinkFromEmployeeCode } from "@/lib/line/auto-link-line-user"
 import {
   isStockCommandEnabled,
@@ -191,7 +198,33 @@ async function locationMessages(
 export async function handleMessage(
   event: webhook.MessageEvent
 ): Promise<void> {
-  if (!event.replyToken || !isOneOnOneUserSource(event.source)) {
+  if (!event.replyToken) {
+    return
+  }
+
+  const groupId =
+    event.source?.type === "group"
+      ? event.source.groupId
+      : event.source?.type === "room"
+        ? event.source.roomId
+        : undefined
+
+  if (groupId && event.message.type === "text") {
+    if (!(await isKnownHrGroup(groupId))) {
+      return
+    }
+    const lineUserId = resolveLineUserIdFromSource(event.source)
+    const messages = await handleHrGroupTextCommand(event.message.text, lineUserId)
+    if (messages.length > 0) {
+      await getLineClient().replyMessage({
+        replyToken: event.replyToken,
+        messages,
+      })
+    }
+    return
+  }
+
+  if (!isOneOnOneUserSource(event.source)) {
     return
   }
 
@@ -242,7 +275,7 @@ export async function handleMessage(
     }
   }
 
-  if (isPendingSlashCommand(text)) {
+  if (isPendingQueueCommand(text)) {
     const messages = await buildPendingQueueMessages(lineUserId)
     await getLineClient().replyMessage({
       replyToken: event.replyToken,

@@ -322,6 +322,18 @@ export async function buildPendingQueueMessages(
   ]
 }
 
+export function isPendingQueueCommand(text: string): boolean {
+  const trimmed = text.trim()
+  const lower = trimmed.toLowerCase()
+  return (
+    lower === "/pending" ||
+    trimmed === "เปิดคิวรออนุมัติ" ||
+    trimmed === "ดูคิวรออนุมัติ" ||
+    lower === "open pending queue"
+  )
+}
+
+/** @deprecated use isPendingQueueCommand */
 export function isPendingSlashCommand(text: string): boolean {
-  return text.trim().toLowerCase() === "/pending"
+  return isPendingQueueCommand(text)
 }

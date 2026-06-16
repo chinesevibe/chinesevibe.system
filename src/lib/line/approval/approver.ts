@@ -1,5 +1,5 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { canApproveHrRequests, canManageHr } from "@/lib/auth/roles"
+import { canApproveHrRequests, canManageHr, isDev } from "@/lib/auth/roles"
 import type { Employee } from "@/lib/auth/session"
 
 export type LineApprover = { id: string; name: string; role: Employee["role"] }
@@ -32,6 +32,6 @@ export async function assertHrOfficerLineApprover(
 ): Promise<LineApprover | null> {
   const approver = await assertHrLineApprover(lineUserId)
   if (!approver) return null
-  if (!canApproveHrRequests(approver.role)) return null
-  return approver
+  if (canApproveHrRequests(approver.role) || isDev(approver.role)) return approver
+  return null
 }

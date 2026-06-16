@@ -554,6 +554,8 @@ const th: MessageCatalog = {
   "line.approval.pendingExpired": "คำขอหมดอายุแล้ว — กรุณากดปฏิเสธ/ตอบกลับใหม่จาก Flex",
   "line.approval.rejectNeedsChat":
     "กรุณาดำเนินการในแชท 1:1 กับ OA (ไม่ใช่ในกลุ่ม) แล้วพิมพ์เหตุผล",
+  "line.approval.groupApproveAmbiguous":
+    "มีคำขอลารออนุมัติมากกว่า 1 รายการ — กรุณากดปุ่มอนุมัติในการ์ด หรือเลือกจากคิวด้านล่าง",
   "line.approval.notFound": "ไม่พบรายการนี้",
   "line.approval.failed": "ดำเนินการไม่สำเร็จ กรุณาลองใหม่หรือใช้ Dashboard",
   "line.approval.approve": "อนุมัติ",
@@ -1375,6 +1377,8 @@ const en: MessageCatalog = {
   "line.approval.pendingExpired": "Request expired — tap reject/reply again from Flex",
   "line.approval.rejectNeedsChat":
     "Please continue in a 1:1 chat with the OA (not in a group), then type your reason",
+  "line.approval.groupApproveAmbiguous":
+    "More than one leave is pending — use the Approve button on the card or pick from the queue below",
   "line.approval.notFound": "Item not found",
   "line.approval.failed": "Action failed — try again or use the Dashboard",
   "line.approval.approve": "Approve",

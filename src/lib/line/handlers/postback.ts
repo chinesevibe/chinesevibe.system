@@ -9,6 +9,7 @@ import {
 } from "@/lib/line/handlers/registration-postback"
 import { lineAccessGateMessages } from "@/lib/line/line-access-gate"
 import { resolveLineUserIdFromSource } from "@/lib/line/handlers/source"
+import { notifyHrGroup } from "@/lib/line/notify-hr"
 import { parseApprovalPostback, parsePostbackAction } from "@/lib/line/types"
 import { resolveLocaleForLineUser } from "@/lib/i18n/employee-locale"
 import { t } from "@/lib/i18n/translate"
@@ -22,6 +23,37 @@ async function fallbackText(lineUserId?: string): Promise<messagingApi.Message> 
     type: "text",
     text: t("line.error.unknownMenu", locale),
   }
+}
+
+async function replyOrPushGroup(
+  event: webhook.PostbackEvent,
+  messages: messagingApi.Message[]
+): Promise<void> {
+  if (!event.replyToken) return
+
+  try {
+    await getLineClient().replyMessage({
+      replyToken: event.replyToken,
+      messages,
+    })
+    return
+  } catch (error) {
+    console.warn("postback reply failed, trying group push", error)
+  }
+
+  const groupId =
+    event.source?.type === "group"
+      ? event.source.groupId
+      : event.source?.type === "room"
+        ? event.source.roomId
+        : undefined
+
+  if (groupId) {
+    await notifyHrGroup(messages)
+    return
+  }
+
+  throw new Error("postback reply failed and no group target for push")
 }
 
 export async function handlePostback(
@@ -58,10 +90,7 @@ export async function handlePostback(
   }
 
   try {
-    await getLineClient().replyMessage({
-      replyToken: event.replyToken,
-      messages,
-    })
+    await replyOrPushGroup(event, messages)
   } catch (error) {
     throw new Error(
       `postback reply failed (action=${action ?? approval?.action ?? "unknown"})`,

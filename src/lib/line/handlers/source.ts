@@ -1,5 +1,7 @@
 import type { webhook } from "@line/bot-sdk"
 
+import { isHrGroupCommandText } from "@/lib/line/handlers/group-hr-commands"
+
 /** 1:1 chat with the OA only — not group or room. */
 export function isOneOnOneUserSource(
   source: webhook.Event["source"] | undefined
@@ -31,6 +33,13 @@ export function shouldHandleInteractiveEvent(event: webhook.Event): boolean {
       event.source?.type === "group" ||
       event.source?.type === "room"
     )
+  }
+  if (
+    event.type === "message" &&
+    event.message.type === "text" &&
+    (event.source?.type === "group" || event.source?.type === "room")
+  ) {
+    return isHrGroupCommandText(event.message.text)
   }
   return isOneOnOneUserSource(event.source)
 }

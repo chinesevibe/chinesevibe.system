@@ -29,7 +29,6 @@ export type PendingApprovalKind =
   | "leave"
   | "overtime"
   | "attendance"
-  | "document"
   | "location_review"
 
 export type PendingApprovalItem = {
@@ -117,8 +116,6 @@ export async function getDashboardWidgets() {
     attSubmissionCountRes,
     otRes,
     otCountRes,
-    docRequestsRes,
-    docRequestCountRes,
     locationReviewRes,
     locationReviewCountRes,
     complaintsRes,
@@ -158,7 +155,7 @@ export async function getDashboardWidgets() {
     supabase
       .from("hr_document_requests")
       .select("doc_type")
-      .in("status", ["pending", "processing"]),
+      .in("status", [...PENDING_DOC_STATUSES]),
     supabase
       .from("hr_employees")
       .select("id, name, position, status, branch_id, created_at")
@@ -214,16 +211,6 @@ export async function getDashboardWidgets() {
       .from("hr_overtime_requests")
       .select("id", { count: "exact", head: true })
       .eq("approval_status", "pending_hr"),
-    supabase
-      .from("hr_document_requests")
-      .select("id, doc_type, status, created_at, hr_employees!inner(name)")
-      .in("status", [...PENDING_DOC_STATUSES])
-      .order("created_at", { ascending: false })
-      .limit(PENDING_APPROVAL_FETCH_LIMIT),
-    supabase
-      .from("hr_document_requests")
-      .select("id", { count: "exact", head: true })
-      .in("status", [...PENDING_DOC_STATUSES]),
     supabase
       .from("hr_attendance")
       .select(`id, check_in_at, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name)`)
@@ -366,19 +353,6 @@ export async function getDashboardWidgets() {
     })
   }
 
-  for (const row of docRequestsRes.data ?? []) {
-    const docLabel =
-      DOC_TYPE_LABELS[row.doc_type as DocType] ?? (row.doc_type as string)
-    pendingApprovalItems.push({
-      id: `document-${row.id}`,
-      kind: "document",
-      title: "ขอเอกสารรอดำเนินการ",
-      summary: `${employeeJoin(row.hr_employees as { name: string } | Array<{ name: string }>)?.name ?? "—"} · ${docLabel}`,
-      href: "/admin/documents?status=pending",
-      createdAt: row.created_at as string | null,
-    })
-  }
-
   for (const row of locationReviewRes.data ?? []) {
     pendingApprovalItems.push({
       id: `location-${row.id}`,
@@ -405,7 +379,6 @@ export async function getDashboardWidgets() {
     (leavePendingCountRes.count ?? 0) +
     (attSubmissionCountRes.count ?? 0) +
     (otCountRes.count ?? 0) +
-    (docRequestCountRes.count ?? 0) +
     (locationReviewCountRes.count ?? 0)
 
   const complaintReminders: ComplaintReminderItem[] = (

@@ -99,7 +99,6 @@ const PENDING_APPROVAL_ICON: Record<
   leave: { icon: CalendarCheck, tone: "warning" },
   overtime: { icon: Clock, tone: "warning" },
   attendance: { icon: Clock, tone: "info" },
-  document: { icon: FileText, tone: "info" },
   location_review: { icon: MapPin, tone: "purple" },
 }
 
