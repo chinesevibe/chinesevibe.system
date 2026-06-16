@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   createContext,
   useCallback,
@@ -20,7 +21,17 @@ import {
   setNotificationSoundMuted,
 } from "@/lib/notifications/play-notification-sound"
 
-const POLL_MS = 30_000
+const POLL_MS = 15_000
+
+function inboxFingerprint(inbox: NotificationInbox): string {
+  return JSON.stringify({
+    approvalTotal: inbox.approvalTotal,
+    total: inbox.total,
+    complianceTotal: inbox.complianceTotal,
+    navBadges: inbox.navBadges,
+    itemIds: inbox.items.map((item) => item.id),
+  })
+}
 
 type AdminNotificationContextValue = {
   inbox: NotificationInbox
@@ -61,7 +72,9 @@ export function AdminNotificationProvider({
     isNotificationSoundMuted()
   )
   const prevApprovalRef = useRef(initialInbox.approvalTotal)
+  const inboxFingerprintRef = useRef(inboxFingerprint(initialInbox))
   const seededRef = useRef(false)
+  const router = useRouter()
 
   const navGroups = useMemo(
     () =>
@@ -79,11 +92,19 @@ export function AdminNotificationProvider({
   const refresh = useCallback(async (opts?: { showLoading?: boolean }) => {
     if (opts?.showLoading) setLoading(true)
     try {
-      const res = await fetch("/api/notifications", { cache: "no-store" })
-      if (!res.ok) return
+      const res = await fetch("/api/notifications", {
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: { "Cache-Control": "no-cache" },
+      })
+      if (!res.ok) {
+        console.warn("notifications poll failed:", res.status)
+        return
+      }
       const data = (await res.json()) as NotificationInbox
       const prev = prevApprovalRef.current
       const next = data.approvalTotal ?? 0
+      const nextFingerprint = inboxFingerprint(data)
 
       if (
         seededRef.current &&
@@ -94,15 +115,25 @@ export function AdminNotificationProvider({
         playNotificationSound()
       }
 
+      const inboxChanged = nextFingerprint !== inboxFingerprintRef.current
       seededRef.current = true
       prevApprovalRef.current = next
+      inboxFingerprintRef.current = nextFingerprint
       setInbox(data)
+
+      if (inboxChanged) {
+        router.refresh()
+      }
     } finally {
       if (opts?.showLoading) setLoading(false)
     }
-  }, [soundMuted])
+  }, [router, soundMuted])
 
   useEffect(() => {
+    const bootId = window.setTimeout(() => {
+      void refresh()
+    }, 0)
+
     const id = window.setInterval(() => {
       if (document.visibilityState === "visible") void refresh()
     }, POLL_MS)
@@ -111,6 +142,7 @@ export function AdminNotificationProvider({
     }
     document.addEventListener("visibilitychange", onVisible)
     return () => {
+      window.clearTimeout(bootId)
       window.clearInterval(id)
       document.removeEventListener("visibilitychange", onVisible)
     }

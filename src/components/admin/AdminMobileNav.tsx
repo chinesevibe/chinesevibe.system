@@ -34,8 +34,7 @@ export function AdminMobileNav({
 }) {
   const [open, setOpen] = useState(false)
   const live = useAdminNotificationsOptional()
-  const resolvedGroups =
-    live && live.navGroups.length > 0 ? live.navGroups : groups
+  const resolvedGroups = live?.navGroups ?? groups
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

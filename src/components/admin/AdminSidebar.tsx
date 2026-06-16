@@ -191,8 +191,7 @@ export function AdminSidebar({
   devAllMode?: boolean
 }) {
   const live = useAdminNotificationsOptional()
-  const groups =
-    live && live.navGroups.length > 0 ? live.navGroups : groupsProp
+  const groups = live?.navGroups ?? groupsProp
 
   return (
     <aside

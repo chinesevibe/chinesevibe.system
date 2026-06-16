@@ -137,7 +137,7 @@ export function AdminNotificationBell({
             <div>
               <p className="text-xs font-semibold">การแจ้งเตือน</p>
               <p className="text-[10px] text-muted-foreground">
-                อัปเดตอัตโนมัติทุก 30 วินาที
+                อัปเดตอัตโนมัติทุก 15 วินาที
               </p>
             </div>
             {loading ? (

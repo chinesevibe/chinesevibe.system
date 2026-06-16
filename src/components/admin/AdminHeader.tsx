@@ -37,7 +37,7 @@ export function AdminHeader({
 }) {
   const isDev = user?.role === "dev"
   const live = useAdminNotifications()
-  const navGroups = live.navGroups.length > 0 ? live.navGroups : navGroupsProp
+  const navGroups = live?.navGroups ?? navGroupsProp
 
   return (
     <header className="z-10 shrink-0 border-b border-border/80 bg-white px-3 py-2 md:px-4 md:py-2.5">

@@ -12,6 +12,8 @@ import {
 import { canEmployeeAccessAdminPortal } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   const employee = await getCurrentEmployee()
   if (!employee || !canEmployeeAccessAdminPortal(employee)) {
