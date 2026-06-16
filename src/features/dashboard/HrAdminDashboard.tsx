@@ -131,11 +131,11 @@ export async function HrAdminDashboard({ userName }: { userName: string }) {
         <KpiCard
           compact
           iconSize="lg"
-          label="Unresolved HR Tickets"
-          value={widgets.unresolvedAlerts}
-          detail="Open support requests"
+          label="Pending Approvals"
+          value={widgets.pendingApprovalCount}
+          detail="รายการรอการอนุมัติทั้งหมด"
           icon={MessageCircleWarning}
-          accent="purple"
+          accent={widgets.pendingApprovalCount > 0 ? "purple" : "success"}
         />
       </div>
 
@@ -208,11 +208,11 @@ export async function HrAdminDashboard({ userName }: { userName: string }) {
         <WidgetCard
           compact
           title="Recent HR Tickets"
-          href="/admin/alerts"
-          footerHref="/admin/alerts"
-          footerLabel="Go to Tickets"
+          href="/admin/leaves?status=pending"
+          footerHref="/admin/leaves?status=pending"
+          footerLabel="ดูรายการรออนุมัติ"
         >
-          <RecentHrTicketsList items={widgets.recentAlerts} />
+          <RecentHrTicketsList items={widgets.pendingApprovals} />
         </WidgetCard>
       </div>
 
@@ -230,11 +230,11 @@ export async function HrAdminDashboard({ userName }: { userName: string }) {
         <WidgetCard
           compact
           title="Compliance Reminders"
-          href="/admin/alerts"
-          footerHref="/admin/alerts"
-          footerLabel="Go to Compliance"
+          href="/admin/complaints?status=open"
+          footerHref="/admin/complaints?status=open"
+          footerLabel="ดูเรื่องร้องเรียน"
         >
-          <ComplianceRemindersList items={widgets.compliance} />
+          <ComplianceRemindersList items={widgets.complaintReminders} />
         </WidgetCard>
 
         <WidgetCard compact title="Attendance (7 days)" href="/admin/attendance">

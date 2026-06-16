@@ -1,21 +1,26 @@
 import {
-  AlertCircle,
+  CalendarCheck,
   Clock,
   FileText,
+  MapPin,
+  MessageCircleWarning,
   Shield,
+  UserPlus,
   Wallet,
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
 
 import { StatusPill } from "@/components/brand/StatusPill"
+import { COMPLAINT_STATUS_LABELS } from "@/features/complaints/types"
 import type { DocType } from "@/features/documents/types"
 import type {
   AttendanceException,
-  ComplianceItem,
+  ComplaintReminderItem,
+  PendingApprovalItem,
+  PendingApprovalKind,
   PendingDocumentGroup,
   PendingRegistrationItem,
-  RecentAlertItem,
 } from "@/features/dashboard/widgets-data"
 import { cn } from "@/lib/utils"
 
@@ -85,13 +90,17 @@ const DOC_TYPE_ICON: Record<DocType, LucideIcon> = {
   other: FileText,
 }
 
-const COMPLIANCE_KIND_ICON: Record<
-  ComplianceItem["kind"],
-  { icon: LucideIcon; tone: "warning" | "danger" | "info" }
+const PENDING_APPROVAL_ICON: Record<
+  PendingApprovalKind,
+  { icon: LucideIcon; tone: "warning" | "danger" | "info" | "purple" }
 > = {
-  probation: { icon: Clock, tone: "warning" },
-  visa: { icon: Shield, tone: "info" },
-  work_permit: { icon: FileText, tone: "info" },
+  registration: { icon: UserPlus, tone: "warning" },
+  onboarding: { icon: UserPlus, tone: "info" },
+  leave: { icon: CalendarCheck, tone: "warning" },
+  overtime: { icon: Clock, tone: "warning" },
+  attendance: { icon: Clock, tone: "info" },
+  document: { icon: FileText, tone: "info" },
+  location_review: { icon: MapPin, tone: "purple" },
 }
 
 function EmptyListMessage({ children }: { children: string }) {
@@ -108,10 +117,17 @@ function formatExceptionLabel(kind: AttendanceException["kind"]): {
   return { label: "Open", variant: "warning" }
 }
 
-function formatComplianceKind(kind: ComplianceItem["kind"]): string {
-  if (kind === "probation") return "Probation review"
-  if (kind === "visa") return "Visa renewal"
-  return "Work permit renewal"
+function formatCreatedAt(iso: string | null): string {
+  if (!iso) return "—"
+  if (!iso.includes("T")) return iso
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  return date.toLocaleString("th-TH", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 }
 
 export function DocumentApprovalsList({
@@ -146,56 +162,43 @@ export function DocumentApprovalsList({
 export function ComplianceRemindersList({
   items,
 }: {
-  items: ComplianceItem[]
+  items: ComplaintReminderItem[]
 }) {
   if (items.length === 0) {
-    return <EmptyListMessage>ไม่มีรายการที่ใกล้ครบกำหนด</EmptyListMessage>
+    return <EmptyListMessage>ไม่มีเรื่องร้องเรียนที่เปิดอยู่</EmptyListMessage>
   }
 
   return (
     <ul className="space-y-3">
-      {items.map((item) => {
-        const meta = COMPLIANCE_KIND_ICON[item.kind]
-        const overdue = item.daysLeft < 0
-        return (
-          <li
-            key={`${item.employeeId}-${item.kind}`}
-            className="flex items-start gap-3"
-          >
-            <CircleIcon
-              icon={meta.icon}
-              tone={overdue ? "danger" : item.daysLeft <= 7 ? "warning" : meta.tone}
-            />
-            <div className="min-w-0 flex-1">
+      {items.map((item) => (
+        <li key={item.id} className="flex items-start gap-3">
+          <CircleIcon icon={MessageCircleWarning} tone="warning" />
+          <div className="min-w-0 flex-1">
+            <Link
+              href={`/admin/complaints?status=open`}
+              className="block rounded-md transition-colors hover:text-brand-red"
+            >
               <p className="text-sm font-medium leading-tight">
-                {item.employeeName}
+                {item.ticketCode} · {item.subject}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                {formatComplianceKind(item.kind)}
+                {item.isAnonymous
+                  ? "ผู้แจ้งไม่เปิดเผยตัวตน"
+                  : (item.employeeName ?? "—")}
               </p>
-              <p
-                className={cn(
-                  "mt-0.5 text-xs",
-                  overdue
-                    ? "font-semibold text-brand-red"
-                    : item.daysLeft <= 7
-                      ? "text-amber-600"
-                      : "text-muted-foreground"
-                )}
-              >
-                {overdue
-                  ? "Overdue"
-                  : item.daysLeft === 0
-                    ? "Due today"
-                    : `Due in ${item.daysLeft} days`}
-              </p>
-            </div>
-            <span className="shrink-0 text-xs text-muted-foreground">
-              {item.dueDate}
-            </span>
-          </li>
-        )
-      })}
+              <div className="mt-1.5">
+                <StatusPill
+                  label={COMPLAINT_STATUS_LABELS[item.status]}
+                  variant="pending"
+                />
+              </div>
+            </Link>
+          </div>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {formatCreatedAt(item.createdAt)}
+          </span>
+        </li>
+      ))}
     </ul>
   )
 }
@@ -268,38 +271,37 @@ export function PendingRegistrationsList({
 export function RecentHrTicketsList({
   items,
 }: {
-  items: RecentAlertItem[]
+  items: PendingApprovalItem[]
 }) {
   if (items.length === 0) {
-    return <EmptyListMessage>ไม่มี HR ticket ที่เปิดอยู่</EmptyListMessage>
+    return <EmptyListMessage>ไม่มีรายการรอการอนุมัติ</EmptyListMessage>
   }
 
   return (
     <ul className="space-y-3">
-      {items.map((item) => (
-        <li key={item.id} className="flex items-start gap-3">
-          <CircleIcon
-            icon={AlertCircle}
-            tone={item.status === "failed" ? "danger" : "warning"}
-          />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium leading-tight">
-              <span className="text-muted-foreground">Alert</span>
-              {" · "}
-              {item.alertType}
-            </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {item.triggerDate} · {item.employeeName}
-            </p>
-            <div className="mt-1.5">
-              <StatusPill
-                label={item.status === "failed" ? "Failed" : "Open"}
-                variant={item.status === "failed" ? "rejected" : "pending"}
-              />
+      {items.map((item) => {
+        const meta = PENDING_APPROVAL_ICON[item.kind]
+        return (
+          <li key={item.id} className="flex items-start gap-3">
+            <CircleIcon icon={meta.icon} tone={meta.tone} />
+            <div className="min-w-0 flex-1">
+              <Link
+                href={item.href}
+                className="block rounded-md transition-colors hover:text-brand-red"
+              >
+                <p className="text-sm font-medium leading-tight">{item.title}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{item.summary}</p>
+                <div className="mt-1.5">
+                  <StatusPill label="รอดำเนินการ" variant="pending" />
+                </div>
+              </Link>
             </div>
-          </div>
-        </li>
-      ))}
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {formatCreatedAt(item.createdAt)}
+            </span>
+          </li>
+        )
+      })}
     </ul>
   )
 }
