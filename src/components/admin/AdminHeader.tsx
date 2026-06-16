@@ -1,24 +1,23 @@
+"use client"
+
 import { LogOut } from "lucide-react"
 
 import type { AdminNavGroup, AdminNavItem } from "@/components/admin/admin-nav"
 import { AdminEmployeeSearch } from "@/components/admin/AdminEmployeeSearch"
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav"
 import { AdminNotificationBell } from "@/components/admin/AdminNotificationBell"
+import { useAdminNotifications } from "@/components/admin/AdminNotificationProvider"
 import { DevRoleSwitcher } from "@/components/admin/DevRoleSwitcher"
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { Button } from "@/components/ui/button"
 import type { DevViewAs } from "@/lib/auth/dev-view"
 import { roleDisplayLabel } from "@/lib/auth/labels"
 import type { EmployeeUserChip } from "@/lib/auth/session"
-import type { NotificationItem } from "@/features/notifications/types"
 
 export function AdminHeader({
-  alertBadge = 0,
-  approvalBadge = 0,
-  notificationItems = [],
   showComplianceLink = true,
   user,
-  navGroups,
+  navGroups: navGroupsProp,
   navItems,
   branchMode = false,
   inventoryMode = false,
@@ -26,9 +25,6 @@ export function AdminHeader({
   devAllMode = false,
   devView = null,
 }: {
-  alertBadge?: number
-  approvalBadge?: number
-  notificationItems?: NotificationItem[]
   showComplianceLink?: boolean
   user?: EmployeeUserChip
   navGroups?: AdminNavGroup[]
@@ -40,6 +36,8 @@ export function AdminHeader({
   devView?: DevViewAs | null
 }) {
   const isDev = user?.role === "dev"
+  const live = useAdminNotifications()
+  const navGroups = live.navGroups.length > 0 ? live.navGroups : navGroupsProp
 
   return (
     <header className="z-10 shrink-0 border-b border-border/80 bg-white px-3 py-2 md:px-4 md:py-2.5">
@@ -55,12 +53,7 @@ export function AdminHeader({
         <AdminEmployeeSearch />
         <div className="flex items-center gap-1 sm:gap-2">
           {isDev && devView ? <DevRoleSwitcher currentView={devView} /> : null}
-          <AdminNotificationBell
-            initialApprovalTotal={approvalBadge}
-            initialTotal={alertBadge}
-            initialItems={notificationItems}
-            showComplianceLink={showComplianceLink}
-          />
+          <AdminNotificationBell showComplianceLink={showComplianceLink} />
           {user ? (
             <div className="hidden items-center gap-2 rounded-lg border border-border/80 px-2 py-1 sm:flex">
               <EmployeeAvatar

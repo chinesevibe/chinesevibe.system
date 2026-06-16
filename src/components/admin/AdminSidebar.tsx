@@ -10,6 +10,7 @@ import {
   type AdminNavItem,
 } from "@/components/admin/admin-nav"
 import { AdminNavIcon } from "@/components/admin/admin-nav-icons"
+import { useAdminNotificationsOptional } from "@/components/admin/AdminNotificationProvider"
 import { isBranchNavActive } from "@/components/admin/branch-nav"
 import { isInventoryManagerNavActive, isInventoryNavActive } from "@/components/admin/inventory-nav"
 import { isDevNavActive } from "@/lib/auth/dev-view"
@@ -175,7 +176,7 @@ function AdminNavLink({
 }
 
 export function AdminSidebar({
-  groups,
+  groups: groupsProp,
   items,
   branchMode = false,
   inventoryMode = false,
@@ -189,6 +190,10 @@ export function AdminSidebar({
   inventoryManagerMode?: boolean
   devAllMode?: boolean
 }) {
+  const live = useAdminNotificationsOptional()
+  const groups =
+    live && live.navGroups.length > 0 ? live.navGroups : groupsProp
+
   return (
     <aside
       className={cn(

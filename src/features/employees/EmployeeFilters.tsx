@@ -3,10 +3,18 @@
 import { useEffect, useRef, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
+import type { BranchFilterOption } from "@/features/employees/data"
+
 const inputClass =
   "h-9 rounded-lg border border-border/80 bg-muted/30 px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
 
-export function EmployeeFilters({ departments }: { departments: string[] }) {
+export function EmployeeFilters({
+  departments,
+  branches,
+}: {
+  departments: string[]
+  branches: BranchFilterOption[]
+}) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -44,6 +52,20 @@ export function EmployeeFilters({ departments }: { departments: string[] }) {
         className={`${inputClass} w-56`}
         aria-label="ค้นหาชื่อพนักงาน"
       />
+      <select
+        value={searchParams.get("branch_id") ?? ""}
+        onChange={(e) => push({ branch_id: e.target.value })}
+        className={inputClass}
+        aria-label="กรองตามสาขา"
+      >
+        <option value="">ทุกสาขา</option>
+        <option value="__none__">รอกำหนดสาขา</option>
+        {branches.map((b) => (
+          <option key={b.id} value={b.id}>
+            {b.name}
+          </option>
+        ))}
+      </select>
       <select
         value={searchParams.get("dept") ?? ""}
         onChange={(e) => push({ dept: e.target.value })}

@@ -17,9 +17,15 @@ export type SortColumn = (typeof SORT_COLUMNS)[number]
 
 export type EmployeeStatusFilter = "all" | "active" | "inactive" | "probation" | "onboarding"
 
+export type BranchFilterOption = {
+  id: string
+  name: string
+}
+
 export type EmployeeListParams = {
   q?: string
   dept?: string
+  branch_id?: string
   status?: EmployeeStatusFilter
   sort?: SortColumn
   dir?: "asc" | "desc"
@@ -67,9 +73,16 @@ export function normalizeParams(raw: {
     ? (get("status") as EmployeeStatusFilter)
     : "all"
   const page = Math.max(1, Number.parseInt(get("page"), 10) || 1)
+  const branchRaw = get("branch_id")
+  const branch_id =
+    branchRaw === "__none__" ||
+    /^[0-9a-f-]{36}$/i.test(branchRaw)
+      ? branchRaw
+      : ""
   return {
     q: get("q"),
     dept: get("dept"),
+    branch_id,
     status,
     sort,
     dir: get("dir") === "desc" ? "desc" : "asc",
@@ -97,6 +110,11 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
   }
   if (params.dept) {
     query = query.eq("department", params.dept)
+  }
+  if (params.branch_id === "__none__") {
+    query = query.is("branch_id", null)
+  } else if (params.branch_id) {
+    query = query.eq("branch_id", params.branch_id)
   }
   if (params.status === "active" || params.status === "inactive") {
     query = query.eq("status", params.status)
@@ -176,6 +194,20 @@ export async function getOnboardingPendingCount(): Promise<number> {
     .or(ONBOARDING_PENDING_OR_FILTER)
   if (error) throw error
   return count ?? 0
+}
+
+export async function getBranchesForFilter(): Promise<BranchFilterOption[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("hr_branches")
+    .select("id, name")
+    .order("name")
+
+  if (error) throw error
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    name: row.name as string,
+  }))
 }
 
 export async function getDepartments(): Promise<string[]> {

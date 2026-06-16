@@ -6,6 +6,7 @@ import { Menu } from "lucide-react"
 import { ADMIN_SIDEBAR_WIDTH_CLASS } from "@/components/admin/admin-layout"
 import type { AdminNavGroup, AdminNavItem } from "@/components/admin/admin-nav"
 import { AdminNavLinks } from "@/components/admin/AdminSidebar"
+import { useAdminNotificationsOptional } from "@/components/admin/AdminNotificationProvider"
 import { BrandMark } from "@/components/brand/BrandMark"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -32,6 +33,9 @@ export function AdminMobileNav({
   devAllMode?: boolean
 }) {
   const [open, setOpen] = useState(false)
+  const live = useAdminNotificationsOptional()
+  const resolvedGroups =
+    live && live.navGroups.length > 0 ? live.navGroups : groups
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -49,7 +53,7 @@ export function AdminMobileNav({
         </SheetHeader>
         <div className="py-4">
           <AdminNavLinks
-            groups={groups}
+            groups={resolvedGroups}
             items={items}
             branchMode={branchMode}
             inventoryMode={inventoryMode}

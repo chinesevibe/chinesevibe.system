@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { AdminShell } from "@/components/admin/AdminShell"
+import { AdminNotificationProvider } from "@/components/admin/AdminNotificationProvider"
 import {
   getNavGroupsForEmployee,
   isBranchPortalPath,
@@ -88,6 +89,11 @@ export default async function AdminLayout({
     : null
   const navMode = dev && devView ? getDevNavMode(devView) : null
 
+  const baseNavGroups =
+    dev && devView
+      ? getDevNavGroups(devView)
+      : getNavGroupsForEmployee(employee)
+
   const notificationScope = resolveNotificationScope(employee, devView)
   const notificationInbox = notificationScope
     ? await getNotificationInbox(employee, notificationScope)
@@ -98,41 +104,37 @@ export default async function AdminLayout({
         complianceTotal: 0,
         navBadges: {},
       }
-  const alertBadge = notificationInbox.total
-  const approvalBadge = notificationInbox.approvalTotal
-  let navGroups =
-    dev && devView
-      ? getDevNavGroups(devView)
-      : getNavGroupsForEmployee(employee)
-
-  if (Object.keys(notificationInbox.navBadges).length > 0) {
-    navGroups = withNavGroupAlertBadges(navGroups, notificationInbox.navBadges)
-  }
+  const navGroups =
+    Object.keys(notificationInbox.navBadges).length > 0
+      ? withNavGroupAlertBadges(baseNavGroups, notificationInbox.navBadges)
+      : baseNavGroups
 
   return (
-    <AdminShell
-      alertBadge={alertBadge}
-      approvalBadge={approvalBadge}
-      notificationItems={notificationInbox.items}
-      showComplianceLink={
-        (notificationScope === "hr" || hasFullDataAccess(employee.role)) &&
-        !restrictedInventory &&
-        !inventoryManager
-      }
-      branchMode={navMode?.branchMode ?? branchManager}
-      inventoryMode={restrictedInventory}
-      inventoryManagerMode={inventoryManager}
-      devAllMode={navMode?.devAllMode ?? false}
-      devView={devView}
-      navGroups={navGroups}
-      user={{
-        name: employee.name,
-        role: employee.role,
-        position: employee.position,
-        avatarUrl: employee.avatarUrl,
-      }}
+    <AdminNotificationProvider
+      initialInbox={notificationInbox}
+      baseNavGroups={baseNavGroups}
     >
-      {children}
-    </AdminShell>
+      <AdminShell
+        showComplianceLink={
+          (notificationScope === "hr" || hasFullDataAccess(employee.role)) &&
+          !restrictedInventory &&
+          !inventoryManager
+        }
+        branchMode={navMode?.branchMode ?? branchManager}
+        inventoryMode={restrictedInventory}
+        inventoryManagerMode={inventoryManager}
+        devAllMode={navMode?.devAllMode ?? false}
+        devView={devView}
+        navGroups={navGroups}
+        user={{
+          name: employee.name,
+          role: employee.role,
+          position: employee.position,
+          avatarUrl: employee.avatarUrl,
+        }}
+      >
+        {children}
+      </AdminShell>
+    </AdminNotificationProvider>
   )
 }

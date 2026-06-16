@@ -1,10 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   AlertTriangle,
   Bell,
+  BellOff,
   CalendarDays,
   ClipboardList,
   Clock,
@@ -17,9 +18,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import { useAdminNotifications } from "@/components/admin/AdminNotificationProvider"
 import {
   NOTIFICATION_LIST_LIMIT,
-  type NotificationItem,
   type NotificationKind,
 } from "@/features/notifications/types"
 import { formatThaiDate } from "@/lib/datetime/thailand"
@@ -63,81 +64,19 @@ function formatBadgeCount(count: number): string {
 }
 
 export function AdminNotificationBell({
-  initialApprovalTotal = 0,
-  initialTotal = 0,
-  initialItems = [],
   showComplianceLink = true,
 }: {
-  initialApprovalTotal?: number
-  initialTotal?: number
-  initialItems?: NotificationItem[]
   showComplianceLink?: boolean
 }) {
+  const { inbox, loading, refresh, soundMuted, setSoundMuted } =
+    useAdminNotifications()
   const [open, setOpen] = useState(false)
-  const [cache, setCache] = useState<{
-    items: NotificationItem[]
-    total: number
-    approvalTotal: number
-    complianceTotal: number
-  } | null>(null)
-  const [loading, setLoading] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
-  const approvalTotal = cache?.approvalTotal ?? initialApprovalTotal
-  const total = cache?.total ?? initialTotal
-  const complianceTotal = cache?.complianceTotal ?? Math.max(0, total - approvalTotal)
-  const items = (cache?.items ?? initialItems).slice(0, NOTIFICATION_LIST_LIMIT)
-
-  const refresh = useCallback(async (opts?: { showLoading?: boolean }) => {
-    if (opts?.showLoading) setLoading(true)
-    try {
-      const res = await fetch("/api/notifications", { cache: "no-store" })
-      if (!res.ok) return
-      const data = (await res.json()) as {
-        items: NotificationItem[]
-        total: number
-        approvalTotal?: number
-        complianceTotal?: number
-      }
-      setCache({
-        items: data.items ?? [],
-        total: data.total ?? 0,
-        approvalTotal: data.approvalTotal ?? 0,
-        complianceTotal: data.complianceTotal ?? 0,
-      })
-    } finally {
-      if (opts?.showLoading) setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-    void (async () => {
-      const res = await fetch("/api/notifications", { cache: "no-store" })
-      if (cancelled || !res.ok) return
-      const data = (await res.json()) as {
-        items: NotificationItem[]
-        total: number
-        approvalTotal?: number
-        complianceTotal?: number
-      }
-      if (cancelled) return
-      setCache({
-        items: data.items ?? [],
-        total: data.total ?? 0,
-        approvalTotal: data.approvalTotal ?? 0,
-        complianceTotal: data.complianceTotal ?? 0,
-      })
-    })()
-    const onVisible = () => {
-      if (document.visibilityState === "visible") void refresh()
-    }
-    document.addEventListener("visibilitychange", onVisible)
-    return () => {
-      cancelled = true
-      document.removeEventListener("visibilitychange", onVisible)
-    }
-  }, [refresh])
+  const approvalTotal = inbox.approvalTotal
+  const total = inbox.total
+  const complianceTotal = inbox.complianceTotal
+  const items = inbox.items.slice(0, NOTIFICATION_LIST_LIMIT)
 
   const toggleOpen = () => {
     setOpen((wasOpen) => {
@@ -198,7 +137,7 @@ export function AdminNotificationBell({
             <div>
               <p className="text-xs font-semibold">การแจ้งเตือน</p>
               <p className="text-[10px] text-muted-foreground">
-                แสดงสูงสุด {NOTIFICATION_LIST_LIMIT} รายการล่าสุด
+                อัปเดตอัตโนมัติทุก 30 วินาที
               </p>
             </div>
             {loading ? (
@@ -281,6 +220,18 @@ export function AdminNotificationBell({
                 แสดง {NOTIFICATION_LIST_LIMIT} จาก {total} รายการ
               </p>
             ) : null}
+            <button
+              type="button"
+              onClick={() => setSoundMuted(!soundMuted)}
+              className="flex items-center justify-center gap-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+            >
+              {soundMuted ? (
+                <BellOff className="size-3" />
+              ) : (
+                <Bell className="size-3" />
+              )}
+              {soundMuted ? "เปิดเสียงแจ้งเตือน" : "ปิดเสียงแจ้งเตือน"}
+            </button>
             {showComplianceLink ? (
               <Link
                 href="/admin/alerts"
