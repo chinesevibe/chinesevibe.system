@@ -1,13 +1,19 @@
 import {
   DOC_STATUSES,
+  DOC_STATUS_LABELS,
+  DOC_TYPE_LABELS,
   resolveDocumentDecisionStatus,
   type DocDecisionAction,
   type DocStatus,
+  type DocType,
 } from "@/features/documents/types"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { coerceLocale } from "@/lib/i18n/types"
 import { documentStatusFlex } from "@/lib/line/flex/document-request"
-import { pushToLineUser } from "@/lib/line/notify-hr"
+import {
+  getApproverDisplayName,
+  notifyDecisionParties,
+} from "@/lib/line/notify-approval-decision"
 
 export type DocumentDecideInput = {
   docId: string
@@ -85,21 +91,40 @@ export async function decideDocument(
   const empRaw = doc.hr_employees as EmpJoin | EmpJoin[]
   const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw
   const locale = coerceLocale(emp?.preferred_locale)
+  const employeeName = emp?.name ?? "พนักงาน"
+  const docType = doc.doc_type as DocType
+  const docLabel = DOC_TYPE_LABELS[docType] ?? doc.doc_type
+  const statusLabel = DOC_STATUS_LABELS[nextStatus] ?? nextStatus
+  const approverName = await getApproverDisplayName(input.approverId)
 
-  try {
-    if (emp?.line_user_id) {
-      await pushToLineUser(emp.line_user_id, [
-        documentStatusFlex({
-          docType: doc.doc_type,
-          status: nextStatus,
-          note: note || undefined,
-          locale,
-        }),
-      ])
-    }
-  } catch (lineError) {
-    console.error("document decide LINE notify failed:", lineError)
-  }
+  const hrHeadline =
+    input.action === "reject"
+      ? "❌ ปฏิเสธคำขอเอกสาร"
+      : `✅ อัปเดตคำขอเอกสาร → ${statusLabel}`
+
+  await notifyDecisionParties({
+    employeeLineUserId: emp?.line_user_id,
+    employeeMessages: emp?.line_user_id
+      ? [
+          documentStatusFlex({
+            docType: doc.doc_type,
+            status: nextStatus,
+            note: note || undefined,
+            locale,
+          }),
+        ]
+      : undefined,
+    hrGroupText: [
+      hrHeadline,
+      `พนักงาน: ${employeeName}`,
+      `เอกสาร: ${docLabel}`,
+      `สำเนา: ${doc.copies}`,
+      note ? `หมายเหตุ: ${note}` : null,
+      `โดย: ${approverName}`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  })
 
   return { ok: true, status: nextStatus, id: input.docId }
 }

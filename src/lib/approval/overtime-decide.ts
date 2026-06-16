@@ -2,7 +2,10 @@ import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { coerceLocale } from "@/lib/i18n/types"
 import { overtimeResultFlex } from "@/lib/line/flex/overtime-request"
-import { pushToLineUser } from "@/lib/line/notify-hr"
+import {
+  getApproverDisplayName,
+  notifyDecisionParties,
+} from "@/lib/line/notify-approval-decision"
 
 export type OvertimeDecideInput = {
   otId: string
@@ -78,24 +81,39 @@ export async function decideOvertime(
   const empRaw = ot.hr_employees as Emp | Emp[]
   const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw
   const lineUserId = emp?.line_user_id
+  const employeeName = emp?.name ?? "พนักงาน"
   const branchId = emp?.branch_id ?? null
   const locale = coerceLocale(emp?.preferred_locale)
   const id = input.otId
 
-  const notifyEmployee = async (approved: boolean) => {
-    if (!lineUserId) return
-    try {
-      await pushToLineUser(lineUserId, [
+  const notifyParties = async (approved: boolean) => {
+    const approverName = await getApproverDisplayName(input.approverId)
+    const timeRange = `${ot.start_time} – ${ot.end_time}`
+    await notifyDecisionParties({
+      employeeLineUserId: lineUserId,
+      employeeMessages: [
         overtimeResultFlex({
           workDate: ot.work_date as string,
           approved,
           note: note || undefined,
           locale,
         }),
-      ])
-    } catch (lineError) {
-      console.error("overtime decide LINE notify failed:", lineError)
-    }
+      ],
+      hrGroupText: [
+        approved ? "✅ อนุมัติ OT แล้ว" : "❌ ปฏิเสธ OT",
+        `พนักงาน: ${employeeName}`,
+        `วันที่: ${ot.work_date}`,
+        `เวลา: ${timeRange}`,
+        note
+          ? approved
+            ? `หมายเหตุ: ${note}`
+            : `เหตุผล: ${note}`
+          : null,
+        `โดย: ${approverName}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    })
   }
 
   if (input.action === "reject") {
@@ -125,7 +143,7 @@ export async function decideOvertime(
       return { ok: false, error: error.message, status: 400 }
     }
 
-    await notifyEmployee(false)
+    await notifyParties(false)
     return { ok: true, status: "rejected", id }
   }
 
@@ -155,6 +173,6 @@ export async function decideOvertime(
     sourceId: id,
   })
 
-  await notifyEmployee(true)
+  await notifyParties(true)
   return { ok: true, status: "approved", id }
 }

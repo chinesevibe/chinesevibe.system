@@ -3,6 +3,10 @@ import { getAdminClient } from "@/lib/auth/admin-client"
 import { coerceLocale } from "@/lib/i18n/types"
 import { t } from "@/lib/i18n/translate"
 import { notifyComplaintReplyToEmployee } from "@/lib/line/complaint-notify"
+import {
+  getApproverDisplayName,
+  notifyDecisionParties,
+} from "@/lib/line/notify-approval-decision"
 
 export type ComplaintReplyInput = {
   complaintId: string
@@ -126,6 +130,22 @@ export async function replyComplaint(
     message,
     closed: input.close === true,
     thread,
+  })
+
+  const approverName = await getApproverDisplayName(input.approverId)
+  const employeeLabel = complaint.is_anonymous
+    ? "ผู้ร้องเรียน (ไม่ระบุตัวตน)"
+    : (emp?.name ?? "พนักงาน")
+
+  await notifyDecisionParties({
+    hrGroupText: [
+      input.close ? "✅ ปิดเรื่องร้องเรียนแล้ว" : "✅ ตอบกลับร้องเรียนแล้ว",
+      `เลขที่: ${complaint.ticket_code}`,
+      `เรื่อง: ${complaint.subject}`,
+      `จาก: ${employeeLabel}`,
+      `ข้อความ HR: ${message}`,
+      `โดย: ${approverName}`,
+    ].join("\n"),
   })
 
   return {

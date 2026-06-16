@@ -604,6 +604,11 @@ const th: MessageCatalog = {
   "line.attendanceReview.subtitle": "รอ HR ตรวจสอบ",
   "line.attendanceReview.status": "รอตรวจ",
   "line.attendanceReview.unknownFlags": "ตรวจพบสัญญาณผิดปกติ",
+  "line.attendanceReview.employeeApproved": "✅ HR อนุมัติพิกัดการเช็คอินแล้ว",
+  "line.attendanceReview.employeeApprovedWithNote":
+    "✅ HR อนุมัติพิกัดการเช็คอินแล้ว\n\nหมายเหตุ: {note}",
+  "line.attendanceReview.employeeRejected":
+    "❌ HR ปฏิเสธพิกัดการเช็คอิน\n\nเหตุผล: {note}",
 
   "liff.checkin.pageTitle": "เช็คอินด้วย QR",
   "liff.checkin.pageDesc": "สแกนจาก QR ประจำวันของคุณ",
@@ -1420,6 +1425,11 @@ const en: MessageCatalog = {
   "line.attendanceReview.subtitle": "Waiting for HR review",
   "line.attendanceReview.status": "Pending review",
   "line.attendanceReview.unknownFlags": "Abnormal signals detected",
+  "line.attendanceReview.employeeApproved": "✅ HR approved your check-in location",
+  "line.attendanceReview.employeeApprovedWithNote":
+    "✅ HR approved your check-in location\n\nNote: {note}",
+  "line.attendanceReview.employeeRejected":
+    "❌ HR rejected your check-in location\n\nReason: {note}",
 
   "liff.checkin.pageTitle": "QR check-in",
   "liff.checkin.pageDesc": "Scan your daily QR code",

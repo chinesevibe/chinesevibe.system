@@ -1,4 +1,8 @@
-import { countLeaveDays, type LeaveType } from "@/features/leave/types"
+import {
+  countLeaveDays,
+  LEAVE_TYPE_LABELS,
+  type LeaveType,
+} from "@/features/leave/types"
 import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import {
@@ -6,7 +10,10 @@ import {
   leaveRejectedFlex,
 } from "@/lib/line/flex/leave-result"
 import { coerceLocale } from "@/lib/i18n/types"
-import { pushToLineUser } from "@/lib/line/notify-hr"
+import {
+  getApproverDisplayName,
+  notifyDecisionParties,
+} from "@/lib/line/notify-approval-decision"
 
 export type LeaveDecideInput = {
   leaveId: string
@@ -69,6 +76,7 @@ export async function decideLeave(
     ? leave.hr_employees[0]
     : leave.hr_employees
   const lineUserId = employeeJoin?.line_user_id as string | null | undefined
+  const employeeName = (employeeJoin?.name as string | undefined) ?? "พนักงาน"
   const branchId = (employeeJoin as { branch_id?: string })?.branch_id ?? null
   const locale = coerceLocale(
     (employeeJoin as { preferred_locale?: unknown })?.preferred_locale
@@ -101,21 +109,28 @@ export async function decideLeave(
       return { ok: false, error: error.message, status: 400 }
     }
 
-    if (lineUserId) {
-      try {
-        await pushToLineUser(lineUserId, [
-          leaveRejectedFlex({
-            type: leaveType,
-            startDate: leave.start_date,
-            endDate: leave.end_date,
-            reason: note,
-            locale,
-          }),
-        ])
-      } catch (lineError) {
-        console.error("leave reject LINE notify failed:", lineError)
-      }
-    }
+    const approverName = await getApproverDisplayName(input.approverId)
+    const leaveLabel = LEAVE_TYPE_LABELS[leaveType] ?? leaveType
+    await notifyDecisionParties({
+      employeeLineUserId: lineUserId,
+      employeeMessages: [
+        leaveRejectedFlex({
+          type: leaveType,
+          startDate: leave.start_date,
+          endDate: leave.end_date,
+          reason: note,
+          locale,
+        }),
+      ],
+      hrGroupText: [
+        "❌ ปฏิเสธคำขอลา",
+        `พนักงาน: ${employeeName}`,
+        `ประเภท: ${leaveLabel}`,
+        `วันที่: ${leave.start_date} – ${leave.end_date}`,
+        `เหตุผล: ${note}`,
+        `โดย: ${approverName}`,
+      ].join("\n"),
+    })
 
     return { ok: true, status: "rejected", id }
   }
@@ -180,22 +195,31 @@ export async function decideLeave(
     }
   }
 
-  if (lineUserId) {
-    try {
-      await pushToLineUser(lineUserId, [
-        leaveApprovedFlex({
-          type: leaveType,
-          startDate: leave.start_date,
-          endDate: leave.end_date,
-          remainingDays,
-          note: note || null,
-          locale,
-        }),
-      ])
-    } catch (lineError) {
-      console.error("leave decide LINE notify failed:", lineError)
-    }
-  }
+  const approverName = await getApproverDisplayName(input.approverId)
+  const leaveLabel = LEAVE_TYPE_LABELS[leaveType] ?? leaveType
+  await notifyDecisionParties({
+    employeeLineUserId: lineUserId,
+    employeeMessages: [
+      leaveApprovedFlex({
+        type: leaveType,
+        startDate: leave.start_date,
+        endDate: leave.end_date,
+        remainingDays,
+        note: note || null,
+        locale,
+      }),
+    ],
+    hrGroupText: [
+      "✅ อนุมัติคำขอลาแล้ว",
+      `พนักงาน: ${employeeName}`,
+      `ประเภท: ${leaveLabel}`,
+      `วันที่: ${leave.start_date} – ${leave.end_date}`,
+      note ? `หมายเหตุ: ${note}` : null,
+      `โดย: ${approverName}`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  })
 
   return { ok: true, status: "approved", id }
 }

@@ -1,5 +1,12 @@
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
+import { formatIctTime } from "@/lib/attendance/late"
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { coerceLocale } from "@/lib/i18n/types"
+import { t } from "@/lib/i18n/translate"
+import {
+  getApproverDisplayName,
+  notifyDecisionParties,
+} from "@/lib/line/notify-approval-decision"
 import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
 
 export type AttendanceLocationDecideInput = {
@@ -29,7 +36,7 @@ export async function decideAttendanceLocation(
   const { data: row, error: loadError } = await admin
     .from("hr_attendance")
     .select(
-      `id, employee_id, shift_date, work_hours, check_out_at, location_review_status, ${EMPLOYEE_VIA_ATTENDANCE}!inner(branch_id)`
+      `id, employee_id, shift_date, work_hours, check_in_at, check_out_at, location_review_status, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name, line_user_id, preferred_locale, branch_id)`
     )
     .eq("id", input.attendanceId)
     .maybeSingle()
@@ -99,6 +106,45 @@ export async function decideAttendanceLocation(
       return { ok: false, error: message, status: 400 }
     }
   }
+
+  type EmpJoin = {
+    name?: string
+    line_user_id?: string | null
+    preferred_locale?: unknown
+    branch_id?: string | null
+  }
+  const empRaw = row.hr_employees as EmpJoin | EmpJoin[] | null
+  const emp = empRaw ? (Array.isArray(empRaw) ? empRaw[0] : empRaw) : null
+  const locale = coerceLocale(emp?.preferred_locale)
+  const employeeName = emp?.name ?? "พนักงาน"
+  const approverName = await getApproverDisplayName(input.approverId)
+  const checkInLabel = row.check_in_at
+    ? formatIctTime(new Date(row.check_in_at as string))
+    : "—"
+  const approved = input.action === "approve"
+
+  const employeeText = approved
+    ? note
+      ? t("line.attendanceReview.employeeApprovedWithNote", locale, { note })
+      : t("line.attendanceReview.employeeApproved", locale)
+    : t("line.attendanceReview.employeeRejected", locale, { note })
+
+  await notifyDecisionParties({
+    employeeLineUserId: emp?.line_user_id,
+    employeeMessages: emp?.line_user_id
+      ? [{ type: "text", text: employeeText }]
+      : undefined,
+    hrGroupText: [
+      approved ? "✅ อนุมัติพิกัดการเช็คอินแล้ว" : "❌ ปฏิเสธพิกัดการเช็คอิน",
+      `พนักงาน: ${employeeName}`,
+      `วันที่: ${row.shift_date ?? "—"}`,
+      `เวลาเข้า: ${checkInLabel}`,
+      note ? `หมายเหตุ: ${note}` : null,
+      `โดย: ${approverName}`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  })
 
   return {
     ok: true,

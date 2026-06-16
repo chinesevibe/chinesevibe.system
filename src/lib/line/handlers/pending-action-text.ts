@@ -94,7 +94,11 @@ export async function handlePendingActionText(
       ]
     }
     case "reject_registration": {
-      const result = await rejectEmployeeRegistration(row.target_id, trimmedNote)
+      const result = await rejectEmployeeRegistration(
+        row.target_id,
+        trimmedNote,
+        approverId
+      )
       if (!result.ok) {
         return [{ type: "text", text: `❌ ${result.error}` }]
       }

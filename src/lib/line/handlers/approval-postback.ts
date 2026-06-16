@@ -57,7 +57,7 @@ async function handleRegistrationApproval(
   if (!approver) return noPermission(locale)
 
   if (action === "approve_registration") {
-    const result = await approveEmployeeRegistration(employeeId)
+    const result = await approveEmployeeRegistration(employeeId, approver.id)
     if (!result.ok) {
       if (result.status === 404) {
         return [{ type: "text", text: t("line.approval.notFound", locale) }]
