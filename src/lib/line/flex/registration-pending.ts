@@ -3,6 +3,10 @@ import type { messagingApi } from "@line/bot-sdk"
 import { t } from "@/lib/i18n/translate"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 import { BRAND_RED, cardBody, brandedTitleHeader } from "@/lib/line/flex/base"
+import {
+  approvalButtonFooter,
+  buildApprovalPostbackData,
+} from "@/lib/line/approval/flex-buttons"
 
 export type RegistrationNotifyPayload = {
   employeeId: string
@@ -74,40 +78,33 @@ export function registrationPendingFlex(
           margin: "lg",
           wrap: true,
         },
-        {
-          type: "box",
-          layout: "horizontal",
-          margin: "lg",
-          spacing: "sm",
-          contents: [
-            {
-              type: "button",
-              style: "primary",
-              color: BRAND_RED,
-              height: "sm",
-              flex: 1,
-              action: {
-                type: "postback",
-                label: t("line.registrationPending.approve", locale),
-                data: `action=approve_registration&emp_id=${employeeId}`,
-                displayText: t("line.registrationPending.approveDisplay", locale),
-              },
-            },
-            {
-              type: "button",
-              style: "secondary",
-              height: "sm",
-              flex: 1,
-              action: {
-                type: "postback",
-                label: t("line.registrationPending.reject", locale),
-                data: `action=reject_registration&emp_id=${employeeId}`,
-                displayText: t("line.registrationPending.rejectDisplay", locale),
-              },
-            },
-          ],
-        },
       ]),
+      footer: approvalButtonFooter(
+        [
+          {
+            label: t("line.registrationPending.approve", locale),
+            data: buildApprovalPostbackData(
+              "approve_registration",
+              "emp_id",
+              employeeId
+            ),
+            style: "primary",
+            color: BRAND_RED,
+            displayText: t("line.registrationPending.approveDisplay", locale),
+          },
+          {
+            label: t("line.registrationPending.reject", locale),
+            data: buildApprovalPostbackData(
+              "reject_registration",
+              "emp_id",
+              employeeId
+            ),
+            style: "secondary",
+            displayText: t("line.registrationPending.rejectDisplay", locale),
+          },
+        ],
+        locale
+      ),
     },
   }
 }

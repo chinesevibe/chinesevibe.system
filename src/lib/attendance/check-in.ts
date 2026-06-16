@@ -100,7 +100,7 @@ export async function checkIn({
   const late = lateMinutes(now, hour, minute)
   const suspicious = locationDecision.status === "suspicious_location"
 
-  const { error: insertError } = await admin.from("hr_attendance").insert({
+  const { data: inserted, error: insertError } = await admin.from("hr_attendance").insert({
     employee_id: employee.id,
     check_in_at: now.toISOString(),
     check_in_location: locationDecision.payload,
@@ -110,13 +110,19 @@ export async function checkIn({
     location_review_note: suspicious ? suspiciousLocationMessage(locationDecision.flags) : null,
     location_reviewed_by: null,
     location_reviewed_at: null,
-  })
+  }).select("id").single()
 
   if (insertError) {
     throw insertError
   }
 
-  if (suspicious) {
+  if (suspicious && inserted?.id) {
+    const { notifyAttendanceLocationReview } = await import(
+      "@/lib/line/notify-attendance-location"
+    )
+    void notifyAttendanceLocationReview(inserted.id as string).catch((err) => {
+      console.error("check-in HR notify failed:", err)
+    })
     return {
       status: "suspicious_location",
       flags: locationDecision.flags,

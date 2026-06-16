@@ -24,6 +24,12 @@ import {
   pendingApprovalFlex,
 } from "@/lib/line/flex/menu-guide"
 import { buildActionMessages } from "@/lib/line/handlers/actions"
+import {
+  buildPendingQueueMessages,
+  isPendingSlashCommand,
+} from "@/lib/line/handlers/actions/pending-queue"
+import { handlePendingActionText } from "@/lib/line/handlers/pending-action-text"
+import { getActivePendingAction } from "@/lib/line/approval/pending-actions"
 import { isOneOnOneUserSource } from "@/lib/line/handlers/source"
 import { tryAutoLinkFromEmployeeCode } from "@/lib/line/auto-link-line-user"
 import {
@@ -218,6 +224,29 @@ export async function handleMessage(
     await getLineClient().replyMessage({
       replyToken: event.replyToken,
       messages: linkMessages,
+    })
+    return
+  }
+
+  if (lineUserId) {
+    const pending = await getActivePendingAction(lineUserId)
+    if (pending) {
+      const messages = await handlePendingActionText(lineUserId, text)
+      if (messages) {
+        await getLineClient().replyMessage({
+          replyToken: event.replyToken,
+          messages,
+        })
+        return
+      }
+    }
+  }
+
+  if (isPendingSlashCommand(text)) {
+    const messages = await buildPendingQueueMessages(lineUserId)
+    await getLineClient().replyMessage({
+      replyToken: event.replyToken,
+      messages,
     })
     return
   }

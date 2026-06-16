@@ -9,6 +9,11 @@ import { t, type MessageKey } from "@/lib/i18n/translate"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 import { BRAND_RED } from "@/lib/line/brand"
 import { flexMessage, simpleBubble } from "@/lib/line/flex/base"
+import {
+  approvalButtonFooter,
+  buildApprovalPostbackData,
+  type PostbackButtonSpec,
+} from "@/lib/line/approval/flex-buttons"
 
 function docTypeLabel(type: string, locale: AppLocale): string {
   if (!DOC_TYPES.includes(type as DocType)) return type
@@ -60,7 +65,49 @@ export function documentSubmitConfirmFlex(options: {
   )
 }
 
+function documentActionButtons(
+  docId: string,
+  status: DocStatus,
+  locale: AppLocale
+): PostbackButtonSpec[] {
+  const approveLabel =
+    status === "processing"
+      ? t("line.approval.docReady", locale)
+      : status === "ready"
+        ? t("line.approval.docComplete", locale)
+        : t("line.approval.docAccept", locale)
+
+  const buttons: PostbackButtonSpec[] = [
+    {
+      label: approveLabel,
+      data: buildApprovalPostbackData("approve_document", "doc_id", docId),
+      style: "primary",
+      color: "#7B1FA2",
+      displayText: approveLabel,
+    },
+  ]
+
+  if (status === "pending" || status === "on_hold") {
+    buttons.push({
+      label: t("line.approval.docHold", locale),
+      data: buildApprovalPostbackData("hold_document", "doc_id", docId),
+      style: "secondary",
+      displayText: t("line.approval.docHold", locale),
+    })
+    buttons.push({
+      label: t("line.approval.reject", locale),
+      data: buildApprovalPostbackData("reject_document", "doc_id", docId),
+      style: "secondary",
+      displayText: t("line.approval.rejectDisplay", locale),
+    })
+  }
+
+  return buttons
+}
+
 export function documentSubmitHrNotifyFlex(options: {
+  docId: string
+  status?: DocStatus
   employeeName: string
   department: string | null
   docType: DocType
@@ -70,32 +117,44 @@ export function documentSubmitHrNotifyFlex(options: {
   locale?: AppLocale
 }): messagingApi.FlexMessage {
   const locale = options.locale ?? DEFAULT_LOCALE
+  const status = options.status ?? "pending"
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const adminUrl =
     options.adminUrl ?? (baseUrl ? `${baseUrl}/admin/documents` : undefined)
 
+  const bubble = simpleBubble({
+    title: t("line.docHr.title", locale),
+    accentColor: BRAND_RED,
+    rows: [
+      { label: t("line.common.employee", locale), value: options.employeeName },
+      { label: t("line.common.department", locale), value: options.department ?? "—" },
+      {
+        label: t("line.common.type", locale),
+        value: docTypeLabel(options.docType, locale),
+      },
+      {
+        label: t("line.common.copiesShort", locale),
+        value: `${options.copies} ${t("line.common.copyUnit", locale)}`,
+      },
+      { label: t("line.common.purpose", locale), value: options.purpose },
+      {
+        label: t("line.common.status", locale),
+        value: docStatusLabel(status, locale),
+      },
+    ],
+    button: adminUrl
+      ? { label: t("line.docHr.button", locale), uri: adminUrl }
+      : undefined,
+  })
+
+  bubble.footer = approvalButtonFooter(
+    documentActionButtons(options.docId, status, locale),
+    locale
+  )
+
   return flexMessage(
     t("line.docHr.alt", locale, { name: options.employeeName }),
-    simpleBubble({
-      title: t("line.docHr.title", locale),
-      accentColor: BRAND_RED,
-      rows: [
-        { label: t("line.common.employee", locale), value: options.employeeName },
-        { label: t("line.common.department", locale), value: options.department ?? "—" },
-        {
-          label: t("line.common.type", locale),
-          value: docTypeLabel(options.docType, locale),
-        },
-        {
-          label: t("line.common.copiesShort", locale),
-          value: `${options.copies} ${t("line.common.copyUnit", locale)}`,
-        },
-        { label: t("line.common.purpose", locale), value: options.purpose },
-      ],
-      button: adminUrl
-        ? { label: t("line.docHr.button", locale), uri: adminUrl }
-        : undefined,
-    })
+    bubble
   )
 }
 

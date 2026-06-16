@@ -80,20 +80,22 @@ export function RegisterForm() {
   const [optionsError, setOptionsError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [lineLinkHint, setLineLinkHint] = useState<string | null>(null)
+  const [lineLinkPendingHint, setLineLinkPendingHint] = useState<string | null>(
+    null
+  )
 
   const lineStartUrl = "/api/auth/line/start"
 
-  useEffect(() => {
-    if (!linked || !linkedName) return
-    setLineLinkHint(tx("auth.register.lineLinked", { name: linkedName }))
-  }, [linked, linkedName, tx])
+  const lineLinkHint =
+    linked && linkedName
+      ? tx("auth.register.lineLinked", { name: linkedName })
+      : lineLinkPendingHint
 
   async function tryLinkLineBeforeSubmit(code: string) {
     if (!code.trim() || linked) return
     const ok = await linkWithEmployeeCode(code)
     if (ok) {
-      setLineLinkHint(tx("auth.register.lineLinkedPending"))
+      setLineLinkPendingHint(tx("auth.register.lineLinkedPending"))
     }
   }
 

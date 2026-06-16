@@ -38,7 +38,7 @@ async function notifyHrIndividuals(
   const { data: hrRows, error } = await getAdminClient()
     .from("hr_employees")
     .select("line_user_id")
-    .in("role", ["hr"])
+    .in("role", ["hr", "dev"])
     .eq("status", "active")
     .not("line_user_id", "is", null)
 

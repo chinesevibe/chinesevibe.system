@@ -223,6 +223,7 @@ export async function POST(request: NextRequest) {
 
     await notifyHr([
       leaveSubmitHrNotifyFlex({
+        leaveId: leave.id,
         employeeName: employee.name,
         department: employee.department,
         type: leaveType,

@@ -2,6 +2,11 @@ import type { messagingApi } from "@line/bot-sdk"
 
 import { BRAND_RED } from "@/lib/line/brand"
 import { flexMessage, simpleBubble } from "@/lib/line/flex/base"
+import {
+  approvalButtonFooter,
+  buildApprovalPostbackData,
+  type PostbackButtonSpec,
+} from "@/lib/line/approval/flex-buttons"
 import { t } from "@/lib/i18n/translate"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 
@@ -38,6 +43,7 @@ export function overtimeSubmitConfirmFlex(options: {
 }
 
 export function overtimeSubmitHrNotifyFlex(options: {
+  otId: string
   employeeName: string
   department: string | null
   workDate: string
@@ -50,25 +56,45 @@ export function overtimeSubmitHrNotifyFlex(options: {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const adminUrl = baseUrl ? `${baseUrl}/admin/overtime` : undefined
 
+  const buttons: PostbackButtonSpec[] = [
+    {
+      label: t("line.approval.approve", locale),
+      data: buildApprovalPostbackData("approve_ot", "ot_id", options.otId),
+      style: "primary",
+      color: BRAND_RED,
+      displayText: t("line.approval.approveDisplay", locale),
+    },
+    {
+      label: t("line.approval.reject", locale),
+      data: buildApprovalPostbackData("reject_ot", "ot_id", options.otId),
+      style: "secondary",
+      displayText: t("line.approval.rejectDisplay", locale),
+    },
+  ]
+
+  const bubble = simpleBubble({
+    title: t("line.otHr.title", locale),
+    accentColor: BRAND_RED,
+    rows: [
+      { label: t("line.common.employee", locale), value: options.employeeName },
+      { label: t("line.common.department", locale), value: options.department ?? "—" },
+      { label: t("line.common.date", locale), value: options.workDate },
+      {
+        label: t("line.common.time", locale),
+        value: `${options.startTime} – ${options.endTime}`,
+      },
+      { label: t("line.common.reason", locale), value: options.reason },
+    ],
+    button: adminUrl
+      ? { label: t("line.otHr.button", locale), uri: adminUrl }
+      : undefined,
+  })
+
+  bubble.footer = approvalButtonFooter(buttons, locale)
+
   return flexMessage(
     t("line.otHr.alt", locale, { name: options.employeeName }),
-    simpleBubble({
-      title: t("line.otHr.title", locale),
-      accentColor: BRAND_RED,
-      rows: [
-        { label: t("line.common.employee", locale), value: options.employeeName },
-        { label: t("line.common.department", locale), value: options.department ?? "—" },
-        { label: t("line.common.date", locale), value: options.workDate },
-        {
-          label: t("line.common.time", locale),
-          value: `${options.startTime} – ${options.endTime}`,
-        },
-        { label: t("line.common.reason", locale), value: options.reason },
-      ],
-      button: adminUrl
-        ? { label: t("line.otHr.button", locale), uri: adminUrl }
-        : undefined,
-    })
+    bubble
   )
 }
 

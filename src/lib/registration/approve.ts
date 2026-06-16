@@ -1,6 +1,7 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { canManageHr } from "@/lib/auth/roles"
 import { pushToLineUser } from "@/lib/line/notify-hr"
+
+export { assertHrLineApprover } from "@/lib/line/approval/approver"
 
 export type RegistrationDecisionResult =
   | { ok: true; employeeName: string; lineUserId: string | null }
@@ -65,7 +66,8 @@ export async function approveEmployeeRegistration(
 }
 
 export async function rejectEmployeeRegistration(
-  employeeId: string
+  employeeId: string,
+  note?: string
 ): Promise<RegistrationDecisionResult> {
   const admin = getAdminClient()
 
@@ -86,12 +88,15 @@ export async function rejectEmployeeRegistration(
   }
 
   const lineUserId = row.line_user_id as string | null
+  const reasonLine =
+    note && note.trim().length >= 3 ? `\n\nเหตุผล: ${note.trim()}` : ""
+
   if (lineUserId) {
     try {
       await pushToLineUser(lineUserId, [
         {
           type: "text",
-          text: "❌ คำขอลงทะเบียนยังไม่ได้รับการอนุมัติ\n\nกรุณาติดต่อ HR หรือลองลงทะเบียนใหม่ภายหลัง",
+          text: `❌ คำขอลงทะเบียนยังไม่ได้รับการอนุมัติ${reasonLine}\n\nกรุณาติดต่อ HR หรือลองลงทะเบียนใหม่ภายหลัง`,
         },
       ])
     } catch (e) {
@@ -104,22 +109,4 @@ export async function rejectEmployeeRegistration(
     employeeName: row.name as string,
     lineUserId,
   }
-}
-
-export async function assertHrLineApprover(
-  lineUserId: string | undefined
-): Promise<{ id: string; name: string } | null> {
-  if (!lineUserId) return null
-
-  const admin = getAdminClient()
-  const { data } = await admin
-    .from("hr_employees")
-    .select("id, name, role, status")
-    .eq("line_user_id", lineUserId)
-    .maybeSingle()
-
-  if (!data || data.status !== "active") return null
-  if (!canManageHr(data.role as Parameters<typeof canManageHr>[0])) return null
-
-  return { id: data.id as string, name: data.name as string }
 }

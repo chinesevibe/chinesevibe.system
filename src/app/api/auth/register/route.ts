@@ -358,7 +358,6 @@ export async function POST(request: NextRequest) {
   const employeePosition =
     typeof employee.position === "string" ? employee.position : null
 
-  const hadRealLineBefore = employeeHasRealLine
   let sessionLineUserId = existingLineId
 
   if (employeeNeedsLineLink) {
@@ -429,10 +428,7 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  const shouldNotify =
-    status === "inactive" &&
-    hasRealLineCookie &&
-    (!hadRealLineBefore || employeeNeedsLineLink)
+  const shouldNotify = status === "inactive"
 
   if (shouldNotify) {
     void notifyRegistrationPending(employee.id).catch((err) => {

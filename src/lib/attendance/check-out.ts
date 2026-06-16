@@ -170,6 +170,14 @@ export async function checkOut({
   })
 
   if (hasNewSuspiciousSignal || finalizeResult.status === "pending_location_review") {
+    if (hasNewSuspiciousSignal) {
+      const { notifyAttendanceLocationReview } = await import(
+        "@/lib/line/notify-attendance-location"
+      )
+      void notifyAttendanceLocationReview(record.id as string).catch((err) => {
+        console.error("check-out HR notify failed:", err)
+      })
+    }
     return {
       status: "suspicious_location",
       flags: suspiciousFlags,

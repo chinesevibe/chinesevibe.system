@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
       }
       await notifyHr([
         overtimeSubmitHrNotifyFlex({
+          otId: row.id,
           employeeName: submitterName,
           department: submitterDepartment,
           workDate: otWorkDate,
@@ -213,6 +214,7 @@ export async function POST(request: NextRequest) {
     }
     await notifyHr([
       overtimeSubmitHrNotifyFlex({
+        otId: row.id,
         employeeName: target.name as string,
         department: (target.department as string) ?? "—",
         workDate,

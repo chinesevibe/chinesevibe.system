@@ -70,6 +70,8 @@ export async function POST(request: NextRequest) {
     }
     await notifyHr([
       documentSubmitHrNotifyFlex({
+        docId: row.id,
+        status: "pending",
         employeeName: employee.name,
         department: employee.department,
         docType: docType as DocType,

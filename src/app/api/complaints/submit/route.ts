@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
     }
     await notifyHr([
       complaintSubmitHrNotifyFlex({
+        complaintId: row.id,
         ticketCode,
         subject,
         isAnonymous,
