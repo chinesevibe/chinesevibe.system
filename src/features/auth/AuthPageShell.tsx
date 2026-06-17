@@ -1,11 +1,11 @@
 "use client"
 
-import { BrandMark } from "@/components/brand/BrandMark"
 import { AuthLanguageSwitcher } from "@/components/auth/AuthLanguageSwitcher"
 import {
   LocaleProvider,
   useLocale,
 } from "@/features/portal/LocaleProvider"
+import { BRAND_LOGIN_HERO } from "@/lib/brand/assets"
 import type { MessageKey } from "@/lib/i18n/translate"
 import type { AppLocale } from "@/lib/i18n/types"
 
@@ -25,20 +25,21 @@ function AuthPageShellInner({
       <div
         className={`w-full ${maxWidth} overflow-hidden rounded-2xl border border-border/80 bg-card shadow-lg`}
       >
-        <div className="relative overflow-hidden bg-brand-red px-6 py-10 text-center text-white">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-25"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 30% 20%, #fff 0, transparent 45%), radial-gradient(circle at 80% 80%, #fff 0, transparent 40%)",
-            }}
+        <div className="overflow-hidden bg-brand-red">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={BRAND_LOGIN_HERO}
+            alt="CNV WorkHub — HR & Payroll"
+            width={480}
+            height={360}
+            className="block h-auto w-full object-cover"
+            decoding="async"
           />
-          <div className="relative">
-            <BrandMark variant="login" onDark />
-            <p className="mt-4 text-sm font-medium text-white/90">{tx(titleKey)}</p>
-          </div>
         </div>
         <div className="space-y-4 p-6">
+          <h1 className="text-center text-lg font-semibold text-foreground">
+            {tx(titleKey)}
+          </h1>
           <AuthLanguageSwitcher />
           {children}
         </div>

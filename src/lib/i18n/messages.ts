@@ -11,7 +11,7 @@ const th: MessageCatalog = {
   "lang.my": "မြန်မာ",
   "lang.label": "ภาษา",
 
-  "auth.login.title": "CNV WorkHub",
+  "auth.login.title": "เข้าสู่ระบบ",
   "auth.login.subtitle": "เข้าสู่ระบบด้วยรหัสพนักงานและสาขาที่ HR แจ้งให้",
   "auth.login.officerSubtitle": "แผนก Officer — กรุณายืนยันรหัสผ่านเพื่อเข้า Dashboard",
   "auth.login.dashboard": "เข้าสู่ Dashboard",
@@ -848,7 +848,7 @@ const en: MessageCatalog = {
   "lang.my": "မြန်မာ",
   "lang.label": "Language",
 
-  "auth.login.title": "CNV WorkHub",
+  "auth.login.title": "Sign in",
   "auth.login.subtitle": "Sign in with the employee code and branch provided by HR",
   "auth.login.officerSubtitle":
     "Officer department — confirm your password to access the dashboard",
