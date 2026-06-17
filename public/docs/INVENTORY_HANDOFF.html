@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CNV WorkHub — สรุปงานคลังสินค้า &amp; Checklist ส่งมอบ</title>
+  <link rel="icon" href="/brand/mascot.svg" type="image/svg+xml" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8f7f4;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --border: #e5e2dc;
+      --brand: #c41e3a;
+      --brand-soft: #fdecee;
+      --blue: #1e4f8a;
+      --blue-soft: #eef4fb;
+      --green: #1a6b45;
+      --green-soft: #ecf7f0;
+      --amber: #9a6700;
+      --amber-soft: #fff8e6;
+      --violet: #5b3a8c;
+      --violet-soft: #f3eef9;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Sarabun", "IBM Plex Sans Thai", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+    }
+    header {
+      background: linear-gradient(135deg, #7a1530 0%, #c41e3a 55%, #e85d4a 100%);
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+    }
+    header .wrap { max-width: 1000px; margin: 0 auto; }
+    header .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    header .brand-row img {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.2);
+      padding: 6px;
+    }
+    header h1 { margin: 0 0 .35rem; font-size: 1.75rem; font-weight: 700; }
+    header p { margin: 0; opacity: .92; font-size: 1rem; max-width: 42rem; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 1.25rem;
+    }
+    .meta a, .meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .35rem .85rem;
+      border-radius: 999px;
+      font-size: .85rem;
+      text-decoration: none;
+      background: rgba(255,255,255,.15);
+      color: #fff;
+    }
+    .meta a:hover { background: rgba(255,255,255,.28); }
+    nav.toc {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(248,247,244,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      overflow-x: auto;
+    }
+    nav.toc .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    nav.toc a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: .875rem;
+      padding: .35rem .65rem;
+      border-radius: 6px;
+    }
+    nav.toc a:hover { background: var(--blue-soft); }
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    section h2 {
+      margin: 0 0 1rem;
+      font-size: 1.25rem;
+      color: var(--brand);
+      border-bottom: 2px solid var(--brand-soft);
+      padding-bottom: .5rem;
+    }
+    section h3 { margin: 1.25rem 0 .65rem; font-size: 1.05rem; }
+    p { margin: 0 0 .85rem; }
+    .muted { color: var(--muted); font-size: .925rem; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+    li { margin-bottom: .35rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .925rem;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: .55rem .75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f1ec; font-weight: 600; }
+    tr:nth-child(even) td { background: #faf9f7; }
+    .diagram {
+      background: #faf9f7;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .flow-svg { width: 100%; max-width: 100%; height: auto; display: block; }
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+      padding: .85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: .925rem;
+    }
+    .callout.ok { border-color: var(--green); background: var(--green-soft); }
+    .callout.warn { border-color: var(--amber); background: var(--amber-soft); }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .card-mini {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      background: #faf9f7;
+      text-align: center;
+    }
+    .card-mini svg { margin-bottom: .5rem; }
+    .card-mini strong { display: block; font-size: .95rem; }
+    .card-mini span { font-size: .8rem; color: var(--muted); }
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      padding: .55rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: .95rem;
+    }
+    .checklist label:last-child { border-bottom: none; }
+    .checklist input { margin-top: .25rem; width: 1.1rem; height: 1.1rem; accent-color: var(--brand); }
+    .badge {
+      display: inline-block;
+      padding: .15rem .5rem;
+      border-radius: 4px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .badge-done { background: var(--green-soft); color: var(--green); }
+    .badge-pending { background: var(--amber-soft); color: var(--amber); }
+    .progress-bar {
+      height: 8px;
+      background: #eceae4;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: .75rem 0 1rem;
+    }
+    .progress-bar div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), #e85d4a);
+      width: 0%;
+      transition: width .3s;
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.35rem; }
+    }
+    @media print {
+      nav.toc { display: none; }
+      section { break-inside: avoid; box-shadow: none; }
+      .checklist input { pointer-events: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand-row">
+        <img src="/brand/mascot.svg" alt="CNV WorkHub" width="56" height="56" />
+        <div>
+          <h1>สรุปงานคลังสินค้า (Inventory Module)</h1>
+          <p>เอกสารส่งมอบ · คู่มือใช้งาน · Checklist ตรวจรับ (UAT) สำหรับใช้งานจริง</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span>อัปเดต: 17 มิ.ย. 2026</span>
+        <a href="https://hr-app-two-iota.vercel.app/admin/inventory" target="_blank" rel="noopener">เปิดระบบคลัง ↗</a>
+        <a href="/docs/HR_SYSTEM_WORKFLOW.html">Workflow HR ทั้งระบบ</a>
+        <a href="/line-oa-manual.html">คู่มือ LINE OA</a>
+        <a href="/docs/LINE_OA_Employee_Manual_TH.pdf" target="_blank" rel="noopener">PDF พนักงาน ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <div class="wrap">
+      <a href="#overview">ภาพรวม</a>
+      <a href="#delivered">สิ่งที่ส่งมอบ</a>
+      <a href="#roles">สิทธิ์</a>
+      <a href="#setup">ตั้งค่าเริ่มต้น</a>
+      <a href="#flows">Flow งาน</a>
+      <a href="#modules">โมดูล</a>
+      <a href="#fefo">FEFO / Lot</a>
+      <a href="#uat">Checklist UAT</a>
+      <a href="#signoff">ลงนามรับมอบ</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="overview">
+      <h2>1. ภาพรวม</h2>
+      <p>
+        โมดูล <strong>คลังสินค้า</strong> ใน CNV WorkHub ครอบคลุม master data, รับเข้า, สต็อก, เบิก, โอน,
+        ตรวจนับ, บันทึกใช้จริง, แจ้งเสียหาย, รายงาน และ FEFO (First Expired, First Out) แยก lot
+      </p>
+      <div class="callout ok">
+        <strong>สถานะข้อมูล production:</strong> ลบข้อมูล demo (DEMO-HQ, SKU-DEMO-*) แล้ว —
+        พร้อมกรอก master data จริงตามลำดับในหัวข้อ 4
+      </div>
+      <div class="grid-3">
+        <div class="card-mini">
+          <svg class="flow-svg" viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+            <rect x="8" y="20" width="48" height="36" rx="4" fill="#eef4fb" stroke="#1e4f8a" stroke-width="2"/>
+            <path d="M20 20 V14 h24 v6" fill="none" stroke="#1e4f8a" stroke-width="2"/>
+            <rect x="18" y="30" width="12" height="10" rx="1" fill="#c41e3a" opacity=".85"/>
+            <rect x="34" y="30" width="12" height="10" rx="1" fill="#1e4f8a" opacity=".7"/>
+          </svg>
+          <strong>Master Data</strong>
+          <span>SKU · Supplier · สาขา · คลัง · BOM</span>
+        </div>
+        <div class="card-mini">
+          <svg class="flow-svg" viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+            <circle cx="32" cy="32" r="24" fill="#ecf7f0" stroke="#1a6b45" stroke-width="2"/>
+            <path d="M22 32 h20 M32 22 v20" stroke="#1a6b45" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <strong>Operational</strong>
+          <span>รับเข้า · เบิก · โอน · นับ · ใช้ · เสียหาย</span>
+        </div>
+        <div class="card-mini">
+          <svg class="flow-svg" viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+            <rect x="10" y="12" width="44" height="40" rx="4" fill="#f3eef9" stroke="#5b3a8c" stroke-width="2"/>
+            <path d="M18 24 h28 M18 32 h20 M18 40 h24" stroke="#5b3a8c" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <strong>Reports &amp; FEFO</strong>
+          <span>สต็อก · Lot · Override audit</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="delivered">
+      <h2>2. สิ่งที่ส่งมอบแล้ว</h2>
+      <table>
+        <thead>
+          <tr><th>หมวด</th><th>รายการ</th><th>สถานะ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Schema / DB</td><td>ตาราง inv_* ครบ (transfer, stock count, lots, FEFO RPCs, RLS roles)</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>UI Hub</td><td>ศูนย์ควบคุมคลัง · แดชบอร์ด · Alerts · Reports</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>Master CRUD</td><td>SKU, Supplier, สาขาคลัง (+ผูก HR), คลังย่อย, BOM</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>รับเข้า</td><td>Inbound order + อนุมัติ → สร้าง lot + movement</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>เบิก</td><td>Requisition workflow + FEFO preview + multi-lot issue</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>โอน / นับ</td><td>Transfer + Stock count + Lot picker</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>เสียหาย / ใช้</td><td>Damage approval + Consumption + ตัดตามสูตร BOM</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>สต็อก</td><td>ยอดรวม SKU×คลัง + ตารางแยก Lot</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>สิทธิ์</td><td>inventory / hr / dev (เขียน) · ceo (อ่านอย่างเดียว)</td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>ข้อมูลจริง</td><td>SKU / สาขา / opening stock ตามสาขาจริง</td><td><span class="badge badge-pending">รอทีมกรอก</span></td></tr>
+          <tr><td>UAT sign-off</td><td>ทดสอบครบ checklist ด้านล่าง</td><td><span class="badge badge-pending">รอตรวจรับ</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="roles">
+      <h2>3. สิทธิ์ผู้ใช้</h2>
+      <table>
+        <thead>
+          <tr><th>Role</th><th>เข้า Admin คลัง</th><th>Master data</th><th>งานคลัง (เบิก/โอน/รับเข้า)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>inventory</strong></td><td>✓</td><td>อ่าน</td><td>✓ เต็ม</td></tr>
+          <tr><td><strong>hr</strong></td><td>✓</td><td>✓ แก้ไข</td><td>✓ เต็ม</td></tr>
+          <tr><td><strong>dev</strong></td><td>✓</td><td>✓</td><td>✓ เต็ม (QA)</td></tr>
+          <tr><td><strong>ceo</strong></td><td>✓</td><td>อ่าน</td><td>อ่านอย่างเดียว</td></tr>
+          <tr><td>employee (แผนกคลัง)</td><td>จำกัดตามแผนก</td><td>—</td><td>ตาม policy แผนก</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        ตั้ง role ใน <strong>HR → พนักงาน</strong>: พนักงานคลัง → <code>inventory</code>, ผู้บริหาร → <code>ceo</code>
+      </div>
+    </section>
+
+    <section id="setup">
+      <h2>4. ลำดับตั้งค่า (ก่อนใช้งานจริง)</h2>
+      <ol>
+        <li><strong>สาขา (คลัง)</strong> — <code>/admin/inventory/branches</code> สร้างสาขา + ผูกสาขา HR (ถ้ามี)</li>
+        <li><strong>คลังสินค้า</strong> — อย่างน้อย 1 คลัง <code>main</code> ต่อสาขา</li>
+        <li><strong>Supplier</strong> — ผู้จำหน่ายที่ใช้รับเข้า</li>
+        <li><strong>SKU</strong> — ตั้งหน่วย, Min/Max, <em>expiry_required</em>, <em>lot_tracking</em></li>
+        <li><strong>รับเข้า (Inbound)</strong> — สร้างใบ → อนุมัติ → ระบบสร้าง lot อัตโนมัติ</li>
+        <li><strong>ตรวจสต็อก</strong> — <code>/admin/inventory/stock</code> ยอดรวม + แยก lot</li>
+        <li><strong>BOM (ถ้าใช้)</strong> — <code>/admin/inventory/bom</code> กำหนดสูตรวัตถุดิบ</li>
+      </ol>
+    </section>
+
+    <section id="flows">
+      <h2>5. Flow งานหลัก (ภาพประกอบ)</h2>
+      <h3>5.1 รับเข้า → Lot → สต็อก</h3>
+      <div class="diagram mermaid">
+flowchart LR
+  A[สร้าง Inbound] --> B[เพิ่มรายการ SKU]
+  B --> C[สถานะ Pending]
+  C --> D[อนุมัติรับเข้า]
+  D --> E[สร้าง inv_stock_lots]
+  E --> F[อัปเดต inv_stock_balances]
+  F --> G[บันทึก movement]
+      </div>
+      <h3>5.2 เบิกวัตถุดิบ (FEFO)</h3>
+      <div class="diagram mermaid">
+flowchart LR
+  R1[สร้างใบเบิก] --> R2[อนุมัติ]
+  R2 --> R3[FEFO แนะนำ lot]
+  R3 --> R4[Issue ตัด lot]
+  R4 --> R5[movement + ลดยอด]
+      </div>
+      <h3>5.3 โอนระหว่างคลัง</h3>
+      <div class="diagram mermaid">
+flowchart LR
+  T1[Draft ใบโอน] --> T2[เลือก Lot ต้นทาง]
+  T2 --> T3[ส่ง In transit]
+  T3 --> T4[รับปลายทาง]
+      </div>
+      <svg class="flow-svg" viewBox="0 0 900 120" aria-label="แผนผังเมนูคลัง" role="img">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#c41e3a;stop-opacity:.15"/>
+            <stop offset="100%" style="stop-color:#1e4f8a;stop-opacity:.15"/>
+          </linearGradient>
+        </defs>
+        <rect x="10" y="30" width="880" height="70" rx="10" fill="url(#g1)" stroke="#e5e2dc"/>
+        <text x="450" y="22" text-anchor="middle" font-size="13" fill="#5c5c5c" font-family="Sarabun,sans-serif">เมนูคลัง — จาก Hub /admin/inventory</text>
+        <g font-family="Sarabun,sans-serif" font-size="11" fill="#1a1a1a">
+          <rect x="24" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#c41e3a"/><text x="60" y="72" text-anchor="middle">รับเข้า</text>
+          <rect x="108" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#1e4f8a"/><text x="144" y="72" text-anchor="middle">สต็อก</text>
+          <rect x="192" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#5b3a8c"/><text x="228" y="72" text-anchor="middle">ใบเบิก</text>
+          <rect x="276" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#1e4f8a"/><text x="312" y="72" text-anchor="middle">โอน</text>
+          <rect x="360" y="48" width="80" height="40" rx="6" fill="#fff" stroke="#9a6700"/><text x="400" y="72" text-anchor="middle">ตรวจนับ</text>
+          <rect x="452" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#5c5c5c"/><text x="488" y="72" text-anchor="middle">ใช้จริง</text>
+          <rect x="536" y="48" width="72" height="40" rx="6" fill="#fff" stroke="#c41e3a"/><text x="572" y="72" text-anchor="middle">เสียหาย</text>
+          <rect x="620" y="48" width="60" height="40" rx="6" fill="#fff" stroke="#c41e3a"/><text x="650" y="72" text-anchor="middle">SKU</text>
+          <rect x="692" y="48" width="88" height="40" rx="6" fill="#fff" stroke="#5b3a8c"/><text x="736" y="72" text-anchor="middle">คลัง/BOM</text>
+          <rect x="792" y="48" width="88" height="40" rx="6" fill="#fff" stroke="#1a6b45"/><text x="836" y="72" text-anchor="middle">Reports</text>
+        </g>
+      </svg>
+    </section>
+
+    <section id="modules">
+      <h2>6. รายการหน้าจอและ URL</h2>
+      <table>
+        <thead><tr><th>หน้า</th><th>URL</th><th>ใช้เมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td>ศูนย์ควบคุม</td><td>/admin/inventory</td><td>ทางลัดงานประจำวัน</td></tr>
+          <tr><td>แดชบอร์ด</td><td>/admin/inventory/dashboard</td><td>KPI ภาพรวม</td></tr>
+          <tr><td>Alerts</td><td>/admin/inventory/alerts</td><td>สต็อกต่ำ / ใกล้หมดอายุ</td></tr>
+          <tr><td>สต็อก + Lot</td><td>/admin/inventory/stock</td><td>ตรวจยอดคงเหลือ</td></tr>
+          <tr><td>รับเข้า</td><td>/admin/inventory/inbound</td><td>รับสินค้าเข้าคลัง</td></tr>
+          <tr><td>ใบเบิก</td><td>/admin/inventory/requisition</td><td>เบิกไปครัว/แผนก</td></tr>
+          <tr><td>โอน</td><td>/admin/inventory/transfer</td><td>ย้ายระหว่างคลัง</td></tr>
+          <tr><td>ตรวจนับ</td><td>/admin/inventory/stock-count</td><td>นับจริง vs ระบบ</td></tr>
+          <tr><td>ใช้จริง</td><td>/admin/inventory/consumption</td><td>บันทึกการใช้</td></tr>
+          <tr><td>เสียหาย</td><td>/admin/inventory/damage</td><td>แจ้งของเสีย/หมดอายุ</td></tr>
+          <tr><td>BOM</td><td>/admin/inventory/bom</td><td>สูตร + ตัดตามสูตร</td></tr>
+          <tr><td>รายงาน</td><td>/admin/inventory/reports</td><td>รวม 8+ รายงาน + FEFO override</td></tr>
+          <tr><td>LIFF สแกนรับเข้า</td><td>/liff/inbound-scan</td><td>สแกนบาร์โค้ดมือถือ</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="fefo">
+      <h2>7. FEFO / Lot tracking</h2>
+      <ul>
+        <li>ทุกครั้งที่<strong>อนุมัติรับเข้า</strong> ระบบสร้าง <code>inv_stock_lots</code> พร้อม expiry (ถ้ากำหนด)</li>
+        <li><strong>เบิก / ใช้ / เสียหาย / โอน</strong> ใช้ FEFO แนะนำ lot — เลือก lot เองได้จาก dropdown</li>
+        <li>หน้าสต็อกแสดงทั้งยอดรวมและรายการ lot คงเหลือ</li>
+        <li>รายงาน FEFO Override: <code>/admin/inventory/reports/fefo-override</code></li>
+      </ul>
+    </section>
+
+    <section id="uat">
+      <h2>8. Checklist ตรวจรับ (UAT)</h2>
+      <p class="muted">ติ๊กเมื่อทดสอบผ่านบน production — ความคืบหน้าบันทึกในเบราว์เซอร์ (local)</p>
+      <div class="progress-bar" aria-hidden="true"><div id="uat-progress"></div></div>
+      <p id="uat-count" class="muted" style="margin-top:0"></p>
+
+      <h3>Gate 0 — ข้อมูลหลัก</h3>
+      <div class="checklist" data-group="gate0">
+        <label><input type="checkbox" data-uat /> สร้างสาขาคลัง + ผูกสาขา HR แล้ว</label>
+        <label><input type="checkbox" data-uat /> สร้างคลัง main ครบทุกสาขาที่ใช้งาน</label>
+        <label><input type="checkbox" data-uat /> สร้าง Supplier อย่างน้อย 1 ราย</label>
+        <label><input type="checkbox" data-uat /> สร้าง SKU จริงครบ (ไม่ใช่ DEMO)</label>
+        <label><input type="checkbox" data-uat /> ตั้ง role พนักงานคลัง = inventory</label>
+      </div>
+
+      <h3>Gate 1 — รับเข้า &amp; สต็อก</h3>
+      <div class="checklist" data-group="gate1">
+        <label><input type="checkbox" data-uat /> สร้าง inbound + อนุมัติ → lot ปรากฏในหน้าสต็อก</label>
+        <label><input type="checkbox" data-uat /> ยอด inv_stock_balances ตรงกับที่รับเข้า</label>
+        <label><input type="checkbox" data-uat /> ตาราง Lot แสดง lot_number + expiry ถูกต้อง</label>
+      </div>
+
+      <h3>Gate 2 — เบิก / โอน / นับ</h3>
+      <div class="checklist" data-group="gate2">
+        <label><input type="checkbox" data-uat /> ใบเบิก: สร้าง → อนุมัติ → issue + FEFO preview</label>
+        <label><input type="checkbox" data-uat /> โอนสินค้า: เลือก lot → ส่ง → รับปลายทาง</label>
+        <label><input type="checkbox" data-uat /> ตรวจนับ: สร้าง session → กรอกยอด → finalize</label>
+      </div>
+
+      <h3>Gate 3 — เสียหาย / ใช้ / BOM</h3>
+      <div class="checklist" data-group="gate3">
+        <label><input type="checkbox" data-uat /> แจ้งเสียหาย + เลือก lot → อนุมัติ → ลดสต็อก</label>
+        <label><input type="checkbox" data-uat /> บันทึกใช้จริง (consumption) ผ่าน FEFO</label>
+        <label><input type="checkbox" data-uat /> BOM: ตัดตามสูตร (ถ้าใช้งาน)</label>
+      </div>
+
+      <h3>Gate 4 — สิทธิ์ &amp; รายงาน</h3>
+      <div class="checklist" data-group="gate4">
+        <label><input type="checkbox" data-uat /> inventory login → ทำงานคลังได้ (ไม่แก้ master)</label>
+        <label><input type="checkbox" data-uat /> hr login → แก้ master + งานคลังได้</label>
+        <label><input type="checkbox" data-uat /> ceo login → อ่านได้ ไม่สามารถอนุมัติ/แก้ operational</label>
+        <label><input type="checkbox" data-uat /> รายงาน stock / inbound / variance เปิดได้</label>
+        <label><input type="checkbox" data-uat /> ไม่มี error ใน browser console ระหว่าง flow หลัก</label>
+      </div>
+    </section>
+
+    <section id="signoff">
+      <h2>9. ลงนามรับมอบ</h2>
+      <table>
+        <thead>
+          <tr><th>บทบาท</th><th>ชื่อ</th><th>วันที่</th><th>ลายเซ็น</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ทีมคลัง (ผู้ใช้งาน)</td><td></td><td></td><td></td></tr>
+          <tr><td>HR Admin</td><td></td><td></td><td></td></tr>
+          <tr><td>ผู้บริหาร / CEO</td><td></td><td></td><td></td></tr>
+          <tr><td>ผู้พัฒนา / ส่งมอบ</td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        Production: <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">https://hr-app-two-iota.vercel.app</a>
+        · Commit ล่าสุด inventory go-live: <code>99d2992</code>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+
+    (function () {
+      const KEY = "inventory-uat-checklist-v1";
+      const boxes = document.querySelectorAll("[data-uat]");
+      const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+      boxes.forEach((box, i) => {
+        const id = "uat-" + i;
+        box.id = id;
+        box.checked = !!saved[id];
+        box.addEventListener("change", update);
+      });
+
+      function update() {
+        const state = {};
+        let done = 0;
+        boxes.forEach((box) => {
+          state[box.id] = box.checked;
+          if (box.checked) done++;
+        });
+        localStorage.setItem(KEY, JSON.stringify(state));
+        const pct = boxes.length ? Math.round((done / boxes.length) * 100) : 0;
+        document.getElementById("uat-progress").style.width = pct + "%";
+        document.getElementById("uat-count").textContent =
+          "ผ่านแล้ว " + done + " / " + boxes.length + " รายการ (" + pct + "%)";
+      }
+      update();
+    })();
+  </script>
+</body>
+</html>

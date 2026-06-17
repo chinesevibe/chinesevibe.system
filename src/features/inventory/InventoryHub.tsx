@@ -4,8 +4,11 @@ import {
   ArrowRight,
   BarChart3,
   Bell,
+  BookOpen,
   Building2,
   ClipboardList,
+  ExternalLink,
+  FileText,
   LayoutDashboard,
   Package,
   PackagePlus,
@@ -214,6 +217,38 @@ function HubSection({
   )
 }
 
+function DocQuickLink({
+  href,
+  icon: Icon,
+  label,
+  external = false,
+  imageSrc,
+}: {
+  href: string
+  icon?: LucideIcon
+  label: string
+  external?: boolean
+  imageSrc?: string
+}) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="inline-flex items-center gap-2 rounded-lg border border-border/70 bg-card px-3 py-2 text-sm font-medium transition-colors hover:border-brand-red/30 hover:bg-muted/30"
+    >
+      {imageSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imageSrc} alt="" className="size-5 shrink-0 rounded" width={20} height={20} />
+      ) : Icon ? (
+        <Icon className="size-4 shrink-0 text-brand-red" aria-hidden />
+      ) : null}
+      <span>{label}</span>
+      {external ? <ExternalLink className="size-3.5 text-muted-foreground" aria-hidden /> : null}
+    </a>
+  )
+}
+
 function QuickLink({
   href,
   icon: Icon,
@@ -257,18 +292,40 @@ export function InventoryHub({
             เลือกงานประจำวันหรือตั้งค่าข้อมูลหลัก — เมนูด้านบนใช้สลับหน้างานได้ตลอด
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <QuickLink
-            href="/admin/inventory/dashboard"
-            icon={LayoutDashboard}
-            label="แดชบอร์ด"
-          />
-          <QuickLink
-            href="/admin/inventory/alerts"
-            icon={Bell}
-            label="Alerts"
-            badge={alertCount}
-          />
+        <div className="flex flex-col gap-2 sm:items-end">
+          <div className="flex flex-wrap gap-2">
+            <DocQuickLink
+              href="/docs/INVENTORY_HANDOFF.html"
+              imageSrc="/brand/mascot.svg"
+              label="คู่มือ & Checklist UAT"
+              external
+            />
+            <DocQuickLink
+              href="/line-oa-manual.html"
+              icon={BookOpen}
+              label="คู่มือ LINE OA"
+              external
+            />
+            <DocQuickLink
+              href="/docs/LINE_OA_Employee_Manual_TH.pdf"
+              icon={FileText}
+              label="PDF พนักงาน"
+              external
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <QuickLink
+              href="/admin/inventory/dashboard"
+              icon={LayoutDashboard}
+              label="แดชบอร์ด"
+            />
+            <QuickLink
+              href="/admin/inventory/alerts"
+              icon={Bell}
+              label="Alerts"
+              badge={alertCount}
+            />
+          </div>
         </div>
       </div>
 
