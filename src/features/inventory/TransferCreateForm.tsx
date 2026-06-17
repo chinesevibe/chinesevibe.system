@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import { InventoryFormField } from "@/features/inventory/InventoryFormFields"
+import { InventoryLotPicker } from "@/features/inventory/InventoryLotPicker"
 import { createTransfer } from "@/features/inventory/actions/transfer"
 import { invInputClass } from "@/features/inventory/form-styles"
 import type { InvInventoryCreateOptions } from "@/features/inventory/types"
@@ -14,6 +15,7 @@ type DraftItem = {
   key: string
   sku_id: string
   qty_sent: string
+  lot_id: string
   lot_number: string
 }
 
@@ -22,6 +24,7 @@ function newItem(): DraftItem {
     key: crypto.randomUUID(),
     sku_id: "",
     qty_sent: "1",
+    lot_id: "",
     lot_number: "",
   }
 }
@@ -72,7 +75,8 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
         items: items.map((item) => ({
           sku_id: item.sku_id,
           qty_sent: Number(item.qty_sent),
-          lot_number: item.lot_number,
+          lot_id: item.lot_id || null,
+          lot_number: item.lot_number || null,
         })),
       })
       if (result.success && result.id) {
@@ -137,9 +141,9 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
         {items.map((item, index) => {
           const sku = skuById.get(item.sku_id)
           return (
-            <div key={item.key} className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_180px_auto]">
+            <div key={item.key} className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_220px_auto]">
               <InventoryFormField label={`SKU #${index + 1}`}>
-                <select value={item.sku_id} className={invInputClass} onChange={(e) => updateItem(item.key, { sku_id: e.target.value })}>
+                <select value={item.sku_id} className={invInputClass} onChange={(e) => updateItem(item.key, { sku_id: e.target.value, lot_id: "", lot_number: "" })}>
                   <option value="" disabled>เลือก SKU</option>
                   {options.skus.map((option) => (
                     <option key={option.id} value={option.id}>{option.code} — {option.name}</option>
@@ -151,7 +155,17 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
                 <input type="number" min={0.001} step="any" value={item.qty_sent} className={invInputClass} onChange={(e) => updateItem(item.key, { qty_sent: e.target.value })} />
               </InventoryFormField>
               <InventoryFormField label="Lot">
-                <input value={item.lot_number} className={invInputClass} onChange={(e) => updateItem(item.key, { lot_number: e.target.value })} />
+                <InventoryLotPicker
+                  skuId={item.sku_id}
+                  warehouseId={fromWarehouseId}
+                  value={item.lot_id}
+                  onChange={(lotId, lot) =>
+                    updateItem(item.key, {
+                      lot_id: lotId,
+                      lot_number: lot?.lot_number ?? "",
+                    })
+                  }
+                />
               </InventoryFormField>
               <div className="flex items-end">
                 <Button type="button" size="icon" variant="ghost" onClick={() => removeItem(item.key)} disabled={items.length === 1}>

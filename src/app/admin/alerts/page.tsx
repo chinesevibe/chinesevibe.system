@@ -25,7 +25,7 @@ export default async function AdminAlertsPage({
   return (
     <AdminPageShell
       title="Alerts"
-      description={`รายการแจ้งเตือน ${tabLabel} — ภายใน 60 วันข้างหน้า`}
+      description={`รายการแจ้งเตือน ${tabLabel} — ใกล้ครบ 60 วัน หรือหมดอายุแล้ว`}
       badge={<CountBadge count={rows.length} label="รายการ" />}
     >
       <div className="flex flex-col gap-4">

@@ -204,7 +204,13 @@ const th: MessageCatalog = {
   "line.alreadyCheckedOut.desc": "คุณเช็คเอาท์วันนี้แล้ว เวลา {time} น.",
   "line.notCheckedIn.alt": "ยังไม่เช็คอิน",
   "line.notCheckedIn.title": "ยังไม่เช็คอิน",
-  "line.notCheckedIn.desc": "กรุณาเช็คอินก่อนเลิกงาน",
+  "line.notCheckedIn.subtitle": "ต้องลงเวลาเข้าก่อนเลิกงาน",
+  "line.notCheckedIn.desc":
+    "คุณยังไม่มีการเช็คเข้าวันนี้ — ลงเวลาเข้าย้อนหลังได้ภายใน 48 ชม. หลังเลิกกะ",
+  "line.notCheckedIn.step1": "กดปุ่มด้านล่างเพื่อเปิดหน้าลงเวลาย้อนหลัง",
+  "line.notCheckedIn.step2": "เลือกวันที่และกรอกเวลาเข้าตามจริง",
+  "line.notCheckedIn.tip": "หมดเวลา 48 ชม. แล้วกรุณาติดต่อ HR",
+  "line.notCheckedIn.retroButton": "ลงเวลาเข้าย้อนหลัง",
 
   "line.geofence.alt": "อยู่นอกพื้นที่สาขา",
   "line.geofence.title": "อยู่นอกพื้นที่สาขา",
@@ -653,6 +659,9 @@ const th: MessageCatalog = {
   "liff.attendance.saveFailed": "บันทึกไม่สำเร็จ",
   "liff.attendance.autoTitle": "บันทึกอัตโนมัติ",
   "liff.attendance.autoDesc": "เมื่อเช็คเอาท์ผ่าน LINE หรือบันทึกเวลาออกที่นี่ ระบบจะบันทึกเข้า payroll ทันที ไม่ต้องยื่นสรุปวันหรือรออนุมัติ",
+  "liff.attendance.retroQuota": "สิทธิ์ลงย้อนหลังเดือนนี้: {used}/{limit} ครั้ง",
+  "liff.attendance.retroDeadline": "แก้ได้ถึง: {deadline}",
+  "liff.attendance.retroExpired": "หมดเวลาลงย้อนหลัง (48 ชม.) — ติดต่อ HR",
 
   "liff.inbound.loading": "กำลังโหลด…",
   "liff.inbound.loadingOrder": "กำลังโหลดใบรับเข้า…",
@@ -761,7 +770,7 @@ const th: MessageCatalog = {
   "leave.form.sickHoursLabel": "ชั่วโมงลาป่วย (ภายในวัน)",
   "leave.form.sickHoursPlaceholder": "เช่น 2",
   "leave.form.sickHoursDesc":
-    "ลาป่วยภายในวันนับเป็นชม. — ใส่ชั่วโมงแทนจำนวนวัน",
+    "ลาป่วยภายในวันนับเป็นชม. — ใส่ชั่วโมงแทนจำนวนวัน และต้องแนบใบรับรองแพทย์",
   "leave.form.daysCount": "จำนวนวันลา:",
   "leave.form.daysValue": "{count} วัน",
   "leave.form.sickRetroNote":
@@ -769,6 +778,8 @@ const th: MessageCatalog = {
   "leave.form.reasonLabel": "เหตุผล",
   "leave.form.reasonPlaceholder": "ระบุเหตุผลการลา",
   "leave.form.attachmentLabel": "ใบรับรองแพทย์ (JPEG/PNG/PDF ไม่เกิน 5MB)",
+  "leave.form.validation.medicalRequired":
+    "ลาป่วยแบบชั่วโมงต้องแนบใบรับรองแพทย์",
   "leave.form.fileSelected": "เลือกไฟล์แล้ว: {name}",
   "leave.form.submit": "ส่งใบลา",
   "leave.form.success": "ส่งคำขอลาแล้ว — รอ HR อนุมัติ (ภายใน 48 ชม.)",
@@ -1030,7 +1041,13 @@ const en: MessageCatalog = {
   "line.alreadyCheckedOut.desc": "You already checked out today at {time}.",
   "line.notCheckedIn.alt": "Not checked in",
   "line.notCheckedIn.title": "Not checked in",
-  "line.notCheckedIn.desc": "Please check in before checking out.",
+  "line.notCheckedIn.subtitle": "Check in before clocking out",
+  "line.notCheckedIn.desc":
+    "No check-in today — you can backfill within 48 hours after shift end.",
+  "line.notCheckedIn.step1": "Tap the button below to open retro time entry",
+  "line.notCheckedIn.step2": "Pick the date and enter your actual check-in time",
+  "line.notCheckedIn.tip": "After 48 hours, contact HR",
+  "line.notCheckedIn.retroButton": "Backfill check-in",
 
   "line.geofence.alt": "Outside branch area",
   "line.geofence.title": "Outside branch area",
@@ -1476,6 +1493,9 @@ const en: MessageCatalog = {
   "liff.attendance.saveFailed": "Save failed",
   "liff.attendance.autoTitle": "Automatic payroll record",
   "liff.attendance.autoDesc": "When you check out via LINE or record check-out here, the system records payroll immediately. No daily summary or approval needed.",
+  "liff.attendance.retroQuota": "Retro corrections this month: {used}/{limit}",
+  "liff.attendance.retroDeadline": "Editable until: {deadline}",
+  "liff.attendance.retroExpired": "Retro window expired (48h) — contact HR",
 
   "liff.inbound.loading": "Loading...",
   "liff.inbound.loadingOrder": "Loading inbound order...",
@@ -1593,6 +1613,8 @@ const en: MessageCatalog = {
   "leave.form.reasonLabel": "Reason",
   "leave.form.reasonPlaceholder": "Enter reason for leave",
   "leave.form.attachmentLabel": "Medical certificate (JPEG/PNG/PDF, max 5MB)",
+  "leave.form.validation.medicalRequired":
+    "Hourly sick leave requires a medical certificate",
   "leave.form.fileSelected": "File selected: {name}",
   "leave.form.submit": "Submit leave",
   "leave.form.success": "Leave submitted — HR will approve within 48 hours",

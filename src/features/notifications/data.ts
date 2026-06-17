@@ -11,6 +11,7 @@ import type {
 } from "@/features/notifications/types"
 import { NOTIFICATION_LIST_LIMIT } from "@/features/notifications/types"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
+import { probationNeedsComplianceAlert } from "@/lib/employees/probation-compliance"
 import {
   buildBranchNavBadges,
   buildHrNavBadges,
@@ -87,7 +88,7 @@ async function complianceNotifications(
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("hr_employees")
-    .select("id, name, department, probation_end, visa_expiry, work_permit_expiry")
+    .select("id, name, department, probation_end, probation_outcome, visa_expiry, work_permit_expiry")
     .eq("status", "active")
 
   if (error) throw error
@@ -102,21 +103,36 @@ async function complianceNotifications(
     department: string | null,
     dueDate: string
   ) => {
-    if (dueDate < today || dueDate > windowEnd) return
+    if (dueDate > windowEnd) return
     total += 1
     const daysLeft = daysBetween(today, dueDate)
-    const urgency = daysLeft <= COMPLIANCE_URGENT_DAYS ? "urgent" : "normal"
+    const isExpired = daysLeft < 0
+    const urgency = isExpired
+      ? "urgent"
+      : daysLeft <= COMPLIANCE_URGENT_DAYS
+        ? "urgent"
+        : "normal"
     const title =
       kind === "probation"
-        ? "ทดลองงานใกล้ครบ"
+        ? isExpired
+          ? "ทดลองงานครบแล้ว"
+          : "ทดลองงานใกล้ครบ"
         : kind === "visa"
-          ? "วีซ่าใกล้หมดอายุ"
-          : "Work Permit ใกล้หมดอายุ"
+          ? isExpired
+            ? "วีซ่าหมดอายุแล้ว"
+            : "วีซ่าใกล้หมดอายุ"
+          : isExpired
+            ? "Work Permit หมดอายุแล้ว"
+            : "Work Permit ใกล้หมดอายุ"
     items.push({
       id: `${kind}-${employeeId}`,
       kind,
       title,
-      summary: `${name}${department ? ` · ${department}` : ""} — เหลือ ${daysLeft} วัน (${dueDate})`,
+      summary: `${name}${department ? ` · ${department}` : ""} — ${
+        isExpired
+          ? `หมดอายุแล้ว ${Math.abs(daysLeft)} วัน (${dueDate})`
+          : `เหลือ ${daysLeft} วัน (${dueDate})`
+      }`,
       href: `/admin/employees/${employeeId}`,
       createdAt: dueDate,
       urgency,
@@ -124,7 +140,13 @@ async function complianceNotifications(
   }
 
   for (const row of data ?? []) {
-    if (row.probation_end) {
+    if (
+      row.probation_end &&
+      probationNeedsComplianceAlert({
+        probationEnd: row.probation_end as string,
+        probationOutcome: row.probation_outcome as string | null,
+      })
+    ) {
       pushCompliance(
         "probation",
         row.id,

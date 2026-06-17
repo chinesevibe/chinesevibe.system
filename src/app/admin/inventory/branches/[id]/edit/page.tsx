@@ -2,7 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
-import { getInvBranch } from "@/features/inventory/actions/branch"
+import { getInvBranch, listHrBranchesForMapping } from "@/features/inventory/actions/branch"
 import { BranchForm } from "@/features/inventory/BranchForm"
 import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
@@ -18,6 +18,7 @@ export default async function EditBranchPage({ params }: PageProps) {
 
   const branch = await getInvBranch(id)
   if (!branch) notFound()
+  const hrBranches = await listHrBranchesForMapping()
 
   return (
     <AdminPageShell
@@ -32,6 +33,7 @@ export default async function EditBranchPage({ params }: PageProps) {
         mode="edit"
         initial={branch}
         readOnly={readOnly || !canManageHr(employee.role)}
+        hrBranches={hrBranches}
       />
     </AdminPageShell>
   )

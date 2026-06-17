@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { AttendanceCorrectableBanner } from "@/features/attendance/AttendanceCalendar"
 import { useLocale } from "@/features/portal/LocaleProvider"
 
 const FIELD_CLASS =
@@ -22,12 +23,28 @@ type SubmitMessageState = {
   message: string
 }
 
+type RetroUsage = { used: number; limit: number; remaining: number }
+
 export function AttendanceManualClient({
   defaultDate,
   defaultTime,
+  today,
+  retroUsage,
+  withinRetroWindow,
+  retroDeadline,
+  correctableDays,
 }: {
   defaultDate: string
   defaultTime: string
+  today: string
+  retroUsage: RetroUsage
+  withinRetroWindow: boolean
+  retroDeadline: string | null
+  correctableDays: Array<{
+    workDate: string
+    issue: "missing_checkin" | "missing_checkout"
+    deadline: string
+  }>
 }) {
   const { tx } = useLocale()
   const [date, setDate] = useState(defaultDate)
@@ -38,14 +55,46 @@ export function AttendanceManualClient({
     "idle"
   )
   const [manualMsg, setManualMsg] = useState<SubmitMessageState | null>(null)
+  const [windowOpen, setWindowOpen] = useState(withinRetroWindow)
+  const [deadlineIso, setDeadlineIso] = useState(retroDeadline)
+  const [quota, setQuota] = useState(retroUsage)
+  const [correctable, setCorrectable] = useState(correctableDays)
 
-  const canCheckin = Boolean(date && checkInTime)
-  const canCheckout = Boolean(date && checkOutTime)
+  useEffect(() => {
+    let cancelled = false
+    void fetch(`/api/attendance/retro-status?date=${encodeURIComponent(date)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled || !data || data.error) return
+        setWindowOpen(Boolean(data.withinRetroWindow))
+        setDeadlineIso(typeof data.deadline === "string" ? data.deadline : null)
+        if (data.retroUsage) setQuota(data.retroUsage as RetroUsage)
+        if (Array.isArray(data.correctableDays)) {
+          setCorrectable(data.correctableDays)
+        }
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
+  }, [date])
+
+  const retroBlocked = !windowOpen && date < today
+
+  const deadlineLabel = useMemo(() => {
+    if (!deadlineIso) return null
+    return new Intl.DateTimeFormat("th-TH", {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: "Asia/Bangkok",
+    }).format(new Date(deadlineIso))
+  }, [deadlineIso])
+
+  const canCheckin = Boolean(date && checkInTime) && !retroBlocked
+  const canCheckout = Boolean(date && checkOutTime) && !retroBlocked
   const canBoth = canCheckin && canCheckout
 
-  async function submitManual(
-    mode: "checkin" | "checkout" | "full"
-  ) {
+  async function submitManual(mode: "checkin" | "checkout" | "full") {
     setBusyMode(mode === "full" ? "both" : mode)
     setManualMsg(null)
 
@@ -113,14 +162,31 @@ export function AttendanceManualClient({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 p-4">
+      <AttendanceCorrectableBanner items={correctable} />
+
       <Card>
         <CardHeader>
           <CardTitle>{tx("liff.attendance.pageTitle")}</CardTitle>
-          <CardDescription>
-            {tx("liff.attendance.pageDesc")}
-          </CardDescription>
+          <CardDescription>{tx("liff.attendance.pageDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            {tx("liff.attendance.retroQuota", {
+              used: String(quota.used),
+              limit: String(quota.limit),
+            })}
+          </p>
+          {deadlineLabel ? (
+            <p className="text-xs text-muted-foreground">
+              {tx("liff.attendance.retroDeadline", { deadline: deadlineLabel })}
+            </p>
+          ) : null}
+          {retroBlocked ? (
+            <p className="text-sm text-destructive">
+              {tx("liff.attendance.retroExpired")}
+            </p>
+          ) : null}
+
           <label className="grid gap-1 text-sm">
             <span className="font-medium">{tx("liff.attendance.date")}</span>
             <input
@@ -196,9 +262,7 @@ export function AttendanceManualClient({
       <Card>
         <CardHeader>
           <CardTitle>{tx("liff.attendance.autoTitle")}</CardTitle>
-          <CardDescription>
-            {tx("liff.attendance.autoDesc")}
-          </CardDescription>
+          <CardDescription>{tx("liff.attendance.autoDesc")}</CardDescription>
         </CardHeader>
       </Card>
     </div>

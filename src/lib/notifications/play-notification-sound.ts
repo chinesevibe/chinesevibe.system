@@ -1,21 +1,35 @@
+/** Peak output gain for the admin notification tone (0–1, Web Audio max). */
+const NOTIFICATION_SOUND_VOLUME = 1
+
+function playTone(
+  ctx: AudioContext,
+  startAt: number,
+  frequency: number,
+  durationSec: number,
+  volume = NOTIFICATION_SOUND_VOLUME
+): void {
+  const osc = ctx.createOscillator()
+  const gain = ctx.createGain()
+  osc.type = "triangle"
+  osc.frequency.setValueAtTime(frequency, startAt)
+  gain.gain.setValueAtTime(0.0001, startAt)
+  gain.gain.exponentialRampToValueAtTime(volume, startAt + 0.015)
+  gain.gain.exponentialRampToValueAtTime(0.0001, startAt + durationSec)
+  osc.connect(gain)
+  gain.connect(ctx.destination)
+  osc.start(startAt)
+  osc.stop(startAt + durationSec + 0.02)
+}
+
 /** Short notification tone via Web Audio API (no asset file). */
 export function playNotificationSound(): void {
   if (typeof window === "undefined") return
   try {
     const ctx = new AudioContext()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.type = "sine"
-    osc.frequency.setValueAtTime(880, ctx.currentTime)
-    osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.08)
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02)
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25)
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.start(ctx.currentTime)
-    osc.stop(ctx.currentTime + 0.26)
-    osc.onended = () => void ctx.close()
+    const start = ctx.currentTime
+    playTone(ctx, start, 880, 0.14)
+    playTone(ctx, start + 0.16, 1175, 0.18)
+    window.setTimeout(() => void ctx.close(), 450)
   } catch {
     // Autoplay policy or unsupported — ignore
   }

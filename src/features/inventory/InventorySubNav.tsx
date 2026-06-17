@@ -16,6 +16,7 @@ const OPERATIONAL_LINKS = [
   { href: "/admin/inventory/transfer", label: "โอนสินค้า" },
   { href: "/admin/inventory/consumption", label: "บันทึกใช้" },
   { href: "/admin/inventory/damage", label: "แจ้งเสียหาย" },
+  { href: "/admin/inventory/stock-count", label: "นับสต็อก" },
 ] as const
 
 const MASTER_DATA_LINKS = [
@@ -23,19 +24,23 @@ const MASTER_DATA_LINKS = [
   { href: "/admin/inventory/suppliers", label: "Supplier" },
   { href: "/admin/inventory/branches", label: "สาขา (คลัง)" },
   { href: "/admin/inventory/warehouses", label: "คลังสินค้า" },
+  { href: "/admin/inventory/bom", label: "BOM" },
 ] as const
 
 export function InventorySubNav({
   staffMode = false,
+  showMasterData = false,
   alertCount = 0,
 }: {
   staffMode?: boolean
+  showMasterData?: boolean
   alertCount?: number
 }) {
   const pathname = usePathname()
-  const links = staffMode
-    ? OPERATIONAL_LINKS
-    : [...OPERATIONAL_LINKS, ...MASTER_DATA_LINKS]
+  const links =
+    staffMode && !showMasterData
+      ? OPERATIONAL_LINKS
+      : [...OPERATIONAL_LINKS, ...MASTER_DATA_LINKS]
 
   return (
     <nav className="flex flex-wrap gap-1 rounded-xl border border-border/80 bg-muted/30 p-1">

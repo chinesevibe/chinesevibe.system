@@ -12,6 +12,7 @@ const REPORT_LINKS = [
   { href: "/admin/inventory/reports/transfer", label: "Transfer" },
   { href: "/admin/inventory/reports/variance", label: "Stock Count Variance" },
   { href: "/admin/inventory/reports/audit", label: "Audit Trail" },
+  { href: "/admin/inventory/reports/fefo-override", label: "FEFO Override" },
 ]
 
 export default async function InventoryReportsHubPage() {

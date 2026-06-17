@@ -1,6 +1,7 @@
 import type { ContractType } from "@/features/employees/profile/data"
 import type { SalaryPaymentMethod } from "@/features/employees/profile/payment-method"
 import type { AssignableRole } from "@/lib/auth/employee-roles"
+import { timeForApi } from "@/lib/datetime/time-input"
 import type { PayType } from "@/lib/payroll/pay-type"
 import {
   defaultPayDayForNationality,
@@ -56,6 +57,7 @@ export type ProfilePatchInput = {
   salary: string
   housing_allowance: string
   contract_start: string
+  contract_end: string
   contract_type: ContractType
   probation_end: string
   visa_expiry: string
@@ -84,20 +86,33 @@ function buildNationalityPayDayFields(form: {
   return { nationality, pay_day: payDay }
 }
 
-export function buildProfilePatchBody(form: ProfilePatchInput): Record<string, unknown> {
-  return {
+const SALARY_PATCH_KEYS = [
+  "salary",
+  "housing_allowance",
+  "pay_type",
+  "pay_day",
+  "nationality",
+  "salary_payment_method",
+  "bank_name",
+  "bank_account_name",
+  "bank_account_number",
+  "bank_branch",
+] as const
+
+export function buildProfilePatchBody(
+  form: ProfilePatchInput,
+  options?: { includeSalaryFields?: boolean }
+): Record<string, unknown> {
+  const includeSalary = options?.includeSalaryFields !== false
+  const body: Record<string, unknown> = {
     name: form.name.trim(),
     date_of_birth: form.date_of_birth || null,
-    ...buildNationalityPayDayFields(form),
     phone: form.phone.trim() || null,
     email: form.email.trim() || null,
     position: form.position.trim() || null,
     department: form.department.trim() || null,
-    salary: form.salary ? Number.parseFloat(form.salary) : null,
-    housing_allowance: form.housing_allowance
-      ? Number.parseFloat(form.housing_allowance)
-      : null,
     contract_start: form.contract_start || null,
+    contract_end: form.contract_end || null,
     contract_type: form.contract_type,
     probation_end: form.probation_end || null,
     visa_expiry: form.visa_expiry || null,
@@ -106,12 +121,35 @@ export function buildProfilePatchBody(form: ProfilePatchInput): Record<string, u
     role: form.role,
     employee_code: form.employee_code.trim() || null,
     branch_id: form.branch_id || null,
-    pay_type: form.pay_type,
     work_shift_id: form.work_shift_id || null,
-    default_check_in_time: form.default_check_in_time || null,
-    default_check_out_time: form.default_check_out_time || null,
-    ...buildBankPatchFields(form),
+    default_check_in_time: timeForApi(form.default_check_in_time),
+    default_check_out_time: timeForApi(form.default_check_out_time),
   }
+
+  if (includeSalary) {
+    Object.assign(body, buildNationalityPayDayFields(form), {
+      salary: form.salary ? Number.parseFloat(form.salary) : null,
+      housing_allowance: form.housing_allowance
+        ? Number.parseFloat(form.housing_allowance)
+        : null,
+      pay_type: form.pay_type,
+      ...buildBankPatchFields(form),
+    })
+  } else if (isValidNationality(form.nationality)) {
+    body.nationality = form.nationality
+  }
+
+  return body
+}
+
+export function stripSalaryFieldsFromPatch(
+  body: Record<string, unknown>
+): Record<string, unknown> {
+  const next = { ...body }
+  for (const key of SALARY_PATCH_KEYS) {
+    delete next[key]
+  }
+  return next
 }
 
 export type AddEmployeeFormState = {
@@ -168,8 +206,8 @@ export function buildAddEmployeeBody(form: AddEmployeeFormState): Record<string,
     branch_id: form.branch_id || null,
     pay_type: form.pay_type,
     work_shift_id: form.work_shift_id || null,
-    default_check_in_time: form.default_check_in_time || null,
-    default_check_out_time: form.default_check_out_time || null,
+    default_check_in_time: timeForApi(form.default_check_in_time),
+    default_check_out_time: timeForApi(form.default_check_out_time),
     ...buildBankPatchFields(form),
   }
 }

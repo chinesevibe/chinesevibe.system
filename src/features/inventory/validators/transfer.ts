@@ -3,7 +3,8 @@ import { z } from "zod"
 const transferItemSchema = z.object({
   sku_id: z.string().uuid("SKU ไม่ถูกต้อง"),
   qty_sent: z.coerce.number().positive("จำนวนส่งต้องมากกว่า 0"),
-  lot_number: z.string().trim().min(1, "กรุณากรอก Lot").max(120).optional(),
+  lot_id: z.string().uuid("Lot ไม่ถูกต้อง").optional().nullable(),
+  lot_number: z.string().trim().max(120).optional().nullable(),
 })
 
 export const createTransferSchema = z

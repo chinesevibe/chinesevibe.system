@@ -11,10 +11,12 @@ const ALLOWED_KEYS = new Set([
   "hr_line_group_id",
   "morning_push_employee_enabled",
   "morning_push_employee_fallback_time",
+  "morning_push_employee_fallback_time_2",
   "morning_push_employee_remind_after_min",
   "morning_push_employee_days",
   "morning_push_officer_enabled",
   "morning_push_officer_fallback_time",
+  "morning_push_officer_fallback_time_2",
   "morning_push_officer_remind_after_min",
   "morning_push_officer_days",
 ])
@@ -29,7 +31,7 @@ function validateRuntimeConfig(key: string, value: string): string | null {
     return null
   }
 
-  if (key.endsWith("_fallback_time")) {
+  if (key.endsWith("_fallback_time_2") || key.endsWith("_fallback_time")) {
     if (!TIME_RE.test(value)) {
       return "เวลา fallback ต้องอยู่ในรูปแบบ HH:MM"
     }

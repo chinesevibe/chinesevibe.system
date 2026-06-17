@@ -14,9 +14,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { employeeDisplayStatusPill } from "@/features/employees/employee-list-display"
 import type { EmployeeRow } from "@/features/employees/data"
-import { LineUserIdCell } from "@/features/employees/LineUserIdCell"
+import { LineLinkBadge } from "@/features/employees/LineLinkBadge"
 import { formatThaiSlashDate } from "@/lib/datetime/thailand"
+import { payTypeDisplayLabel } from "@/lib/payroll/pay-type"
 import { cn } from "@/lib/utils"
 
 const BRANCH_PILL_VARIANTS = [
@@ -39,11 +41,6 @@ function branchPillClass(name: string): string {
   return BRANCH_PILL_VARIANTS[hash] ?? BRANCH_PILL_VARIANTS[0]
 }
 
-function formatSalary(value: number | null): string {
-  if (value == null || Number.isNaN(value)) return "—"
-  return value.toLocaleString("th-TH")
-}
-
 function stopRowNav(event: React.MouseEvent) {
   event.stopPropagation()
 }
@@ -51,6 +48,7 @@ function stopRowNav(event: React.MouseEvent) {
 function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
   const router = useRouter()
   const profileHref = `/admin/employees/${e.id}`
+  const statusPill = employeeDisplayStatusPill(e.displayStatus)
 
   return (
     <TableRow
@@ -66,7 +64,7 @@ function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
       role="link"
       aria-label={`เปิดโปรไฟล์ ${e.name}`}
     >
-      <TableCell className="text-sm font-medium tabular-nums text-muted-foreground">
+      <TableCell className="whitespace-nowrap text-sm font-medium tabular-nums text-muted-foreground">
         <Link
           href={profileHref}
           className="hover:text-brand-red hover:underline"
@@ -75,8 +73,8 @@ function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
           {displayEmployeeCode(e)}
         </Link>
       </TableCell>
-      <TableCell>
-        <div className="flex min-w-0 items-center gap-3">
+      <TableCell className="min-w-[10rem]">
+        <div className="flex min-w-0 items-center gap-2.5">
           <EmployeeAvatar name={e.name} imageUrl={e.avatarUrl} size="sm" />
           <Link
             href={profileHref}
@@ -87,11 +85,13 @@ function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
           </Link>
         </div>
       </TableCell>
-      <TableCell className="text-sm">{e.position ?? "—"}</TableCell>
-      <TableCell onClick={stopRowNav}>
-        <LineUserIdCell lineUserId={e.line_user_id} />
+      <TableCell className="max-w-[8rem] truncate text-sm">
+        {e.department ?? "—"}
       </TableCell>
-      <TableCell>
+      <TableCell className="max-w-[9rem] truncate text-sm">
+        {e.position ?? "—"}
+      </TableCell>
+      <TableCell className="whitespace-nowrap">
         {e.branch_name ? (
           <span
             className={cn(
@@ -108,35 +108,65 @@ function EmployeeTableRow({ employee: e }: { employee: EmployeeRow }) {
           "—"
         )}
       </TableCell>
-      <TableCell className="text-right text-sm tabular-nums">
-        {formatSalary(e.salary)}
+      <TableCell className="whitespace-nowrap">
+        <StatusPill label={statusPill.label} variant={statusPill.variant} />
       </TableCell>
-      <TableCell className="text-sm tabular-nums">
+      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+        {payTypeDisplayLabel(e.pay_type)}
+      </TableCell>
+      <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
+        <LineLinkBadge lineUserId={e.line_user_id} />
+      </TableCell>
+      <TableCell className="whitespace-nowrap text-sm tabular-nums">
+        {e.phone?.trim() ? (
+          <a
+            href={`tel:${e.phone.replace(/\s/g, "")}`}
+            className="hover:text-brand-red hover:underline"
+            onClick={stopRowNav}
+          >
+            {e.phone}
+          </a>
+        ) : (
+          "—"
+        )}
+      </TableCell>
+      <TableCell className="whitespace-nowrap text-sm tabular-nums">
         {formatThaiSlashDate(e.contract_start)}
       </TableCell>
-      <TableCell onClick={stopRowNav}>
+      <TableCell className="whitespace-nowrap text-sm tabular-nums">
+        {formatThaiSlashDate(e.probation_end)}
+      </TableCell>
+      <TableCell className="whitespace-nowrap">
+        <StatusPill
+          label={e.visaStatus.label}
+          variant={e.visaStatus.variant}
+        />
+      </TableCell>
+      <TableCell className="whitespace-nowrap">
+        <StatusPill
+          label={e.workPermitStatus.label}
+          variant={e.workPermitStatus.variant}
+        />
+      </TableCell>
+      <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
         {e.contract_file_path ? (
           <a
             href={`/api/employees/${e.id}/contract`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-brand-red hover:underline"
+            className="inline-flex items-center gap-1 text-sm text-brand-red hover:underline"
           >
             <FileText className="size-4 shrink-0" aria-hidden />
-            <span>
-              สัญญาจ้าง
-              {e.contract_start
-                ? ` (${formatThaiSlashDate(e.contract_start)})`
-                : ""}
-            </span>
+            เปิดไฟล์
           </a>
         ) : e.contract_start ? (
           <Link
             href={profileHref}
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground hover:underline"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground hover:underline"
+            onClick={stopRowNav}
           >
             <FileText className="size-4 shrink-0" aria-hidden />
-            <span>แนบสัญญา ({formatThaiSlashDate(e.contract_start)})</span>
+            แนบสัญญา
           </Link>
         ) : (
           <span className="text-sm text-muted-foreground">—</span>
@@ -180,15 +210,21 @@ export function EmployeeTable({
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow>
-            <TableHead className="w-[100px]">รหัสพนักงาน</TableHead>
-            <TableHead>ชื่อ-นามสกุล</TableHead>
+            <TableHead className="w-[5.5rem]">รหัส</TableHead>
+            <TableHead className="min-w-[10rem]">ชื่อ-นามสกุล</TableHead>
+            <TableHead>แผนก</TableHead>
             <TableHead>ตำแหน่ง</TableHead>
-            <TableHead className="min-w-[240px]">LINE User ID</TableHead>
             <TableHead>สาขา</TableHead>
-            <TableHead className="text-right">เงินเดือน</TableHead>
-            <TableHead>วันเริ่มงาน</TableHead>
-            <TableHead>สัญญาจ้าง</TableHead>
-            <TableHead className="w-12" />
+            <TableHead>สถานะ</TableHead>
+            <TableHead>ประเภทจ้าง</TableHead>
+            <TableHead>LINE</TableHead>
+            <TableHead>โทร</TableHead>
+            <TableHead>เริ่มงาน</TableHead>
+            <TableHead>ทดลองถึง</TableHead>
+            <TableHead>วีซ่า</TableHead>
+            <TableHead>Work Permit</TableHead>
+            <TableHead>สัญญา</TableHead>
+            <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
         <TableBody>

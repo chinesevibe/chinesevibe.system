@@ -320,20 +320,33 @@ export function alreadyCheckedInFlex(
   }, locale)
 }
 
-export function notCheckedInFlex(locale: AppLocale = DEFAULT_LOCALE): messagingApi.FlexMessage {
-  return guide(t("line.notCheckedIn.alt", locale), {
-    emoji: "⚠️",
-    title: t("line.notCheckedIn.title", locale),
-    subtitle: t("line.notCheckedIn.title", locale),
-    accentColor: "#F59E0B",
-    description: t("line.notCheckedIn.desc", locale),
-    steps: [t("line.notCheckedIn.desc", locale)],
-    tip: t("line.notCheckedIn.desc", locale),
-    postbackButton: {
-      label: t("line.attendancePicker.btnCheckin", locale),
-      data: "action=checkin_in",
+export function notCheckedInFlex(
+  locale: AppLocale = DEFAULT_LOCALE,
+  retroLiffUrl?: string
+): messagingApi.FlexMessage {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? ""
+  const liffUrl = retroLiffUrl ?? `${baseUrl}/liff/attendance`
+
+  return guide(
+    t("line.notCheckedIn.alt", locale),
+    {
+      emoji: "⚠️",
+      title: t("line.notCheckedIn.title", locale),
+      subtitle: t("line.notCheckedIn.subtitle", locale),
+      accentColor: "#F59E0B",
+      description: t("line.notCheckedIn.desc", locale),
+      steps: [
+        t("line.notCheckedIn.step1", locale),
+        t("line.notCheckedIn.step2", locale),
+      ],
+      tip: t("line.notCheckedIn.tip", locale),
+      button: {
+        label: t("line.notCheckedIn.retroButton", locale),
+        uri: liffUrl,
+      },
     },
-  }, locale)
+    locale
+  )
 }
 
 export function alreadyCheckedOutFlex(

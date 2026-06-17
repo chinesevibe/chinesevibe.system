@@ -2,6 +2,14 @@ import { DOC_TYPE_LABELS, type DocType } from "@/features/documents/types"
 import { ONBOARDING_PENDING_OR_FILTER } from "@/features/employees/data"
 import { COMPLAINT_STATUS_LABELS, type ComplaintStatus } from "@/features/complaints/types"
 import { LEAVE_TYPE_LABELS, type LeaveType } from "@/features/leave/types"
+import {
+  getHrAttendanceIssues,
+  type HrAttendanceIssue,
+} from "@/features/attendance/issues"
+import {
+  getDashboardComplianceReminders,
+  type ComplianceReminderItem,
+} from "@/features/dashboard/compliance-data"
 import { ictDayRangeUtc, formatIctTime } from "@/lib/attendance/late"
 import { createClient } from "@/lib/supabase/server"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
@@ -22,6 +30,8 @@ export type AttendanceException = {
   kind: "late" | "no_checkout"
   detail: string
 }
+
+export type { HrAttendanceIssue }
 
 export type PendingApprovalKind =
   | "registration"
@@ -50,14 +60,6 @@ export type ComplaintReminderItem = {
   createdAt: string | null
 }
 
-export type NewHireItem = {
-  id: string
-  name: string
-  position: string | null
-  contractStart: string | null
-  status: "completed" | "in_progress" | "pending"
-}
-
 export type PendingRegistrationItem = {
   id: string
   name: string
@@ -72,6 +74,8 @@ export type PendingDocumentGroup = {
   label: string
   count: number
 }
+
+export type { ComplianceReminderItem }
 
 function employeeJoin<T extends { name: string }>(
   joined: T | Array<T> | null | undefined
@@ -407,28 +411,12 @@ export async function getDashboardWidgets() {
 
   let onboardingInProgress = 0
   let onboardingPending = 0
-  const newHires: NewHireItem[] = []
 
   for (const row of onboardingQueueRes.data ?? []) {
-    const createdAt = row.created_at as string | null
     if (row.status === "inactive") {
       onboardingPending += 1
-      newHires.push({
-        id: row.id as string,
-        name: row.name as string,
-        position: row.position as string | null,
-        contractStart: createdAt?.slice(0, 10) ?? null,
-        status: "pending",
-      })
     } else {
       onboardingInProgress += 1
-      newHires.push({
-        id: row.id as string,
-        name: row.name as string,
-        position: row.position as string | null,
-        contractStart: createdAt?.slice(0, 10) ?? null,
-        status: "in_progress",
-      })
     }
   }
 
@@ -481,14 +469,20 @@ export async function getDashboardWidgets() {
     .sort((a, b) => b.count - a.count)
   const pendingDocumentCount = pendingDocuments.reduce((s, d) => s + d.count, 0)
 
+  const [attendanceIssues, compliance] = await Promise.all([
+    getHrAttendanceIssues(new Date(), 8),
+    getDashboardComplianceReminders(8),
+  ])
+
   return {
     pendingLeaves,
     exceptions: exceptions.slice(0, 6),
+    attendanceIssues,
     complaintReminders,
     openComplaintCount,
     exceptionCount: exceptions.length,
+    attendanceIssueCount: attendanceIssues.length,
     onboardingDonut,
-    newHires: newHires.slice(0, 5),
     pendingOnboarding,
     pendingRegistrations,
     pendingRegistrationCount: pendingRegCountRes.count ?? pendingRegistrations.length,
@@ -496,5 +490,7 @@ export async function getDashboardWidgets() {
     pendingDocumentCount,
     pendingApprovals,
     pendingApprovalCount,
+    complianceReminders: compliance.items,
+    complianceCounts: compliance.counts,
   }
 }

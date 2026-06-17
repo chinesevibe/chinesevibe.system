@@ -28,7 +28,7 @@ const sectionLinks = (branch: BranchDetail) =>
   [
     {
       label: "Attendance",
-      href: branchAdminSubPath(branch, "attendance"),
+      href: `/admin/attendance?branch_id=${encodeURIComponent(branch.id)}`,
       icon: Clock,
     },
     {

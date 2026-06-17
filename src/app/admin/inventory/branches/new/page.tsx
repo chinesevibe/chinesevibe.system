@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
+import { listHrBranchesForMapping } from "@/features/inventory/actions/branch"
 import { BranchForm } from "@/features/inventory/BranchForm"
 import { canManageHr } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
@@ -12,6 +13,8 @@ export default async function NewBranchPage() {
     redirect("/admin/inventory/branches")
   }
 
+  const hrBranches = await listHrBranchesForMapping()
+
   return (
     <AdminPageShell
       title="สร้างสาขา (คลัง)"
@@ -21,7 +24,7 @@ export default async function NewBranchPage() {
         </Link>
       }
     >
-      <BranchForm mode="create" />
+      <BranchForm mode="create" hrBranches={hrBranches} />
     </AdminPageShell>
   )
 }

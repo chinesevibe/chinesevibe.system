@@ -19,9 +19,9 @@ import {
   isValidPayDay,
 } from "@/lib/payroll/pay-day"
 import { createClient } from "@/lib/supabase/server"
+import { isValidTimeHHMM, timeForApi } from "@/lib/datetime/time-input"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const TIME_RE = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
 
 type CreateBody = {
   name?: string
@@ -142,10 +142,10 @@ export async function POST(request: Request) {
     }
   }
 
-  if (body.default_check_in_time && !TIME_RE.test(body.default_check_in_time)) {
+  if (body.default_check_in_time && !isValidTimeHHMM(body.default_check_in_time)) {
     return NextResponse.json({ error: "invalid default_check_in_time format (HH:MM)" }, { status: 400 })
   }
-  if (body.default_check_out_time && !TIME_RE.test(body.default_check_out_time)) {
+  if (body.default_check_out_time && !isValidTimeHHMM(body.default_check_out_time)) {
     return NextResponse.json({ error: "invalid default_check_out_time format (HH:MM)" }, { status: 400 })
   }
 
@@ -190,8 +190,8 @@ export async function POST(request: Request) {
       status: body.status === "inactive" ? "inactive" : "active",
       role,
       work_shift_id: workShiftId,
-      default_check_in_time: body.default_check_in_time || null,
-      default_check_out_time: body.default_check_out_time || null,
+      default_check_in_time: timeForApi(body.default_check_in_time),
+      default_check_out_time: timeForApi(body.default_check_out_time),
       nationality,
       pay_day: payDay,
       ...bank.updates,

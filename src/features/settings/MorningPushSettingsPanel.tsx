@@ -43,8 +43,8 @@ function GroupCard({
         <div>
           <h4 className="text-sm font-semibold">{label}</h4>
           <p className="text-xs text-muted-foreground">
-            เวลาจริงใช้กะงานหรือเวลา default ในโปรไฟล์พนักงานก่อน - ค่านี้เป็น
-            fallback
+            เวลาจริงใช้กะงานในโปรไฟล์พนักงานก่อน — ค่า fallback แยกกะที่ 1 และกะที่ 2
+            (เรียงตามเวลาเริ่มกะในระบบ)
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm">
@@ -57,10 +57,10 @@ function GroupCard({
         </label>
       </div>
 
-      <div className="grid gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">
           <span className="mb-1 block text-muted-foreground">
-            เวลา fallback (HH:MM)
+            เวลา fallback กะที่ 1 (HH:MM)
           </span>
           <input
             type="time"
@@ -72,6 +72,22 @@ function GroupCard({
           />
         </label>
 
+        <label className="text-sm">
+          <span className="mb-1 block text-muted-foreground">
+            เวลา fallback กะที่ 2 (HH:MM)
+          </span>
+          <input
+            type="time"
+            className="h-9 w-full rounded-lg border px-2"
+            value={config.fallbackTime2}
+            onChange={(e) =>
+              onChange({ ...config, fallbackTime2: e.target.value })
+            }
+          />
+        </label>
+      </div>
+
+      <div className="grid gap-3">
         <label className="text-sm">
           <span className="mb-1 block text-muted-foreground">
             เตือนหลังเริ่มงาน (นาที)
@@ -199,7 +215,8 @@ export function MorningPushSettingsPanel({ rows }: { rows: RuntimeConfigRow[] })
 
       {!hasChanges ? (
         <p className="mt-3 text-xs text-muted-foreground">
-          ค่า default เมื่อยังไม่ตั้ง: fallback {MORNING_PUSH_DEFAULTS.employee.fallbackTime} ·
+          ค่า default เมื่อยังไม่ตั้ง: fallback กะ 1 {MORNING_PUSH_DEFAULTS.employee.fallbackTime} ·
+          กะ 2 {MORNING_PUSH_DEFAULTS.employee.fallbackTime2} ·
           remind {MORNING_PUSH_DEFAULTS.employee.remindAfterMin} นาที · วันทำงาน จ-ศ
         </p>
       ) : null}

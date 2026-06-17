@@ -9,8 +9,50 @@ export type InvSku = {
   max_stock: number
   image_url: string | null
   is_active: boolean
+  expiry_required: boolean
+  lot_tracking_required: boolean
+  default_issue_method: "fefo" | "fifo" | "manual"
+  shelf_life_days: number | null
+  storage_type: "dry" | "chilled" | "frozen" | null
   created_at: string
   updated_at: string
+}
+
+export type InvStockLot = {
+  id: string
+  sku_id: string
+  warehouse_id: string
+  lot_number: string
+  batch_number: string | null
+  supplier_lot_ref: string | null
+  expiry_date: string | null
+  manufactured_date: string | null
+  received_date: string
+  received_qty: number
+  remaining_qty: number
+  unit_cost: number | null
+  status: "available" | "reserved" | "expired" | "damaged" | "depleted"
+  inbound_item_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type InvFefoAllocation = {
+  lot_id: string
+  lot_number: string
+  expiry_date: string | null
+  received_date: string
+  qty: number
+}
+
+export type InvRequisitionIssueLine = {
+  id: string
+  requisition_item_id: string
+  lot_id: string
+  qty_issued: number
+  override_reason: string | null
+  overridden_by: string | null
+  created_at: string
 }
 
 export type InvSupplier = {
@@ -29,6 +71,7 @@ export type InvBranch = {
   code: string
   name: string
   address: string | null
+  hr_branch_id: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -207,6 +250,7 @@ export type InvDamage = {
   branch_id: string
   warehouse_id: string
   sku_id: string
+  lot_id: string | null
   qty: number
   damage_type: InvDamageType
   reason: string
@@ -277,6 +321,7 @@ export type InvStockCountItem = {
   sku_id: string
   system_qty: number
   physical_qty: number | null
+  lot_id: string | null
   lot_number: string | null
   counted_by: string | null
   counted_at: string | null
@@ -326,6 +371,8 @@ export type InvTransferItem = {
   sku_id: string
   qty_sent: number
   qty_received: number
+  lot_id: string | null
+  source_lot_id: string | null
   lot_number: string | null
   created_at: string
   updated_at: string

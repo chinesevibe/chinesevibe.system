@@ -161,6 +161,70 @@ export function SkuForm({
         ใช้งาน
       </label>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <InventoryFormField label="วิธีจ่ายเริ่มต้น" htmlFor="default_issue_method">
+          <InventorySelect
+            id="default_issue_method"
+            name="default_issue_method"
+            defaultValue={initial?.default_issue_method ?? "fefo"}
+            disabled={readOnly}
+          >
+            <option value="fefo">FEFO (หมดอายุก่อน)</option>
+            <option value="fifo">FIFO (รับก่อน)</option>
+            <option value="manual">Manual (เลือก Lot เอง)</option>
+          </InventorySelect>
+        </InventoryFormField>
+        <InventoryFormField label="ประเภทจัดเก็บ" htmlFor="storage_type">
+          <InventorySelect
+            id="storage_type"
+            name="storage_type"
+            defaultValue={initial?.storage_type ?? ""}
+            disabled={readOnly}
+          >
+            <option value="">— ไม่ระบุ —</option>
+            <option value="dry">แห้ง</option>
+            <option value="chilled">เย็น</option>
+            <option value="frozen">แช่แข็ง</option>
+          </InventorySelect>
+        </InventoryFormField>
+      </div>
+
+      <InventoryFormField label="อายุเก็บ (วัน)" htmlFor="shelf_life_days">
+        <InventoryTextInput
+          id="shelf_life_days"
+          name="shelf_life_days"
+          type="number"
+          min={1}
+          step={1}
+          defaultValue={initial?.shelf_life_days ?? ""}
+          disabled={readOnly}
+        />
+      </InventoryFormField>
+
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          name="expiry_required"
+          value="true"
+          defaultChecked={initial?.expiry_required ?? false}
+          disabled={readOnly}
+          className="size-4 rounded border-input"
+        />
+        บังคับระบุวันหมดอายุเมื่อรับเข้า
+      </label>
+
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          name="lot_tracking_required"
+          value="true"
+          defaultChecked={initial?.lot_tracking_required ?? true}
+          disabled={readOnly}
+          className="size-4 rounded border-input"
+        />
+        ติดตาม Lot
+      </label>
+
       {readOnly ? (
         <p className="text-sm text-muted-foreground">
           <Link href="/admin/inventory/sku" className="text-brand-red hover:underline">

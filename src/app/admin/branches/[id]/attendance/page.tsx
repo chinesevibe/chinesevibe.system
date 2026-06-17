@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation"
 
 import { getBranchById } from "@/features/branches/branch-hub-data"
-import { branchAdminSubPath } from "@/lib/branches/branch-slug"
 
 export default async function LegacyBranchAttendanceRedirect({
   params,
@@ -11,5 +10,5 @@ export default async function LegacyBranchAttendanceRedirect({
   const { id } = await params
   const branch = await getBranchById(id)
   if (!branch) notFound()
-  redirect(branchAdminSubPath(branch, "attendance"))
+  redirect(`/admin/attendance?branch_id=${encodeURIComponent(branch.id)}`)
 }

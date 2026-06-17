@@ -13,6 +13,7 @@ import { getInvBranches } from "@/features/inventory/actions/branch"
 import { getInvWarehousesWithBranch } from "@/features/inventory/actions/warehouse"
 import { InventoryLoadError } from "@/features/inventory/InventorySearchBar"
 import { listInvStockRows } from "@/features/inventory/stock-data"
+import { listInvStockLotRows } from "@/features/inventory/stock-lot-data"
 import { StockFilters } from "@/features/inventory/StockFilters"
 import { isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
@@ -38,16 +39,22 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
 
   let loadError: string | null = null
   let rows: Awaited<ReturnType<typeof listInvStockRows>> = []
+  let lotRows: Awaited<ReturnType<typeof listInvStockLotRows>> = []
   let branches: Awaited<ReturnType<typeof getInvBranches>> = []
   let warehouses: Awaited<ReturnType<typeof getInvWarehousesWithBranch>> = []
 
   try {
-    ;[rows, branches, warehouses] = await Promise.all([
+    ;[rows, lotRows, branches, warehouses] = await Promise.all([
       listInvStockRows({
         search,
         branchId: branchId || undefined,
         warehouseId: warehouseId || undefined,
         belowMinOnly,
+      }),
+      listInvStockLotRows({
+        search,
+        branchId: branchId || undefined,
+        warehouseId: warehouseId || undefined,
       }),
       getInvBranches(),
       getInvWarehousesWithBranch(),
@@ -120,13 +127,53 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
                 <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
                   {belowMinOnly
                     ? "ไม่พบ SKU ที่ต่ำกว่า Min"
-                    : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าหรือรัน demo seed migration"}
+                    : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </DataTableShell>
+
+      <div className="mt-8 space-y-3">
+        <h2 className="text-base font-semibold">สต็อกแยกตาม Lot (FEFO)</h2>
+        <DataTableShell>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>SKU</TableHead>
+                <TableHead>Lot</TableHead>
+                <TableHead>สาขา</TableHead>
+                <TableHead>คลัง</TableHead>
+                <TableHead>หมดอายุ</TableHead>
+                <TableHead className="text-right">คงเหลือ</TableHead>
+                <TableHead>สถานะ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {lotRows.length > 0 ? (
+                lotRows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="font-medium">{row.skuCode}</TableCell>
+                    <TableCell>{row.lotNumber}</TableCell>
+                    <TableCell>{row.branchName}</TableCell>
+                    <TableCell>{row.warehouseName}</TableCell>
+                    <TableCell>{row.expiryDate ?? "—"}</TableCell>
+                    <TableCell className="text-right tabular-nums">{row.remainingQty}</TableCell>
+                    <TableCell>{row.status}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                    ยังไม่มี lot คงเหลือ
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </DataTableShell>
+      </div>
     </AdminPageShell>
   )
 }

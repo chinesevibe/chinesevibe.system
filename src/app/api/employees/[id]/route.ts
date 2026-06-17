@@ -4,7 +4,7 @@ import { ictToday } from "@/features/employees/data"
 import type { ContractType } from "@/features/employees/profile/data"
 import type { SalaryPaymentMethod } from "@/features/employees/profile/payment-method"
 import { isAssignableRole, type AssignableRole } from "@/lib/auth/employee-roles"
-import { canEditEmployeeRecord, canManageHr } from "@/lib/auth/roles"
+import { canEditEmployeeRecord, canManageHr, canViewSalaryData } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { validateEmployeeDepartmentRole } from "@/lib/employees/validate-department-role"
 import { normalizeBankFields } from "@/lib/employees/bank-fields"
@@ -21,7 +21,7 @@ import { createClient } from "@/lib/supabase/server"
 
 const DAY_MS = 86_400_000
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const TIME_RE = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
+import { isValidTimeHHMM, timeForApi } from "@/lib/datetime/time-input"
 
 function addDays(date: string, days: number): string {
   const t = Date.parse(`${date}T00:00:00Z`) + days * DAY_MS
@@ -38,6 +38,7 @@ type PatchBody = {
   salary?: number | null
   housing_allowance?: number | null
   contract_start?: string | null
+  contract_end?: string | null
   contract_type?: ContractType
   probation_end?: string | null
   visa_expiry?: string | null
@@ -93,14 +94,17 @@ export async function PATCH(
     }
 
     if (body.probationAction === "pass") {
-      updates.probation_end = addDays(today, -1)
+      updates.probation_end = null
+      updates.probation_outcome = "passed"
       updates.status = "active"
     } else if (body.probationAction === "fail") {
+      updates.probation_outcome = "failed"
       updates.status = "inactive"
     } else if (body.probationAction === "extend") {
       const base =
         row.probation_end && row.probation_end >= today ? row.probation_end : today
       updates.probation_end = addDays(base, 30)
+      updates.probation_outcome = "extended"
       updates.status = "active"
     }
   } else {
@@ -153,6 +157,7 @@ export async function PATCH(
       updates.housing_allowance = body.housing_allowance
     }
     if (body.contract_start !== undefined) updates.contract_start = body.contract_start
+    if (body.contract_end !== undefined) updates.contract_end = body.contract_end
     if (body.contract_type !== undefined) {
       const allowed: ContractType[] = ["full_time", "part_time", "contract", null]
       if (!allowed.includes(body.contract_type)) {
@@ -214,16 +219,24 @@ export async function PATCH(
     }
 
     if (body.default_check_in_time !== undefined) {
-      if (body.default_check_in_time !== null && body.default_check_in_time !== "" && !TIME_RE.test(body.default_check_in_time)) {
+      if (
+        body.default_check_in_time !== null &&
+        body.default_check_in_time !== "" &&
+        !isValidTimeHHMM(body.default_check_in_time)
+      ) {
         return NextResponse.json({ error: "invalid default_check_in_time format (HH:MM)" }, { status: 400 })
       }
-      updates.default_check_in_time = body.default_check_in_time || null
+      updates.default_check_in_time = timeForApi(body.default_check_in_time)
     }
     if (body.default_check_out_time !== undefined) {
-      if (body.default_check_out_time !== null && body.default_check_out_time !== "" && !TIME_RE.test(body.default_check_out_time)) {
+      if (
+        body.default_check_out_time !== null &&
+        body.default_check_out_time !== "" &&
+        !isValidTimeHHMM(body.default_check_out_time)
+      ) {
         return NextResponse.json({ error: "invalid default_check_out_time format (HH:MM)" }, { status: 400 })
       }
-      updates.default_check_out_time = body.default_check_out_time || null
+      updates.default_check_out_time = timeForApi(body.default_check_out_time)
     }
 
     const bank = normalizeBankFields(body)
@@ -235,6 +248,21 @@ export async function PATCH(
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: "no changes" }, { status: 400 })
+  }
+
+  if (!canViewSalaryData(caller.role)) {
+    for (const key of Object.keys(updates)) {
+      if (
+        key === "salary" ||
+        key === "housing_allowance" ||
+        key === "pay_type" ||
+        key === "pay_day" ||
+        key === "salary_payment_method" ||
+        key.startsWith("bank_")
+      ) {
+        return NextResponse.json({ error: "forbidden salary fields" }, { status: 403 })
+      }
+    }
   }
 
   if (body.role !== undefined || body.department !== undefined || body.position !== undefined) {

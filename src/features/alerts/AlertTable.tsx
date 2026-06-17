@@ -16,7 +16,7 @@ export function AlertTable({ rows }: { rows: AlertRow[] }) {
   if (rows.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">
-        ไม่มีรายการแจ้งเตือนในช่วง 60 วันข้างหน้า
+        ไม่มีรายการแจ้งเตือน (ใกล้ครบ 60 วัน หรือหมดอายุแล้ว)
       </p>
     )
   }
@@ -40,11 +40,27 @@ export function AlertTable({ rows }: { rows: AlertRow[] }) {
               <TableCell className="font-medium">{row.name}</TableCell>
               <TableCell>{row.department ?? "—"}</TableCell>
               <TableCell>{row.dueDate}</TableCell>
-              <TableCell className="tabular-nums">{row.daysLeft} วัน</TableCell>
+              <TableCell className="tabular-nums">
+                {row.daysLeft < 0
+                  ? `หมดแล้ว ${Math.abs(row.daysLeft)} วัน`
+                  : `${row.daysLeft} วัน`}
+              </TableCell>
               <TableCell>
                 <StatusPill
-                  label={row.daysLeft <= 30 ? "ด่วน" : "ติดตาม"}
-                  variant={row.daysLeft <= 7 ? "warning" : "info"}
+                  label={
+                    row.daysLeft < 0
+                      ? "หมดอายุ"
+                      : row.daysLeft <= 7
+                        ? "ด่วน"
+                        : "ติดตาม"
+                  }
+                  variant={
+                    row.daysLeft < 0
+                      ? "rejected"
+                      : row.daysLeft <= 7
+                        ? "warning"
+                        : "info"
+                  }
                 />
               </TableCell>
               <TableCell>

@@ -29,6 +29,9 @@ const API_ERROR_FALLBACK: Record<string, string> = {
   insufficient_balance: "ยอดลาคงเหลือไม่เพียงพอ",
   "invalid file type": "รองรับเฉพาะไฟล์ JPEG, PNG หรือ PDF",
   "file too large": "ไฟล์ต้องมีขนาดไม่เกิน 5MB",
+  "ต้องแนบใบรับรองแพทย์สำหรับลาป่วยนี้":
+    "ต้องแนบใบรับรองแพทย์สำหรับลาป่วยนี้",
+  "invalid leave hours": "ชั่วโมงลาป่วยไม่ถูกต้อง (ต้องมากกว่า 0 และไม่เกิน 24)",
 }
 
 export function formatLeaveApiError(body: {
@@ -36,8 +39,13 @@ export function formatLeaveApiError(body: {
   message?: string
 } | null): string {
   if (body?.message) return body.message
-  if (body?.error && API_ERROR_FALLBACK[body.error]) {
-    return API_ERROR_FALLBACK[body.error]
+  if (body?.error) {
+    if (API_ERROR_FALLBACK[body.error]) {
+      return API_ERROR_FALLBACK[body.error]
+    }
+    if (!/^[a-z0-9_]+$/.test(body.error)) {
+      return body.error
+    }
   }
   return "ส่งใบลาไม่สำเร็จ"
 }

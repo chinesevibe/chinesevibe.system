@@ -63,6 +63,8 @@ export type InvTransferItemRow = {
   sku_id: string
   qty_sent: number
   qty_received: number
+  lot_id: string | null
+  source_lot_id: string | null
   lot_number: string | null
   created_at: string
   updated_at: string
@@ -269,6 +271,8 @@ export async function getTransferDetail(id: string): Promise<InvTransferDetail |
     sku_id: row.sku_id as string,
     qty_sent: Number(row.qty_sent),
     qty_received: Number(row.qty_received ?? 0),
+    lot_id: (row.lot_id as string | null) ?? null,
+    source_lot_id: (row.source_lot_id as string | null) ?? null,
     lot_number: (row.lot_number as string | null) ?? null,
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
@@ -312,6 +316,7 @@ export async function createTransfer(input: CreateTransferInput): Promise<Invent
         sku_id: item.sku_id,
         qty_sent: item.qty_sent,
         qty_received: 0,
+        lot_id: item.lot_id ?? null,
         lot_number: item.lot_number?.trim() || null,
       }))
     )

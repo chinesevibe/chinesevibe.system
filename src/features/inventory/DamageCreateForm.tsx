@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import { InventoryFormField } from "@/features/inventory/InventoryFormFields"
+import { InventoryLotPicker } from "@/features/inventory/InventoryLotPicker"
 import {
   createDamageReport,
   uploadDamagePhoto,
@@ -20,6 +21,7 @@ type DraftItem = {
   key: string
   sku_id: string
   qty: string
+  lot_id: string
   damage_type: InvDamageType
   reason: string
   notes: string
@@ -40,6 +42,7 @@ function newItem(): DraftItem {
     key: crypto.randomUUID(),
     sku_id: "",
     qty: "1",
+    lot_id: "",
     damage_type: "damaged",
     reason: "",
     notes: "",
@@ -142,6 +145,7 @@ export function DamageCreateForm({
           damage_type: item.damage_type,
           reason: item.reason,
           notes: item.notes,
+          lot_id: item.lot_id || null,
           photo_url: uploadedPaths[item.key] ?? null,
         })),
       })
@@ -242,14 +246,14 @@ export function DamageCreateForm({
           return (
             <div
               key={item.key}
-              className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_180px_1fr_220px_auto]"
+              className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_180px_200px_1fr_220px_auto]"
             >
               <InventoryFormField label={`SKU #${index + 1}`}>
                 <select
                   value={item.sku_id}
                   className={invInputClass}
                   onChange={(event) =>
-                    updateItem(item.key, { sku_id: event.target.value })
+                    updateItem(item.key, { sku_id: event.target.value, lot_id: "" })
                   }
                 >
                   <option value="" disabled>
@@ -307,6 +311,15 @@ export function DamageCreateForm({
                         estimatedValue
                       )}`}
                 </p>
+              </InventoryFormField>
+
+              <InventoryFormField label="Lot">
+                <InventoryLotPicker
+                  skuId={item.sku_id}
+                  warehouseId={warehouseId}
+                  value={item.lot_id}
+                  onChange={(lotId) => updateItem(item.key, { lot_id: lotId })}
+                />
               </InventoryFormField>
 
               <InventoryFormField label="เหตุผล">

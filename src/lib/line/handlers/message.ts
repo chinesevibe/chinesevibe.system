@@ -17,7 +17,6 @@ import { checkoutSummaryFlex } from "@/lib/line/flex/checkout"
 import {
   alreadyCheckedInFlex,
   alreadyCheckedOutFlex,
-  menuHintFlex,
   notCheckedInFlex,
   notRegisteredFlex,
   outsideGeofenceFlex,
@@ -38,6 +37,7 @@ import {
   isOneOnOneUserSource,
   resolveLineUserIdFromSource,
 } from "@/lib/line/handlers/source"
+import { buildLineAutoReplyMessages, shouldSendLineAutoReply } from "@/lib/line/auto-reply"
 import { tryAutoLinkFromEmployeeCode } from "@/lib/line/auto-link-line-user"
 import {
   isStockCommandEnabled,
@@ -314,38 +314,38 @@ export async function handleMessage(
     return
   }
 
-  if (!isUserChatEnabled()) {
-    return
+  if (isUserChatEnabled()) {
+    const textActions: Record<string, RichMenuPostbackAction> = {
+      คลังสินค้า: "inventory",
+      สแกนรับเข้า: "inventory",
+      รับเข้า: "inventory",
+      ประกาศ: "announcement",
+      ขอเอกสาร: "document",
+      เอกสาร: "document",
+      ร้องเรียน: "complaint",
+      ลา: "leave",
+      ot: "overtime",
+      ขอot: "overtime",
+      เช็คอิน: "checkin",
+      "ติดต่อ hr": "contact_hr",
+      ติดต่อhr: "contact_hr",
+    }
+    const action = textActions[text.toLowerCase()] ?? textActions[text]
+
+    if (action) {
+      const messages = await buildActionMessages(action, { lineUserId, locale })
+      await getLineClient().replyMessage({
+        replyToken: event.replyToken,
+        messages,
+      })
+      return
+    }
   }
 
-  const textActions: Record<string, RichMenuPostbackAction> = {
-    คลังสินค้า: "inventory",
-    สแกนรับเข้า: "inventory",
-    รับเข้า: "inventory",
-    ประกาศ: "announcement",
-    ขอเอกสาร: "document",
-    เอกสาร: "document",
-    ร้องเรียน: "complaint",
-    ลา: "leave",
-    ot: "overtime",
-    ขอot: "overtime",
-    เช็คอิน: "checkin",
-    "ติดต่อ hr": "contact_hr",
-    ติดต่อhr: "contact_hr",
-  }
-  const action = textActions[text.toLowerCase()] ?? textActions[text]
-
-  if (action) {
-    const messages = await buildActionMessages(action, { lineUserId, locale })
+  if (shouldSendLineAutoReply(text)) {
     await getLineClient().replyMessage({
       replyToken: event.replyToken,
-      messages,
+      messages: await buildLineAutoReplyMessages(locale),
     })
-    return
   }
-
-  await getLineClient().replyMessage({
-    replyToken: event.replyToken,
-    messages: [menuHintFlex(locale)],
-  })
 }

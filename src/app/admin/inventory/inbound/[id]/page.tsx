@@ -181,7 +181,7 @@ export default async function InboundOrderDetailPage({ params }: PageProps) {
                     <TableCell className="text-right">
                       <InventoryDeleteButton
                         label={`รายการ ${item.sku_code}`}
-                        onDelete={() => deleteInvInboundItem(item.id, order.id)}
+                        onDelete={deleteInvInboundItem.bind(null, item.id, order.id)}
                       />
                     </TableCell>
                   ) : null}

@@ -118,7 +118,7 @@ export default async function InventoryWarehousesPage({ searchParams }: PageProp
                         </Link>
                         <InventoryDeleteButton
                           label={`คลัง ${warehouse.code}`}
-                          onDelete={() => deleteInvWarehouse(warehouse.id)}
+                          onDelete={deleteInvWarehouse.bind(null, warehouse.id)}
                         />
                       </div>
                     </TableCell>

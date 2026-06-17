@@ -46,11 +46,11 @@ export function EmployeeFilters({
     <div className="flex flex-wrap items-center gap-2">
       <input
         type="search"
-        placeholder="ค้นหาชื่อพนักงาน..."
+        placeholder="ค้นหาชื่อหรือรหัสพนักงาน..."
         value={q}
         onChange={(e) => setQ(e.target.value)}
         className={`${inputClass} w-56`}
-        aria-label="ค้นหาชื่อพนักงาน"
+        aria-label="ค้นหาชื่อหรือรหัสพนักงาน"
       />
       <select
         value={searchParams.get("branch_id") ?? ""}

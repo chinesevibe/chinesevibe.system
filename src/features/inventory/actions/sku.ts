@@ -24,6 +24,11 @@ function formDataToObject(formData: FormData) {
     max_stock: formData.get("max_stock") ?? 0,
     image_url: formData.get("image_url"),
     is_active: formData.get("is_active") ?? "false",
+    expiry_required: formData.get("expiry_required") ?? "false",
+    lot_tracking_required: formData.get("lot_tracking_required") ?? "true",
+    default_issue_method: formData.get("default_issue_method") ?? "fefo",
+    shelf_life_days: formData.get("shelf_life_days"),
+    storage_type: formData.get("storage_type"),
   }
 }
 

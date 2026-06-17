@@ -185,6 +185,16 @@ function EmployeeBalanceDialog({
     () => buildEditableBalances(row, policies)
   )
 
+  function applyPolicyDefaults() {
+    setDraft((current) =>
+      current.map((entry) => ({
+        ...entry,
+        total: entry.policyDefault,
+        remaining: entry.policyDefault - entry.used,
+      }))
+    )
+  }
+
   async function save() {
     setBusy(true)
     setError(null)
@@ -220,6 +230,11 @@ function EmployeeBalanceDialog({
             {`${row.employeeName} · ${row.department ?? "ไม่ระบุแผนก"}`}
           </DialogDescription>
         </DialogHeader>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={busy} onClick={applyPolicyDefaults}>
+            กรอกจาก policy
+          </Button>
+        </div>
         <div className="overflow-x-auto rounded-xl border border-border/70">
           <Table>
             <TableHeader>

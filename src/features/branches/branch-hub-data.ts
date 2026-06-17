@@ -7,6 +7,7 @@ import {
   getBranchOvertimeQueue,
 } from "@/features/branches/branch-queues"
 import { fetchBranchById, fetchBranchBySlug } from "@/features/branches/branch-query"
+import { probationNeedsComplianceAlert } from "@/lib/employees/probation-compliance"
 import {
   EMPLOYEE_VIA_ATTENDANCE,
   EMPLOYEE_VIA_ATTENDANCE_SUBMISSION,
@@ -119,7 +120,7 @@ export async function getBranchEmployeesWithAlerts(
     supabase
       .from("hr_employees")
       .select(
-        "id, name, employee_code, phone, department, position, status, role, probation_end, visa_expiry, work_permit_expiry"
+        "id, name, employee_code, phone, department, position, status, role, probation_end, probation_outcome, visa_expiry, work_permit_expiry"
       )
       .eq("branch_id", branchId)
       .order("name"),
@@ -199,11 +200,16 @@ export async function getBranchEmployeesWithAlerts(
 
   return (employeesRes.data ?? []).map((row) => {
     const probation = row.probation_end as string | null
+    const probationOutcome = row.probation_outcome as string | null
     const visa = row.visa_expiry as string | null
     const permit = row.work_permit_expiry as string | null
-    const complianceDue = [probation, visa, permit].some(
-      (d) => d && d >= today && d <= windowEnd
-    )
+    const probationDue =
+      probation &&
+      probationNeedsComplianceAlert({ probationEnd: probation, probationOutcome }) &&
+      (probation < today || (probation >= today && probation <= windowEnd))
+    const complianceDue =
+      probationDue ||
+      [visa, permit].some((d) => d && (d < today || (d >= today && d <= windowEnd)))
 
     return {
       id: row.id as string,

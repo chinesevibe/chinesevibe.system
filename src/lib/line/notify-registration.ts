@@ -1,10 +1,10 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
 import { registrationPendingFlex } from "@/lib/line/flex/registration-pending"
-import { notifyHr, pushToLineUser } from "@/lib/line/notify-hr"
+import { notifyHr } from "@/lib/line/notify-hr"
 
 /**
- * Notify HR LINE group + individual HR/admin/dev when a worker self-registers.
+ * Notify HR LINE group when a worker self-registers (approve via Flex in group).
  * Best-effort — never throws to caller.
  */
 export async function notifyRegistrationPending(
@@ -51,32 +51,13 @@ export async function notifyRegistrationPending(
         `ชื่อ: ${employee.name}`,
         employee.phone ? `เบอร์: ${employee.phone}` : null,
         branchName ? `สาขา: ${branchName}` : null,
-        "กดอนุมัติ/ปฏิเสธใน Flex ด้านล่าง หรือเปิด Dashboard",
+        "กดอนุมัติ/ปฏิเสธใน Flex ด้านล่าง",
       ]
         .filter(Boolean)
         .join("\n"),
     }
 
     await notifyHr([textSummary, flex])
-
-    const { data: hrRows } = await admin
-      .from("hr_employees")
-      .select("line_user_id")
-      .in("role", ["hr", "dev"])
-      .eq("status", "active")
-      .not("line_user_id", "is", null)
-
-    const seen = new Set<string>()
-    for (const row of hrRows ?? []) {
-      const uid = row.line_user_id as string
-      if (seen.has(uid)) continue
-      seen.add(uid)
-      try {
-        await pushToLineUser(uid, [flex])
-      } catch (e) {
-        console.error("notifyRegistrationPending push hr failed:", uid, e)
-      }
-    }
   } catch (e) {
     console.error("notifyRegistrationPending failed:", e)
   }

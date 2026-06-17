@@ -2,6 +2,8 @@
 // (RLS: hr_is_hr_admin allows full read). No service role here.
 import { ictToday } from "@/lib/datetime/thailand"
 import { employeeAvatarPublicUrl } from "@/lib/employees/avatar"
+import type { PayType } from "@/lib/payroll/pay-type"
+import { expiryStatusLabel, type ExpiryStatusLabel } from "@/features/employees/profile/visa-status"
 import { createClient } from "@/lib/supabase/server"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
 
@@ -42,12 +44,16 @@ export type EmployeeRow = {
   role: string
   branch_id: string | null
   branch_name: string | null
-  salary: number | null
+  phone: string | null
+  pay_type: PayType | null
   status: "active" | "inactive"
   contract_start: string | null
   contract_file_path: string | null
   probation_end: string | null
   visa_expiry: string | null
+  work_permit_expiry: string | null
+  visaStatus: ExpiryStatusLabel
+  workPermitStatus: ExpiryStatusLabel
   avatar_path: string | null
   avatarUrl: string | null
   displayStatus:
@@ -101,12 +107,14 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
   let query = supabase
     .from("hr_employees")
     .select(
-      `id, employee_code, line_user_id, name, position, department, role, branch_id, salary, status, contract_start, contract_file_path, probation_end, visa_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name)`,
+      `id, employee_code, line_user_id, name, position, department, role, branch_id, phone, pay_type, status, contract_start, contract_file_path, probation_end, visa_expiry, work_permit_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name)`,
       { count: "exact" }
     )
 
   if (params.q) {
-    query = query.ilike("name", `%${escapeLike(params.q)}%`)
+    const term = escapeLike(params.q.trim())
+    const pattern = `%${term}%`
+    query = query.or(`name.ilike.${pattern},employee_code.ilike.${pattern}`)
   }
   if (params.dept) {
     query = query.eq("department", params.dept)
@@ -160,6 +168,12 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
     ) {
       displayStatus = "probation"
     }
+    const visa_expiry = (row.visa_expiry as string | null) ?? null
+    const work_permit_expiry = (row.work_permit_expiry as string | null) ?? null
+    const pay_type_raw = row.pay_type as string | null
+    const pay_type: PayType | null =
+      pay_type_raw === "monthly" || pay_type_raw === "hourly" ? pay_type_raw : null
+
     return {
       id: row.id as string,
       employee_code: (row.employee_code as string | null) ?? null,
@@ -170,12 +184,16 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
       role: row.role as string,
       branch_id: (row.branch_id as string | null) ?? null,
       branch_name,
-      salary: row.salary != null ? Number(row.salary) : null,
+      phone: (row.phone as string | null) ?? null,
+      pay_type,
       status: row.status as "active" | "inactive",
       contract_start: (row.contract_start as string | null) ?? null,
       contract_file_path: (row.contract_file_path as string | null) ?? null,
       probation_end: (row.probation_end as string | null) ?? null,
-      visa_expiry: (row.visa_expiry as string | null) ?? null,
+      visa_expiry,
+      work_permit_expiry,
+      visaStatus: expiryStatusLabel(visa_expiry, today),
+      workPermitStatus: expiryStatusLabel(work_permit_expiry, today),
       avatar_path: (row.avatar_path as string | null) ?? null,
       avatarUrl: employeeAvatarPublicUrl((row.avatar_path as string | null) ?? null),
       displayStatus,

@@ -42,6 +42,9 @@ export function BranchLocationEditor({ branch }: { branch: BranchDetail }) {
   const [geofenceEnabled, setGeofenceEnabled] = useState(
     branch.geofence_enabled !== false
   )
+  const [geofenceRadiusM, setGeofenceRadiusM] = useState(
+    String(branch.geofence_radius_m ?? GEOFENCE_MAX_RADIUS_M)
+  )
   const [busy, setBusy] = useState(false)
   const [locating, setLocating] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -105,6 +108,21 @@ export function BranchLocationEditor({ branch }: { branch: BranchDetail }) {
       }
     }
 
+    let radiusM = GEOFENCE_MAX_RADIUS_M
+    if (!headOffice && geofenceEnabled) {
+      const parsedRadius = Number.parseInt(geofenceRadiusM, 10)
+      if (
+        !Number.isInteger(parsedRadius) ||
+        parsedRadius < 1 ||
+        parsedRadius > GEOFENCE_MAX_RADIUS_M
+      ) {
+        setError(`รัศมี Geofence ต้องเป็นตัวเลข 1–${GEOFENCE_MAX_RADIUS_M} เมตร`)
+        setBusy(false)
+        return
+      }
+      radiusM = parsedRadius
+    }
+
     try {
       const res = await fetch(`/api/branches/${branch.id}`, {
         method: "PATCH",
@@ -119,7 +137,7 @@ export function BranchLocationEditor({ branch }: { branch: BranchDetail }) {
             ? {}
             : {
                 geofence_enabled: geofenceEnabled,
-                geofence_radius_m: GEOFENCE_MAX_RADIUS_M,
+                geofence_radius_m: radiusM,
               }),
         }),
       })
@@ -212,7 +230,7 @@ export function BranchLocationEditor({ branch }: { branch: BranchDetail }) {
             Head Office (000) — ไม่ใช้ Geofence สำหรับเช็คอิน/เช็คเอาท์
           </p>
         ) : (
-          <>
+          <div className="flex flex-wrap items-center gap-3">
             <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
               <input
                 type="checkbox"
@@ -222,10 +240,22 @@ export function BranchLocationEditor({ branch }: { branch: BranchDetail }) {
               />
               เปิด Geofence
             </label>
+            <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+              รัศมี (เมตร)
+              <input
+                type="number"
+                min={1}
+                max={GEOFENCE_MAX_RADIUS_M}
+                disabled={!geofenceEnabled}
+                className="h-8 w-20 rounded-lg border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-muted/40"
+                value={geofenceRadiusM}
+                onChange={(e) => setGeofenceRadiusM(e.target.value)}
+              />
+            </label>
             <span className="text-xs text-muted-foreground">
-              รัศมี {GEOFENCE_MAX_RADIUS_M} เมตร (คงที่)
+              สูงสุด {GEOFENCE_MAX_RADIUS_M} เมตร
             </span>
-          </>
+          </div>
         )}
       </div>
 

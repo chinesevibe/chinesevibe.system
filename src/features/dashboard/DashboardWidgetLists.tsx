@@ -5,6 +5,7 @@ import {
   MapPin,
   MessageCircleWarning,
   Shield,
+  ShieldAlert,
   UserPlus,
   Wallet,
   type LucideIcon,
@@ -17,6 +18,8 @@ import type { DocType } from "@/features/documents/types"
 import type {
   AttendanceException,
   ComplaintReminderItem,
+  ComplianceReminderItem,
+  HrAttendanceIssue,
   PendingApprovalItem,
   PendingApprovalKind,
   PendingDocumentGroup,
@@ -158,7 +161,72 @@ export function DocumentApprovalsList({
   )
 }
 
-export function ComplianceRemindersList({
+const COMPLIANCE_KIND_ICON: Record<
+  ComplianceReminderItem["kind"],
+  { icon: LucideIcon; tone: "warning" | "danger" | "info" }
+> = {
+  probation: { icon: CalendarCheck, tone: "warning" },
+  visa: { icon: ShieldAlert, tone: "danger" },
+  work_permit: { icon: Shield, tone: "info" },
+}
+
+export function ComplianceExpiringList({
+  items,
+}: {
+  items: ComplianceReminderItem[]
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyListMessage>
+        ไม่มีทดลองงาน / วีซ่า / Work Permit ใกล้ครบหรือหมดอายุแล้ว
+      </EmptyListMessage>
+    )
+  }
+
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
+        const meta = COMPLIANCE_KIND_ICON[item.kind]
+        const tone = item.urgency === "expired" ? "danger" : meta.tone
+        return (
+          <li key={item.id} className="flex items-start gap-3">
+            <CircleIcon icon={meta.icon} tone={tone} />
+            <div className="min-w-0 flex-1">
+              <Link
+                href={item.href}
+                className="block rounded-md transition-colors hover:text-brand-red"
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <p className="text-sm font-medium leading-tight">{item.name}</p>
+                  {item.urgency === "expired" ? (
+                    <span className="shrink-0 rounded bg-red-100 px-1 py-px text-[9px] font-semibold text-red-700">
+                      หมดอายุ
+                    </span>
+                  ) : item.urgency === "urgent" ? (
+                    <span className="shrink-0 rounded bg-brand-red/10 px-1 py-px text-[9px] font-semibold text-brand-red">
+                      ด่วน
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {item.title}
+                  {item.department ? ` · ${item.department}` : ""}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {item.daysLeft < 0
+                    ? `หมดอายุแล้ว ${Math.abs(item.daysLeft)} วัน (${item.dueDate})`
+                    : `เหลือ ${item.daysLeft} วัน (${item.dueDate})`}
+                </p>
+              </Link>
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+export function OpenComplaintsList({
   items,
 }: {
   items: ComplaintReminderItem[]
@@ -174,7 +242,7 @@ export function ComplianceRemindersList({
           <CircleIcon icon={MessageCircleWarning} tone="warning" />
           <div className="min-w-0 flex-1">
             <Link
-              href={`/admin/complaints?status=open`}
+              href="/admin/complaints?status=open"
               className="block rounded-md transition-colors hover:text-brand-red"
             >
               <p className="text-sm font-medium leading-tight">
@@ -196,6 +264,53 @@ export function ComplianceRemindersList({
           <span className="shrink-0 text-xs text-muted-foreground">
             {formatCreatedAt(item.createdAt)}
           </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/** @deprecated Use OpenComplaintsList */
+export function ComplianceRemindersList({
+  items,
+}: {
+  items: ComplaintReminderItem[]
+}) {
+  return <OpenComplaintsList items={items} />
+}
+
+export function AttendanceIssuesList({
+  items,
+}: {
+  items: HrAttendanceIssue[]
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyListMessage>ไม่มีรายการลืมเช็คเข้า/ออกที่ต้องติดตาม</EmptyListMessage>
+    )
+  }
+
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => (
+        <li key={`${item.employeeId}-${item.workDate}-${item.issue}`}>
+          <Link
+            href={item.href}
+            className="flex items-center gap-3 rounded-md transition-colors hover:text-brand-red"
+          >
+            <AvatarInitials name={item.employeeName} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">{item.employeeName}</p>
+              <p className="text-xs text-muted-foreground">
+                {item.workDate} ·{" "}
+                {item.issue === "missing_checkin" ? "ลืมเช็คเข้า" : "ลืมเช็คออก"}
+              </p>
+              <StatusPill
+                label={item.retroEligible ? "แก้ได้ (48 ชม.)" : "ติดต่อ HR"}
+                variant={item.retroEligible ? "pending" : "rejected"}
+              />
+            </div>
+          </Link>
         </li>
       ))}
     </ul>

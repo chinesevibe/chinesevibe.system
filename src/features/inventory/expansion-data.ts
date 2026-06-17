@@ -150,14 +150,16 @@ export async function getInventoryAlerts(filters: InventoryReportFilters & { typ
   const expiry30 = isoDate(addDays(today, 30))
   const { branchNames, warehouseInfo } = await getBranchWarehouseMaps()
 
-  const [stockRows, inboundLotsRes, damagesRes, stockCountsRes] = await Promise.all([
+  const [stockRows, stockLotsRes, damagesRes, stockCountsRes] = await Promise.all([
     listInvStockRows({
       branchId: filters.branchId,
       warehouseId: filters.warehouseId,
     }),
     supabase
-      .from("inv_inbound_items")
-      .select("id, sku_id, quantity, lot_number, expiry_date, inbound_order_id, inv_inbound_orders!inner(status, warehouse_id), inv_skus(code, name)")
+      .from("inv_stock_lots")
+      .select("id, sku_id, remaining_qty, lot_number, expiry_date, warehouse_id, inv_skus(code, name)")
+      .gt("remaining_qty", 0)
+      .eq("status", "available")
       .not("expiry_date", "is", null)
       .gte("expiry_date", todayIso)
       .lte("expiry_date", expiry30),
@@ -172,9 +174,19 @@ export async function getInventoryAlerts(filters: InventoryReportFilters & { typ
       .eq("inv_stock_counts.status", "completed"),
   ])
 
-  if (inboundLotsRes.error) throw new Error(inboundLotsRes.error.message)
+  if (stockLotsRes.error) {
+    const missingTable =
+      stockLotsRes.error.code === "42P01" ||
+      stockLotsRes.error.message.includes("inv_stock_lots")
+    if (!missingTable) throw new Error(stockLotsRes.error.message)
+  }
   if (damagesRes.error) throw new Error(damagesRes.error.message)
-  if (stockCountsRes.error) throw new Error(stockCountsRes.error.message)
+  if (stockCountsRes.error) {
+    const missingTable =
+      stockCountsRes.error.code === "42P01" ||
+      stockCountsRes.error.message.includes("inv_stock_count")
+    if (!missingTable) throw new Error(stockCountsRes.error.message)
+  }
 
   const stockValueBySku = new Map<string, number>()
   const costMap = await latestCostBySkuIds([
@@ -205,31 +217,29 @@ export async function getInventoryAlerts(filters: InventoryReportFilters & { typ
     }
   }
 
-  for (const row of inboundLotsRes.data ?? []) {
-    const orderRaw = row.inv_inbound_orders as unknown
-    const order = Array.isArray(orderRaw) ? orderRaw[0] : orderRaw
-    const warehouseId = (order as { warehouse_id?: string } | null)?.warehouse_id ?? null
+  for (const row of stockLotsRes.data ?? []) {
+    const warehouseId = row.warehouse_id as string
     if (filters.warehouseId && warehouseId !== filters.warehouseId) continue
     const warehouse = warehouseId ? warehouseInfo.get(warehouseId) : null
     if (filters.branchId && warehouse?.branch_id !== filters.branchId) continue
+    const skuRaw = row.inv_skus as unknown
+    const sku = Array.isArray(skuRaw) ? skuRaw[0] : skuRaw
     const expiryDate = row.expiry_date as string
     const daysLeft = Math.max(
       0,
       Math.ceil((Date.parse(`${expiryDate}T00:00:00Z`) - Date.parse(`${todayIso}T00:00:00Z`)) / 86_400_000)
     )
-    const skuRaw = row.inv_skus as unknown
-    const sku = Array.isArray(skuRaw) ? skuRaw[0] : skuRaw
     alerts.push({
       id: `expiry-${row.id as string}`,
       type: "expiry",
       severity: daysLeft <= 7 ? "high" : daysLeft <= 14 ? "medium" : "low",
-      title: `${(sku as { code?: string } | null)?.code ?? "SKU"} ใกล้หมดอายุ`,
-      detail: `${(sku as { name?: string } | null)?.name ?? "—"} · Lot ${(row.lot_number as string | null) ?? "—"} · เหลือ ${daysLeft} วัน`,
-      branchName: warehouse?.branch_id ? branchNames.get(warehouse.branch_id) ?? "—" : "—",
-      warehouseName: warehouse?.name ?? null,
-      href: "/admin/inventory/inbound",
+      title: `${(sku as { code?: string })?.code ?? "SKU"} ใกล้หมดอายุ`,
+      detail: `${(sku as { name?: string })?.name ?? ""} Lot ${row.lot_number as string} เหลือ ${row.remaining_qty as number} หมดอายุ ${expiryDate}`,
+      branchName: warehouse ? branchNames.get(warehouse.branch_id) ?? "—" : "—",
+      warehouseName: warehouse?.name ?? "—",
+      href: "/admin/inventory/stock",
       daysLeft,
-      qty: Number(row.quantity),
+      qty: row.remaining_qty as number,
     })
   }
 

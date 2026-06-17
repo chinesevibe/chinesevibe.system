@@ -42,7 +42,7 @@ export default async function AdminEmployeesPage({
       <AdminPageShell
         fill
         title="รายชื่อพนักงาน"
-        description="ค้นหา กรอง และเปิดโปรไฟล์พนักงาน"
+        description="ค้นหา กรอง และเปิดโปรไฟล์ — เงินเดือนดูที่เมนู Payroll"
         badge={
           <div className="flex flex-wrap items-center gap-2">
             <CountBadge count={total} label="คน" />

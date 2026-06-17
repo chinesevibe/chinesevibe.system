@@ -32,7 +32,7 @@ cd hr-app && node scripts/line-oa-greeting-setup.mjs
 1. **Settings → Response settings**
    - Response mode: **Webhook**
    - เปิด **Use webhook**
-   - ปิด **Auto-response message**
+   - ปิด **Auto-response message** (ระบบตอบผ่าน Webhook แทน — ข้อความมาตรฐานในโค้ด)
 2. **Greeting message** (เมนูซ้าย)
    - เปิดใช้งาน
    - วางข้อความจากสคริปต์ → **Save**

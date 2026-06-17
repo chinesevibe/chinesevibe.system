@@ -105,7 +105,7 @@ export default async function InventoryBranchesPage({ searchParams }: PageProps)
                         </Link>
                         <InventoryDeleteButton
                           label={`สาขา ${branch.code}`}
-                          onDelete={() => deleteInvBranch(branch.id)}
+                          onDelete={deleteInvBranch.bind(null, branch.id)}
                         />
                       </div>
                     </TableCell>

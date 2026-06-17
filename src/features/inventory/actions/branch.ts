@@ -18,6 +18,7 @@ function formDataToObject(formData: FormData) {
     code: formData.get("code"),
     name: formData.get("name"),
     address: formData.get("address"),
+    hr_branch_id: formData.get("hr_branch_id"),
     is_active: formData.get("is_active") ?? "false",
   }
 }
@@ -96,4 +97,16 @@ export async function getInvBranch(id: string): Promise<InvBranch | null> {
     .maybeSingle()
   if (error) throw new Error(error.message)
   return data as InvBranch | null
+}
+
+export async function listHrBranchesForMapping(): Promise<
+  Array<{ id: string; code: string; name: string }>
+> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("hr_branches")
+    .select("id, code, name")
+    .order("code", { ascending: true })
+  if (error) throw new Error(error.message)
+  return (data ?? []) as Array<{ id: string; code: string; name: string }>
 }

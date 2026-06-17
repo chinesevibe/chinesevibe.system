@@ -11,16 +11,21 @@ import {
   InventoryFormField,
   InventoryTextInput,
 } from "@/features/inventory/InventoryFormFields"
+import { invInputClass } from "@/features/inventory/form-styles"
 import type { InvBranch } from "@/features/inventory/types"
+
+type HrBranchOption = { id: string; code: string; name: string }
 
 export function BranchForm({
   mode,
   initial,
   readOnly = false,
+  hrBranches = [],
 }: {
   mode: "create" | "edit"
   initial?: InvBranch
   readOnly?: boolean
+  hrBranches?: HrBranchOption[]
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -82,6 +87,23 @@ export function BranchForm({
           defaultValue={initial?.address ?? ""}
           disabled={readOnly}
         />
+      </InventoryFormField>
+
+      <InventoryFormField label="ผูกสาขา HR (optional)" htmlFor="hr_branch_id">
+        <select
+          id="hr_branch_id"
+          name="hr_branch_id"
+          className={invInputClass}
+          defaultValue={initial?.hr_branch_id ?? ""}
+          disabled={readOnly}
+        >
+          <option value="">— ไม่ผูก —</option>
+          {hrBranches.map((branch) => (
+            <option key={branch.id} value={branch.id}>
+              {branch.code} — {branch.name}
+            </option>
+          ))}
+        </select>
       </InventoryFormField>
 
       <label className="flex items-center gap-2 text-sm">

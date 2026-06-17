@@ -44,7 +44,18 @@ export const invRequisitionRejectSchema = z.object({
 export const invRequisitionIssueItemSchema = z.object({
   id: z.string().uuid("ไม่พบรายการ"),
   qty_issued: z.coerce.number().positive("จำนวนจ่ายต้องมากกว่า 0"),
-  lot_number: z.string().trim().min(1, "กรุณาระบุ Lot").max(100),
+  lot_number: z
+    .string()
+    .trim()
+    .max(100)
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  override_reason: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
 })
 
 export const invRequisitionIssueSchema = z.object({

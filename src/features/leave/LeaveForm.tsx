@@ -101,6 +101,12 @@ export function LeaveForm() {
     setSubmitError(null)
     setSuccess(false)
 
+    if (isSameDaySick && leaveHours.trim() && !file) {
+      setSubmitError(tx("leave.form.validation.medicalRequired"))
+      setSubmitting(false)
+      return
+    }
+
     const formData = new FormData()
     formData.append("type", values.type)
     formData.append("startDate", values.startDate)
@@ -244,7 +250,10 @@ export function LeaveForm() {
 
         {type === "sick" ? (
           <FormItem>
-            <FormLabel>{tx("leave.form.attachmentLabel")}</FormLabel>
+            <FormLabel>
+              {tx("leave.form.attachmentLabel")}
+              {isSameDaySick && leaveHours.trim() ? " *" : null}
+            </FormLabel>
             <FormControl>
               <input
                 type="file"

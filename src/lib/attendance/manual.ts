@@ -3,6 +3,13 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { computeWorkHours, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { lateMinutes, ictDayRangeUtc } from "@/lib/attendance/late"
+import {
+  assertRetroAllowance,
+  assertRetroWindow,
+  needsRetroEnforcement,
+  recordRetroCorrections,
+  type ShiftSchedule,
+} from "@/lib/attendance/retro-limit"
 import { getWorkStart } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
 
@@ -15,6 +22,9 @@ export type ManualAttendancePayload = {
   mode: EmployeeManualMode
   checkInTime?: string
   checkOutTime?: string
+  /** HR bypasses retro window and quota */
+  source?: "employee" | "hr"
+  actorEmployeeId?: string
 }
 
 const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/
@@ -26,14 +36,10 @@ export type ManualAttendanceResult = {
   status: "checkin_saved" | "checkout_saved" | "both_saved"
 }
 
-export type ActiveShift = {
+export type ActiveShift = ShiftSchedule & {
   id: string
   code: string
   name: string
-  start_hour: number
-  start_minute: number
-  crosses_midnight: boolean
-  grace_minutes: number
 }
 
 function parseDate(value: string): string {
@@ -71,7 +77,7 @@ async function resolveShift(
     const { data, error } = await supabase
       .from("hr_work_shifts")
       .select(
-        "id, code, name, start_hour, start_minute, crosses_midnight, grace_minutes"
+        "id, code, name, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
       )
       .eq("id", requestedShiftId)
       .eq("is_active", true)
@@ -96,7 +102,7 @@ async function resolveShift(
   const { data, error } = await supabase
     .from("hr_work_shifts")
     .select(
-      "id, code, name, start_hour, start_minute, crosses_midnight, grace_minutes"
+      "id, code, name, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
     )
     .eq("id", employee.work_shift_id)
     .eq("is_active", true)
@@ -205,9 +211,21 @@ export async function saveManualAttendance(
   }
 
   const existing = rows?.[0]
+  const source = payload.source ?? "employee"
+  const now = new Date()
 
   if (!existing && mode === "checkout") {
-    throw new Error("ยังไม่มีข้อมูลเช็คอินวันนี้")
+    throw new Error(
+      "ยังไม่มีข้อมูลเช็คอินวันนี้ — กรุณาลงเวลาเข้าย้อนหลังก่อน (ภายใน 48 ชม.)"
+    )
+  }
+
+  if (
+    source === "employee" &&
+    needsRetroEnforcement(mode, date, existing ?? null, now)
+  ) {
+    assertRetroWindow(date, shift, now)
+    await assertRetroAllowance(supabase, payload.employeeId, mode, now)
   }
 
   const existingCheckInAt = existing ? new Date(existing.check_in_at) : null
@@ -276,6 +294,19 @@ export async function saveManualAttendance(
       })
     }
 
+    if (
+      source === "employee" &&
+      needsRetroEnforcement(mode, date, null, now)
+    ) {
+      await recordRetroCorrections(supabase, {
+        employeeId: payload.employeeId,
+        workDate: date,
+        mode,
+        attendanceId: inserted.id as string,
+        createdBy: payload.actorEmployeeId ?? payload.employeeId,
+      })
+    }
+
     return {
       id: inserted.id,
       status: mode === "full" ? "both_saved" : "checkin_saved",
@@ -316,6 +347,19 @@ export async function saveManualAttendance(
       branchId,
       workDate: date,
       workHours: finalWorkHours,
+    })
+  }
+
+  if (
+    source === "employee" &&
+    needsRetroEnforcement(mode, date, existing, now)
+  ) {
+    await recordRetroCorrections(supabase, {
+      employeeId: payload.employeeId,
+      workDate: date,
+      mode,
+      attendanceId: updated.id as string,
+      createdBy: payload.actorEmployeeId ?? payload.employeeId,
     })
   }
 

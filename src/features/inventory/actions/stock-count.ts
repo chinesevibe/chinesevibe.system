@@ -269,6 +269,7 @@ export async function getStockCountDetail(id: string): Promise<InvStockCountDeta
       sku_id: row.sku_id as string,
       system_qty: systemQty,
       physical_qty: physicalQty,
+      lot_id: (row.lot_id as string | null) ?? null,
       lot_number: (row.lot_number as string | null) ?? null,
       counted_by: (row.counted_by as string | null) ?? null,
       counted_at: (row.counted_at as string | null) ?? null,

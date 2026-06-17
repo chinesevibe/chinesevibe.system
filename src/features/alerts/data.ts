@@ -1,6 +1,7 @@
 import { ictToday } from "@/features/employees/data"
 import type { AlertRow, AlertTab } from "@/features/alerts/types"
 import { createClient } from "@/lib/supabase/server"
+import { probationNeedsComplianceAlert } from "@/lib/employees/probation-compliance"
 
 const DAY_MS = 86_400_000
 const WINDOW_DAYS = 60
@@ -18,26 +19,39 @@ function dateField(tab: AlertTab): "probation_end" | "visa_expiry" | "work_permi
   return "work_permit_expiry"
 }
 
+function isRelevantAlertDate(dueDate: string, today: string, upcomingLimit: string): boolean {
+  return dueDate < today || (dueDate >= today && dueDate <= upcomingLimit)
+}
+
 export async function getAlertRows(tab: AlertTab): Promise<AlertRow[]> {
   const supabase = await createClient()
   const today = ictToday()
-  const windowEnd = new Date(Date.parse(`${today}T00:00:00Z`) + WINDOW_DAYS * DAY_MS)
+  const upcomingLimit = new Date(Date.parse(`${today}T00:00:00Z`) + WINDOW_DAYS * DAY_MS)
     .toISOString()
     .slice(0, 10)
 
   const field = dateField(tab)
   const { data, error } = await supabase
     .from("hr_employees")
-    .select("id, name, department, probation_end, visa_expiry, work_permit_expiry, status")
+    .select("id, name, department, probation_end, probation_outcome, visa_expiry, work_permit_expiry, status")
     .eq("status", "active")
     .not(field, "is", null)
-    .gte(field, today)
-    .lte(field, windowEnd)
     .order(field, { ascending: true })
 
   if (error) throw error
 
   return (data ?? [])
+    .filter((row) => {
+      const dueDate = row[field] as string
+      if (!isRelevantAlertDate(dueDate, today, upcomingLimit)) return false
+      if (tab === "probation") {
+        return probationNeedsComplianceAlert({
+          probationEnd: dueDate,
+          probationOutcome: row.probation_outcome as string | null,
+        })
+      }
+      return true
+    })
     .map((row) => {
       const dueDate = row[field] as string
       return {
@@ -49,10 +63,7 @@ export async function getAlertRows(tab: AlertTab): Promise<AlertRow[]> {
         field: tab,
       }
     })
-    .filter((row) => {
-      if (tab !== "probation") return true
-      return row.daysLeft >= 0
-    })
+    .sort((a, b) => a.daysLeft - b.daysLeft)
 }
 
 export async function getUrgentAlertCount(): Promise<number> {
@@ -64,17 +75,25 @@ export async function getUrgentAlertCount(): Promise<number> {
 
   const { data, error } = await supabase
     .from("hr_employees")
-    .select("probation_end, visa_expiry, work_permit_expiry")
+    .select("probation_end, probation_outcome, visa_expiry, work_permit_expiry")
     .eq("status", "active")
 
   if (error) throw error
 
   const within = (date: string | null) =>
-    date !== null && date >= today && date <= limit
+    date !== null && (date < today || (date >= today && date <= limit))
 
   let count = 0
   for (const row of data ?? []) {
-    if (within(row.probation_end)) count += 1
+    if (
+      probationNeedsComplianceAlert({
+        probationEnd: row.probation_end as string | null,
+        probationOutcome: row.probation_outcome as string | null,
+      }) &&
+      within(row.probation_end as string | null)
+    ) {
+      count += 1
+    }
     if (within(row.visa_expiry)) count += 1
     if (within(row.work_permit_expiry)) count += 1
   }

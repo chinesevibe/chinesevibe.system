@@ -3,6 +3,7 @@
 import { ictDayRangeUtc } from "@/lib/attendance/late"
 import { getPayrollHourReport } from "@/features/payroll/data"
 import { createClient } from "@/lib/supabase/server"
+import { probationNeedsComplianceAlert } from "@/lib/employees/probation-compliance"
 
 const DAY_MS = 86_400_000
 const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
@@ -71,7 +72,7 @@ export async function getDashboardStats(
       supabase.from("hr_leaves").select("status"),
       supabase
         .from("hr_employees")
-        .select("probation_end, visa_expiry, work_permit_expiry")
+        .select("probation_end, probation_outcome, visa_expiry, work_permit_expiry")
         .eq("status", "active"),
       getPayrollHourReport(payrollYear, payrollMonth),
     ])
@@ -116,14 +117,23 @@ export async function getDashboardStats(
 
   // Date columns are "YYYY-MM-DD" strings — string compare is date compare.
   const withinWindow = (date: string | null): boolean =>
-    date !== null && date >= todayIct && date <= expiryLimit
+    date !== null && (date < todayIct || (date >= todayIct && date <= expiryLimit))
   const expiring = { probation: 0, visa: 0, workPermit: 0 }
   for (const row of (expiryRes.data ?? []) as Array<{
     probation_end: string | null
+    probation_outcome: string | null
     visa_expiry: string | null
     work_permit_expiry: string | null
   }>) {
-    if (withinWindow(row.probation_end)) expiring.probation += 1
+    if (
+      probationNeedsComplianceAlert({
+        probationEnd: row.probation_end,
+        probationOutcome: row.probation_outcome,
+      }) &&
+      withinWindow(row.probation_end)
+    ) {
+      expiring.probation += 1
+    }
     if (withinWindow(row.visa_expiry)) expiring.visa += 1
     if (withinWindow(row.work_permit_expiry)) expiring.workPermit += 1
   }

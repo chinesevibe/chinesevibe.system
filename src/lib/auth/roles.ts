@@ -138,6 +138,11 @@ export function canEditEmployeeRecord(role: AppRole): boolean {
   return canManageHr(role) || isCeo(role)
 }
 
+/** Salary, bank, pay type — HR, Dev, CEO only */
+export function canViewSalaryData(role: AppRole): boolean {
+  return canEditEmployeeRecord(role)
+}
+
 /** CEO — open all admin routes (no path prison) */
 export function isCeoAllowedPath(pathname: string): boolean {
   return pathname.startsWith("/admin")

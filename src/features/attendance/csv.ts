@@ -4,6 +4,7 @@ export function rowsToCsv(rows: AttendanceRow[]): string {
   const header = [
     "วันที่",
     "พนักงาน",
+    "สาขา",
     "แผนก",
     "เวลาเข้า",
     "เวลาออก",
@@ -14,6 +15,7 @@ export function rowsToCsv(rows: AttendanceRow[]): string {
     [
       r.date,
       r.employeeName,
+      r.branchName ?? "",
       r.department ?? "",
       r.checkInText,
       r.checkOutText,

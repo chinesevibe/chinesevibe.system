@@ -123,9 +123,9 @@ export default async function InventorySkuPage({ searchParams }: PageProps) {
                           แก้ไข
                         </Link>
                           <InventoryDeleteButton
-                            label={`SKU ${sku.code}`}
-                            onDelete={() => deleteInvSku(sku.id)}
-                          />
+                          label={`SKU ${sku.code}`}
+                          onDelete={deleteInvSku.bind(null, sku.id)}
+                        />
                         </div>
                       </TableCell>
                     ) : null}

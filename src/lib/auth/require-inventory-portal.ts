@@ -5,6 +5,7 @@ import {
   canManageHr,
   isCeo,
   isDev,
+  isInventoryRole,
 } from "@/lib/auth/roles"
 import { getCurrentEmployee, type Employee } from "@/lib/auth/session"
 
@@ -22,7 +23,7 @@ export async function requireInventoryPortal(): Promise<Employee> {
   return employee
 }
 
-/** Master data (SKU, Supplier, branches, warehouses) — HR/CEO/Dev only */
+/** Master data (SKU, Supplier, branches, warehouses) — HR/CEO/Inventory/Dev */
 export async function requireInventoryMasterData(): Promise<Employee> {
   const employee = await getCurrentEmployee()
 
@@ -32,7 +33,9 @@ export async function requireInventoryMasterData(): Promise<Employee> {
   if (
     employee.role !== "dev" &&
     !canManageHr(employee.role) &&
-    !isCeo(employee.role)
+    !isCeo(employee.role) &&
+    !isInventoryRole(employee.role) &&
+    !canAccessInventoryPortal(employee)
   ) {
     redirect("/login?error=forbidden")
   }

@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       checkInTime: checkInTime,
       checkOutTime: checkOutTime,
       shiftId,
+      actorEmployeeId: employee.id,
     })
 
     return NextResponse.json({

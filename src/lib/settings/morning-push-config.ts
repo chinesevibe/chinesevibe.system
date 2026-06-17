@@ -3,6 +3,7 @@ export type MorningPushGroup = "employee" | "officer"
 export type MorningPushGroupConfig = {
   enabled: boolean
   fallbackTime: string
+  fallbackTime2: string
   remindAfterMin: number
   days: number[]
 }
@@ -19,12 +20,14 @@ export const MORNING_PUSH_DEFAULTS: Record<
   employee: {
     enabled: true,
     fallbackTime: "09:00",
+    fallbackTime2: "11:00",
     remindAfterMin: 0,
     days: [1, 2, 3, 4, 5],
   },
   officer: {
     enabled: true,
     fallbackTime: "09:00",
+    fallbackTime2: "11:00",
     remindAfterMin: 0,
     days: [1, 2, 3, 4, 5],
   },
@@ -74,6 +77,10 @@ export function parseMorningPushFromRows(
         map.get(`${prefix}fallback_time`),
         defaults.fallbackTime
       ),
+      fallbackTime2: parseTime(
+        map.get(`${prefix}fallback_time_2`),
+        defaults.fallbackTime2
+      ),
       remindAfterMin: parseRemindMinutes(
         map.get(`${prefix}remind_after_min`),
         defaults.remindAfterMin
@@ -96,6 +103,7 @@ export function serializeMorningPushPatch(
   return {
     [`${prefix}enabled`]: config.enabled ? "true" : "false",
     [`${prefix}fallback_time`]: config.fallbackTime,
+    [`${prefix}fallback_time_2`]: config.fallbackTime2,
     [`${prefix}remind_after_min`]: String(config.remindAfterMin),
     [`${prefix}days`]: [...config.days].sort((a, b) => a - b).join(","),
   }

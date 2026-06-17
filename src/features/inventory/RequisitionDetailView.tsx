@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getFefoAllocations } from "@/features/inventory/actions/fefo"
 import {
   approveRequisition,
   issueRequisition,
@@ -23,7 +24,7 @@ import {
 import {
   REQUISITION_STATUS_LABELS,
 } from "@/features/inventory/RequisitionListTable"
-import type { InvRequisitionDetail, InvRequisitionItemRow } from "@/features/inventory/types"
+import type { InvFefoAllocation, InvRequisitionDetail, InvRequisitionItemRow } from "@/features/inventory/types"
 import { formatThaiDate } from "@/lib/datetime/thailand"
 
 function formatQuantity(value: number) {
@@ -86,6 +87,26 @@ export function RequisitionDetailView({
         .map((item) => [item.id, String(item.qty_issued)])
     )
   )
+
+  const [fefoPreview, setFefoPreview] = useState<Record<string, InvFefoAllocation[]>>({})
+  const [fefoLoadingId, setFefoLoadingId] = useState<string | null>(null)
+
+  async function loadFefoPreview(item: InvRequisitionItemRow) {
+    const qty = Number(issuedQty[item.id] ?? 0)
+    if (qty <= 0) return
+    setFefoLoadingId(item.id)
+    const result = await getFefoAllocations(
+      item.sku_id,
+      detail.requisition.warehouse_id,
+      qty
+    )
+    setFefoLoadingId(null)
+    if (result.success) {
+      setFefoPreview((current) => ({ ...current, [item.id]: result.allocations }))
+    } else {
+      setError(result.error)
+    }
+  }
 
   const approvedItems = useMemo(
     () => detail.items.filter((item) => item.qty_approved > 0),
@@ -305,43 +326,69 @@ export function RequisitionDetailView({
           <div>
             <h2 className="text-sm font-semibold">จ่ายสินค้า</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              การกดจ่ายจะตัดสต็อกและบันทึก movement ทันที
+              ระบบจัด Lot อัตโนมัติตาม FEFO (หมดอายุก่อน) — ไม่ต้องกรอก Lot ยกเว้น SKU ตั้งค่า manual
             </p>
           </div>
           {approvedItems.map((item) => (
             <div
               key={item.id}
-              className="grid gap-3 rounded-lg border border-border p-3 md:grid-cols-[1fr_160px_180px]"
+              className="grid gap-3 rounded-lg border border-border p-3"
             >
               <p className="text-sm">
                 {item.sku_code} — อนุมัติ {formatQuantity(item.qty_approved)}{" "}
                 {unitLabel(item)}
               </p>
-              <input
-                type="number"
-                min={0.001}
-                max={item.qty_approved}
-                step="any"
-                className="h-10 rounded-lg border border-input px-3 text-sm"
-                value={issuedQty[item.id] ?? "0"}
-                onChange={(event) =>
-                  setIssuedQty((current) => ({
-                    ...current,
-                    [item.id]: event.target.value,
-                  }))
-                }
-              />
-              <input
-                placeholder="Lot"
-                className="h-10 rounded-lg border border-input px-3 text-sm"
-                value={lotNumbers[item.id] ?? ""}
-                onChange={(event) =>
-                  setLotNumbers((current) => ({
-                    ...current,
-                    [item.id]: event.target.value,
-                  }))
-                }
-              />
+              <div className="grid gap-3 md:grid-cols-[160px_1fr]">
+                <input
+                  type="number"
+                  min={0.001}
+                  max={item.qty_approved}
+                  step="any"
+                  className="h-10 rounded-lg border border-input px-3 text-sm"
+                  value={issuedQty[item.id] ?? "0"}
+                  onChange={(event) =>
+                    setIssuedQty((current) => ({
+                      ...current,
+                      [item.id]: event.target.value,
+                    }))
+                  }
+                />
+                <input
+                  placeholder="Lot (manual SKU เท่านั้น)"
+                  className="h-10 rounded-lg border border-input px-3 text-sm"
+                  value={lotNumbers[item.id] ?? ""}
+                  onChange={(event) =>
+                    setLotNumbers((current) => ({
+                      ...current,
+                      [item.id]: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={pending || fefoLoadingId === item.id}
+                  onClick={() => void loadFefoPreview(item)}
+                >
+                  {fefoLoadingId === item.id ? "กำลังคำนวณ…" : "ดูแนะนำ FEFO"}
+                </Button>
+              </div>
+              {(fefoPreview[item.id]?.length ?? 0) > 0 ? (
+                <div className="rounded-md bg-muted/40 p-2 text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">แนะนำ FEFO:</p>
+                  <ul className="mt-1 space-y-1">
+                    {fefoPreview[item.id]?.map((line) => (
+                      <li key={line.lot_id}>
+                        {line.lot_number} · หมดอายุ {line.expiry_date ?? "—"} · จำนวน{" "}
+                        {formatQuantity(line.qty)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           ))}
           <Button
@@ -354,7 +401,8 @@ export function RequisitionDetailView({
                   items: approvedItems.map((item) => ({
                     id: item.id,
                     qty_issued: Number(issuedQty[item.id] ?? 0),
-                    lot_number: lotNumbers[item.id] ?? "",
+                    lot_number: lotNumbers[item.id]?.trim() || undefined,
+                    override_reason: undefined,
                   })),
                 })
               )

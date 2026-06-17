@@ -110,7 +110,7 @@ export default async function InventorySuppliersPage({ searchParams }: PageProps
                         </Link>
                         <InventoryDeleteButton
                           label={`Supplier ${supplier.code}`}
-                          onDelete={() => deleteInvSupplier(supplier.id)}
+                          onDelete={deleteInvSupplier.bind(null, supplier.id)}
                         />
                       </div>
                     </TableCell>

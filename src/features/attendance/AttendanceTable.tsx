@@ -36,9 +36,12 @@ const REVIEW_VARIANT: Record<
 export function AttendanceTable({
   rows,
   canManage = false,
+  employeeView = false,
 }: {
   rows: AttendanceRow[]
   canManage?: boolean
+  /** Hide employee/dept columns on single-employee pages */
+  employeeView?: boolean
 }) {
   if (rows.length === 0) {
     return (
@@ -54,8 +57,9 @@ export function AttendanceTable({
         <TableHeader>
           <TableRow>
             <TableHead>วันที่</TableHead>
-            <TableHead>พนักงาน</TableHead>
-            <TableHead>แผนก</TableHead>
+            {!employeeView ? <TableHead>พนักงาน</TableHead> : null}
+            {!employeeView ? <TableHead>สาขา</TableHead> : null}
+            {!employeeView ? <TableHead>แผนก</TableHead> : null}
             <TableHead>เข้า</TableHead>
             <TableHead>ออก</TableHead>
             <TableHead>ชม.</TableHead>
@@ -68,8 +72,15 @@ export function AttendanceTable({
           {rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
-              <TableCell className="font-medium">{row.employeeName}</TableCell>
-              <TableCell>{row.department ?? "—"}</TableCell>
+              {!employeeView ? (
+                <TableCell className="font-medium">{row.employeeName}</TableCell>
+              ) : null}
+              {!employeeView ? (
+                <TableCell>{row.branchName ?? "—"}</TableCell>
+              ) : null}
+              {!employeeView ? (
+                <TableCell>{row.department ?? "—"}</TableCell>
+              ) : null}
               <TableCell>{row.checkInText}</TableCell>
               <TableCell>{row.checkOutText}</TableCell>
               <TableCell className="tabular-nums">

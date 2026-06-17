@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test src/lib/payroll/*.test.ts",
+    "test": "node --import tsx --test src/lib/payroll/*.test.ts src/lib/attendance/*.test.ts src/lib/employees/*.test.ts src/lib/inventory/*.test.ts",
     "seed:admin": "node scripts/seed-admin.mjs",
     "odoo:setup-sync": "node scripts/odoo-setup-sync.mjs",
     "odoo:ensure-rules": "node scripts/odoo-ensure-rules.mjs",

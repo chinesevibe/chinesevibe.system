@@ -12,6 +12,7 @@ import {
 } from "@/features/employees/profile/visa-status"
 import type { WorkShiftSummary } from "@/features/shifts/types"
 import { employeeAvatarPublicUrl } from "@/lib/employees/avatar"
+import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 import { createClient } from "@/lib/supabase/server"
 
 export type { SalaryPaymentMethod } from "@/features/employees/profile/payment-method"
@@ -62,7 +63,7 @@ export type EmployeeProfile = {
   contract_uploaded_at: string | null
   role: string
   status: "active" | "inactive"
-  probationStatus: "pending" | "passed" | "not_applicable"
+  probationStatus: "pending" | "overdue" | "passed" | "not_applicable"
   visaStatus: ExpiryStatusLabel
   workPermitStatus: ExpiryStatusLabel
 }
@@ -70,10 +71,12 @@ export type EmployeeProfile = {
 export function deriveProbationStatus(
   status: "active" | "inactive",
   probationEnd: string | null,
-  today: string
+  today: string,
+  probationOutcome: string | null = null
 ): EmployeeProfile["probationStatus"] {
+  if (probationOutcome === "passed") return "passed"
   if (status !== "active" || !probationEnd) return "not_applicable"
-  return probationEnd >= today ? "pending" : "passed"
+  return probationEnd >= today ? "pending" : "overdue"
 }
 
 const PROFILE_BASE_SELECT =
@@ -178,8 +181,10 @@ export async function getEmployeeProfile(
     branch_id: (data.branch_id as string | null) ?? null,
     work_shift_id: (data.work_shift_id as string | null) ?? null,
     workShift,
-    default_check_in_time: (data.default_check_in_time as string | null) ?? null,
-    default_check_out_time: (data.default_check_out_time as string | null) ?? null,
+    default_check_in_time:
+      normalizeTimeToHHMM(data.default_check_in_time as string | null) || null,
+    default_check_out_time:
+      normalizeTimeToHHMM(data.default_check_out_time as string | null) || null,
     salary: data.salary != null ? Number(data.salary) : null,
     housing_allowance,
     contract_start: (data.contract_start as string | null) ?? null,
@@ -209,7 +214,12 @@ export async function getEmployeeProfile(
     contract_file_name: (data.contract_file_name as string | null) ?? null,
     contract_uploaded_at: (data.contract_uploaded_at as string | null) ?? null,
     status,
-    probationStatus: deriveProbationStatus(status, data.probation_end as string | null, today),
+    probationStatus: deriveProbationStatus(
+      status,
+      data.probation_end as string | null,
+      today,
+      data.probation_outcome as string | null
+    ),
     visaStatus: expiryStatusLabel(data.visa_expiry as string | null, today),
     workPermitStatus: expiryStatusLabel(data.work_permit_expiry as string | null, today),
   }

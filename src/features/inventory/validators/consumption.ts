@@ -46,6 +46,7 @@ export const invDamageItemSchema = z.object({
   qty: z.coerce.number().positive("จำนวนต้องมากกว่า 0"),
   damage_type: invDamageTypeSchema,
   reason: z.string().trim().min(1, "กรุณาระบุเหตุผล").max(2000),
+  lot_id: z.string().uuid("Lot ไม่ถูกต้อง").optional().nullable(),
   photo_url: optionalText(1000),
   notes: optionalText(1000),
 })

@@ -5,12 +5,15 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 
+type DeleteResult = { success: boolean; error?: string }
+
 export function InventoryDeleteButton({
   label,
   onDelete,
 }: {
   label: string
-  onDelete: () => Promise<{ success: boolean; error?: string }>
+  /** Bound server action — do not pass inline closures from Server Components */
+  onDelete: () => Promise<DeleteResult>
 }) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)

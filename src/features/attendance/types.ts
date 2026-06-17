@@ -12,6 +12,7 @@ export type AttendanceRow = {
   employeeId: string
   employeeName: string
   department: string | null
+  branchName: string | null
   date: string
   checkInAt: string
   checkOutAt: string | null

@@ -13,6 +13,7 @@ import {
   getAttendanceRecords,
   normalizeAttendanceParams,
 } from "@/features/attendance/data"
+import { getBranchesForFilter } from "@/features/employees/data"
 import { canManageHr } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
@@ -25,10 +26,11 @@ export default async function AdminAttendancePage({
   const employee = await getCurrentEmployee()
   const canManage = employee ? canManageHr(employee.role) : false
 
-  const [{ rows, total, summary }, departments, employees] = await Promise.all([
+  const [{ rows, total, summary }, departments, branches, employees] = await Promise.all([
     getAttendanceRecords(params),
     getAttendanceDepartments(),
-    getAttendanceEmployees(),
+    getBranchesForFilter(),
+    getAttendanceEmployees(params.branch_id),
   ])
 
   return (
@@ -48,12 +50,14 @@ export default async function AdminAttendancePage({
         <Suspense fallback={null}>
           <AttendanceFilters
             departments={departments}
+            branches={branches}
             employees={employees}
             values={{
               from: params.from,
               to: params.to,
               dept: params.dept,
               employee: params.employee,
+              branch_id: params.branch_id,
             }}
           />
         </Suspense>
