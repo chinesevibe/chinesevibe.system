@@ -22,13 +22,13 @@ function AuthLoginBrandHeader() {
         decoding="async"
       />
       <p
-        className="mt-3 text-2xl font-bold tracking-tight text-brand-red"
+        className="mt-3 text-4xl font-bold uppercase tracking-tight text-brand-red"
         style={{ fontFamily: "var(--font-noto-sc), sans-serif" }}
       >
         {PRODUCT_NAME}
       </p>
-      <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.35em] text-brand-red/75">
-        HR &amp; Payroll
+      <p className="mt-1 text-sm font-medium uppercase tracking-[0.25em] text-brand-red/75">
+        Welcome
       </p>
     </div>
   )
