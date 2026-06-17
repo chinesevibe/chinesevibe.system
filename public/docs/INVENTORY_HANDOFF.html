@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CNV WorkHub — สรุปงานคลังสินค้า &amp; Checklist ส่งมอบ</title>
+  <title>CNV WorkHub — สรุปส่งมอบ คลัง · Payroll · Audit</title>
   <link rel="icon" href="/brand/mascot.svg" type="image/svg+xml" />
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -223,15 +223,15 @@
       <div class="brand-row">
         <img src="/brand/mascot.svg" alt="CNV WorkHub" width="56" height="56" />
         <div>
-          <h1>สรุปงานคลังสินค้า (Inventory Module)</h1>
-          <p>เอกสารส่งมอบ · คู่มือใช้งาน · Checklist ตรวจรับ (UAT) สำหรับใช้งานจริง</p>
+          <h1>สรุปงานส่งมอบ CNV WorkHub</h1>
+          <p>คลังสินค้า · Payroll · Audit ความพร้อม · Checklist ตรวจรับ (UAT) บน production</p>
         </div>
       </div>
       <div class="meta">
         <span>อัปเดต: 17 มิ.ย. 2026</span>
-        <a href="https://hr-app-two-iota.vercel.app/admin/inventory" target="_blank" rel="noopener">เปิดระบบคลัง ↗</a>
+        <a href="https://hr-app-two-iota.vercel.app/admin/inventory" target="_blank" rel="noopener">ศูนย์ควบคุมคลัง ↗</a>
+        <a href="https://hr-app-two-iota.vercel.app/admin/payroll" target="_blank" rel="noopener">Payroll Hub ↗</a>
         <a href="/docs/HR_SYSTEM_WORKFLOW.html">Workflow HR ทั้งระบบ</a>
-        <a href="/line-oa-manual.html">คู่มือ LINE OA</a>
         <a href="/line-oa-manual.html">คู่มือ LINE OA</a>
       </div>
     </div>
@@ -240,14 +240,14 @@
   <nav class="toc">
     <div class="wrap">
       <a href="#overview">ภาพรวม</a>
-      <a href="#delivered">สิ่งที่ส่งมอบ</a>
+      <a href="#delivered">คลัง</a>
+      <a href="#payroll">Payroll</a>
+      <a href="#audit">Audit</a>
       <a href="#roles">สิทธิ์</a>
-      <a href="#setup">ตั้งค่าเริ่มต้น</a>
-      <a href="#flows">Flow งาน</a>
-      <a href="#modules">โมดูล</a>
-      <a href="#fefo">FEFO / Lot</a>
+      <a href="#setup">ตั้งค่า</a>
+      <a href="#flows">Flow</a>
       <a href="#uat">Checklist UAT</a>
-      <a href="#signoff">ลงนามรับมอบ</a>
+      <a href="#signoff">ลงนาม</a>
     </div>
   </nav>
 
@@ -255,12 +255,13 @@
     <section id="overview">
       <h2>1. ภาพรวม</h2>
       <p>
-        โมดูล <strong>คลังสินค้า</strong> ใน CNV WorkHub ครอบคลุม master data, รับเข้า, สต็อก, เบิก, โอน,
-        ตรวจนับ, บันทึกใช้จริง, แจ้งเสียหาย, รายงาน และ FEFO (First Expired, First Out) แยก lot
+        เอกสารนี้รวม <strong>โมดูลคลังสินค้า</strong>, <strong>ความพร้อม Payroll (บาท)</strong>
+        และ <strong>สรุป Audit ระบบ</strong> สำหรับตรวจรับก่อนใช้งานจริงบน
+        <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">production</a>
       </p>
       <div class="callout ok">
-        <strong>สถานะข้อมูล production:</strong> ลบข้อมูล demo (DEMO-HQ, SKU-DEMO-*) แล้ว —
-        พร้อมกรอก master data จริงตามลำดับในหัวข้อ 4
+        <strong>Verdict รวม:</strong> 🟡 <em>พร้อม Demo / UAT</em> — Core HR + LINE + Portal + Inventory + Payroll engine deploy แล้ว
+        · รอทีมกรอก master data คลัง + ทดสอบ Payroll กับ Accounting + sign-off LINE production
       </div>
       <div class="grid-3">
         <div class="card-mini">
@@ -293,7 +294,10 @@
     </section>
 
     <section id="delivered">
-      <h2>2. สิ่งที่ส่งมอบแล้ว</h2>
+      <h2>2. คลังสินค้า — สิ่งที่ส่งมอบแล้ว</h2>
+      <div class="callout ok" style="margin-bottom:1rem">
+        <strong>ข้อมูล production:</strong> ลบ demo (DEMO-HQ, SKU-DEMO-*) แล้ว — พร้อมกรอก master data จริง
+      </div>
       <table>
         <thead>
           <tr><th>หมวด</th><th>รายการ</th><th>สถานะ</th></tr>
@@ -429,8 +433,103 @@ flowchart LR
       </ul>
     </section>
 
+    <section id="payroll">
+      <h2>8. Payroll — ความพร้อมระบบเงินเดือน (บาท)</h2>
+      <p>
+        โมดูล <strong>Native Payroll Engine</strong> (migration <code>20260615210000</code>) คำนวณเงินเดือนบาทจากชม.ที่อนุมัติแล้ว
+        แยก <em>office (monthly)</em> และ <em>hourly (หน้าร้าน)</em> · หักประกันสังคม · สร้างสลิป PDF · พนักงานดูที่ Portal
+      </p>
+
+      <div class="diagram mermaid">
+flowchart LR
+  A[ชม.จาก Attendance/OT อนุมัติ] --> B[Payroll Hub สรุปชม.]
+  B --> C[เลือกเดือน + วันตัดรอบ]
+  C --> D[คำนวณรอบ payroll run]
+  D --> E[Lock รอบ]
+  E --> F[สร้าง PDF สลิป]
+  F --> G[พนักงานดู /portal/payslips]
+      </div>
+
+      <table>
+        <thead><tr><th>รายการ</th><th>URL / หลักฐาน</th><th>สถานะ</th></tr></thead>
+        <tbody>
+          <tr><td>Payroll Hub (สรุปชม.)</td><td><code>/admin/payroll</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>คำนวณเงินเดือน + Lock รอบ</td><td><code>/admin/payroll/runs</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>ตั้งค่า cutoff / OT / SSO</td><td><code>/admin/payroll/settings</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>สลิป PDF (Storage bucket)</td><td>API <code>/api/payroll/runs/[id]/generate-pdf</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>พนักงานดูสลิป</td><td><code>/portal/payslips</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
+          <tr><td>ตาราง DB</td><td><code>hr_payroll_runs</code>, <code>hr_payslips</code>, <code>hr_payslip_lines</code></td><td><span class="badge badge-done">Migration แล้ว</span></td></tr>
+          <tr><td>Odoo sync UI</td><td>redirect → native runs</td><td><span class="badge badge-done">ใช้ engine ในระบบ</span></td></tr>
+          <tr><td>กฎภาษีแบบละเอียด</td><td>config <code>taxEnabled</code> (ปิด default)</td><td><span class="badge badge-pending">รอ Accounting ยืนยัน</span></td></tr>
+          <tr><td>ทดสอบรอบจริง + ลงนาม</td><td>HR + Accounting onsite</td><td><span class="badge badge-pending">รอ UAT</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>กฎคำนวณ (สรุป)</h3>
+      <table>
+        <thead><tr><th>ประเภท</th><th>แหล่งชม.</th><th>การคำนวณ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>hourly</strong> (หน้าร้าน)</td><td>ledger ชม.ปกติ + OT อนุมัติ</td><td>ชม. × อัตราชั่วโมง + OT × multiplier</td></tr>
+          <tr><td><strong>monthly</strong> (office)</td><td>เงินเดือนในโปรไฟล์ + OT</td><td>เงินเดือน + ค่าที่พัก (ถ้ามี) + OT จากอัตราชม.เทียบ</td></tr>
+          <tr><td>หัก SSO</td><td>ทุกประเภท</td><td>min(cap, gross × rate) — ตั้งใน Settings</td></tr>
+          <tr><td>จ่ายวันที่ 4 / 5</td><td>ตาม <code>pay_day</code> พนักงาน</td><td>แยก batch ในหน้า runs</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <strong>ก่อนรอบจ่ายจริง:</strong> ตรวจ <code>pay_type</code> + <code>salary</code> ทุกคน · ตั้ง <code>payroll_cutoff_day</code> ·
+        ให้ Attendance/OT อนุมัติครบก่อนคำนวณ · Lock รอบก่อนส่งสลิป
+      </div>
+    </section>
+
+    <section id="audit">
+      <h2>9. Audit — สรุปความพร้อมระบบทั้งหมด</h2>
+      <p class="muted">อ้างอิง Delivery Readiness Audit (T30, T106, P5–P6) + สถานะ deploy ล่าสุด</p>
+
+      <table>
+        <thead><tr><th>มิติ</th><th>Verdict</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Build / Typecheck / Lint</strong></td><td><span class="badge badge-done">PASS</span></td><td>Next.js 16 · ผ่านก่อน deploy ทุกครั้ง</td></tr>
+          <tr><td><strong>Security Review</strong></td><td><span class="badge badge-done">PASS</span></td><td>T26 + P6 — RLS, webhook signature, role escalation ปลอดภัย</td></tr>
+          <tr><td><strong>Core HR + LINE OA</strong></td><td><span class="badge badge-done">Demo ready</span></td><td>Rich Menu, LIFF, check-in/out, leave, OT, cron alerts</td></tr>
+          <tr><td><strong>Employee Portal</strong></td><td><span class="badge badge-done">Delivered</span></td><td><code>/portal</code> — attendance, leave, docs, payslips, stock</td></tr>
+          <tr><td><strong>Inventory</strong></td><td><span class="badge badge-done">Go-live ready</span></td><td>FEFO, transfer, stock count, BOM — รอ master data จริง</td></tr>
+          <tr><td><strong>Payroll บาท</strong></td><td><span class="badge badge-pending">UAT กับ Accounting</span></td><td>Engine deploy แล้ว — รอทดสอบรอบจ่ายจริง</td></tr>
+          <tr><td><strong>LINE production UAT</strong></td><td><span class="badge badge-pending">ยังไม่ sign-off</span></td><td>ทดสอบด้วยบัญชีพนักงานจริง + webhook logs</td></tr>
+          <tr><td><strong>E2E automated</strong></td><td><span class="badge badge-done">Baseline PASS</span></td><td>T27: 23/23 · smoke routes ผ่าน</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Gates ที่ผ่านแล้ว</h3>
+      <ul>
+        <li>Production deploy: <code>hr-app-two-iota.vercel.app</code></li>
+        <li>Supabase project: <code>oouswalwqhojpzqwwdvs</code> — migrations sync</li>
+        <li>Self-register + HR onboarding queue</li>
+        <li>Approval policy: Leave/OT → HR (หรือ BM→HR ตาม config)</li>
+        <li>Geofence + morning push (2 shifts) + inventory roles RLS</li>
+      </ul>
+
+      <h3>Caveats / งานที่ยังเปิด (ไม่บล็อก Demo)</h3>
+      <table>
+        <thead><tr><th>#</th><th>หัวข้อ</th><th>แนวทาง</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>LINE OA auto-reply ในกลุ่ม HR</td><td>ปิด Response settings → Webhook mode</td></tr>
+          <tr><td>2</td><td>มอบหมาย Branch Manager</td><td>ตั้งใน HR Admin เมื่อ org พร้อม</td></tr>
+          <tr><td>3</td><td>Key rotation หลัง handoff</td><td>Supabase service role, LINE token, Vault cron secret</td></tr>
+          <tr><td>4</td><td>กฎภาษีเงินได้</td><td>เปิด/ปรับเมื่อ Accounting ยืนยันอัตรา</td></tr>
+          <tr><td>5</td><td>Inventory master data</td><td>กรอก SKU/สาขา/คลังจริงตามหัวข้อ 4</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info" style="border-color:var(--blue);background:var(--blue-soft)">
+        <strong>Smoke test (หลัง deploy):</strong>
+        <code>node scripts/e2e/smoke-role-routes.mjs</code> ·
+        <code>npm run build && npm run typecheck && npm run lint</code>
+      </div>
+    </section>
+
     <section id="uat">
-      <h2>8. Checklist ตรวจรับ (UAT)</h2>
+      <h2>10. Checklist ตรวจรับ (UAT)</h2>
       <p class="muted">ติ๊กเมื่อทดสอบผ่านบน production — ความคืบหน้าบันทึกในเบราว์เซอร์ (local)</p>
       <div class="progress-bar" aria-hidden="true"><div id="uat-progress"></div></div>
       <p id="uat-count" class="muted" style="margin-top:0"></p>
@@ -473,15 +572,35 @@ flowchart LR
         <label><input type="checkbox" data-uat /> รายงาน stock / inbound / variance เปิดได้</label>
         <label><input type="checkbox" data-uat /> ไม่มี error ใน browser console ระหว่าง flow หลัก</label>
       </div>
+      <h3>Gate 5 — Payroll (บาท)</h3>
+      <div class="checklist" data-group="gate5">
+        <label><input type="checkbox" data-uat /> ตั้ง pay_type + salary ครบทุกพนักงานที่จ่าย</label>
+        <label><input type="checkbox" data-uat /> ตั้ง payroll_cutoff_day + OT multiplier ใน Settings</label>
+        <label><input type="checkbox" data-uat /> Attendance/OT อนุมัติครบในรอบที่ทดสอบ</label>
+        <label><input type="checkbox" data-uat /> คำนวณรอบทดสอบ → ตัวเลข gross/net ตรงกับ Accounting</label>
+        <label><input type="checkbox" data-uat /> Lock รอบ → สร้าง PDF สลิปได้</label>
+        <label><input type="checkbox" data-uat /> พนักงาน login Portal → เห็นสลิปที่ /portal/payslips</label>
+      </div>
+
+      <h3>Gate 6 — Audit / Sign-off ระบบ</h3>
+      <div class="checklist" data-group="gate6">
+        <label><input type="checkbox" data-uat /> LINE check-in/out บน production ผ่าน</label>
+        <label><input type="checkbox" data-uat /> ขอลา + อนุมัติ HR ผ่าน (LIFF หรือ Portal)</label>
+        <label><input type="checkbox" data-uat /> OT ยื่น → อนุมัติ → ชม.เข้า payroll ledger</label>
+        <label><input type="checkbox" data-uat /> Security: พนักงานเข้า /admin ไม่ได้</label>
+        <label><input type="checkbox" data-uat /> HR ดู CEO dashboard / report ได้ (ถ้าใช้)</label>
+        <label><input type="checkbox" data-uat /> ไม่มี P0 bug ค้างก่อนลงนาม</label>
+      </div>
     </section>
 
     <section id="signoff">
-      <h2>9. ลงนามรับมอบ</h2>
+      <h2>11. ลงนามรับมอบ</h2>
       <table>
         <thead>
           <tr><th>บทบาท</th><th>ชื่อ</th><th>วันที่</th><th>ลายเซ็น</th></tr>
         </thead>
         <tbody>
+          <tr><td>Accounting / Payroll</td><td></td><td></td><td></td></tr>
           <tr><td>ทีมคลัง (ผู้ใช้งาน)</td><td></td><td></td><td></td></tr>
           <tr><td>HR Admin</td><td></td><td></td><td></td></tr>
           <tr><td>ผู้บริหาร / CEO</td><td></td><td></td><td></td></tr>
@@ -490,7 +609,7 @@ flowchart LR
       </table>
       <div class="callout">
         Production: <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">https://hr-app-two-iota.vercel.app</a>
-        · Commit ล่าสุด inventory go-live: <code>99d2992</code>
+        · Commit ล่าสุด: <code>8ca4473</code> (handoff doc + inventory go-live)
       </div>
     </section>
   </main>
@@ -499,7 +618,7 @@ flowchart LR
     mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
 
     (function () {
-      const KEY = "inventory-uat-checklist-v1";
+      const KEY = "inventory-uat-checklist-v2";
       const boxes = document.querySelectorAll("[data-uat]");
       const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
 
