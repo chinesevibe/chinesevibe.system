@@ -5,9 +5,34 @@ import {
   LocaleProvider,
   useLocale,
 } from "@/features/portal/LocaleProvider"
-import { BRAND_LOGIN_HERO } from "@/lib/brand/assets"
+import { PRODUCT_NAME } from "@/lib/brand/product"
 import type { MessageKey } from "@/lib/i18n/translate"
 import type { AppLocale } from "@/lib/i18n/types"
+
+function AuthLoginBrandHeader() {
+  return (
+    <div className="bg-white px-6 py-10 text-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/mascot-hd.png"
+        alt=""
+        width={160}
+        height={192}
+        className="mx-auto h-auto w-32 object-contain"
+        decoding="async"
+      />
+      <p
+        className="mt-3 text-2xl font-bold tracking-tight text-brand-red"
+        style={{ fontFamily: "var(--font-noto-sc), sans-serif" }}
+      >
+        {PRODUCT_NAME}
+      </p>
+      <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.35em] text-brand-red/75">
+        HR &amp; Payroll
+      </p>
+    </div>
+  )
+}
 
 function AuthPageShellInner({
   titleKey,
@@ -25,17 +50,7 @@ function AuthPageShellInner({
       <div
         className={`w-full ${maxWidth} overflow-hidden rounded-2xl border border-border/80 bg-card shadow-lg`}
       >
-        <div className="overflow-hidden bg-brand-red">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={BRAND_LOGIN_HERO}
-            alt="CNV WorkHub — HR & Payroll"
-            width={480}
-            height={360}
-            className="block h-auto w-full object-cover"
-            decoding="async"
-          />
-        </div>
+        <AuthLoginBrandHeader />
         <div className="space-y-4 p-6">
           <h1 className="text-center text-lg font-semibold text-foreground">
             {tx(titleKey)}
