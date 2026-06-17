@@ -4,11 +4,9 @@ import {
   ArrowRight,
   BarChart3,
   Bell,
-  BookOpen,
   Building2,
   ClipboardList,
   ExternalLink,
-  FileText,
   LayoutDashboard,
   Package,
   PackagePlus,
@@ -292,40 +290,24 @@ export function InventoryHub({
             เลือกงานประจำวันหรือตั้งค่าข้อมูลหลัก — เมนูด้านบนใช้สลับหน้างานได้ตลอด
           </p>
         </div>
-        <div className="flex flex-col gap-2 sm:items-end">
-          <div className="flex flex-wrap gap-2">
-            <DocQuickLink
-              href="/docs/INVENTORY_HANDOFF.html"
-              imageSrc="/brand/mascot.svg"
-              label="คู่มือ & Checklist UAT"
-              external
-            />
-            <DocQuickLink
-              href="/line-oa-manual.html"
-              icon={BookOpen}
-              label="คู่มือ LINE OA"
-              external
-            />
-            <DocQuickLink
-              href="/docs/LINE_OA_Employee_Manual_TH.pdf"
-              icon={FileText}
-              label="PDF พนักงาน"
-              external
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <QuickLink
-              href="/admin/inventory/dashboard"
-              icon={LayoutDashboard}
-              label="แดชบอร์ด"
-            />
-            <QuickLink
-              href="/admin/inventory/alerts"
-              icon={Bell}
-              label="Alerts"
-              badge={alertCount}
-            />
-          </div>
+        <div className="flex flex-wrap gap-2">
+          <DocQuickLink
+            href="/docs/INVENTORY_HANDOFF.html"
+            imageSrc="/brand/mascot.svg"
+            label="คู่มือ & Checklist UAT"
+            external
+          />
+          <QuickLink
+            href="/admin/inventory/dashboard"
+            icon={LayoutDashboard}
+            label="แดชบอร์ด"
+          />
+          <QuickLink
+            href="/admin/inventory/alerts"
+            icon={Bell}
+            label="Alerts"
+            badge={alertCount}
+          />
         </div>
       </div>
 
