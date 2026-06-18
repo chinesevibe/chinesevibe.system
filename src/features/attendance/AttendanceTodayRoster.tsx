@@ -17,10 +17,46 @@ function isWorkingStatus(status: DailyRosterEmployeeStatus): boolean {
   return status === "present" || status === "late"
 }
 
+type RosterEmployee = DailyRoster["groups"][number]["employees"][number]
+type RosterGroup = DailyRoster["groups"][number]
+type RosterListItem = {
+  employee: RosterEmployee
+  contextLabel?: string
+}
+
+function compareRosterItems(left: RosterListItem, right: RosterListItem): number {
+  const contextCompare = (left.contextLabel ?? "").localeCompare(right.contextLabel ?? "", "th")
+  if (contextCompare !== 0) return contextCompare
+  return left.employee.name.localeCompare(right.employee.name, "th")
+}
+
+function buildContextLabel(group: RosterGroup): string | undefined {
+  if (group.id === "__unassigned__") return "ไม่มีกะ"
+  return `${group.name} • ${group.timeRange}`
+}
+
+function buildRosterItems(
+  groups: DailyRoster["groups"],
+  predicate: (employee: RosterEmployee) => boolean
+): RosterListItem[] {
+  return groups
+    .flatMap((group) =>
+      group.employees
+        .filter(predicate)
+        .map((employee) => ({
+          employee,
+          contextLabel: buildContextLabel(group),
+        }))
+    )
+    .sort(compareRosterItems)
+}
+
 function EmployeeRosterCard({
   employee,
+  contextLabel,
 }: {
-  employee: DailyRoster["groups"][number]["employees"][number]
+  employee: RosterEmployee
+  contextLabel?: string
 }) {
   return (
     <Link
@@ -37,7 +73,7 @@ function EmployeeRosterCard({
             </span>
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {[employee.position, employee.branchName].filter(Boolean).join(" • ") || "—"}
+            {[employee.position, employee.branchName, contextLabel].filter(Boolean).join(" • ") || "—"}
           </p>
         </div>
         <Badge
@@ -60,22 +96,67 @@ function EmployeeRosterCard({
   )
 }
 
+function RosterSection({
+  title,
+  emptyText,
+  items,
+}: {
+  title: string
+  emptyText: string
+  items: RosterListItem[]
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{emptyText}</p>
+        ) : (
+          items.map(({ employee, contextLabel }) => (
+            <EmployeeRosterCard
+              key={`${employee.id}-${contextLabel ?? "none"}`}
+              employee={employee}
+              contextLabel={contextLabel}
+            />
+          ))
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
 export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
-  const leaveEmployees = roster.groups.flatMap((group) =>
-    group.employees.filter((employee) => employee.status === "on_leave")
+  const leaveEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "on_leave"
   )
-  const absentEmployees = roster.groups.flatMap((group) =>
-    group.employees.filter((employee) => employee.status === "absent")
+  const absentEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "absent"
   )
-  const otherEmployees = roster.groups.flatMap((group) =>
-    group.employees.filter(
-      (employee) =>
-        employee.status === "off" ||
-        employee.status === "pending" ||
-        employee.status === "upcoming" ||
-        employee.status === "unassigned"
-    )
+  const pendingEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "pending"
   )
+  const upcomingEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "upcoming"
+  )
+  const offEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "off"
+  )
+  const unassignedEmployees = buildRosterItems(
+    roster.groups,
+    (employee) => employee.status === "unassigned"
+  )
+  const hasOtherEmployees =
+    pendingEmployees.length > 0 ||
+    upcomingEmployees.length > 0 ||
+    offEmployees.length > 0 ||
+    unassignedEmployees.length > 0
 
   return (
     <div className="flex flex-col gap-4">
@@ -109,7 +190,26 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                       {group.id === roster.nextShiftId ? (
                         <Badge variant="outline">กำลังกะถัดไป</Badge>
                       ) : null}
-                      <span>เช็คอิน {group.totals.checkedIn}/{group.totals.total}</span>
+                      <span>
+                        กำลังทำงาน{" "}
+                        {
+                          group.employees.filter(
+                            (employee) =>
+                              isWorkingStatus(employee.status) &&
+                              employee.checkedInAt &&
+                              !employee.checkedOutAt
+                          ).length
+                        }
+                      </span>
+                      <span>
+                        ออกแล้ว{" "}
+                        {
+                          group.employees.filter(
+                            (employee) =>
+                              isWorkingStatus(employee.status) && employee.checkedInAt && employee.checkedOutAt
+                          ).length
+                        }
+                      </span>
                       <span>สาย {group.totals.late}</span>
                       <span>ลา {group.totals.onLeave}</span>
                       <span>ขาด {group.totals.absent}</span>
@@ -118,17 +218,58 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                 </CardHeader>
               </summary>
               <CardContent className="border-t bg-muted/10 py-4">
-                {group.employees.filter((employee) => isWorkingStatus(employee.status)).length === 0 ? (
-                  <p className="text-sm text-muted-foreground">ยังไม่มีคนอยู่ในรอบนี้</p>
-                ) : (
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {group.employees
-                      .filter((employee) => isWorkingStatus(employee.status))
-                      .map((employee) => (
-                        <EmployeeRosterCard key={employee.id} employee={employee} />
-                      ))}
-                  </div>
-                )}
+                {(() => {
+                  const activeEmployees = group.employees
+                    .filter(
+                      (employee) =>
+                        isWorkingStatus(employee.status) &&
+                        employee.checkedInAt &&
+                        !employee.checkedOutAt
+                    )
+                    .sort((left, right) => left.name.localeCompare(right.name, "th"))
+                  const completedEmployees = group.employees
+                    .filter(
+                      (employee) =>
+                        isWorkingStatus(employee.status) &&
+                        employee.checkedInAt &&
+                        employee.checkedOutAt
+                    )
+                    .sort((left, right) => left.name.localeCompare(right.name, "th"))
+
+                  return (
+                    <div className="space-y-4">
+                      {activeEmployees.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                          {completedEmployees.length > 0
+                            ? "ทุกคนในรอบนี้ออกงานครบแล้ว"
+                            : "ยังไม่มีคนอยู่ในรอบนี้"}
+                        </p>
+                      ) : (
+                        <div className="grid gap-3 md:grid-cols-2">
+                          {activeEmployees.map((employee) => (
+                            <EmployeeRosterCard key={employee.id} employee={employee} />
+                          ))}
+                        </div>
+                      )}
+
+                      {completedEmployees.length > 0 ? (
+                        <div className="rounded-xl border border-border/60 bg-background/70 p-3">
+                          <div className="mb-3 flex items-center justify-between gap-2">
+                            <p className="text-sm font-medium">ออกงานแล้ว</p>
+                            <span className="text-xs text-muted-foreground">
+                              {completedEmployees.length} คน
+                            </span>
+                          </div>
+                          <div className="grid gap-3 md:grid-cols-2">
+                            {completedEmployees.map((employee) => (
+                              <EmployeeRosterCard key={employee.id} employee={employee} />
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  )
+                })()}
               </CardContent>
             </details>
           </Card>
@@ -136,45 +277,66 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">ลางาน</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {leaveEmployees.length === 0 ? (
-              <p className="text-sm text-muted-foreground">ไม่มีพนักงานลางาน</p>
-            ) : (
-              leaveEmployees.map((employee) => (
-                <EmployeeRosterCard key={employee.id} employee={employee} />
-              ))
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">ขาดงาน</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {absentEmployees.length === 0 ? (
-              <p className="text-sm text-muted-foreground">ไม่มีพนักงานขาดงาน</p>
-            ) : (
-              absentEmployees.map((employee) => (
-                <EmployeeRosterCard key={employee.id} employee={employee} />
-              ))
-            )}
-          </CardContent>
-        </Card>
+        <RosterSection title="ลางาน" emptyText="ไม่มีพนักงานลางาน" items={leaveEmployees} />
+        <RosterSection title="ขาดงาน" emptyText="ไม่มีพนักงานขาดงาน" items={absentEmployees} />
         <Card>
           <CardHeader>
             <CardTitle className="text-base">รายการอื่นๆ</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {otherEmployees.length === 0 ? (
+          <CardContent className="space-y-4">
+            {!hasOtherEmployees ? (
               <p className="text-sm text-muted-foreground">ไม่มีรายการอื่น</p>
             ) : (
-              otherEmployees.map((employee) => (
-                <EmployeeRosterCard key={employee.id} employee={employee} />
-              ))
+              <>
+                {pendingEmployees.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">รอเช็คอินในช่วง grace</p>
+                    {pendingEmployees.map(({ employee, contextLabel }) => (
+                      <EmployeeRosterCard
+                        key={`${employee.id}-${contextLabel ?? "pending"}`}
+                        employee={employee}
+                        contextLabel={contextLabel}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                {upcomingEmployees.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">ยังไม่ถึงเวลาเริ่มกะ</p>
+                    {upcomingEmployees.map(({ employee, contextLabel }) => (
+                      <EmployeeRosterCard
+                        key={`${employee.id}-${contextLabel ?? "upcoming"}`}
+                        employee={employee}
+                        contextLabel={contextLabel}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                {offEmployees.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">วันหยุดประจำสัปดาห์</p>
+                    {offEmployees.map(({ employee, contextLabel }) => (
+                      <EmployeeRosterCard
+                        key={`${employee.id}-${contextLabel ?? "off"}`}
+                        employee={employee}
+                        contextLabel={contextLabel}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                {unassignedEmployees.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">ยังไม่กำหนดกะ</p>
+                    {unassignedEmployees.map(({ employee, contextLabel }) => (
+                      <EmployeeRosterCard
+                        key={`${employee.id}-${contextLabel ?? "unassigned"}`}
+                        employee={employee}
+                        contextLabel={contextLabel}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+              </>
             )}
           </CardContent>
         </Card>
