@@ -1,16 +1,17 @@
 import type {
   AttendanceCalendarResult,
   AttendanceDayCell,
-  AttendanceDayStatus,
 } from "@/features/attendance/calendar-types"
+import { deriveAttendanceDayStatus } from "@/features/attendance/day-status"
+import { effectiveAttendanceIsLate } from "@/lib/attendance/late"
 import { ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { isEmployeeOffOnDate, parseOffDays } from "@/lib/employees/off-days"
 import {
   getRetroDeadline,
-  isPastShiftEnd,
-  isPastShiftStart,
   isWithinRetroWindow,
   type ShiftSchedule,
 } from "@/lib/attendance/retro-limit"
+import { getAttendanceGoLiveDate } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
 
 export type {
@@ -43,17 +44,48 @@ function formatIctTime(iso: string): string {
   return `${hh}:${mm}`
 }
 
-async function loadShift(
+async function loadEmployeeSchedule(
   supabase: Awaited<ReturnType<typeof createClient>>,
   employeeId: string
-): Promise<ShiftSchedule | null> {
-  const { data: employee, error: empError } = await supabase
-    .from("hr_employees")
-    .select("work_shift_id")
-    .eq("id", employeeId)
-    .maybeSingle()
-  if (empError) throw empError
-  if (!employee?.work_shift_id) return null
+): Promise<{
+  shift: ShiftSchedule | null
+  offDays: number[]
+  defaultCheckInTime: string | null
+}> {
+  const selectAttempts = [
+    "work_shift_id, off_days, default_check_in_time",
+    "work_shift_id, default_check_in_time",
+    "work_shift_id",
+  ]
+
+  type EmployeeScheduleRow = {
+    work_shift_id: string | null
+    off_days?: unknown
+    default_check_in_time?: string | null
+  }
+
+  let employee: EmployeeScheduleRow | null = null
+
+  for (const select of selectAttempts) {
+    const { data, error } = await supabase
+      .from("hr_employees")
+      .select(select)
+      .eq("id", employeeId)
+      .maybeSingle()
+    if (!error) {
+      employee = (data as EmployeeScheduleRow | null) ?? null
+      break
+    }
+    if (!error.message?.includes("does not exist")) throw error
+  }
+
+  if (!employee?.work_shift_id) {
+    return {
+      shift: null,
+      offDays: parseOffDays(employee?.off_days),
+      defaultCheckInTime: (employee?.default_check_in_time as string | null) ?? null,
+    }
+  }
 
   const { data: shift, error } = await supabase
     .from("hr_work_shifts")
@@ -64,7 +96,12 @@ async function loadShift(
     .eq("is_active", true)
     .maybeSingle()
   if (error) throw error
-  return (shift as ShiftSchedule | null) ?? null
+
+  return {
+    shift: (shift as ShiftSchedule | null) ?? null,
+    offDays: parseOffDays(employee.off_days),
+    defaultCheckInTime: (employee.default_check_in_time as string | null) ?? null,
+  }
 }
 
 async function loadLeaveDates(
@@ -115,37 +152,6 @@ function attendanceByDate(
   return map
 }
 
-function deriveDayStatus(
-  date: string,
-  today: string,
-  now: Date,
-  shift: ShiftSchedule | null,
-  onLeave: boolean,
-  record: {
-    check_in_at: string
-    check_out_at: string | null
-    is_late: boolean
-  } | null
-): AttendanceDayStatus {
-  if (date > today) return "future"
-  if (onLeave) return "on_leave"
-  if (!shift) return "no_shift"
-
-  if (!record) {
-    if (date === today && !isPastShiftStart(date, shift, now)) return "future"
-    if (date === today && !isPastShiftEnd(date, shift, now)) return "in_progress"
-    if (!isPastShiftStart(date, shift, now)) return "future"
-    return "missing_checkin"
-  }
-
-  if (!record.check_out_at) {
-    if (date === today && !isPastShiftEnd(date, shift, now)) return "in_progress"
-    return "missing_checkout"
-  }
-
-  return record.is_late ? "late" : "complete"
-}
-
 export async function getEmployeeAttendanceCalendar(
   employeeId: string,
   month: string,
@@ -158,8 +164,8 @@ export async function getEmployeeAttendanceCalendar(
   const rangeStart = ictLocalToUtc(start, "00:00")
   const rangeEnd = new Date(ictLocalToUtc(end, "00:00").getTime() + DAY_MS)
 
-  const [shift, leaveDates, attendanceRes] = await Promise.all([
-    loadShift(supabase, employeeId),
+  const [schedule, leaveDates, attendanceRes, goLiveDate] = await Promise.all([
+    loadEmployeeSchedule(supabase, employeeId),
     loadLeaveDates(supabase, employeeId, start, end),
     supabase
       .from("hr_attendance")
@@ -167,7 +173,9 @@ export async function getEmployeeAttendanceCalendar(
       .eq("employee_id", employeeId)
       .gte("check_in_at", rangeStart.toISOString())
       .lt("check_in_at", rangeEnd.toISOString()),
+    getAttendanceGoLiveDate(),
   ])
+  const { shift, offDays, defaultCheckInTime } = schedule
 
   if (attendanceRes.error) throw attendanceRes.error
   const byDate = attendanceByDate(attendanceRes.data ?? [])
@@ -175,10 +183,46 @@ export async function getEmployeeAttendanceCalendar(
   const cells: AttendanceDayCell[] = days.map((date) => {
     const record = byDate.get(date) ?? null
     const onLeave = leaveDates.has(date)
-    const status = deriveDayStatus(date, today, now, shift, onLeave, record)
+
+    if (!onLeave && !record && isEmployeeOffOnDate(date, offDays)) {
+      return {
+        date,
+        status: "off",
+        checkIn: null,
+        checkOut: null,
+        hours: null,
+        retroEligible: false,
+        retroExpired: false,
+        deadline: null,
+        attendanceId: null,
+      }
+    }
+
+    const effectiveRecord = record
+      ? {
+          ...record,
+          is_late: effectiveAttendanceIsLate(
+            record.check_in_at,
+            shift,
+            record.is_late,
+            defaultCheckInTime
+          ),
+        }
+      : null
+
+    const status = deriveAttendanceDayStatus(
+      date,
+      today,
+      now,
+      shift,
+      onLeave,
+      effectiveRecord,
+      goLiveDate
+    )
     const withinRetro =
       shift !== null &&
       status !== "on_leave" &&
+      status !== "off" &&
       status !== "no_shift" &&
       status !== "future" &&
       (status === "missing_checkin" || status === "missing_checkout") &&

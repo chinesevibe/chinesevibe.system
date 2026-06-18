@@ -55,6 +55,8 @@ type RosterAttendanceRow = {
 
 type RosterLeaveRow = {
   employee_id: string
+  start_date: string
+  end_date: string
 }
 
 export type DailyRosterFilters = {
@@ -75,7 +77,12 @@ export type DailyRosterEmployeeStatus =
   | "upcoming"
   | "unassigned"
 
-export type DailyRosterGroupState = "closed" | "grace" | "upcoming" | "unassigned"
+export type DailyRosterGroupState =
+  | "active"
+  | "closed"
+  | "grace"
+  | "upcoming"
+  | "unassigned"
 
 export type DailyRosterEmployee = {
   id: string
@@ -155,6 +162,15 @@ function ictDayRange(date: string): { start: Date; end: Date } {
   return { start, end: new Date(start.getTime() + DAY_MS) }
 }
 
+function addIctDays(date: string, days: number): string {
+  const [year, month, day] = date.split("-").map(Number)
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10)
+}
+
+function attendanceWorkDate(row: Pick<RosterAttendanceRow, "shift_date" | "check_in_at">): string {
+  return row.shift_date ?? ictDateFromUtc(new Date(row.check_in_at))
+}
+
 function branchNameFromJoin(
   joined: RosterEmployeeRow["hr_branches"]
 ): string | null {
@@ -190,6 +206,7 @@ function groupStateForDate(
 }
 
 function groupStateLabel(state: DailyRosterGroupState): string {
+  if (state === "active") return "ยังมีคนทำงานอยู่"
   if (state === "upcoming") return "ยังไม่ถึงเวลา"
   if (state === "grace") return "รอครบเวลา grace"
   if (state === "unassigned") return "ยังไม่กำหนดกะ"
@@ -271,6 +288,31 @@ function buildRosterWorkTimeText(
   })
 }
 
+function buildEmployeeAttendanceHref(employeeId: string, date: string): string {
+  return `/admin/employees/${employeeId}/attendance?month=${date.slice(0, 7)}&date=${date}`
+}
+
+function shouldReplaceRosterRecord(
+  current: RosterAttendanceRow | undefined,
+  next: RosterAttendanceRow
+): boolean {
+  if (!current) return true
+  if (current.check_out_at && !next.check_out_at) return true
+  if (!current.check_out_at && next.check_out_at) return false
+  return next.check_in_at > current.check_in_at
+}
+
+function isDateWithinRange(date: string, start: string, end: string): boolean {
+  return date >= start && date <= end
+}
+
+function isEmployeeOnLeave(
+  leaves: RosterLeaveRow[],
+  workDate: string
+): boolean {
+  return leaves.some((leave) => isDateWithinRange(workDate, leave.start_date, leave.end_date))
+}
+
 function pushCount(
   totals: DailyRoster["totals"] | DailyRosterGroup["totals"],
   status: DailyRosterEmployeeStatus
@@ -289,17 +331,51 @@ export function buildDailyRosterSnapshot(
   leaveRows: RosterLeaveRow[]
 ): DailyRoster {
   const today = ictDateFromUtc(input.now)
+  const previousDate = addIctDays(input.date, -1)
   const shiftById = new Map(input.shifts.map((shift) => [shift.id, shift]))
-  const attendanceByEmployee = new Map<string, RosterAttendanceRow>()
+  const attendanceByEmployee = new Map<string, RosterAttendanceRow[]>()
+  const employeeById = new Map(input.employees.map((employee) => [employee.id, employee]))
+  const carryoverGroupDates = new Map<string, string>()
 
   for (const row of attendanceRows) {
     const existing = attendanceByEmployee.get(row.employee_id)
-    if (!existing || row.check_in_at < existing.check_in_at) {
-      attendanceByEmployee.set(row.employee_id, row)
+    if (existing) {
+      existing.push(row)
+    } else {
+      attendanceByEmployee.set(row.employee_id, [row])
     }
   }
 
-  const leaveSet = new Set(leaveRows.map((row) => row.employee_id))
+  if (input.date === today) {
+    for (const row of attendanceRows) {
+      if (row.check_out_at) continue
+      if (attendanceWorkDate(row) !== previousDate) continue
+      const employee = employeeById.get(row.employee_id)
+      const shiftId = employee?.work_shift_id
+      const shift = shiftId ? shiftById.get(shiftId) : null
+      if (!shiftId || !shift?.crosses_midnight) continue
+      carryoverGroupDates.set(shiftId, previousDate)
+    }
+  }
+
+  for (const rows of attendanceByEmployee.values()) {
+    rows.sort((left, right) => {
+      if (left.check_out_at && !right.check_out_at) return 1
+      if (!left.check_out_at && right.check_out_at) return -1
+      return right.check_in_at.localeCompare(left.check_in_at)
+    })
+  }
+
+  const leaveByEmployee = new Map<string, RosterLeaveRow[]>()
+  for (const row of leaveRows) {
+    const existing = leaveByEmployee.get(row.employee_id)
+    if (existing) {
+      existing.push(row)
+    } else {
+      leaveByEmployee.set(row.employee_id, [row])
+    }
+  }
+
   const groups = new Map<string, DailyRosterGroup>()
   const rosterTotals: DailyRoster["totals"] = {
     total: 0,
@@ -316,8 +392,9 @@ export function buildDailyRosterSnapshot(
     if (existing) return existing
 
     const shift = shiftId ? (shiftById.get(shiftId) ?? null) : null
-    const state = groupStateForDate(input.date, today, input.now, shift)
-    const startAt = shift ? getShiftStartUtc(input.date, scheduleFromShift(shift)) : null
+    const effectiveDate = carryoverGroupDates.get(key) ?? input.date
+    const state = groupStateForDate(effectiveDate, today, input.now, shift)
+    const startAt = shift ? getShiftStartUtc(effectiveDate, scheduleFromShift(shift)) : null
     const graceAt = startAt
       ? new Date(startAt.getTime() + shift!.grace_minutes * 60_000)
       : null
@@ -350,9 +427,10 @@ export function buildDailyRosterSnapshot(
     const shift = employee.work_shift_id
       ? (shiftById.get(employee.work_shift_id) ?? null)
       : null
-    const onLeave = leaveSet.has(employee.id)
+    const groupDate = carryoverGroupDates.get(group.id) ?? input.date
+    const onLeave = isEmployeeOnLeave(leaveByEmployee.get(employee.id) ?? [], groupDate)
     const offDays = parseOffDays(employee.off_days)
-    if (!onLeave && isEmployeeOffOnDate(input.date, offDays)) {
+    if (!onLeave && isEmployeeOffOnDate(groupDate, offDays)) {
       const rosterEmployee: DailyRosterEmployee = {
         id: employee.id,
         employeeCode: formatEmployeeCode(employee),
@@ -360,7 +438,7 @@ export function buildDailyRosterSnapshot(
         position: employee.position,
         department: employee.department,
         branchName: branchNameFromJoin(employee.hr_branches),
-        employeeHref: `/admin/employees/${employee.id}/attendance`,
+        employeeHref: buildEmployeeAttendanceHref(employee.id, input.date),
         status: "off",
         statusLabel: employeeStatusLabel("off"),
         note: buildEmployeeNote("off", null, group.state),
@@ -375,7 +453,14 @@ export function buildDailyRosterSnapshot(
       continue
     }
 
-    const record = attendanceByEmployee.get(employee.id) ?? null
+    const employeeRecords = attendanceByEmployee.get(employee.id) ?? []
+    let record: RosterAttendanceRow | null = null
+    for (const candidate of employeeRecords) {
+      if (attendanceWorkDate(candidate) !== groupDate) continue
+      if (shouldReplaceRosterRecord(record ?? undefined, candidate)) {
+        record = candidate
+      }
+    }
     const effectiveIsLate = record
       ? effectiveAttendanceIsLate(
           record.check_in_at,
@@ -388,7 +473,7 @@ export function buildDailyRosterSnapshot(
       ? { ...record, is_late: effectiveIsLate }
       : null
     const dayStatus = deriveAttendanceDayStatus(
-      input.date,
+      groupDate,
       today,
       input.now,
       shift ? scheduleFromShift(shift) : null,
@@ -404,7 +489,7 @@ export function buildDailyRosterSnapshot(
       position: employee.position,
       department: employee.department,
       branchName: branchNameFromJoin(employee.hr_branches),
-      employeeHref: `/admin/employees/${employee.id}/attendance`,
+      employeeHref: buildEmployeeAttendanceHref(employee.id, input.date),
       status,
       statusLabel: employeeStatusLabel(status),
       note: buildEmployeeNote(status, effectiveRecord, group.state),
@@ -417,6 +502,13 @@ export function buildDailyRosterSnapshot(
     group.employees.push(rosterEmployee)
     pushCount(group.totals, status)
     pushCount(rosterTotals, status)
+  }
+
+  for (const group of groups.values()) {
+    if (group.employees.some((employee) => employee.checkedInAt && !employee.checkedOutAt)) {
+      group.state = "active"
+      group.stateLabel = groupStateLabel("active")
+    }
   }
 
   const sortedGroups = [...groups.values()].sort((left, right) => {
@@ -435,7 +527,12 @@ export function buildDailyRosterSnapshot(
     today,
     goLiveDate: input.goLiveDate,
     nextShiftId:
-      sortedGroups.find((group) => group.state === "grace" || group.state === "upcoming")?.id ??
+      sortedGroups.find(
+        (group) =>
+          group.state === "active" ||
+          group.state === "grace" ||
+          group.state === "upcoming"
+      )?.id ??
       null,
     totals: rosterTotals,
     availableShifts: sortedGroups.map((group) => ({
@@ -501,7 +598,11 @@ async function loadRosterEmployees(
 export async function getDailyRoster(filters: DailyRosterFilters): Promise<DailyRoster> {
   const supabase = await createClient()
   const now = filters.now ?? new Date()
-  const { start, end } = ictDayRange(filters.date)
+  const today = ictDateFromUtc(now)
+  const previousDate = addIctDays(filters.date, -1)
+  const attendanceRangeDate =
+    filters.date === today ? addIctDays(filters.date, -1) : filters.date
+  const { start, end } = ictDayRange(attendanceRangeDate)
 
   const employeeRows = await loadRosterEmployees(supabase, filters)
   const employeeIds = employeeRows.map((employee) => employee.id)
@@ -527,16 +628,21 @@ export async function getDailyRoster(filters: DailyRosterFilters): Promise<Daily
           .select("employee_id, check_in_at, check_out_at, is_late, shift_date")
           .in("employee_id", employeeIds)
           .gte("check_in_at", start.toISOString())
-          .lt("check_in_at", end.toISOString())
+          .lt(
+            "check_in_at",
+            filters.date === today
+              ? new Date(end.getTime() + DAY_MS).toISOString()
+              : end.toISOString()
+          )
       : Promise.resolve({ data: [], error: null }),
     employeeIds.length > 0
       ? supabase
           .from("hr_leaves")
-          .select("employee_id")
+          .select("employee_id, start_date, end_date")
           .in("employee_id", employeeIds)
           .eq("status", "approved")
           .lte("start_date", filters.date)
-          .gte("end_date", filters.date)
+          .gte("end_date", filters.date === today ? previousDate : filters.date)
       : Promise.resolve({ data: [], error: null }),
   ])
 
@@ -553,10 +659,7 @@ export async function getDailyRoster(filters: DailyRosterFilters): Promise<Daily
       employees: employeeRows,
       shifts: (shiftResult.data ?? []) as RosterShiftRow[],
     },
-    ((attendanceResult.data ?? []) as RosterAttendanceRow[]).filter((row) => {
-      const date = row.shift_date ?? ictDateFromUtc(new Date(row.check_in_at))
-      return date === filters.date
-    }),
+    (attendanceResult.data ?? []) as RosterAttendanceRow[],
     (leaveResult.data ?? []) as RosterLeaveRow[]
   )
 }

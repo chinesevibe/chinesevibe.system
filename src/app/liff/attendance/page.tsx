@@ -47,6 +47,28 @@ async function loadShift(employeeId: string): Promise<ShiftSchedule | null> {
   return (shift as ShiftSchedule | null) ?? null
 }
 
+async function loadOpenAttendanceWorkDate(employeeId: string, now: Date): Promise<string | null> {
+  const supabase = await createClient()
+  const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  const { data, error } = await supabase
+    .from("hr_attendance")
+    .select("shift_date, check_in_at")
+    .eq("employee_id", employeeId)
+    .is("check_out_at", null)
+    .gte("check_in_at", window36hStart.toISOString())
+    .order("check_in_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) throw error
+  if (!data) return null
+  return (data.shift_date as string | null) ?? requestedWorkDateFromCheckIn(data.check_in_at as string)
+}
+
+function requestedWorkDateFromCheckIn(checkInAt: string): string {
+  return new Date(new Date(checkInAt).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10)
+}
+
 export default async function AttendanceLiffPage({
   searchParams,
 }: {
@@ -63,21 +85,23 @@ export default async function AttendanceLiffPage({
 
   const supabase = await createClient()
   const now = new Date()
-  const [shift, retroUsage, correctable] = await Promise.all([
+  const [shift, retroUsage, correctable, openWorkDate] = await Promise.all([
     loadShift(employee.id),
     getRetroUsage(supabase, employee.id, now),
     getCorrectableDays(employee.id, now),
+    loadOpenAttendanceWorkDate(employee.id, now),
   ])
+  const effectiveDate = openWorkDate ?? requestedDate
 
-  const withinWindow = isWithinRetroWindow(requestedDate, shift, now)
+  const withinWindow = isWithinRetroWindow(effectiveDate, shift, now)
   const deadline =
-    shift && requestedDate !== ictDateNow()
-      ? getRetroDeadline(requestedDate, shift, now).toISOString()
+    shift && effectiveDate !== ictDateNow()
+      ? getRetroDeadline(effectiveDate, shift, now).toISOString()
       : null
 
   return (
     <AttendanceManualClient
-      defaultDate={requestedDate}
+      defaultDate={effectiveDate}
       defaultTime={ictTimeNow()}
       today={ictDateNow()}
       retroUsage={retroUsage}

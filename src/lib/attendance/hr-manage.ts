@@ -88,6 +88,27 @@ async function resolveIsLate(
   )
 }
 
+async function findOtherOpenAttendance(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  employeeId: string,
+  excludeAttendanceId?: string
+): Promise<{ id: string } | null> {
+  let query = supabase
+    .from("hr_attendance")
+    .select("id")
+    .eq("employee_id", employeeId)
+    .is("check_out_at", null)
+    .limit(1)
+
+  if (excludeAttendanceId) {
+    query = query.neq("id", excludeAttendanceId)
+  }
+
+  const { data, error } = await query.maybeSingle()
+  if (error) throw error
+  return (data as { id: string } | null) ?? null
+}
+
 function parseInput(
   input: HrAttendanceInput,
   shift: HrWorkShift | null
@@ -163,6 +184,10 @@ export async function createAttendanceByHr(
   if (empError) throw empError
   if (!employee) throw new Error("ไม่พบพนักงาน")
 
+  if (!checkOutAt && (await findOtherOpenAttendance(supabase, employeeId))) {
+    throw new Error("พนักงานมีรอบเข้างานที่ยังไม่ปิดอยู่แล้ว")
+  }
+
   const isLate = await resolveIsLate(
     checkInAt,
     shift,
@@ -218,6 +243,13 @@ export async function updateAttendanceByHr(
   )
   if (duplicate) {
     throw new Error("พนักงานมีบันทึกเข้างานวันนี้อยู่แล้ว")
+  }
+
+  if (
+    !checkOutAt &&
+    (await findOtherOpenAttendance(supabase, existing.employee_id, attendanceId))
+  ) {
+    throw new Error("พนักงานมีรอบเข้างานที่ยังไม่ปิดอยู่แล้ว")
   }
 
   const { data: employee, error: empError } = await supabase

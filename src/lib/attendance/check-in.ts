@@ -94,6 +94,27 @@ export async function checkIn({
   }
   const employee = row
 
+  const openWindowStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  const { data: openRecord, error: openRecordError } = await admin
+    .from("hr_attendance")
+    .select("check_in_at")
+    .eq("employee_id", employee.id)
+    .is("check_out_at", null)
+    .gte("check_in_at", openWindowStart.toISOString())
+    .order("check_in_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (openRecordError) {
+    throw openRecordError
+  }
+  if (openRecord) {
+    return {
+      status: "already_checked_in",
+      checkInAt: new Date(openRecord.check_in_at),
+    }
+  }
+
   const { start, end } = ictDayRangeUtc(now)
   const { data: existing, error: existingError } = await admin
     .from("hr_attendance")

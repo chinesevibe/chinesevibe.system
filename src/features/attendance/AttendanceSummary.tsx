@@ -4,6 +4,10 @@ import { KpiCard } from "@/components/brand/KpiCard"
 import type { AttendanceSummary } from "@/features/attendance/types"
 import { cn } from "@/lib/utils"
 
+function wholeHours(hours: number): string {
+  return String(Math.floor(hours))
+}
+
 export function AttendanceSummaryCard({
   summary,
   compact = false,
@@ -22,7 +26,7 @@ export function AttendanceSummaryCard({
       <KpiCard
         compact={compact}
         label="ชั่วโมงรวม"
-        value={summary.totalHours.toFixed(1)}
+        value={wholeHours(summary.totalHours)}
         icon={Clock}
         accent="success"
       />

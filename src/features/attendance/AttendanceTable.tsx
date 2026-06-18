@@ -33,6 +33,11 @@ const REVIEW_VARIANT: Record<
   rejected: "rejected",
 }
 
+function wholeHours(hours: number | null): string {
+  if (hours == null) return "—"
+  return String(Math.floor(hours))
+}
+
 export function AttendanceTable({
   rows,
   canManage = false,
@@ -84,7 +89,7 @@ export function AttendanceTable({
               <TableCell>{row.checkInText}</TableCell>
               <TableCell>{row.checkOutText}</TableCell>
               <TableCell className="tabular-nums">
-                {row.workHours?.toFixed(1) ?? "—"}
+                {wholeHours(row.workHours)}
               </TableCell>
               <TableCell>
                 <StatusPill

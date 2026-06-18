@@ -5,6 +5,7 @@ export type AttendanceDayStatus =
   | "missing_checkout"
   | "missing_checkin"
   | "on_leave"
+  | "off"
   | "no_shift"
   | "future"
   | "retro_expired"

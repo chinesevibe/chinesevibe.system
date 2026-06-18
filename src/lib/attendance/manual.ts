@@ -1,12 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
-import { ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   assertRetroAllowance,
   assertRetroWindow,
+  getShiftEndUtc,
   needsRetroEnforcement,
   recordRetroCorrections,
   type ShiftSchedule,
@@ -43,6 +44,25 @@ export type ActiveShift = ShiftSchedule & {
   name: string
 }
 
+type ExistingAttendanceRow = {
+  id: string
+  check_in_at: string
+  check_out_at: string | null
+  work_hours: number | null
+  shift_date: string | null
+}
+
+function pickRelevantAttendanceRow(
+  rows: ExistingAttendanceRow[]
+): ExistingAttendanceRow | null {
+  if (rows.length === 0) return null
+  return [...rows].sort((left, right) => {
+    if (left.check_out_at && !right.check_out_at) return 1
+    if (!left.check_out_at && right.check_out_at) return -1
+    return right.check_in_at.localeCompare(left.check_in_at)
+  })[0] ?? null
+}
+
 function parseDate(value: string): string {
   if (!DATE_RE.test(value)) {
     throw new Error("รูปแบบวันที่ไม่ถูกต้อง")
@@ -67,6 +87,99 @@ function ictDayWindow(date: string): { start: Date; end: Date } {
 
 function parseCheckTime(date: string, time: string): Date {
   return ictLocalToUtc(date, time)
+}
+
+export function isOvernightOpenShiftCheckout(params: {
+  mode: EmployeeManualMode
+  existing: ExistingAttendanceRow | null
+  shift: ShiftSchedule | null
+  now: Date
+}): boolean {
+  const { mode, existing, shift, now } = params
+  if (mode !== "checkout" || !existing || existing.check_out_at || !shift?.crosses_midnight) {
+    return false
+  }
+
+  const workDate = existing.shift_date
+  if (!workDate) return false
+  if (workDate >= ictDateFromUtc(now)) return false
+
+  // ponytail: small grace keeps 14:00-02:00 overnight checkout from being counted as retro
+  const shiftEndWithGrace = new Date(getShiftEndUtc(workDate, shift).getTime() + 6 * 60 * 60 * 1000)
+  return now.getTime() <= shiftEndWithGrace.getTime()
+}
+
+async function findExistingAttendance(
+  supabase: SupabaseClient,
+  employeeId: string,
+  workDate: string,
+  mode: EmployeeManualMode,
+  now: Date
+): Promise<ExistingAttendanceRow | null> {
+  if (mode === "checkout") {
+    const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+    const { data: openRecord, error: openError } = await supabase
+      .from("hr_attendance")
+      .select("id, check_in_at, check_out_at, work_hours, shift_date")
+      .eq("employee_id", employeeId)
+      .is("check_out_at", null)
+      .gte("check_in_at", window36hStart.toISOString())
+      .order("check_in_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (openError) throw openError
+    if (openRecord) {
+      return openRecord as ExistingAttendanceRow
+    }
+  }
+
+  const { data: datedRows, error: datedError } = await supabase
+    .from("hr_attendance")
+    .select("id, check_in_at, check_out_at, work_hours, shift_date")
+    .eq("employee_id", employeeId)
+    .eq("shift_date", workDate)
+    .order("check_in_at", { ascending: false })
+    .limit(5)
+
+  if (datedError) throw datedError
+  if (datedRows?.length) {
+    return pickRelevantAttendanceRow(datedRows as ExistingAttendanceRow[])
+  }
+
+  const { start, end } = ictDayWindow(workDate)
+  const { data: rows, error } = await supabase
+    .from("hr_attendance")
+    .select("id, check_in_at, check_out_at, work_hours, shift_date")
+    .eq("employee_id", employeeId)
+    .gte("check_in_at", start.toISOString())
+    .lt("check_in_at", end.toISOString())
+    .order("check_in_at", { ascending: false })
+    .limit(5)
+
+  if (error) throw error
+  return pickRelevantAttendanceRow((rows ?? []) as ExistingAttendanceRow[])
+}
+
+async function findOtherOpenAttendance(
+  supabase: SupabaseClient,
+  employeeId: string,
+  excludeAttendanceId?: string
+): Promise<ExistingAttendanceRow | null> {
+  let query = supabase
+    .from("hr_attendance")
+    .select("id, check_in_at, check_out_at, work_hours, shift_date")
+    .eq("employee_id", employeeId)
+    .is("check_out_at", null)
+    .limit(1)
+
+  if (excludeAttendanceId) {
+    query = query.neq("id", excludeAttendanceId)
+  }
+
+  const { data, error } = await query.maybeSingle()
+  if (error) throw error
+  return (data as ExistingAttendanceRow | null) ?? null
 }
 
 async function resolveShift(
@@ -164,7 +277,7 @@ function assertSequence(
 export async function saveManualAttendance(
   payload: ManualAttendancePayload
 ): Promise<ManualAttendanceResult> {
-  const date = parseDate(payload.date)
+  const requestedDate = parseDate(payload.date)
   const mode = payload.mode
 
   const needsCheckIn = mode !== "checkout"
@@ -176,9 +289,6 @@ export async function saveManualAttendance(
   const checkOutTime = needsCheckOut
     ? parseTime(payload.checkOutTime, "เวลาออก")
     : undefined
-
-  const checkInAt = checkInTime ? parseCheckTime(date, checkInTime) : null
-  const checkOutAt = checkOutTime ? parseCheckTime(date, checkOutTime) : null
 
   const supabase = await createClient()
   const shift = await resolveShift(supabase, payload.employeeId, payload.shiftId)
@@ -196,23 +306,18 @@ export async function saveManualAttendance(
   const defaultCheckOutTime =
     (employeeRow?.default_check_out_time as string | null) ?? null
 
-  const { start, end } = ictDayWindow(date)
-  const { data: rows, error } = await supabase
-    .from("hr_attendance")
-    .select("id, check_in_at, check_out_at, work_hours")
-    .eq("employee_id", payload.employeeId)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
-    .order("check_in_at", { ascending: true })
-    .limit(1)
-
-  if (error) {
-    throw error
-  }
-
-  const existing = rows?.[0]
   const source = payload.source ?? "employee"
   const now = new Date()
+  const existing = await findExistingAttendance(
+    supabase,
+    payload.employeeId,
+    requestedDate,
+    mode,
+    now
+  )
+  const workDate = existing?.shift_date ?? requestedDate
+  const checkInAt = checkInTime ? parseCheckTime(workDate, checkInTime) : null
+  const checkOutAt = checkOutTime ? parseCheckTime(workDate, checkOutTime) : null
 
   if (!existing && mode === "checkout") {
     throw new Error(
@@ -220,11 +325,16 @@ export async function saveManualAttendance(
     )
   }
 
+  if (!finalCheckOutRequested(mode) && (await findOtherOpenAttendance(supabase, payload.employeeId, existing?.id))) {
+    throw new Error("พนักงานมีรอบเข้างานที่ยังไม่ปิดอยู่แล้ว")
+  }
+
   if (
     source === "employee" &&
-    needsRetroEnforcement(mode, date, existing ?? null, now)
+    needsRetroEnforcement(mode, workDate, existing ?? null, now) &&
+    !isOvernightOpenShiftCheckout({ mode, existing, shift, now })
   ) {
-    assertRetroWindow(date, shift, now)
+    assertRetroWindow(workDate, shift, now)
     await assertRetroAllowance(supabase, payload.employeeId, mode, now)
   }
 
@@ -256,8 +366,8 @@ export async function saveManualAttendance(
 
   const finalWorkHours = finalCheckOutAt
     ? computePaidWorkMinutes({
-        workDate: date,
-        shiftDate: date,
+        workDate,
+        shiftDate: workDate,
         checkInAt: finalCheckInAt,
         checkOutAt: finalCheckOutAt,
         shift: shift
@@ -286,7 +396,7 @@ export async function saveManualAttendance(
       .insert({
         employee_id: payload.employeeId,
         work_shift_id: shift?.id ?? null,
-        shift_date: date,
+        shift_date: workDate,
         check_in_at: finalCheckInAt.toISOString(),
         check_out_at: finalCheckOutAt
           ? finalCheckOutAt.toISOString()
@@ -305,18 +415,18 @@ export async function saveManualAttendance(
         attendanceId: inserted.id as string,
         employeeId: payload.employeeId,
         branchId,
-        workDate: date,
+        workDate,
         workHours: finalWorkHours,
       })
     }
 
     if (
       source === "employee" &&
-      needsRetroEnforcement(mode, date, null, now)
+      needsRetroEnforcement(mode, workDate, null, now)
     ) {
       await recordRetroCorrections(supabase, {
         employeeId: payload.employeeId,
-        workDate: date,
+        workDate,
         mode,
         attendanceId: inserted.id as string,
         createdBy: payload.actorEmployeeId ?? payload.employeeId,
@@ -331,7 +441,7 @@ export async function saveManualAttendance(
 
   const updates: Record<string, unknown> = {
     work_shift_id: shift?.id ?? null,
-    shift_date: date,
+    shift_date: workDate,
     is_late: isLateNow,
     work_hours: finalWorkHours,
     check_in_location: null,
@@ -361,18 +471,19 @@ export async function saveManualAttendance(
       attendanceId: updated.id as string,
       employeeId: payload.employeeId,
       branchId,
-      workDate: date,
+      workDate,
       workHours: finalWorkHours,
     })
   }
 
   if (
     source === "employee" &&
-    needsRetroEnforcement(mode, date, existing, now)
+    needsRetroEnforcement(mode, workDate, existing, now) &&
+    !isOvernightOpenShiftCheckout({ mode, existing, shift, now })
   ) {
     await recordRetroCorrections(supabase, {
       employeeId: payload.employeeId,
-      workDate: date,
+      workDate,
       mode,
       attendanceId: updated.id as string,
       createdBy: payload.actorEmployeeId ?? payload.employeeId,
@@ -388,4 +499,8 @@ export async function saveManualAttendance(
           ? "checkin_saved"
           : "checkout_saved",
   }
+}
+
+function finalCheckOutRequested(mode: EmployeeManualMode): boolean {
+  return mode === "checkout" || mode === "full"
 }

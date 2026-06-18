@@ -71,6 +71,13 @@ const STATUS: Record<AttendanceDayStatus, StatusStyle> = {
     badge: "bg-violet-100 text-violet-800",
     accent: "border-l-violet-400",
   },
+  off: {
+    label: "วันหยุด",
+    dot: "bg-sky-400",
+    cell: "bg-sky-50/70 border-sky-100",
+    badge: "bg-sky-100 text-sky-800",
+    accent: "border-l-sky-400",
+  },
   no_shift: {
     label: "ไม่มีกะ",
     dot: "bg-muted-foreground/30",
@@ -101,6 +108,7 @@ const LEGEND_STATUSES: AttendanceDayStatus[] = [
   "missing_checkin",
   "missing_checkout",
   "on_leave",
+  "off",
   "retro_expired",
 ]
 
@@ -136,6 +144,7 @@ function monthStats(days: AttendanceDayCell[]) {
   for (const day of days) {
     if (day.date > ictToday()) continue
     if (day.status === "on_leave") leave += 1
+    else if (day.status === "off") continue
     else if (day.status === "complete" || day.status === "late") complete += 1
     else if (
       day.status === "missing_checkin" ||
@@ -165,6 +174,7 @@ function DayCellContent({
     !day.checkIn &&
     status !== "future" &&
     status !== "on_leave" &&
+    status !== "off" &&
     status !== "no_shift" &&
     style.label
 
@@ -232,6 +242,15 @@ function DayCellContent({
           )}
         >
           ลา
+        </span>
+      ) : status === "off" ? (
+        <span
+          className={cn(
+            "mt-1.5 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium",
+            style.badge
+          )}
+        >
+          วันหยุด
         </span>
       ) : null}
 
