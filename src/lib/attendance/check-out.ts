@@ -10,9 +10,7 @@ import {
   mergeLocationFlags,
   suspiciousLocationMessage,
 } from "@/lib/attendance/location-security"
-
-// Phase 1: display-only OT threshold (8h). No pay calculation.
-const STANDARD_WORK_MINUTES = 480
+import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 
 export type CheckOutResult =
   | {
@@ -22,6 +20,7 @@ export type CheckOutResult =
       checkOutAt: Date
       workMinutes: number
       overtimeMinutes: number
+      showWorkDuration: boolean
     }
   | { status: "not_checked_in" }
   | { status: "already_checked_out"; checkOutAt: Date }
@@ -51,7 +50,9 @@ export async function checkOut({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id")
+    .select(
+      "id, name, status, branch_id, pay_type, work_shift_id, default_check_in_time, default_check_out_time"
+    )
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -66,19 +67,43 @@ export async function checkOut({
   }
   const employee = row
 
-  const { start, end } = ictDayRangeUtc(now)
-  const { data: record, error: recordError } = await admin
+  // Branch Night fix: look back 36 h for an open record first (covers 14:00–02:00 shifts).
+  const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  const { data: openRecord, error: openRecordError } = await admin
     .from("hr_attendance")
     .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
     .eq("employee_id", employee.id)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
+    .is("check_out_at", null)
+    .gte("check_in_at", window36hStart.toISOString())
+    .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  if (recordError) {
-    throw recordError
+  if (openRecordError) {
+    throw openRecordError
   }
+
+  let record: typeof openRecord
+  if (openRecord) {
+    record = openRecord
+  } else {
+    // No open record — fall back to current ICT day to surface already_checked_out.
+    const { start, end } = ictDayRangeUtc(now)
+    const { data: dayRecord, error: dayRecordError } = await admin
+      .from("hr_attendance")
+      .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
+      .eq("employee_id", employee.id)
+      .gte("check_in_at", start.toISOString())
+      .lt("check_in_at", end.toISOString())
+      .limit(1)
+      .maybeSingle()
+
+    if (dayRecordError) {
+      throw dayRecordError
+    }
+    record = dayRecord
+  }
+
   if (!record) {
     return { status: "not_checked_in" }
   }
@@ -122,13 +147,36 @@ export async function checkOut({
   }
 
   const checkInAt = new Date(record.check_in_at)
-  const workMinutes = Math.max(
-    0,
-    Math.floor((now.getTime() - checkInAt.getTime()) / 60_000)
-  )
-  // Stored as hours with 2 decimals — numeric(5,2) cannot hold minutes (max
-  // 999.99, a day can reach 1440).
-  const workHours = Math.round((workMinutes / 60) * 100) / 100
+  const workDate = (record.shift_date as string | null) ?? ictToday()
+
+  // Resolve active shift window if employee has a work_shift_id.
+  let shiftWindow: import("@/lib/attendance/paid-work-time").PaidWorkShiftWindow | null = null
+  if (employee.work_shift_id) {
+    const { data: shiftRow } = await admin
+      .from("hr_work_shifts")
+      .select("start_hour, start_minute, end_hour, end_minute, crosses_midnight")
+      .eq("id", employee.work_shift_id)
+      .eq("is_active", true)
+      .maybeSingle()
+    if (shiftRow) {
+      shiftWindow = shiftRow as import("@/lib/attendance/paid-work-time").PaidWorkShiftWindow
+    }
+  }
+
+  const paidResult = computePaidWorkMinutes({
+    workDate,
+    shiftDate: workDate,
+    checkInAt,
+    checkOutAt: now,
+    shift: shiftWindow,
+    defaultCheckInTime: (employee.default_check_in_time as string | null) ?? undefined,
+    defaultCheckOutTime: (employee.default_check_out_time as string | null) ?? undefined,
+  })
+
+  const workMinutes = paidResult.paidMinutes
+  // Stored as hours with 2 decimals — numeric(5,2) cannot hold minutes.
+  const workHours = paidResult.paidHours
+  const showWorkDuration = (employee.pay_type as string | null) !== "monthly"
 
   // Conditional update: a concurrent check-out loses the race and matches 0 rows.
   const { data: updated, error: updateError } = await admin
@@ -164,7 +212,7 @@ export async function checkOut({
     attendanceId: record.id as string,
     employeeId: employee.id as string,
     branchId: (employee.branch_id as string | null) ?? null,
-    workDate: (record.shift_date as string | null) ?? ictToday(),
+    workDate,
     workHours,
     now,
   })
@@ -191,6 +239,7 @@ export async function checkOut({
     checkInAt,
     checkOutAt: now,
     workMinutes,
-    overtimeMinutes: Math.max(0, workMinutes - STANDARD_WORK_MINUTES),
+    overtimeMinutes: 0,
+    showWorkDuration,
   }
 }

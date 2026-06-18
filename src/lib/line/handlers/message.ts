@@ -112,7 +112,7 @@ function checkOutMessages(
           inText: formatIctTime(result.checkInAt),
           outText: formatIctTime(result.checkOutAt),
           workMinutes: result.workMinutes,
-          overtimeMinutes: result.overtimeMinutes,
+          showWorkDuration: result.showWorkDuration,
           locale,
         }),
       ]

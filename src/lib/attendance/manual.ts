@@ -1,7 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
-import { computeWorkHours, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   assertRetroAllowance,
@@ -184,7 +185,7 @@ export async function saveManualAttendance(
 
   const { data: employeeRow, error: employeeError } = await supabase
     .from("hr_employees")
-    .select("branch_id, default_check_in_time")
+    .select("branch_id, default_check_in_time, default_check_out_time, pay_type")
     .eq("id", payload.employeeId)
     .maybeSingle()
 
@@ -192,6 +193,8 @@ export async function saveManualAttendance(
   const branchId = (employeeRow?.branch_id as string | null) ?? null
   const defaultCheckInTime =
     (employeeRow?.default_check_in_time as string | null) ?? null
+  const defaultCheckOutTime =
+    (employeeRow?.default_check_out_time as string | null) ?? null
 
   const { start, end } = ictDayWindow(date)
   const { data: rows, error } = await supabase
@@ -252,7 +255,23 @@ export async function saveManualAttendance(
   assertSequence(finalCheckInAt, finalCheckOutAt)
 
   const finalWorkHours = finalCheckOutAt
-    ? computeWorkHours(finalCheckInAt, finalCheckOutAt)
+    ? computePaidWorkMinutes({
+        workDate: date,
+        shiftDate: date,
+        checkInAt: finalCheckInAt,
+        checkOutAt: finalCheckOutAt,
+        shift: shift
+          ? {
+              start_hour: shift.start_hour,
+              start_minute: shift.start_minute,
+              end_hour: shift.end_hour,
+              end_minute: shift.end_minute,
+              crosses_midnight: shift.crosses_midnight,
+            }
+          : null,
+        defaultCheckInTime: defaultCheckInTime ?? undefined,
+        defaultCheckOutTime: defaultCheckOutTime ?? undefined,
+      }).paidHours
     : existing
       ? existing.work_hours != null
         ? Number(existing.work_hours)

@@ -189,7 +189,7 @@ const th: MessageCatalog = {
   "line.checkout.checkOut": "เลิกงาน",
   "line.checkout.total": "รวมเวลา",
   "line.checkout.footer":
-    "บันทึกเวลาเข้า-ออกเรียบร้อยแล้ว ไม่ต้องรออนุมัติ",
+    "บันทึกเวลาเข้า-ออกเรียบร้อยแล้ว",
   "line.checkout.footerOt":
     "เกินเวลามาตรฐาน {duration} — หากต้องการขอ OT ให้ใช้เมนูขอ OT",
 

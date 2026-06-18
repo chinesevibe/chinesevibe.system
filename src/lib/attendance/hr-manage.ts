@@ -1,8 +1,8 @@
 import {
-  computeWorkHours,
   hasAttendanceOnIctDay,
   ictLocalToUtc,
 } from "@/lib/attendance/ict-datetime"
+import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import { getWorkStart } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
@@ -11,6 +11,8 @@ type HrWorkShift = {
   id: string
   start_hour: number
   start_minute: number
+  end_hour: number
+  end_minute: number
   crosses_midnight: boolean
   grace_minutes: number
 }
@@ -53,7 +55,7 @@ async function resolveShift(
 
   const query = await supabase
     .from("hr_work_shifts")
-    .select("id, start_hour, start_minute, crosses_midnight, grace_minutes")
+    .select("id, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes")
     .eq("id", shiftId)
     .eq("is_active", true)
     .maybeSingle()
@@ -119,7 +121,21 @@ function parseInput(
     }
     workHours = Math.round(parsed * 100) / 100
   } else if (checkOutAt) {
-    workHours = computeWorkHours(checkInAt, checkOutAt)
+    workHours = computePaidWorkMinutes({
+      workDate: input.date,
+      shiftDate: input.date,
+      checkInAt,
+      checkOutAt,
+      shift: shift
+        ? {
+            start_hour: shift.start_hour,
+            start_minute: shift.start_minute,
+            end_hour: shift.end_hour,
+            end_minute: shift.end_minute,
+            crosses_midnight: shift.crosses_midnight,
+          }
+        : null,
+    }).paidHours
   }
 
   return { checkInAt, checkOutAt, workHours }
