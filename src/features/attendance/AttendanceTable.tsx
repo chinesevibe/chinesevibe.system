@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { DataTableShell } from "@/components/brand/DataTableShell"
 import { StatusPill } from "@/components/brand/StatusPill"
 import {
@@ -40,6 +42,10 @@ function wholeHours(hours: number | null): string {
 
 function rowMeta(row: AttendanceRow): string {
   return [row.branchName, row.department].filter(Boolean).join(" • ") || "—"
+}
+
+function employeeLabel(row: AttendanceRow): string {
+  return `${row.employeeName} (${row.employeeCode})`
 }
 
 export function AttendanceTable({
@@ -124,7 +130,14 @@ export function AttendanceTable({
               {!employeeView ? (
                 <TableCell className="min-w-[16rem]">
                   <div className="space-y-1">
-                    <p className="font-semibold text-foreground">{row.employeeName}</p>
+                    <p className="font-semibold text-foreground">
+                      <Link
+                        href={row.employeeHref}
+                        className="transition hover:text-brand-red hover:underline hover:underline-offset-4"
+                      >
+                        {employeeLabel(row)}
+                      </Link>
+                    </p>
                     <p className="text-xs text-muted-foreground">{rowMeta(row)}</p>
                   </div>
                 </TableCell>

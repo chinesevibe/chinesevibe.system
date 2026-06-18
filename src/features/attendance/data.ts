@@ -74,6 +74,15 @@ export function normalizeAttendanceParams(raw: {
   }
 }
 
+function formatEmployeeCode(employeeId: string, employeeCode: string | null | undefined): string {
+  const trimmed = employeeCode?.trim()
+  return trimmed && trimmed.length > 0 ? trimmed : employeeId.slice(0, 8).toUpperCase()
+}
+
+function buildEmployeeAttendanceHref(employeeId: string, date: string): string {
+  return `/admin/employees/${employeeId}/attendance?month=${date.slice(0, 7)}&date=${date}&from=${date}&to=${date}`
+}
+
 function deriveStatus(
   isLate: boolean,
   checkOutAt: string | null,
@@ -231,7 +240,9 @@ function shiftWindowFromJoin(
 function employeeJoin(
   joined:
     | {
+        id?: string
         name: string
+        employee_code?: string | null
         department: string | null
         branch_id: string | null
         default_check_in_time?: string | null
@@ -240,7 +251,9 @@ function employeeJoin(
         hr_branches: { name: string } | Array<{ name: string }> | null
       }
     | Array<{
+        id?: string
         name: string
+        employee_code?: string | null
         department: string | null
         branch_id: string | null
         default_check_in_time?: string | null
@@ -250,6 +263,7 @@ function employeeJoin(
       }>
 ): {
   name: string
+  employeeCode: string
   department: string | null
   branchName: string | null
   defaultCheckInTime: string | null
@@ -268,6 +282,7 @@ function employeeJoin(
   const shift = shiftFromJoin(emp.hr_work_shifts)
   return {
     name: emp.name,
+    employeeCode: formatEmployeeCode(emp.id ?? "", emp.employee_code ?? null),
     department: emp.department,
     branchName,
     defaultCheckInTime: emp.default_check_in_time ?? null,
@@ -340,7 +355,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   let query = supabase
     .from("hr_attendance")
     .select(
-      `id, employee_id, check_in_at, check_out_at, shift_date, is_late, work_hours, location_review_status, location_review_flags, location_review_note, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name, department, branch_id, ${EMPLOYEE_SCHEDULE_EMBED}, ${BRANCH_VIA_EMPLOYEE}(name))`,
+      `id, employee_id, check_in_at, check_out_at, shift_date, is_late, work_hours, location_review_status, location_review_flags, location_review_note, ${EMPLOYEE_VIA_ATTENDANCE}!inner(id, name, employee_code, department, branch_id, ${EMPLOYEE_SCHEDULE_EMBED}, ${BRANCH_VIA_EMPLOYEE}(name))`,
       { count: "exact" }
     )
     .or(attendanceDateFilter)
@@ -370,7 +385,9 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     location_review_note: string | null
     hr_employees:
       | {
+          id?: string
           name: string
+          employee_code?: string | null
           department: string | null
           branch_id: string | null
           default_check_in_time?: string | null
@@ -379,7 +396,9 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
           hr_branches: { name: string } | Array<{ name: string }> | null
         }
       | Array<{
+          id?: string
           name: string
+          employee_code?: string | null
           department: string | null
           branch_id: string | null
           default_check_in_time?: string | null
@@ -420,6 +439,8 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       id: row.id,
       employeeId: row.employee_id,
       employeeName: emp.name,
+      employeeCode: emp.employeeCode,
+      employeeHref: buildEmployeeAttendanceHref(row.employee_id, workDate),
       department: emp.department,
       branchName: emp.branchName,
       date: workDate,
