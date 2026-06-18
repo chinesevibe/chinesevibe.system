@@ -465,3 +465,15 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/approval-expiry/deno.json"
 entrypoint = "./functions/approval-expiry/index.ts"
+
+[functions.evening-summary]
+enabled = true
+verify_jwt = false
+import_map = "./functions/evening-summary/deno.json"
+entrypoint = "./functions/evening-summary/index.ts"
+
+[functions.shift-attendance-summary]
+enabled = true
+verify_jwt = false
+import_map = "./functions/shift-attendance-summary/deno.json"
+entrypoint = "./functions/shift-attendance-summary/index.ts"

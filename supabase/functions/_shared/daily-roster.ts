@@ -251,17 +251,6 @@ function formatShiftTimeRange(
   return `${pad2(shift.start_hour)}:${pad2(shift.start_minute)}–${pad2(shift.end_hour)}:${pad2(shift.end_minute)}`;
 }
 
-function normalizeTimeToHHMM(value: string | null | undefined): string {
-  if (!value) return "";
-  const trimmed = value.trim();
-  const match = /^(\d{1,2}):(\d{2})(?::\d{2})?/.exec(trimmed);
-  if (!match) return trimmed;
-  const hour = Number.parseInt(match[1], 10);
-  const minute = match[2];
-  if (hour < 0 || hour > 23) return trimmed;
-  return `${String(hour).padStart(2, "0")}:${minute}`;
-}
-
 function formatEmployeeCode(input: {
   employee_code: string | null;
   id: string;
@@ -484,7 +473,7 @@ export async function buildDailyRoster(
     await Promise.all([
       admin
         .from("hr_employees")
-        .select("id, employee_code, name, position, department, branch_id, work_shift_id, default_check_in_time, default_check_out_time, hr_branches(name)")
+        .select("id, employee_code, name, position, department, branch_id, work_shift_id, default_check_in_time, default_check_out_time, hr_branches!hr_employees_branch_id_fkey(name)")
         .eq("status", "active")
         .order("name"),
       admin

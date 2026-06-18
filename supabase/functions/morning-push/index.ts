@@ -2,7 +2,7 @@
 // Triggered by pg_cron via pg_net with the secret key — `auth: ["secret"]`
 // rejects everything else. Standalone Deno code — no imports from src/.
 import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
+import { withSupabase, type WithSupabaseConfig } from "@supabase/server";
 
 const ICT_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DAY_MS = 86_400_000;
@@ -98,6 +98,13 @@ function requireEnv(name: string): string {
   const value = Deno.env.get(name);
   if (!value) throw new Error(`${name} is not set`);
   return value;
+}
+
+function cronSecretAuthConfig(): WithSupabaseConfig {
+  const cronSecretKey = Deno.env.get("CRON_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  return cronSecretKey
+    ? { auth: ["secret"], env: { secretKeys: { default: cronSecretKey } } }
+    : { auth: ["secret"] };
 }
 
 function normalizeText(value: string | null | undefined): string {
@@ -584,7 +591,7 @@ async function pushRetroReminders(
 }
 
 const handler = {
-  fetch: withSupabase({ auth: ["secret"] }, async (_req, ctx) => {
+  fetch: withSupabase(cronSecretAuthConfig(), async (_req, ctx) => {
     const now = new Date();
     const { start, end } = ictDayRangeUtc(now);
     const ictClock = getIctClock(now);
