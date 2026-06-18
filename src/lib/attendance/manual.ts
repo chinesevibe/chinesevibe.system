@@ -376,6 +376,7 @@ export async function saveManualAttendance(
               start_minute: shift.start_minute,
               end_hour: shift.end_hour,
               end_minute: shift.end_minute,
+              grace_minutes: shift.grace_minutes,
               crosses_midnight: shift.crosses_midnight,
             }
           : null,

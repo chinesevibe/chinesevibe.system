@@ -6,6 +6,7 @@ export type PaidWorkShiftWindow = {
   end_hour: number
   end_minute: number
   crosses_midnight: boolean
+  grace_minutes?: number
 }
 
 export type PaidWorkMinutesResult = {
@@ -69,7 +70,14 @@ export function computePaidWorkMinutes({
       windowEnd = new Date(windowEnd.getTime() + 24 * 60 * 60 * 1000)
     }
 
-    return computeOverlap(rawMinutes, checkInAt, checkOutAt, windowStart, windowEnd)
+    return computeOverlap(
+      rawMinutes,
+      checkInAt,
+      checkOutAt,
+      windowStart,
+      windowEnd,
+      shift.grace_minutes ?? 0
+    )
   }
 
   if (defaultCheckInTime && defaultCheckOutTime) {
@@ -106,12 +114,19 @@ function computeOverlap(
   actualIn: Date,
   actualOut: Date,
   windowStart: Date,
-  windowEnd: Date
+  windowEnd: Date,
+  graceMinutes = 0
 ): PaidWorkMinutesResult {
+  const graceMs = Math.max(0, graceMinutes) * 60_000
+  const effectiveIn =
+    actualIn.getTime() > windowStart.getTime() &&
+    actualIn.getTime() <= windowStart.getTime() + graceMs
+      ? windowStart
+      : actualIn
   const overlapMs = Math.max(
     0,
     Math.min(actualOut.getTime(), windowEnd.getTime()) -
-      Math.max(actualIn.getTime(), windowStart.getTime())
+      Math.max(effectiveIn.getTime(), windowStart.getTime())
   )
   const paidMinutes = Math.floor(overlapMs / 60_000)
   const paidHours = Math.round((paidMinutes / 60) * 100) / 100

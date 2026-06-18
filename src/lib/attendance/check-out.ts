@@ -154,7 +154,7 @@ export async function checkOut({
   if (employee.work_shift_id) {
     const { data: shiftRow } = await admin
       .from("hr_work_shifts")
-      .select("start_hour, start_minute, end_hour, end_minute, crosses_midnight")
+      .select("start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes")
       .eq("id", employee.work_shift_id)
       .eq("is_active", true)
       .maybeSingle()
