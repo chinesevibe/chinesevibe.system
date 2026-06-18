@@ -35,3 +35,11 @@ export async function getWorkStart(): Promise<{ hour: number; minute: number }> 
 export function clearRuntimeConfigCache() {
   cache = null
 }
+
+/** ICT calendar date (YYYY-MM-DD) before which attendance is not enforced. */
+export async function getAttendanceGoLiveDate(): Promise<string | null> {
+  const raw = await getRuntimeConfig("attendance_go_live_date")
+  if (!raw) return null
+  const trimmed = raw.trim()
+  return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : null
+}
