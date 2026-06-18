@@ -3,7 +3,7 @@ import {
   hasAttendanceOnIctDay,
   ictLocalToUtc,
 } from "@/lib/attendance/ict-datetime"
-import { ictDayRangeUtc, lateMinutes } from "@/lib/attendance/late"
+import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import { getWorkStart } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
 
@@ -22,28 +22,6 @@ export type HrAttendanceInput = {
   checkOutTime?: string | null
   workHours?: number | null
   workShiftId?: string | null
-}
-
-function parseShiftMinute(shift: HrWorkShift): number {
-  return shift.start_hour * 60 + shift.start_minute
-}
-
-function lateByShift(checkInAt: Date, shift: HrWorkShift): boolean {
-  const nowMinutes = (() => {
-    const { start } = ictDayRangeUtc(checkInAt)
-    const rawMinutes = Math.floor(
-      (checkInAt.getTime() - start.getTime()) / 60_000 + 24 * 60
-    ) % (24 * 60)
-    return rawMinutes
-  })()
-
-  const shiftStart = parseShiftMinute(shift)
-  let lateStart = shiftStart
-  if (shift.crosses_midnight && nowMinutes < shiftStart) {
-    lateStart -= 24 * 60
-  }
-
-  return nowMinutes - shift.grace_minutes - lateStart > 0
 }
 
 function normalizeShiftId(workShiftId: string | null | undefined): string | null {
@@ -94,13 +72,18 @@ async function resolveShift(
 
 async function resolveIsLate(
   checkInAt: Date,
-  shift: HrWorkShift | null
+  shift: HrWorkShift | null,
+  defaultCheckInTime: string | null
 ): Promise<boolean> {
-  if (!shift) {
-    const { hour, minute } = await getWorkStart()
-    return lateMinutes(checkInAt, hour, minute) > 0
-  }
-  return lateByShift(checkInAt, shift)
+  const { hour, minute } = await getWorkStart()
+  return (
+    lateMinutesAtCheckIn(
+      checkInAt,
+      shift,
+      { hour, minute },
+      defaultCheckInTime
+    ) > 0
+  )
 }
 
 function parseInput(
@@ -157,14 +140,18 @@ export async function createAttendanceByHr(
 
   const { data: employee, error: empError } = await supabase
     .from("hr_employees")
-    .select("id, status")
+    .select("id, status, default_check_in_time")
     .eq("id", employeeId)
     .maybeSingle()
 
   if (empError) throw empError
   if (!employee) throw new Error("ไม่พบพนักงาน")
 
-  const isLate = await resolveIsLate(checkInAt, shift)
+  const isLate = await resolveIsLate(
+    checkInAt,
+    shift,
+    (employee.default_check_in_time as string | null) ?? null
+  )
 
   const { data, error } = await supabase
     .from("hr_attendance")
@@ -217,7 +204,19 @@ export async function updateAttendanceByHr(
     throw new Error("พนักงานมีบันทึกเข้างานวันนี้อยู่แล้ว")
   }
 
-  const isLate = await resolveIsLate(checkInAt, shift)
+  const { data: employee, error: empError } = await supabase
+    .from("hr_employees")
+    .select("default_check_in_time")
+    .eq("id", existing.employee_id)
+    .maybeSingle()
+
+  if (empError) throw empError
+
+  const isLate = await resolveIsLate(
+    checkInAt,
+    shift,
+    (employee?.default_check_in_time as string | null) ?? null
+  )
 
   const { data, error } = await supabase
     .from("hr_attendance")

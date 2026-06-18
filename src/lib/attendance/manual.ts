@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { computeWorkHours, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
-import { lateMinutes, ictDayRangeUtc } from "@/lib/attendance/late"
+import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   assertRetroAllowance,
   assertRetroWindow,
@@ -112,25 +112,20 @@ async function resolveShift(
   return (data as ActiveShift | null) ?? null
 }
 
-async function isLate(checkInAt: Date, shift: ActiveShift | null): Promise<boolean> {
-  if (!shift) {
-    const { hour, minute } = await getWorkStart()
-    return lateMinutes(checkInAt, hour, minute) > 0
-  }
-
-  const dayStart = ictDayRangeUtc(checkInAt).start
-  const shiftStartMinutes = shift.start_hour * 60 + shift.start_minute
-  const checkInMinutes = Math.floor(
-    ((checkInAt.getTime() - dayStart.getTime()) / 60_000 + 24 * 60) % (24 * 60)
+async function isLate(
+  checkInAt: Date,
+  shift: ActiveShift | null,
+  defaultCheckInTime: string | null
+): Promise<boolean> {
+  const { hour, minute } = await getWorkStart()
+  return (
+    lateMinutesAtCheckIn(
+      checkInAt,
+      shift,
+      { hour, minute },
+      defaultCheckInTime
+    ) > 0
   )
-
-  let lateStartMinutes = shiftStartMinutes
-  if (shift.crosses_midnight && checkInMinutes < shiftStartMinutes) {
-    lateStartMinutes -= 24 * 60
-  }
-
-  const late = checkInMinutes - shift.grace_minutes - lateStartMinutes
-  return Math.max(0, late) > 0
 }
 
 function resolveFinalCheckOut(
@@ -189,12 +184,14 @@ export async function saveManualAttendance(
 
   const { data: employeeRow, error: employeeError } = await supabase
     .from("hr_employees")
-    .select("branch_id")
+    .select("branch_id, default_check_in_time")
     .eq("id", payload.employeeId)
     .maybeSingle()
 
   if (employeeError) throw employeeError
   const branchId = (employeeRow?.branch_id as string | null) ?? null
+  const defaultCheckInTime =
+    (employeeRow?.default_check_in_time as string | null) ?? null
 
   const { start, end } = ictDayWindow(date)
   const { data: rows, error } = await supabase
@@ -262,7 +259,7 @@ export async function saveManualAttendance(
         : null
       : null
 
-  const isLateNow = await isLate(finalCheckInAt, shift)
+  const isLateNow = await isLate(finalCheckInAt, shift, defaultCheckInTime)
 
   if (!existing) {
     const { data: inserted, error: insertError } = await supabase

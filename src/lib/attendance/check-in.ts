@@ -2,7 +2,12 @@
 // Runs in the webhook context, so writes go through the service-role client
 // (no user session); RLS is bypassed by design (T02).
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDayRangeUtc, lateMinutes } from "@/lib/attendance/late"
+import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
+import {
+  ictDayRangeUtc,
+  lateMinutesAtCheckIn,
+  type ShiftLateSchedule,
+} from "@/lib/attendance/late"
 import {
   evaluateAttendanceLocation,
   suspiciousLocationMessage,
@@ -11,6 +16,34 @@ import {
 import { getWorkStart } from "@/lib/runtime-config"
 
 export type CheckInLocation = AttendanceLocationInput
+
+async function loadEmployeeWorkShift(
+  admin: ReturnType<typeof getAdminClient>,
+  employeeId: string
+): Promise<(ShiftLateSchedule & { id: string }) | null> {
+  const { data: employee, error: employeeError } = await admin
+    .from("hr_employees")
+    .select("work_shift_id")
+    .eq("id", employeeId)
+    .maybeSingle()
+
+  if (employeeError) throw employeeError
+  if (!employee?.work_shift_id) return null
+
+  const { data: shift, error: shiftError } = await admin
+    .from("hr_work_shifts")
+    .select(
+      "id, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
+    )
+    .eq("id", employee.work_shift_id)
+    .eq("is_active", true)
+    .maybeSingle()
+
+  if (shiftError) throw shiftError
+  if (!shift) return null
+
+  return shift as ShiftLateSchedule & { id: string }
+}
 
 export type CheckInResult =
   | {
@@ -46,7 +79,7 @@ export async function checkIn({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id")
+    .select("id, name, status, branch_id, default_check_in_time")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -97,7 +130,13 @@ export async function checkIn({
   }
 
   const { hour, minute } = await getWorkStart()
-  const late = lateMinutes(now, hour, minute)
+  const shift = await loadEmployeeWorkShift(admin, employee.id as string)
+  const late = lateMinutesAtCheckIn(
+    now,
+    shift,
+    { hour, minute },
+    employee.default_check_in_time as string | null
+  )
   const suspicious = locationDecision.status === "suspicious_location"
 
   const { data: inserted, error: insertError } = await admin.from("hr_attendance").insert({
@@ -105,6 +144,8 @@ export async function checkIn({
     check_in_at: now.toISOString(),
     check_in_location: locationDecision.payload,
     is_late: late > 0,
+    work_shift_id: shift?.id ?? null,
+    shift_date: ictDateFromUtc(now),
     location_review_status: suspicious ? "pending_hr" : "clear",
     location_review_flags: locationDecision.flags,
     location_review_note: suspicious ? suspiciousLocationMessage(locationDecision.flags) : null,
