@@ -1,4 +1,4 @@
-import { Clock, CalendarDays, AlertTriangle } from "lucide-react"
+import { Clock, CalendarDays, AlertTriangle, LogOut } from "lucide-react"
 
 import { KpiCard } from "@/components/brand/KpiCard"
 import type { AttendanceSummary } from "@/features/attendance/types"
@@ -16,12 +16,18 @@ export function AttendanceSummaryCard({
   compact?: boolean
 }) {
   return (
-    <div className={cn("grid gap-3", compact ? "grid-cols-3" : "gap-4 sm:grid-cols-3")}>
+    <div
+      className={cn(
+        "grid gap-3",
+        compact ? "grid-cols-2 md:grid-cols-4" : "gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      )}
+    >
       <KpiCard
         compact={compact}
         label={compact ? "วันทำงาน" : "วันทำงาน (ในช่วงที่เลือก)"}
         value={summary.workDays}
         icon={CalendarDays}
+        detail={compact ? undefined : "จำนวนรายการในช่วงวันที่ที่เลือก"}
       />
       <KpiCard
         compact={compact}
@@ -29,6 +35,7 @@ export function AttendanceSummaryCard({
         value={wholeHours(summary.totalHours)}
         icon={Clock}
         accent="success"
+        detail={compact ? undefined : "รวมจากชั่วโมงจริงหลังคำนวณตามกะ"}
       />
       <KpiCard
         compact={compact}
@@ -36,6 +43,15 @@ export function AttendanceSummaryCard({
         value={summary.lateCount}
         icon={AlertTriangle}
         accent="warning"
+        detail={compact ? undefined : "รายการที่เกินเวลาเริ่มงานตามกติกาใหม่"}
+      />
+      <KpiCard
+        compact={compact}
+        label="ยังไม่เช็คออก"
+        value={summary.inProgressCount}
+        icon={LogOut}
+        accent="info"
+        detail={compact ? undefined : "รอบงานที่ยังไม่มีเวลาออก"}
       />
     </div>
   )

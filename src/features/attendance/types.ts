@@ -31,4 +31,5 @@ export type AttendanceSummary = {
   workDays: number
   totalHours: number
   lateCount: number
+  inProgressCount: number
 }

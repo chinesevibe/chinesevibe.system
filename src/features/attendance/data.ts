@@ -332,7 +332,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       return {
         rows: [] as AttendanceRow[],
         total: 0,
-        summary: { workDays: 0, totalHours: 0, lateCount: 0 },
+        summary: { workDays: 0, totalHours: 0, lateCount: 0, inProgressCount: 0 },
       }
     }
   }
@@ -496,6 +496,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     workDays: (summaryRows ?? []).length,
     totalHours: resolvedSummaryRows.reduce((sum, row) => sum + (row.workHours ?? 0), 0),
     lateCount: resolvedSummaryRows.filter((row) => row.isLate).length,
+    inProgressCount: ((summaryRows ?? []) as SummaryRow[]).filter((row) => !row.check_out_at).length,
   }
 
   return { rows, total: count ?? 0, summary }

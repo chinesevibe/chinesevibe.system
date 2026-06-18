@@ -38,6 +38,10 @@ function wholeHours(hours: number | null): string {
   return String(Math.floor(hours))
 }
 
+function rowMeta(row: AttendanceRow): string {
+  return [row.branchName, row.department].filter(Boolean).join(" • ") || "—"
+}
+
 export function AttendanceTable({
   rows,
   canManage = false,
@@ -58,37 +62,84 @@ export function AttendanceTable({
 
   return (
     <DataTableShell>
+      <div className="flex flex-col gap-3 border-b border-border/70 bg-muted/10 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-5">
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-foreground">ประวัติบันทึกเวลาเข้างาน</p>
+          <p className="text-xs text-muted-foreground">
+            เรียงจากวันที่ล่าสุดก่อน และจัดลำดับข้อมูลให้สแกนความผิดปกติได้เร็วขึ้น
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="rounded-full border border-border/80 bg-background px-3 py-1.5 font-medium text-foreground">
+            ทั้งหมด {rows.length} รายการ
+          </span>
+          <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 font-medium text-amber-800">
+            มาสาย {rows.filter((row) => row.status === "late").length}
+          </span>
+          <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 font-medium text-sky-800">
+            ยังไม่เช็คออก {rows.filter((row) => row.status === "in_progress").length}
+          </span>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>วันที่</TableHead>
-            {!employeeView ? <TableHead>พนักงาน</TableHead> : null}
-            {!employeeView ? <TableHead>สาขา</TableHead> : null}
-            {!employeeView ? <TableHead>แผนก</TableHead> : null}
-            <TableHead>เข้า</TableHead>
-            <TableHead>ออก</TableHead>
-            <TableHead>ชม.</TableHead>
-            <TableHead>สถานะ</TableHead>
-            <TableHead>ตรวจพิกัด</TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              วันที่
+            </TableHead>
+            {!employeeView ? (
+              <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                พนักงาน
+              </TableHead>
+            ) : null}
+            {!employeeView ? (
+              <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                ทีม / จุดงาน
+              </TableHead>
+            ) : null}
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              เข้า
+            </TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              ออก
+            </TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              ชม.
+            </TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              สถานะ
+            </TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              ตรวจพิกัด
+            </TableHead>
             {canManage ? <TableHead className="w-[220px]" /> : null}
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
+            <TableRow key={row.id} className="align-top hover:bg-brand-red/5">
+              <TableCell className="whitespace-nowrap font-medium tabular-nums text-foreground">
+                {row.date}
+              </TableCell>
               {!employeeView ? (
-                <TableCell className="font-medium">{row.employeeName}</TableCell>
+                <TableCell className="min-w-[16rem]">
+                  <div className="space-y-1">
+                    <p className="font-semibold text-foreground">{row.employeeName}</p>
+                    <p className="text-xs text-muted-foreground">{rowMeta(row)}</p>
+                  </div>
+                </TableCell>
               ) : null}
               {!employeeView ? (
-                <TableCell>{row.branchName ?? "—"}</TableCell>
+                <TableCell className="min-w-[13rem]">
+                  <div className="space-y-1">
+                    <p className="font-medium text-foreground">{row.department ?? "—"}</p>
+                    <p className="text-xs text-muted-foreground">{row.branchName ?? "—"}</p>
+                  </div>
+                </TableCell>
               ) : null}
-              {!employeeView ? (
-                <TableCell>{row.department ?? "—"}</TableCell>
-              ) : null}
-              <TableCell>{row.checkInText}</TableCell>
-              <TableCell>{row.checkOutText}</TableCell>
-              <TableCell className="tabular-nums">
+              <TableCell className="font-medium tabular-nums">{row.checkInText}</TableCell>
+              <TableCell className="font-medium tabular-nums">{row.checkOutText}</TableCell>
+              <TableCell className="font-semibold tabular-nums text-foreground">
                 {wholeHours(row.workHours)}
               </TableCell>
               <TableCell>
@@ -97,7 +148,7 @@ export function AttendanceTable({
                   variant={STATUS_VARIANT[row.status]}
                 />
               </TableCell>
-              <TableCell>
+              <TableCell className="min-w-[12rem]">
                 <div className="space-y-1">
                   <StatusPill
                     label={row.locationReviewLabel}
