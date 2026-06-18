@@ -1,9 +1,12 @@
 // Employee list queries — server-only, runs through the caller's session
 // (RLS: hr_is_hr_admin allows full read). No service role here.
 import { ictToday } from "@/lib/datetime/thailand"
+import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 import { employeeAvatarPublicUrl } from "@/lib/employees/avatar"
 import type { PayType } from "@/lib/payroll/pay-type"
 import { expiryStatusLabel, type ExpiryStatusLabel } from "@/features/employees/profile/visa-status"
+import { formatShiftTimeRange } from "@/features/shifts/format"
+import type { WorkShiftSummary } from "@/features/shifts/types"
 import { createClient } from "@/lib/supabase/server"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
 
@@ -46,6 +49,14 @@ export type EmployeeRow = {
   branch_name: string | null
   phone: string | null
   pay_type: PayType | null
+  work_shift_id: string | null
+  default_check_in_time: string | null
+  default_check_out_time: string | null
+  workShift: Pick<
+    WorkShiftSummary,
+    "id" | "start_hour" | "start_minute" | "end_hour" | "end_minute"
+  > | null
+  work_time_text: string
   status: "active" | "inactive"
   contract_start: string | null
   contract_file_path: string | null
@@ -65,6 +76,34 @@ export type EmployeeRow = {
 }
 
 export { ictToday } from "@/lib/datetime/thailand"
+
+export function formatEmployeeWorkTimeText(input: {
+  default_check_in_time: string | null
+  default_check_out_time: string | null
+  workShift:
+    | Pick<
+        WorkShiftSummary,
+        "start_hour" | "start_minute" | "end_hour" | "end_minute"
+      >
+    | null
+}): string {
+  const checkIn = normalizeTimeToHHMM(input.default_check_in_time)
+  const checkOut = normalizeTimeToHHMM(input.default_check_out_time)
+  if (checkIn && checkOut) {
+    return `${checkIn} – ${checkOut}`
+  }
+  if (input.workShift) {
+    return formatShiftTimeRange(input.workShift).replace("–", " – ")
+  }
+  return "—"
+}
+
+export function formatEmployeeCode(input: {
+  employee_code: string | null
+  id: string
+}): string {
+  return input.employee_code?.trim() || input.id.slice(0, 8).toUpperCase()
+}
 
 export function normalizeParams(raw: {
   [key: string]: string | string[] | undefined
@@ -107,7 +146,7 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
   let query = supabase
     .from("hr_employees")
     .select(
-      `id, employee_code, line_user_id, name, position, department, role, branch_id, phone, pay_type, status, contract_start, contract_file_path, probation_end, visa_expiry, work_permit_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name)`,
+      `id, employee_code, line_user_id, name, position, department, role, branch_id, phone, pay_type, work_shift_id, default_check_in_time, default_check_out_time, status, contract_start, contract_file_path, probation_end, visa_expiry, work_permit_expiry, avatar_path, ${BRANCH_VIA_EMPLOYEE}(name), hr_work_shifts(id, start_hour, start_minute, end_hour, end_minute)`,
       { count: "exact" }
     )
 
@@ -151,6 +190,21 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
     const branch_name = Array.isArray(branchJoin)
       ? (branchJoin[0]?.name ?? null)
       : (branchJoin?.name ?? null)
+    const joinedShift = row.hr_work_shifts as
+      | Pick<
+          WorkShiftSummary,
+          "id" | "start_hour" | "start_minute" | "end_hour" | "end_minute"
+        >
+      | Array<
+          Pick<
+            WorkShiftSummary,
+            "id" | "start_hour" | "start_minute" | "end_hour" | "end_minute"
+          >
+        >
+      | null
+    const workShift = Array.isArray(joinedShift)
+      ? (joinedShift[0] ?? null)
+      : (joinedShift ?? null)
 
     const pendingApproval =
       row.status === "inactive" && row.role === "employee"
@@ -186,6 +240,19 @@ export async function getEmployees(params: Required<EmployeeListParams>) {
       branch_name,
       phone: (row.phone as string | null) ?? null,
       pay_type,
+      work_shift_id: (row.work_shift_id as string | null) ?? null,
+      default_check_in_time: normalizeTimeToHHMM(
+        (row.default_check_in_time as string | null) ?? null
+      ) || null,
+      default_check_out_time: normalizeTimeToHHMM(
+        (row.default_check_out_time as string | null) ?? null
+      ) || null,
+      workShift,
+      work_time_text: formatEmployeeWorkTimeText({
+        default_check_in_time: (row.default_check_in_time as string | null) ?? null,
+        default_check_out_time: (row.default_check_out_time as string | null) ?? null,
+        workShift,
+      }),
       status: row.status as "active" | "inactive",
       contract_start: (row.contract_start as string | null) ?? null,
       contract_file_path: (row.contract_file_path as string | null) ?? null,
