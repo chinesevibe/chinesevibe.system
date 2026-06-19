@@ -15,9 +15,10 @@ import {
 import type { AttendanceRow } from "@/features/attendance/types"
 import { ictDateFromUtc, ictTimeFromUtc } from "@/lib/attendance/ict-datetime"
 
-type EmployeeOption = { id: string; name: string }
+type EmployeeOptionWithCode = { id: string; name: string; employeeCode: string }
 
 type FormState = {
+  employeeSearch: string
   employeeId: string
   date: string
   checkInTime: string
@@ -30,6 +31,7 @@ const fieldClass =
 
 function emptyForm(defaultDate?: string): FormState {
   return {
+    employeeSearch: "",
     employeeId: "",
     date: defaultDate ?? "",
     checkInTime: "09:00",
@@ -42,12 +44,32 @@ function formFromRow(row: AttendanceRow): FormState {
   const checkIn = new Date(row.checkInAt)
   const checkOut = row.checkOutAt ? new Date(row.checkOutAt) : null
   return {
+    employeeSearch: row.employeeName,
     employeeId: row.employeeId,
     date: ictDateFromUtc(checkIn),
     checkInTime: ictTimeFromUtc(checkIn),
     checkOutTime: checkOut ? ictTimeFromUtc(checkOut) : "",
     workHours: row.workHours != null ? String(row.workHours) : "",
   }
+}
+
+function findEmployeeBySearch(
+  employees: EmployeeOptionWithCode[],
+  search: string
+): EmployeeOptionWithCode | undefined {
+  const value = search.trim()
+  if (!value) return undefined
+  const lowered = value.toLowerCase()
+  const byCode = employees.find((employee) => employee.employeeCode.toLowerCase() === lowered)
+  if (byCode) return byCode
+  const byId = employees.find((employee) => employee.id.toLowerCase() === lowered)
+  if (byId) return byId
+  const byName = employees.find((employee) => employee.name.toLowerCase() === lowered)
+  if (byName) return byName
+  return employees.find(
+    (employee) =>
+      `${employee.name} (${employee.employeeCode})`.toLowerCase() === lowered
+  )
 }
 
 function AttendanceFormFields({
@@ -58,27 +80,39 @@ function AttendanceFormFields({
 }: {
   form: FormState
   setForm: React.Dispatch<React.SetStateAction<FormState>>
-  employees: EmployeeOption[]
+  employees: EmployeeOptionWithCode[]
   mode: "create" | "edit"
 }) {
   return (
     <div className="grid gap-3">
       {mode === "create" ? (
         <label className="grid gap-1 text-sm">
-          <span className="font-medium">พนักงาน</span>
-          <select
+          <span className="font-medium">พนักงาน / รหัสพนักงาน</span>
+          <input
+            list="attendance-employee-options"
             className={fieldClass}
-            value={form.employeeId}
-            onChange={(e) => setForm((f) => ({ ...f, employeeId: e.target.value }))}
+            value={form.employeeSearch}
+            onChange={(e) => {
+              const value = e.target.value
+              const found = findEmployeeBySearch(employees, value)
+              setForm((f) => ({
+                ...f,
+                employeeSearch: value,
+                employeeId: found?.id ?? "",
+              }))
+            }}
+            placeholder="พิมพ์ชื่อหรือรหัสพนักงาน"
             required
-          >
-            <option value="">— เลือกพนักงาน —</option>
-            {employees.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
+          />
+          <datalist id="attendance-employee-options">
+            {employees.map((employee) => (
+              <option
+                key={employee.id}
+                value={employee.employeeCode}
+                label={`${employee.name} (${employee.employeeCode})`}
+              />
             ))}
-          </select>
+          </datalist>
         </label>
       ) : null}
 
@@ -186,7 +220,7 @@ export function AttendanceAddButton({
   employees,
   defaultDate,
 }: {
-  employees: EmployeeOption[]
+  employees: EmployeeOptionWithCode[]
   defaultDate?: string
 }) {
   const [open, setOpen] = useState(false)
