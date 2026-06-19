@@ -1,4 +1,4 @@
-import { Clock, CalendarDays, AlertTriangle, LogOut } from "lucide-react"
+import { Wallet, Clock, CalendarDays, AlertTriangle, LogOut } from "lucide-react"
 
 import { KpiCard } from "@/components/brand/KpiCard"
 import type { AttendanceSummary } from "@/features/attendance/types"
@@ -61,6 +61,24 @@ export function AttendanceSummaryCard({
           detail={compact ? undefined : "รอบงานที่ยังไม่มีเวลาออก"}
         />
       </div>
+      {summary.estimatedEarnings != null ? (
+        <div
+          className={cn(
+            !compact &&
+              "rounded-[1.5rem] border border-violet-200/70 bg-gradient-to-br from-violet-50/80 to-background p-1 shadow-sm",
+            compact && "contents"
+          )}
+        >
+          <KpiCard
+            compact={compact}
+            label="ยอดเงินโดยประมาณ"
+            value={summary.estimatedEarnings}
+            icon={Wallet}
+            accent="purple"
+            detail={compact ? undefined : "คำนวณจากชั่วโมงทำงาน + อัตราค่าจ้างของพนักงาน"}
+          />
+        </div>
+      ) : null}
     </div>
   )
 }

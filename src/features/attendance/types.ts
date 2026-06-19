@@ -34,4 +34,5 @@ export type AttendanceSummary = {
   totalHours: number
   lateCount: number
   inProgressCount: number
+  estimatedEarnings?: string | number | null
 }

@@ -18,6 +18,7 @@ import {
   normalizeAttendanceParams,
 } from "@/features/attendance/data"
 import { getEmployeeProfile } from "@/features/employees/profile/data"
+import { getPayrollConfig } from "@/lib/payroll/config"
 import { canManageHr } from "@/lib/auth/roles"
 import { sanitizeReturnTo } from "@/lib/navigation/return-to"
 import { getCurrentEmployee } from "@/lib/auth/session"
@@ -60,13 +61,40 @@ export default async function EmployeeAttendancePage({
   const canManage = caller ? canManageHr(caller.role) : false
   const now = new Date()
 
-  const [{ rows, total, summary }, departments, employees, calendar] =
+  const [{ rows, total, summary }, departments, employees, calendar, payrollConfig] =
     await Promise.all([
       getAttendanceRecords(listParams),
       getAttendanceDepartments(),
       getAttendanceEmployees(),
       getEmployeeAttendanceCalendar(id, month, now),
+      getPayrollConfig(),
     ])
+
+  const totalHours = summary.totalHours
+  const employeeRatePerHour =
+    profile.pay_type === "monthly"
+      ? payrollConfig.monthly_std_hours > 0 && profile.salary != null
+        ? profile.salary / payrollConfig.monthly_std_hours
+        : 0
+      : profile.salary ?? 0
+
+  const estimatedEarnings =
+    profile.salary == null || employeeRatePerHour <= 0
+      ? null
+      : Math.round(totalHours * employeeRatePerHour * 100) / 100
+
+  const amountFormatter = new Intl.NumberFormat("th-TH", {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+
+  const attendanceSummary = {
+    ...summary,
+    estimatedEarnings:
+      estimatedEarnings == null ? null : amountFormatter.format(estimatedEarnings),
+  }
 
   const employeeCode =
     profile.employee_code?.trim() || profile.id.slice(0, 8).toUpperCase()
@@ -141,7 +169,7 @@ export default async function EmployeeAttendancePage({
                 }}
               />
             </Suspense>
-            <AttendanceSummaryCard summary={summary} compact />
+            <AttendanceSummaryCard summary={attendanceSummary} compact />
             <div className="min-h-0 flex-1 overflow-auto rounded-lg border border-border/60 bg-muted/10">
               <AttendanceTable
                 rows={rows}
