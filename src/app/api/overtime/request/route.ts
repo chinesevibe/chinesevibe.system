@@ -12,7 +12,7 @@ import {
   overtimeSubmitHrNotifyFlex,
 } from "@/lib/line/flex/overtime-request"
 import { coerceLocale, type AppLocale } from "@/lib/i18n/types"
-import { notifyHr, pushToLineUser } from "@/lib/line/notify-hr"
+import { notifyHr, pushToLineUser, type NotifyHrResult } from "@/lib/line/notify-hr"
 import { createClient } from "@/lib/supabase/server"
 
 function otHours(startTime: string, endTime: string): number {
@@ -100,6 +100,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    let lineNotify: NotifyHrResult | undefined
+
     try {
       if (lineUserId) {
         await pushToLineUser(lineUserId, [
@@ -113,7 +115,7 @@ export async function POST(request: NextRequest) {
           }),
         ])
       }
-      await notifyHr([
+      lineNotify = await notifyHr([
         overtimeSubmitHrNotifyFlex({
           otId: row.id,
           employeeName: submitterName,
@@ -133,6 +135,7 @@ export async function POST(request: NextRequest) {
       id: row.id,
       approval_status: "pending_hr",
       hours: otHours(otStartTime, otEndTime),
+      lineNotify,
     })
   }
 
@@ -199,6 +202,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error?.message ?? "insert failed" }, { status: 500 })
   }
 
+  let lineNotify: NotifyHrResult | undefined
+
   try {
     if (target.line_user_id) {
       await pushToLineUser(target.line_user_id as string, [
@@ -212,7 +217,7 @@ export async function POST(request: NextRequest) {
         }),
       ])
     }
-    await notifyHr([
+    lineNotify = await notifyHr([
       overtimeSubmitHrNotifyFlex({
         otId: row.id,
         employeeName: target.name as string,
@@ -232,5 +237,6 @@ export async function POST(request: NextRequest) {
     id: row.id,
     approval_status: "pending_hr",
     hours: otHours(startTime, endTime),
+    lineNotify,
   })
 }
