@@ -23,6 +23,9 @@ type ComplianceNote = {
   category: string
   note: string
   created_at: string
+  attachment_file_name?: string | null
+  attachment_uploaded_at?: string | null
+  attachment_url?: string | null
 }
 
 export function EmployeeProfilePageClient({

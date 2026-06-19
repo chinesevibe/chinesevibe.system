@@ -234,11 +234,35 @@ export async function getComplianceNotes(employeeId: string) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("hr_compliance_notes")
-    .select("id, category, note, created_at")
+    .select(
+      "id, category, note, created_at, attachment_file_path, attachment_file_name, attachment_uploaded_at"
+    )
     .eq("employee_id", employeeId)
     .order("created_at", { ascending: false })
     .limit(20)
 
   if (error) throw error
-  return data ?? []
+
+  const rows = data ?? []
+  return Promise.all(
+    rows.map(async (row) => {
+      const attachmentPath = (row.attachment_file_path as string | null) ?? null
+      let attachmentUrl: string | null = null
+
+      if (attachmentPath) {
+        const { data: signed } = await supabase.storage
+          .from("hr-compliance-notes")
+          .createSignedUrl(attachmentPath, 60 * 60)
+        attachmentUrl = signed?.signedUrl ?? null
+      }
+
+      return {
+        ...row,
+        attachment_file_path: attachmentPath,
+        attachment_file_name: (row.attachment_file_name as string | null) ?? null,
+        attachment_uploaded_at: (row.attachment_uploaded_at as string | null) ?? null,
+        attachment_url: attachmentUrl,
+      }
+    })
+  )
 }
