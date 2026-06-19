@@ -32,8 +32,15 @@ import {
   type RecordConsumptionInput,
   type RejectDamageInput,
 } from "@/features/inventory/validators/consumption"
-import { canAccessInventoryPortal, canManageHr, isCeo, isDev } from "@/lib/auth/roles"
-import { getCurrentEmployee } from "@/lib/auth/session"
+import {
+  canAccessInventoryPortal,
+  canManageInventory,
+  hasHrInventoryAccess,
+  isCeo,
+  isDev,
+  isInventoryRole,
+} from "@/lib/auth/roles"
+import { getCurrentEmployee, type Employee } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
 
 const CONSUMPTION_PATH = "/admin/inventory/consumption"
@@ -54,19 +61,22 @@ function revalidateConsumptionDamage(id?: string) {
 
 function canReadAllInventory(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {
   return (
-    canManageHr(employee.role) ||
-    isDev(employee.role) ||
+    canManageInventory(employee) ||
     isCeo(employee.role) ||
     canAccessInventoryPortal(employee)
   )
 }
 
 function canApproveDamageRole(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {
-  return canManageHr(employee.role) || isDev(employee.role) || canAccessInventoryPortal(employee)
+  return canManageInventory(employee) || canAccessInventoryPortal(employee)
 }
 
-function canApproveInventoryDamageRole(role: Parameters<typeof canManageHr>[0]) {
-  return role === "inventory" || isDev(role)
+function canApproveInventoryDamageRole(employee: Employee) {
+  return (
+    isInventoryRole(employee.role) ||
+    isDev(employee.role) ||
+    hasHrInventoryAccess(employee)
+  )
 }
 
 async function assertActiveInventoryEmployee() {
@@ -434,7 +444,7 @@ export async function approveDamage(
     if (!detail) return { success: false, error: "ไม่พบรายงานความเสียหาย" }
     if (
       detail.approval_required_role === "inventory" &&
-      !canApproveInventoryDamageRole(employee.role)
+      !canApproveInventoryDamageRole(employee)
     ) {
       return { success: false, error: "ต้องใช้สิทธิ์ Admin เพื่ออนุมัติรายการนี้" }
     }
@@ -465,7 +475,7 @@ export async function rejectDamage(
     if (!detail) return { success: false, error: "ไม่พบรายงานความเสียหาย" }
     if (
       detail.approval_required_role === "inventory" &&
-      !canApproveInventoryDamageRole(employee.role)
+      !canApproveInventoryDamageRole(employee)
     ) {
       return { success: false, error: "ต้องใช้สิทธิ์ Admin เพื่อปฏิเสธรายการนี้" }
     }

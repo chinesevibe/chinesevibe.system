@@ -80,9 +80,24 @@ export function isInventoryStaff(employee: Employee): boolean {
   return isInventoryPortalUser(employee) && employee.role === "employee"
 }
 
+/** HR inventory admin — aligns with public.hr_is_hr_admin() for app gates */
+export function hasHrInventoryAccess(employee: Employee): boolean {
+  if (canManageHr(employee.role)) return true
+  return isHrOfficerStaff(employee.department, employee.position)
+}
+
+/** Inventory master data + ops (HR, inventory staff, dev) */
+export function canManageInventory(employee: Employee): boolean {
+  return (
+    isDev(employee.role) ||
+    hasHrInventoryAccess(employee) ||
+    isInventoryRole(employee.role)
+  )
+}
+
 /** Inventory portal + HR/CEO/Dev full inventory access */
 export function canAccessInventoryPortal(employee: Employee): boolean {
-  if (isDev(employee.role) || isCeo(employee.role) || canManageHr(employee.role)) {
+  if (isDev(employee.role) || isCeo(employee.role) || hasHrInventoryAccess(employee)) {
     return true
   }
   if (isInventoryRole(employee.role)) return true

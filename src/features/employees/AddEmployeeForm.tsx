@@ -17,6 +17,8 @@ import { StatusPill } from "@/components/brand/StatusPill"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { AutoSaveIndicator } from "@/features/employees/AutoSaveIndicator"
 import { buildAddEmployeeBody } from "@/features/employees/employee-form-payload"
+import { WeeklyOffDaysPicker } from "@/features/employees/WeeklyOffDaysPicker"
+import type { WeeklyOffDay } from "@/lib/employees/off-days"
 import { useDebouncedAutoSave } from "@/features/employees/use-debounced-auto-save"
 import type { BranchRow } from "@/features/branches/data"
 import type {
@@ -134,6 +136,7 @@ export function AddEmployeeForm({
     work_shift_id: "",
     default_check_in_time: "",
     default_check_out_time: "",
+    off_days: [] as WeeklyOffDay[],
   })
 
   function setField<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -578,6 +581,12 @@ export function AddEmployeeForm({
               เวลาเลิกงานปกติของพนักงานคนนี้
             </p>
           </FormField>
+          <div className="col-span-2">
+            <WeeklyOffDaysPicker
+              value={form.off_days}
+              onChange={(off_days) => setField("off_days", off_days)}
+            />
+          </div>
           <FormField label="Employment Type">
             <select
               className={inputClassName}

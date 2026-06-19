@@ -4,7 +4,7 @@ import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { listBomRows } from "@/features/inventory/actions/bom"
 import { getTransferCreateOptions } from "@/features/inventory/actions/transfer"
 import { BomManagementPanel } from "@/features/inventory/BomManagementPanel"
-import { canManageHr } from "@/lib/auth/roles"
+import { canManageInventory } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 
 export default async function InventoryBomPage() {
@@ -15,7 +15,7 @@ export default async function InventoryBomPage() {
     <AdminPageShell
       title="สูตร BOM / ตัดตามสูตร"
       description={
-        canManageHr(employee.role)
+        canManageInventory(employee)
           ? "กำหนดวัตถุดิบต่อสินค้าสำเร็จรูป และตัดสต็อกตามสูตร (FEFO)"
           : "ดูสูตรและตัดตามสูตรจากคลัง"
       }

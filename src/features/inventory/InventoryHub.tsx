@@ -187,14 +187,16 @@ function HubSection({
   hint,
   items,
   columnsClass,
+  sectionGuideId,
 }: {
   label: string
   hint?: string
   items: HubItem[]
   columnsClass: string
+  sectionGuideId?: string
 }) {
   return (
-    <section className="space-y-3">
+    <section className="space-y-3" data-inventory-guide={sectionGuideId}>
       <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{label}</h2>
@@ -283,7 +285,10 @@ export function InventoryHub({
 }) {
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-gradient-to-br from-muted/30 via-card to-card p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        data-inventory-guide="hub-intro"
+        className="flex flex-col gap-4 rounded-xl border border-border/60 bg-gradient-to-br from-muted/30 via-card to-card p-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">ศูนย์ควบคุมคลังสินค้า</p>
           <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
@@ -316,6 +321,7 @@ export function InventoryHub({
         hint="รับเข้า · สต็อก · เบิก · โอน · ตรวจนับ · ใช้จริง · เสียหาย"
         items={OPERATIONAL_ITEMS}
         columnsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        sectionGuideId="hub-operations"
       />
 
       {!staffMode ? (
@@ -324,6 +330,7 @@ export function InventoryHub({
           hint="ตั้งค่าก่อนเริ่มใช้งานคลัง — แยกจากข้อมูลสาขา HR"
           items={MASTER_DATA_ITEMS}
           columnsClass="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
+          sectionGuideId="hub-master-data"
         />
       ) : null}
     </div>

@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendance History Mock</title>
+    <style>
+      :root {
+        --bg: #f6f3ee;
+        --card: #fffdf9;
+        --line: #e7ddd1;
+        --line-soft: #f1e9de;
+        --text: #231815;
+        --muted: #7c6d65;
+        --brand: #b91c1c;
+        --brand-soft: #fff0ee;
+        --green: #15803d;
+        --green-soft: #e9f8ef;
+        --amber: #b45309;
+        --amber-soft: #fff5df;
+        --red: #b91c1c;
+        --red-soft: #ffe8e8;
+        --blue: #2563eb;
+        --blue-soft: #eaf2ff;
+        --shadow: 0 10px 30px rgba(50, 30, 10, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Prompt", "Noto Sans Thai", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, #fff7ef 0, transparent 28%),
+          linear-gradient(180deg, #fbf8f4 0%, var(--bg) 100%);
+      }
+
+      .page {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 32px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.5fr auto;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      h1 {
+        margin: 14px 0 8px;
+        font-size: 40px;
+        line-height: 1.05;
+      }
+
+      .subhead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .button {
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+        font: inherit;
+        font-weight: 600;
+      }
+
+      .button.primary {
+        border-color: #b60f14;
+        background: linear-gradient(180deg, #d81f26 0%, #b60f14 100%);
+        color: white;
+        box-shadow: 0 14px 24px rgba(182, 15, 20, 0.16);
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 249, 0.95);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .filters {
+        padding: 18px;
+        margin-bottom: 18px;
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .control {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .chip {
+        padding: 9px 13px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .chip.active {
+        border-color: #f1b4b6;
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .kpi {
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .kpi-label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .kpi-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+      }
+
+      .kpi-icon.red { background: var(--brand-soft); color: var(--brand); }
+      .kpi-icon.green { background: var(--green-soft); color: var(--green); }
+      .kpi-icon.amber { background: var(--amber-soft); color: var(--amber); }
+      .kpi-icon.blue { background: var(--blue-soft); color: var(--blue); }
+
+      .kpi-value {
+        font-size: 42px;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+      }
+
+      .kpi-note {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .table-panel {
+        overflow: hidden;
+      }
+
+      .table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line-soft);
+        background: linear-gradient(180deg, #fffdfa 0%, #fbf6f0 100%);
+      }
+
+      .toolbar-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .toolbar-meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .toolbar-tabs {
+        display: flex;
+        gap: 8px;
+      }
+
+      .tab {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .tab.active {
+        background: var(--text);
+        border-color: var(--text);
+        color: white;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: 14px 18px;
+        background: #f7f1e8;
+        border-bottom: 1px solid var(--line);
+        color: #6c584d;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      tbody td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line-soft);
+        vertical-align: top;
+        font-size: 14px;
+      }
+
+      tbody tr:nth-child(even) {
+        background: rgba(255, 251, 245, 0.45);
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 245, 238, 0.85);
+      }
+
+      .date {
+        white-space: nowrap;
+        color: #58483f;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .employee-name {
+        font-weight: 700;
+      }
+
+      .employee-meta,
+      .shift-meta,
+      .location-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .time,
+      .hours {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .badge.normal {
+        color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .badge.late {
+        color: var(--amber);
+        background: var(--amber-soft);
+      }
+
+      .badge.pending {
+        color: #7c5a12;
+        background: #fff6d8;
+      }
+
+      .badge.geo {
+        color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .row-action {
+        padding: 8px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: white;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 20px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .pager {
+        display: flex;
+        gap: 8px;
+      }
+
+      .page-pill {
+        min-width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: white;
+      }
+
+      .page-pill.active {
+        background: var(--text);
+        border-color: var(--text);
+        color: white;
+      }
+
+      @media (max-width: 1100px) {
+        .filters-grid,
+        .kpi-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          padding: 18px;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .filters-grid,
+        .kpi-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .table-toolbar,
+        .footer {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .table-panel {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 1080px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Attendance / History View</div>
+          <h1>Attendance History</h1>
+          <p class="subhead">
+            มุมมองนี้ควรช่วยให้ HR สแกนภาพรวมก่อน แล้วค่อยไล่ดูความผิดปกติรายคนได้เร็ว:
+            ตัวกรองอยู่บน, KPI อยู่กลาง, ตารางเป็นลำดับสุดท้ายและอ่านง่ายขึ้น
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="button">Export CSV</button>
+          <button class="button primary">บันทึกเข้างาน</button>
+        </div>
+      </section>
+
+      <section class="panel filters">
+        <div class="filters-grid">
+          <div class="field">
+            <label>จากวันที่</label>
+            <div class="control">21/05/2026</div>
+          </div>
+          <div class="field">
+            <label>ถึงวันที่</label>
+            <div class="control">19/06/2026</div>
+          </div>
+          <div class="field">
+            <label>สาขา</label>
+            <div class="control">ทุกสาขา</div>
+          </div>
+          <div class="field">
+            <label>แผนก</label>
+            <div class="control">ทั้งหมด</div>
+          </div>
+          <div class="field">
+            <label>พนักงาน</label>
+            <div class="control">ทั้งหมด</div>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <div class="chip active">30 วันล่าสุด</div>
+          <div class="chip">วันนี้</div>
+          <div class="chip">7 วัน</div>
+          <div class="chip">เฉพาะผิดปกติ</div>
+          <div class="chip">ยังไม่เช็คออก</div>
+          <div class="chip">ล้างตัวกรอง</div>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <article class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">วันทำงาน</div>
+            <div class="kpi-icon red">🗓</div>
+          </div>
+          <div class="kpi-value">38</div>
+          <div class="kpi-note">ช่วงวันที่ที่เลือก</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">ชั่วโมงรวม</div>
+            <div class="kpi-icon green">⏱</div>
+          </div>
+          <div class="kpi-value">409</div>
+          <div class="kpi-note">คิดจากชั่วโมงจริงตามกะ</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">มาสาย</div>
+            <div class="kpi-icon amber">⚠</div>
+          </div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-note">แถวที่ควรตรวจต่อก่อน</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">ยังไม่เช็คออก</div>
+            <div class="kpi-icon blue">↗</div>
+          </div>
+          <div class="kpi-value">2</div>
+          <div class="kpi-note">รอบงานที่ยังเปิดอยู่</div>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-toolbar">
+          <div>
+            <div class="toolbar-title">ประวัติบันทึกเวลาเข้างาน</div>
+            <div class="toolbar-meta">เรียงจากล่าสุดก่อน • แสดงข้อมูลที่อ่านเร็วและลดความซ้ำซ้อน</div>
+          </div>
+          <div class="toolbar-tabs">
+            <div class="tab active">ทั้งหมด</div>
+            <div class="tab">ผิดปกติ</div>
+            <div class="tab">ยังไม่เช็คออก</div>
+            <div class="tab">มาสาย</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่</th>
+              <th>พนักงาน</th>
+              <th>กะ / แผนก</th>
+              <th>เข้า</th>
+              <th>ออก</th>
+              <th>ชม.</th>
+              <th>สถานะ</th>
+              <th>ตรวจพิกัด</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="date">2026-06-18</td>
+              <td>
+                <div class="employee-name">SAI THURS MIN</div>
+                <div class="employee-meta">CNV036 • Bang Na</div>
+              </td>
+              <td>
+                <div class="shift-meta">Branch Night 14:00–02:00</div>
+                <div class="location-meta">Back of House</div>
+              </td>
+              <td class="time">15:01</td>
+              <td class="time">02:04</td>
+              <td class="hours">10</td>
+              <td><span class="badge late">สาย</span></td>
+              <td><span class="badge geo">ตำแหน่งปกติ</span></td>
+              <td><button class="row-action">แก้ไข</button></td>
+            </tr>
+
+            <tr>
+              <td class="date">2026-06-18</td>
+              <td>
+                <div class="employee-name">XINQI QIN</div>
+                <div class="employee-meta">CNV043 • Bang Na</div>
+              </td>
+              <td>
+                <div class="shift-meta">Branch Night 14:00–02:00</div>
+                <div class="location-meta">Back of House</div>
+              </td>
+              <td class="time">12:01</td>
+              <td class="time">00:06</td>
+              <td class="hours">10</td>
+              <td><span class="badge normal">ปกติ</span></td>
+              <td><span class="badge geo">ตำแหน่งปกติ</span></td>
+              <td><button class="row-action">แก้ไข</button></td>
+            </tr>
+
+            <tr>
+              <td class="date">2026-06-18</td>
+              <td>
+                <div class="employee-name">Nang Nge Nge</div>
+                <div class="employee-meta">CNV005 • Bang Na</div>
+              </td>
+              <td>
+                <div class="shift-meta">Branch Night 14:00–02:00</div>
+                <div class="location-meta">Front of House</div>
+              </td>
+              <td class="time">14:00</td>
+              <td class="time">02:00</td>
+              <td class="hours">11</td>
+              <td><span class="badge normal">ปกติ</span></td>
+              <td><span class="badge geo">ตำแหน่งปกติ</span></td>
+              <td><button class="row-action">แก้ไข</button></td>
+            </tr>
+
+            <tr>
+              <td class="date">2026-06-18</td>
+              <td>
+                <div class="employee-name">YiWei Sun</div>
+                <div class="employee-meta">CNV021 • Bang Na</div>
+              </td>
+              <td>
+                <div class="shift-meta">Branch Night 14:00–02:00</div>
+                <div class="location-meta">Back of House</div>
+              </td>
+              <td class="time">13:57</td>
+              <td class="time">—</td>
+              <td class="hours">—</td>
+              <td><span class="badge pending">ยังไม่เช็คออก</span></td>
+              <td><span class="badge geo">ตำแหน่งปกติ</span></td>
+              <td><button class="row-action">แก้ไข</button></td>
+            </tr>
+
+            <tr>
+              <td class="date">2026-06-18</td>
+              <td>
+                <div class="employee-name">HninNu Swe</div>
+                <div class="employee-meta">CNV039 • Bang Na</div>
+              </td>
+              <td>
+                <div class="shift-meta">Branch Night 14:00–02:00</div>
+                <div class="location-meta">Back of House</div>
+              </td>
+              <td class="time">13:56</td>
+              <td class="time">02:00</td>
+              <td class="hours">12</td>
+              <td><span class="badge normal">ปกติ</span></td>
+              <td><span class="badge geo">ตำแหน่งปกติ</span></td>
+              <td><button class="row-action">แก้ไข</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <div>แสดง 1–5 จาก 38 รายการ</div>
+          <div class="pager">
+            <div class="page-pill">‹</div>
+            <div class="page-pill active">1</div>
+            <div class="page-pill">2</div>
+            <div class="page-pill">3</div>
+            <div class="page-pill">›</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

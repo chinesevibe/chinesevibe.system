@@ -15,7 +15,7 @@ import type {
   InvWarehouse,
 } from "@/features/inventory/types"
 import {
-  canManageHr,
+  canManageInventory,
   isCeo,
   isDev,
 } from "@/lib/auth/roles"
@@ -184,7 +184,7 @@ async function assertStockCountManager() {
   if (!employee || employee.status !== "active") {
     throw new Error("กรุณาเข้าสู่ระบบ")
   }
-  if (!canManageHr(employee.role) && !isCeo(employee.role) && !isDev(employee.role)) {
+  if (!canManageInventory(employee) && !isCeo(employee.role)) {
     throw new Error("ไม่มีสิทธิ์จัดการรอบตรวจนับสต๊อก")
   }
   return employee

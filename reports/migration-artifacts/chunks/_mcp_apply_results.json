@@ -1,0 +1,7 @@
+[
+  {
+    "chunk": "01",
+    "success": false,
+    "error": "al quantity missing';\\n  end if;\\n\\n  v_reason := coalesce(nullif(trim(v_count.notes), ''), 'Stock count variance');\\n\\n  for v_item in\\n    select *\\n    from public.inv_stock_count_items\\n    where count_id = p_count_id\\n    order by created_at asc\\n    for update\\n  loop\\n\\n\\n-- source: POST /v1/projects/:ref/database/query\\n-- user: pat:13409050\\n-- date: 2026-06-18T01:57:34.555Z\\\"\\nLINE 922:     AS $$\\n                 ^\\n\"}\nTry rerunning the command with --debug to troubleshoot the error.\n"
+  }
+]

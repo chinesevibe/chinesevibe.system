@@ -10,6 +10,7 @@ import {
   type Nationality,
   type PayDay,
 } from "@/lib/payroll/pay-day"
+import { parseOffDays, serializeOffDays, type WeeklyOffDay } from "@/lib/employees/off-days"
 
 type BankFields = {
   salary_payment_method: SalaryPaymentMethod | "" | null
@@ -70,6 +71,7 @@ export type ProfilePatchInput = {
   work_shift_id: string
   default_check_in_time: string
   default_check_out_time: string
+  off_days: number[]
 } & BankFields
 
 function buildNationalityPayDayFields(form: {
@@ -124,6 +126,7 @@ export function buildProfilePatchBody(
     work_shift_id: form.work_shift_id || null,
     default_check_in_time: timeForApi(form.default_check_in_time),
     default_check_out_time: timeForApi(form.default_check_out_time),
+    off_days: serializeOffDays(parseOffDays(form.off_days)),
   }
 
   if (includeSalary) {
@@ -178,6 +181,7 @@ export type AddEmployeeFormState = {
   work_shift_id: string
   default_check_in_time: string
   default_check_out_time: string
+  off_days: WeeklyOffDay[]
 } & BankFields
 
 export function buildAddEmployeeBody(form: AddEmployeeFormState): Record<string, unknown> {
@@ -208,6 +212,7 @@ export function buildAddEmployeeBody(form: AddEmployeeFormState): Record<string,
     work_shift_id: form.work_shift_id || null,
     default_check_in_time: timeForApi(form.default_check_in_time),
     default_check_out_time: timeForApi(form.default_check_out_time),
+    off_days: serializeOffDays(parseOffDays(form.off_days)),
     ...buildBankPatchFields(form),
   }
 }

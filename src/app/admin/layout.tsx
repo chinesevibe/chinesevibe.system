@@ -10,7 +10,7 @@ import {
 import { isInventoryPortalPath } from "@/components/admin/inventory-nav"
 import { withNavGroupAlertBadges } from "@/features/notifications/nav-badges"
 import {
-  getNotificationInbox,
+  getNotificationNavBadges,
   resolveNotificationScope,
 } from "@/features/notifications/data"
 import {
@@ -95,15 +95,16 @@ export default async function AdminLayout({
       : getNavGroupsForEmployee(employee)
 
   const notificationScope = resolveNotificationScope(employee, devView)
-  const notificationInbox = notificationScope
-    ? await getNotificationInbox(employee, notificationScope)
-    : {
-        items: [],
-        total: 0,
-        approvalTotal: 0,
-        complianceTotal: 0,
-        navBadges: {},
-      }
+  const notificationCounts = notificationScope
+    ? await getNotificationNavBadges(employee, notificationScope)
+    : { navBadges: {}, approvalTotal: 0, complianceTotal: 0 }
+  const notificationInbox = {
+    items: [],
+    total: notificationCounts.approvalTotal + notificationCounts.complianceTotal,
+    approvalTotal: notificationCounts.approvalTotal,
+    complianceTotal: notificationCounts.complianceTotal,
+    navBadges: notificationCounts.navBadges,
+  }
   const navGroups =
     Object.keys(notificationInbox.navBadges).length > 0
       ? withNavGroupAlertBadges(baseNavGroups, notificationInbox.navBadges)

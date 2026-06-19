@@ -1,6 +1,6 @@
 import {
   canAccessInventoryPortal,
-  canManageHr,
+  hasHrInventoryAccess,
   isDev,
 } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
@@ -17,10 +17,7 @@ export async function assertInventoryAccess() {
 /** Master data — SKU, Supplier, branches, warehouses (HR/Dev) */
 export async function assertInventoryManage() {
   const employee = await getCurrentEmployee()
-  if (
-    !employee ||
-    (!canManageHr(employee.role) && !isDev(employee.role))
-  ) {
+  if (!employee || (!hasHrInventoryAccess(employee) && !isDev(employee.role))) {
     throw new Error("ไม่มีสิทธิ์จัดการข้อมูลหลักคลังสินค้า")
   }
   return employee

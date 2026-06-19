@@ -1,0 +1,6 @@
+{
+  "chunk": "01",
+  "name": "prod_schema_restore_01",
+  "success": false,
+  "error": "ric;\\n  v_lot_before numeric;\\n  v_lot_after numeric;\\nbegin\\n  if not public.inv_can_manage_requisitions() then\\n    raise exception 'forbidden';\\n  end if;\\n\\n  v_actor_id := public.hr_employee_id();\\n\\n  select * into v_count\\n  from public.inv_stock_counts\\n  where id = p_count_id\\n  for update;\\n\\n  if not found then\\n    raise exception 'stock count not found';\\n  end if;\\n\\n  if v_count.status <> 'counting' then\\n    raise exception 'stock count must be counting to finalize';\\n  end if;\\n\\n  select count(*) into v_missing_count\\n  from public.inv_stock_count_items\\n  where count_id = p_count_id\\n    and physical_qty is null;\\n\\n  if v_missing_count > 0 then\\n    raise exception 'physical quantity missing';\\n  end if;\\n\\n  v_reason := coalesce(nullif(trim(v_count.notes), ''), 'Stock count variance');\\n\\n  for v_item in\\n    select *\\n    from public.inv_stock_count_items\\n    where count_id = p_count_id\\n    order by created_at asc\\n    for update\\n  loop\\n\\n\\n-- source: POST /v1/projects/:ref/database/query\\n-- user: pat:13409050\\n-- date: 2026-06-18T01:55:16.486Z\\\"\\nLINE 922:     AS $$\\n                 ^\\n\"}\nTry rerunning the command with --debug to troubleshoot the error."
+}

@@ -4,12 +4,12 @@ import { redirect } from "next/navigation"
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { listHrBranchesForMapping } from "@/features/inventory/actions/branch"
 import { BranchForm } from "@/features/inventory/BranchForm"
-import { canManageHr } from "@/lib/auth/roles"
+import { canManageInventory } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 export default async function NewBranchPage() {
   const employee = await requireInventoryMasterData()
-  if (!canManageHr(employee.role)) {
+  if (!canManageInventory(employee)) {
     redirect("/admin/inventory/branches")
   }
 

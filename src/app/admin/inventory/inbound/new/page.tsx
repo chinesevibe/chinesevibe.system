@@ -8,7 +8,6 @@ import { getInvWarehousesWithBranch } from "@/features/inventory/actions/warehou
 import {
   InventoryFormField,
   InventorySelect,
-  InventoryTextInput,
 } from "@/features/inventory/InventoryFormFields"
 import { invInputClass } from "@/features/inventory/form-styles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
@@ -50,17 +49,26 @@ export default async function NewInboundOrderPage() {
       }
     >
       <form action={createInvInboundOrderAndRedirect} className="mx-auto max-w-lg space-y-4">
-        <InventoryFormField label="Supplier" htmlFor="supplier_id">
-          <InventorySelect id="supplier_id" name="supplier_id" required defaultValue="">
-            <option value="" disabled>
-              เลือก Supplier
-            </option>
+        <InventoryFormField label="ผู้จำหน่าย" htmlFor="supplier_id">
+          <InventorySelect id="supplier_id" name="supplier_id" defaultValue="">
+            <option value="">ไม่ระบุผู้จำหน่าย</option>
             {activeSuppliers.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.code} — {s.name}
               </option>
             ))}
           </InventorySelect>
+          {activeSuppliers.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              ยังไม่มี Supplier —{" "}
+              <Link
+                href="/admin/inventory/suppliers"
+                className="text-brand-red hover:underline"
+              >
+                ไปเพิ่มที่เมนู Supplier
+              </Link>
+            </p>
+          ) : null}
         </InventoryFormField>
         <InventoryFormField label="คลังรับเข้า" htmlFor="warehouse_id">
           <InventorySelect id="warehouse_id" name="warehouse_id" required defaultValue="">

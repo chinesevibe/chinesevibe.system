@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { getInvBranch, listHrBranchesForMapping } from "@/features/inventory/actions/branch"
 import { BranchForm } from "@/features/inventory/BranchForm"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 type PageProps = {
@@ -32,7 +32,7 @@ export default async function EditBranchPage({ params }: PageProps) {
       <BranchForm
         mode="edit"
         initial={branch}
-        readOnly={readOnly || !canManageHr(employee.role)}
+        readOnly={readOnly || !canManageInventory(employee)}
         hrBranches={hrBranches}
       />
     </AdminPageShell>

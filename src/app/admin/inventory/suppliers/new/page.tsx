@@ -3,12 +3,12 @@ import { redirect } from "next/navigation"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { SupplierForm } from "@/features/inventory/SupplierForm"
-import { canManageHr } from "@/lib/auth/roles"
+import { canManageInventory } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 export default async function NewSupplierPage() {
   const employee = await requireInventoryMasterData()
-  if (!canManageHr(employee.role)) {
+  if (!canManageInventory(employee)) {
     redirect("/admin/inventory/suppliers")
   }
 

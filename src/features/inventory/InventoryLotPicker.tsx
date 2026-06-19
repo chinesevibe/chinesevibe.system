@@ -29,35 +29,38 @@ export function InventoryLotPicker({
   allowEmpty = true,
   emptyLabel = "— FEFO อัตโนมัติ —",
 }: Props) {
+  const enabled = Boolean(skuId && warehouseId)
   const [lots, setLots] = useState<InvStockLotOption[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!skuId || !warehouseId) {
-      setLots([])
-      return
-    }
+    if (!enabled) return
 
     let cancelled = false
-    setLoading(true)
-    setError(null)
 
-    void listAvailableLots(skuId, warehouseId).then((result) => {
-      if (cancelled) return
-      if (result.success) {
-        setLots(result.lots)
-      } else {
-        setLots([])
-        setError(result.error)
-      }
-      setLoading(false)
-    })
+    void Promise.resolve()
+      .then(() => {
+        if (cancelled) return
+        setLoading(true)
+        setError(null)
+        return listAvailableLots(skuId, warehouseId)
+      })
+      .then((result) => {
+        if (cancelled || !result) return
+        if (result.success) {
+          setLots(result.lots)
+        } else {
+          setLots([])
+          setError(result.error)
+        }
+        setLoading(false)
+      })
 
     return () => {
       cancelled = true
     }
-  }, [skuId, warehouseId])
+  }, [enabled, skuId, warehouseId])
 
   if (!skuId || !warehouseId) {
     return (

@@ -25,7 +25,10 @@ import {
   type ReceiveTransferInput,
   type SendTransferInput,
 } from "@/features/inventory/validators/transfer"
-import { canAccessInventoryPortal, canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import {
+  canManageInventory,
+  isCeo,
+} from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
 
@@ -87,10 +90,6 @@ async function assertActiveInventoryEmployee() {
     throw new Error("กรุณาเข้าสู่ระบบ")
   }
   return employee
-}
-
-function canManageInventory(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {
-  return canManageHr(employee.role) || isDev(employee.role) || canAccessInventoryPortal(employee)
 }
 
 function canReadAllInventory(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {

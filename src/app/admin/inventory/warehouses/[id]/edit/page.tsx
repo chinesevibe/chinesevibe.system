@@ -5,7 +5,7 @@ import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { getInvBranches } from "@/features/inventory/actions/branch"
 import { getInvWarehouse } from "@/features/inventory/actions/warehouse"
 import { WarehouseForm } from "@/features/inventory/WarehouseForm"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 type PageProps = {
@@ -40,7 +40,7 @@ export default async function EditWarehousePage({ params }: PageProps) {
         mode="edit"
         initial={warehouse}
         branches={activeBranches}
-        readOnly={readOnly || !canManageHr(employee.role)}
+        readOnly={readOnly || !canManageInventory(employee)}
       />
     </AdminPageShell>
   )

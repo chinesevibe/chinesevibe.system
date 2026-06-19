@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { AuthPageShell } from "@/features/auth/AuthPageShell"
 import { EmployeeCodeLoginForm } from "@/features/auth/EmployeeCodeLoginForm"
+import { LineLoginButton } from "@/features/auth/LineLoginButton"
 import { OfficerPasswordVerifyForm } from "@/features/auth/OfficerPasswordVerifyForm"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { MessageKey } from "@/lib/i18n/translate"
@@ -58,7 +59,19 @@ function LoginPageBody({
         </p>
       ) : null}
       {showOfficerPasswordForm ? <OfficerPasswordVerifyForm /> : null}
-      {showGuestLoginForm ? <EmployeeCodeLoginForm /> : null}
+      {showGuestLoginForm ? (
+        <>
+          <EmployeeCodeLoginForm />
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">
+              {tx("auth.login.orDivider")}
+            </span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <LineLoginButton lineStartUrl={lineStartUrl} />
+        </>
+      ) : null}
       {showRegisterLink ? (
         <p className="text-center text-xs text-muted-foreground">
           <a

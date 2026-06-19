@@ -34,9 +34,8 @@ import {
 } from "@/features/inventory/validators/requisition"
 import {
   canAccessInventoryPortal,
-  canManageHr,
+  canManageInventory,
   isCeo,
-  isDev,
 } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
@@ -50,10 +49,6 @@ function revalidateRequisition(id?: string) {
   if (id) revalidatePath(`${LIST_PATH}/${id}`)
   revalidatePath("/admin/inventory/stock")
   revalidatePath("/admin/report")
-}
-
-function canManageInventory(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {
-  return canManageHr(employee.role) || isDev(employee.role) || canAccessInventoryPortal(employee)
 }
 
 function canReadAllInventory(employee: Awaited<ReturnType<typeof assertActiveInventoryEmployee>>) {

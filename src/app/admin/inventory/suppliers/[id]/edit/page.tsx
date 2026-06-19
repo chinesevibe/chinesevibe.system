@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { getInvSupplier } from "@/features/inventory/actions/supplier"
 import { SupplierForm } from "@/features/inventory/SupplierForm"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 type PageProps = {
@@ -33,7 +33,7 @@ export default async function EditSupplierPage({ params }: PageProps) {
       <SupplierForm
         mode="edit"
         initial={supplier}
-        readOnly={readOnly || !canManageHr(employee.role)}
+        readOnly={readOnly || !canManageInventory(employee)}
       />
     </AdminPageShell>
   )

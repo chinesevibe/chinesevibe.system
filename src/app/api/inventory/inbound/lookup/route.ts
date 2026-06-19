@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 
-import { lookupSkuByBarcode } from "@/features/inventory/inbound-data"
+import {
+  inactiveSkuBarcodeMessage,
+  lookupSkuByBarcode,
+} from "@/features/inventory/inbound-data"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
 export async function GET(request: Request) {
@@ -17,7 +20,11 @@ export async function GET(request: Request) {
   try {
     const sku = await lookupSkuByBarcode(barcode)
     if (!sku) {
-      return NextResponse.json({ error: "ไม่พบ SKU จาก barcode นี้" }, { status: 404 })
+      const inactive = await inactiveSkuBarcodeMessage(barcode)
+      return NextResponse.json(
+        { error: inactive ?? "ไม่พบ SKU จาก barcode นี้" },
+        { status: 404 }
+      )
     }
     return NextResponse.json({ sku })
   } catch (error) {

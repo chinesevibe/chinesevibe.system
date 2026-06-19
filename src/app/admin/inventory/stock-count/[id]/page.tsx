@@ -5,7 +5,7 @@ import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { buttonVariants } from "@/components/ui/button"
 import { StockCountDetailView } from "@/features/inventory/StockCountDetailView"
 import { getStockCountDetail } from "@/features/inventory/actions/stock-count"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 import { cn } from "@/lib/utils"
 
@@ -15,7 +15,7 @@ type PageProps = {
 
 export default async function InventoryStockCountDetailPage({ params }: PageProps) {
   const employee = await requireInventoryPortal()
-  const canManage = canManageHr(employee.role) || isCeo(employee.role) || isDev(employee.role)
+  const canManage = canManageInventory(employee) || isCeo(employee.role) || isDev(employee.role)
   if (!canManage) {
     notFound()
   }

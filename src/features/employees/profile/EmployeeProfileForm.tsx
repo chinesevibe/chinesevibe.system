@@ -51,6 +51,8 @@ import {
 } from "@/lib/payroll/pay-day"
 import { cn } from "@/lib/utils"
 import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
+import { parseOffDays, type WeeklyOffDay } from "@/lib/employees/off-days"
+import { WeeklyOffDaysPicker } from "@/features/employees/WeeklyOffDaysPicker"
 
 const inputBase =
   "mt-1 h-9 rounded-lg border border-input bg-transparent px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -115,6 +117,7 @@ type FormState = {
   work_shift_id: string
   default_check_in_time: string
   default_check_out_time: string
+  off_days: WeeklyOffDay[]
 }
 
 function toFormState(profile: EmployeeProfile): FormState {
@@ -152,6 +155,7 @@ function toFormState(profile: EmployeeProfile): FormState {
     work_shift_id: profile.work_shift_id ?? "",
     default_check_in_time: normalizeTimeToHHMM(profile.default_check_in_time),
     default_check_out_time: normalizeTimeToHHMM(profile.default_check_out_time),
+    off_days: parseOffDays(profile.off_days),
   }
 }
 
@@ -237,12 +241,14 @@ export function EmployeeProfileForm({
           })
         ),
       })
+      const body = (await res.json().catch(() => null)) as
+        | { error?: string; warning?: string }
+        | null
       if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null
         throw new Error(body?.error ?? "บันทึกไม่สำเร็จ")
       }
       if (!opts?.silent) {
-        setMessage("บันทึกข้อมูลแล้ว")
+        setMessage(body?.warning ?? "บันทึกข้อมูลแล้ว")
       }
       router.refresh()
     },
@@ -578,6 +584,10 @@ export function EmployeeProfileForm({
                 ))}
               </select>
             </Field>
+            <WeeklyOffDaysPicker
+              value={form.off_days}
+              onChange={(off_days) => setField("off_days", off_days)}
+            />
             <p className="rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
               LINE ID:{" "}
               <span className="font-mono text-foreground">

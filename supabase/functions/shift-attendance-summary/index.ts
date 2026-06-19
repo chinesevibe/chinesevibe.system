@@ -4,10 +4,10 @@ import { withSupabase, type WithSupabaseConfig } from "@supabase/server";
 import {
   type AdminClient,
   buildDailyRoster,
-  formatNameList,
   ictDateString,
   UNASSIGNED_SHIFT_ID,
 } from "../_shared/daily-roster.ts";
+import { buildAttendanceSummaryFlex } from "../_shared/attendance-summary-flex.ts";
 
 const MULTICAST_LIMIT = 500;
 
@@ -24,15 +24,11 @@ function cronSecretAuthConfig(): WithSupabaseConfig {
     : { auth: ["secret"] };
 }
 
-function ictWeekday(date: Date): number {
-  const ictMs = date.getTime() + 7 * 60 * 60 * 1000;
-  return new Date(ictMs).getUTCDay();
-}
-
+// deno-lint-ignore no-explicit-any
 async function pushHrMessage(
   admin: AdminClient,
   lineHeaders: Record<string, string>,
-  message: { type: "text"; text: string },
+  message: Record<string, unknown>,
 ): Promise<number> {
   const lineApiBase = Deno.env.get("LINE_API_BASE") ?? "https://api.line.me";
   const groupId = Deno.env.get("HR_LINE_GROUP_ID");
@@ -79,11 +75,6 @@ const handler = {
   fetch: withSupabase(cronSecretAuthConfig(), async (_req, ctx) => {
     try {
       const now = new Date();
-      const weekday = ictWeekday(now);
-      if (weekday === 0 || weekday === 6) {
-        return Response.json({ skipped: true, reason: "weekend" });
-      }
-
       const admin = ctx.supabaseAdmin;
       const today = ictDateString(now);
       const roster = await buildDailyRoster(admin, { date: today, now });
@@ -117,21 +108,25 @@ const handler = {
         const dedupeKey = `shift_summary_last_push_${group.id}_${today}`;
         if (existingKeys.has(dedupeKey)) continue;
 
-        const lateEmployees = group.employees.filter((employee) => employee.status === "late");
-        const absentEmployees = group.employees.filter((employee) => employee.status === "absent");
-        const leaveEmployees = group.employees.filter((employee) => employee.status === "on_leave");
+        const lateEmployees = group.employees.filter((e) => e.status === "late");
+        const absentEmployees = group.employees.filter((e) => e.status === "absent");
+        const leaveEmployees = group.employees.filter((e) => e.status === "on_leave");
 
-        const pushed = await pushHrMessage(admin, lineHeaders, {
-          type: "text",
-          text: [
-            `อัปเดต attendance รายกะ ${today}`,
-            `${group.name} • ${group.timeRange}`,
-            `เช็คอินแล้ว: ${group.totals.checkedIn}/${group.totals.total} คน`,
-            `มาสาย (${lateEmployees.length}): ${formatNameList(lateEmployees)}`,
-            `ขาด (${absentEmployees.length}): ${formatNameList(absentEmployees)}`,
-            `ลา (${leaveEmployees.length}): ${formatNameList(leaveEmployees)}`,
-          ].join("\n"),
+        const flexMsg = buildAttendanceSummaryFlex({
+          date: today,
+          shiftName: group.name,
+          timeRange: group.timeRange,
+          total: group.totals.total,
+          checkedIn: group.totals.checkedIn,
+          late: group.totals.late,
+          absent: group.totals.absent,
+          onLeave: group.totals.onLeave,
+          lateNames: lateEmployees.map((e) => e.name),
+          absentNames: absentEmployees.map((e) => e.name),
+          leaveNames: leaveEmployees.map((e) => e.name),
         });
+
+        const pushed = await pushHrMessage(admin, lineHeaders, flexMsg as Record<string, unknown>);
 
         if (pushed > 0) {
           const { error: upsertError } = await admin

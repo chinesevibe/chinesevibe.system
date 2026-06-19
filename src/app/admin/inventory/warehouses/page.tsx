@@ -22,7 +22,7 @@ import {
   InventorySearchBar,
 } from "@/features/inventory/InventorySearchBar"
 import type { InvWarehouseWithBranch } from "@/features/inventory/types"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 import { cn } from "@/lib/utils"
 
@@ -40,7 +40,7 @@ type PageProps = {
 export default async function InventoryWarehousesPage({ searchParams }: PageProps) {
   const employee = await requireInventoryMasterData()
   const readOnly = isCeo(employee.role) && !isDev(employee.role)
-  const canManage = canManageHr(employee.role)
+  const canManage = canManageInventory(employee)
 
   const params = await searchParams
   const search = params?.search ?? ""

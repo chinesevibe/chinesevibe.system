@@ -16,6 +16,10 @@ import {
 } from "@/features/inventory/validators/inbound"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import {
+  inactiveSkuBarcodeMessage,
+  lookupSkuByBarcode,
+} from "@/features/inventory/inbound-data"
 import type { SkuUnitOption } from "@/lib/inventory/unit-conversion"
 import { convertQuantity } from "@/lib/inventory/unit-conversion"
 import { getSkuUnitOptions } from "@/lib/inventory/unit-conversion"
@@ -64,7 +68,9 @@ export async function createInvInboundOrder(
     const { data, error } = await supabase
       .from("inv_inbound_orders")
       .insert({
-        ...payload,
+        supplier_id: payload.supplier_id ?? null,
+        warehouse_id: payload.warehouse_id,
+        notes: payload.notes ?? null,
         status: "pending",
         created_by: employee.id,
       })
@@ -313,7 +319,13 @@ export async function getInvSkuUnitOptionsByBarcode(input: {
       .maybeSingle()
 
     if (skuError) return { success: false, error: skuError.message }
-    if (!sku) return { success: false, error: "ไม่พบ SKU จาก barcode นี้" }
+    if (!sku) {
+      const inactive = await inactiveSkuBarcodeMessage(barcode)
+      return {
+        success: false,
+        error: inactive ?? "ไม่พบ SKU จาก barcode นี้",
+      }
+    }
 
     const options = await getSkuUnitOptions(sku.id as string)
     return {
@@ -466,7 +478,13 @@ export async function scanInvInboundItem(input: {
       .maybeSingle()
 
     if (skuError) return { success: false, error: skuError.message }
-    if (!sku) return { success: false, error: "ไม่พบ SKU จาก barcode นี้" }
+    if (!sku) {
+      const inactive = await inactiveSkuBarcodeMessage(payload.barcode)
+      return {
+        success: false,
+        error: inactive ?? "ไม่พบ SKU จาก barcode นี้",
+      }
+    }
 
     const quantity = await normalizeInboundQuantity({
       skuId: sku.id,

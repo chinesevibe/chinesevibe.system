@@ -2,7 +2,8 @@ import { redirect } from "next/navigation"
 
 import {
   canAccessInventoryPortal,
-  canManageHr,
+  canManageInventory,
+  hasHrInventoryAccess,
   isCeo,
   isDev,
   isInventoryRole,
@@ -32,7 +33,7 @@ export async function requireInventoryMasterData(): Promise<Employee> {
   }
   if (
     employee.role !== "dev" &&
-    !canManageHr(employee.role) &&
+    !hasHrInventoryAccess(employee) &&
     !isCeo(employee.role) &&
     !isInventoryRole(employee.role) &&
     !canAccessInventoryPortal(employee)
@@ -44,5 +45,9 @@ export async function requireInventoryMasterData(): Promise<Employee> {
 }
 
 export function canManageInventoryMasterData(employee: Employee): boolean {
-  return isDev(employee.role) || canManageHr(employee.role) || isCeo(employee.role)
+  return (
+    isDev(employee.role) ||
+    canManageInventory(employee) ||
+    isCeo(employee.role)
+  )
 }

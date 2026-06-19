@@ -13,6 +13,7 @@ import {
 import type { WorkShiftSummary } from "@/features/shifts/types"
 import { employeeAvatarPublicUrl } from "@/lib/employees/avatar"
 import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
+import { parseOffDays } from "@/lib/employees/off-days"
 import { createClient } from "@/lib/supabase/server"
 
 export type { SalaryPaymentMethod } from "@/features/employees/profile/payment-method"
@@ -36,6 +37,7 @@ export type EmployeeProfile = {
   workShift: WorkShiftSummary | null
   default_check_in_time: string | null
   default_check_out_time: string | null
+  off_days: number[]
   pay_type: PayType
   salary: number | null
   housing_allowance: number | null
@@ -80,7 +82,7 @@ export function deriveProbationStatus(
 }
 
 const PROFILE_BASE_SELECT =
-  "id, employee_code, line_user_id, name, date_of_birth, nationality, pay_day, phone, email, position, department, branch_id, work_shift_id, default_check_in_time, default_check_out_time, salary, contract_start, contract_type, contract_end, contract_file_path, contract_file_name, contract_uploaded_at, probation_end, probation_outcome, probation_outcome_note, probation_extended_until, visa_expiry, work_permit_expiry, salary_payment_method, bank_name, bank_account_name, bank_account_number, bank_branch, leave_blacklisted, leave_blacklist_reason, leave_blacklisted_at, avatar_path, role, status"
+  "id, employee_code, line_user_id, name, date_of_birth, nationality, pay_day, phone, email, position, department, branch_id, work_shift_id, default_check_in_time, default_check_out_time, off_days, salary, contract_start, contract_type, contract_end, contract_file_path, contract_file_name, contract_uploaded_at, probation_end, probation_outcome, probation_outcome_note, probation_extended_until, visa_expiry, work_permit_expiry, salary_payment_method, bank_name, bank_account_name, bank_account_number, bank_branch, leave_blacklisted, leave_blacklist_reason, leave_blacklisted_at, avatar_path, role, status"
 
 const PROFILE_SHIFT_EMBED =
   ", hr_work_shifts(id, code, name, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes, standard_hours, is_active)"
@@ -96,8 +98,10 @@ async function loadProfileRow(
   const attempts = [
     `${PROFILE_BASE_SELECT}, housing_allowance${PROFILE_SHIFT_EMBED}`,
     `${PROFILE_BASE_SELECT}${PROFILE_SHIFT_EMBED}`,
-    `${PROFILE_BASE_SELECT}, housing_allowance`,
-    PROFILE_BASE_SELECT,
+    `${PROFILE_BASE_SELECT.replace(", off_days", "")}, housing_allowance${PROFILE_SHIFT_EMBED}`,
+    `${PROFILE_BASE_SELECT.replace(", off_days", "")}${PROFILE_SHIFT_EMBED}`,
+    `${PROFILE_BASE_SELECT.replace(", off_days", "")}, housing_allowance`,
+    PROFILE_BASE_SELECT.replace(", off_days", ""),
   ]
 
   let lastError: { message?: string } | null = null
@@ -185,6 +189,7 @@ export async function getEmployeeProfile(
       normalizeTimeToHHMM(data.default_check_in_time as string | null) || null,
     default_check_out_time:
       normalizeTimeToHHMM(data.default_check_out_time as string | null) || null,
+    off_days: parseOffDays(data.off_days),
     salary: data.salary != null ? Number(data.salary) : null,
     housing_allowance,
     contract_start: (data.contract_start as string | null) ?? null,

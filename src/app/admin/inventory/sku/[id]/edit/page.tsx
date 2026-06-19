@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { getInvSku, getInvUnits } from "@/features/inventory/actions/sku"
 import { SkuForm } from "@/features/inventory/SkuForm"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 
 type PageProps = {
@@ -32,7 +32,7 @@ export default async function EditSkuPage({ params }: PageProps) {
         mode="edit"
         initial={sku}
         units={units}
-        readOnly={readOnly || !canManageHr(employee.role)}
+        readOnly={readOnly || !canManageInventory(employee)}
       />
     </AdminPageShell>
   )

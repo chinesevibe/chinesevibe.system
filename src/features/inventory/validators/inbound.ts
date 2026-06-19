@@ -1,7 +1,8 @@
+import { uuidOptional } from "@/features/inventory/validators/shared"
 import { z } from "zod"
 
 export const invInboundOrderSchema = z.object({
-  supplier_id: z.string().uuid("เลือก Supplier"),
+  supplier_id: uuidOptional,
   warehouse_id: z.string().uuid("เลือกคลังสินค้า"),
   notes: z.string().max(2000).optional().nullable(),
 })

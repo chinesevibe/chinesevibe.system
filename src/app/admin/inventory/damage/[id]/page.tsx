@@ -5,16 +5,17 @@ import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { buttonVariants } from "@/components/ui/button"
 import { getDamageReportDetail } from "@/features/inventory/actions/consumption"
 import { DamageDetailView } from "@/features/inventory/DamageDetailView"
-import { canAccessInventoryPortal, canManageHr, isDev } from "@/lib/auth/roles"
+import {
+  canAccessInventoryPortal,
+  hasHrInventoryAccess,
+  isDev,
+  isInventoryRole,
+} from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 import { cn } from "@/lib/utils"
 
 type PageProps = {
   params: Promise<{ id: string }>
-}
-
-function canApproveInventory(role: Parameters<typeof canManageHr>[0]) {
-  return role === "inventory" || isDev(role)
 }
 
 export default async function DamageDetailPage({ params }: PageProps) {
@@ -26,7 +27,9 @@ export default async function DamageDetailPage({ params }: PageProps) {
   const canApproveNormal = canAccessInventoryPortal(employee)
   const canDecide =
     detail.approval_required_role === "inventory"
-      ? canApproveInventory(employee.role)
+      ? isInventoryRole(employee.role) ||
+        isDev(employee.role) ||
+        hasHrInventoryAccess(employee)
       : canApproveNormal
 
   return (

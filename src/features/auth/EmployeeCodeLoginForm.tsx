@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { ForgotPortalPasswordForm } from "@/features/auth/ForgotPortalPasswordForm"
 import { useLocale } from "@/features/portal/LocaleProvider"
 
 const inputClassName =
@@ -31,6 +32,7 @@ export function EmployeeCodeLoginForm() {
   const [branchesLoading, setBranchesLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showForgot, setShowForgot] = useState(false)
 
   const lookupKey = useMemo(() => {
     const code = employeeCode.trim()
@@ -159,6 +161,16 @@ export function EmployeeCodeLoginForm() {
     }
   }
 
+  if (showForgot) {
+    return (
+      <ForgotPortalPasswordForm
+        initialEmployeeCode={employeeCode}
+        initialBranchId={branchId}
+        onCancel={() => setShowForgot(false)}
+      />
+    )
+  }
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <label className="block text-sm">
@@ -240,6 +252,15 @@ export function EmployeeCodeLoginForm() {
                 disabled={requirementsLoading}
               />
             </label>
+          ) : null}
+          {!needsSetup ? (
+            <button
+              type="button"
+              className="text-xs text-brand-red underline-offset-2 hover:underline"
+              onClick={() => setShowForgot(true)}
+            >
+              {tx("auth.login.forgot.link")}
+            </button>
           ) : null}
         </div>
       ) : null}

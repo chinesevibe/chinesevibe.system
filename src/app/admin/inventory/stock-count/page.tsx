@@ -15,7 +15,7 @@ import {
 import { InventoryHub } from "@/features/inventory/InventoryHub"
 import { InventoryLoadError } from "@/features/inventory/InventorySearchBar"
 import { listStockCounts } from "@/features/inventory/actions/stock-count"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 import { formatThaiDate, formatThaiDateTime } from "@/lib/datetime/thailand"
 import { cn } from "@/lib/utils"
@@ -36,7 +36,7 @@ const STATUS_LABELS = {
 
 export default async function InventoryStockCountPage() {
   const employee = await requireInventoryPortal()
-  if (!canManageHr(employee.role) && !isCeo(employee.role) && !isDev(employee.role)) {
+  if (!canManageInventory(employee) && !isCeo(employee.role) && !isDev(employee.role)) {
     notFound()
   }
   let rows: Awaited<ReturnType<typeof listStockCounts>> = []

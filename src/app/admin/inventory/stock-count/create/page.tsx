@@ -7,13 +7,13 @@ import {
   getStockCountCreateOptions,
 } from "@/features/inventory/actions/stock-count"
 import { StockCountCreateForm } from "@/features/inventory/StockCountCreateForm"
-import { canManageHr, isCeo, isDev } from "@/lib/auth/roles"
+import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 import { cn } from "@/lib/utils"
 
 export default async function InventoryStockCountCreatePage() {
   const employee = await requireInventoryPortal()
-  if (!canManageHr(employee.role) && !isCeo(employee.role) && !isDev(employee.role)) {
+  if (!canManageInventory(employee) && !isCeo(employee.role) && !isDev(employee.role)) {
     notFound()
   }
   const options = await getStockCountCreateOptions()

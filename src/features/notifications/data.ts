@@ -16,6 +16,7 @@ import {
   buildBranchNavBadges,
   buildHrNavBadges,
   buildInventoryNavBadges,
+  hrApprovalCountsTotal,
   type HrApprovalCounts,
 } from "@/features/notifications/nav-badges"
 import type { DevViewAs } from "@/lib/auth/dev-view"
@@ -25,7 +26,6 @@ import type { Employee } from "@/lib/auth/session"
 import {
   EMPLOYEE_VIA_ATTENDANCE_SUBMISSION,
   EMPLOYEE_VIA_LEAVE,
-  EMPLOYEE_VIA_OVERTIME,
 } from "@/lib/supabase/employee-embeds"
 import { createClient } from "@/lib/supabase/server"
 
@@ -670,6 +670,247 @@ async function inventoryNotifications(): Promise<{
       lowStock: lowStockCount,
     },
   }
+}
+
+async function complianceCountOnly(windowEnd: string): Promise<number> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("hr_employees")
+    .select("probation_end, probation_outcome, visa_expiry, work_permit_expiry")
+    .eq("status", "active")
+
+  if (error) throw error
+
+  let total = 0
+  for (const row of data ?? []) {
+    if (
+      row.probation_end &&
+      row.probation_end <= windowEnd &&
+      probationNeedsComplianceAlert({
+        probationEnd: row.probation_end as string,
+        probationOutcome: row.probation_outcome as string | null,
+      })
+    ) {
+      total += 1
+    }
+    if (row.visa_expiry && row.visa_expiry <= windowEnd) total += 1
+    if (row.work_permit_expiry && row.work_permit_expiry <= windowEnd) total += 1
+  }
+
+  return total
+}
+
+async function hrNavBadgeCounts(): Promise<{
+  approvalTotal: number
+  complianceTotal: number
+  navBadges: NotificationInbox["navBadges"]
+}> {
+  const supabase = await createClient()
+  const today = ictToday()
+  const windowEnd = new Date(
+    Date.parse(`${today}T00:00:00Z`) + COMPLIANCE_WINDOW_DAYS * DAY_MS
+  )
+    .toISOString()
+    .slice(0, 10)
+
+  const [
+    registrationCountRes,
+    onboardingCountRes,
+    leavePendingCountRes,
+    leaveHrCountRes,
+    attCountRes,
+    otCountRes,
+    docCountRes,
+    complaintCountRes,
+    complianceTotal,
+  ] = await Promise.all([
+    supabase
+      .from("hr_employees")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "inactive")
+      .eq("role", "employee"),
+    supabase
+      .from("hr_employees")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .eq("role", "employee")
+      .is("branch_id", null),
+    supabase
+      .from("hr_leaves")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("hr_leaves")
+      .select("id", { count: "exact", head: true })
+      .eq("approval_status", "pending_hr"),
+    supabase
+      .from("hr_attendance_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("approval_status", "pending_hr"),
+    supabase
+      .from("hr_overtime_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("approval_status", "pending_hr"),
+    supabase
+      .from("hr_document_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("hr_complaints")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "open"),
+    complianceCountOnly(windowEnd),
+  ])
+
+  const counts: HrApprovalCounts = {
+    registration: registrationCountRes.count ?? 0,
+    onboarding: onboardingCountRes.count ?? 0,
+    leavePending: leavePendingCountRes.count ?? 0,
+    leaveHr: leaveHrCountRes.count ?? 0,
+    attendance: attCountRes.count ?? 0,
+    overtime: otCountRes.count ?? 0,
+    document: docCountRes.count ?? 0,
+    complaint: complaintCountRes.count ?? 0,
+  }
+
+  return {
+    approvalTotal: hrApprovalCountsTotal(counts),
+    complianceTotal,
+    navBadges: buildHrNavBadges(counts, complianceTotal),
+  }
+}
+
+async function branchNavBadgeCounts(caller: Employee): Promise<{
+  approvalTotal: number
+  complianceTotal: number
+  navBadges: NotificationInbox["navBadges"]
+}> {
+  const branchId = await getManagedBranchId(caller.id)
+  if (!branchId) {
+    return { approvalTotal: 0, complianceTotal: 0, navBadges: {} }
+  }
+
+  const supabase = await createClient()
+  const [leaveCountRes, attCountRes] = await Promise.all([
+    supabase
+      .from("hr_leaves")
+      .select(`id, ${EMPLOYEE_VIA_LEAVE}!inner(branch_id)`, {
+        count: "exact",
+        head: true,
+      })
+      .eq("approval_status", "pending_manager")
+      .eq("hr_employees.branch_id", branchId),
+    supabase
+      .from("hr_attendance_submissions")
+      .select(`id, ${EMPLOYEE_VIA_ATTENDANCE_SUBMISSION}!inner(branch_id)`, {
+        count: "exact",
+        head: true,
+      })
+      .eq("approval_status", "pending_manager")
+      .eq("hr_employees.branch_id", branchId),
+  ])
+
+  const leave = leaveCountRes.count ?? 0
+  const attendance = attCountRes.count ?? 0
+  const total = leave + attendance
+  return {
+    approvalTotal: total,
+    complianceTotal: 0,
+    navBadges: buildBranchNavBadges({
+      attendance,
+      leaves: leave,
+      overtime: 0,
+      total,
+    }),
+  }
+}
+
+async function inventoryNavBadgeCounts(): Promise<{
+  approvalTotal: number
+  complianceTotal: number
+  navBadges: NotificationInbox["navBadges"]
+}> {
+  const supabase = await createClient()
+  const [
+    inboundCountRes,
+    requisitionPendingCountRes,
+    requisitionApprovedCountRes,
+    damageCountRes,
+    skusRes,
+    balancesRes,
+  ] = await Promise.all([
+    supabase
+      .from("inv_inbound_orders")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("inv_requisitions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("inv_requisitions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "approved"),
+    supabase
+      .from("inv_damages")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("inv_skus")
+      .select("id, min_stock")
+      .eq("is_active", true),
+    supabase.from("inv_stock_balances").select("sku_id, quantity"),
+  ])
+
+  const qtyBySku = new Map<string, number>()
+  for (const row of balancesRes.data ?? []) {
+    const skuId = row.sku_id as string
+    qtyBySku.set(skuId, (qtyBySku.get(skuId) ?? 0) + Number(row.quantity))
+  }
+
+  let lowStock = 0
+  for (const sku of skusRes.data ?? []) {
+    const minStock = Number(sku.min_stock)
+    if (minStock > 0 && (qtyBySku.get(sku.id as string) ?? 0) < minStock) {
+      lowStock += 1
+    }
+  }
+
+  const inbound = inboundCountRes.count ?? 0
+  const requisition =
+    (requisitionPendingCountRes.count ?? 0) +
+    (requisitionApprovedCountRes.count ?? 0)
+  const damage = damageCountRes.count ?? 0
+  const total = inbound + requisition + damage + lowStock
+
+  return {
+    approvalTotal: total,
+    complianceTotal: 0,
+    navBadges: buildInventoryNavBadges({
+      inbound,
+      requisition,
+      damage,
+      lowStock,
+      total,
+    }),
+  }
+}
+
+export async function getNotificationNavBadges(
+  caller: Employee,
+  scope: NotificationScope
+): Promise<{
+  navBadges: NotificationInbox["navBadges"]
+  approvalTotal: number
+  complianceTotal: number
+}> {
+  if (scope === "branch") {
+    return branchNavBadgeCounts(caller)
+  }
+  if (scope === "inventory") {
+    return inventoryNavBadgeCounts()
+  }
+  return hrNavBadgeCounts()
 }
 
 export async function getNotificationInbox(

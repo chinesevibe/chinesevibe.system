@@ -157,6 +157,22 @@ export function OfficerPasswordVerifyForm() {
           {error}
         </p>
       ) : null}
+      {!needsSetup ? (
+        <p className="text-center text-xs text-muted-foreground">
+          {tx("auth.login.officerForgotHint")}{" "}
+          <button
+            type="button"
+            className="text-brand-red underline-offset-2 hover:underline"
+            onClick={() => {
+              void fetch("/api/auth/logout", { method: "POST" }).then(() => {
+                window.location.href = "/login"
+              })
+            }}
+          >
+            {tx("auth.login.officerForgotAction")}
+          </button>
+        </p>
+      ) : null}
       <Button
         type="submit"
         disabled={submitting}
