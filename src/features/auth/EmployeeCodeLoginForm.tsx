@@ -1,5 +1,6 @@
 "use client"
 
+import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
@@ -24,6 +25,8 @@ export function EmployeeCodeLoginForm() {
   const [branchId, setBranchId] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
   const [requirementsByKey, setRequirementsByKey] = useState<
     Record<string, PasswordRequirements>
   >({})
@@ -223,34 +226,58 @@ export function EmployeeCodeLoginForm() {
                 ? tx("auth.login.form.setPassword")
                 : tx("auth.login.form.password")}
             </span>
-            <input
-              className={inputClassName}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={tx("auth.login.form.passwordPlaceholder")}
-              required
-              autoComplete={needsSetup ? "new-password" : "current-password"}
-              minLength={6}
-              disabled={requirementsLoading}
-            />
+            <div className="relative">
+              <input
+                className={`${inputClassName} pr-10`}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={tx("auth.login.form.passwordPlaceholder")}
+                required
+                autoComplete={needsSetup ? "new-password" : "current-password"}
+                minLength={6}
+                disabled={requirementsLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+              >
+                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
+            </div>
           </label>
           {needsSetup ? (
             <label className="block text-sm">
               <span className="text-muted-foreground">
                 {tx("auth.login.form.confirmPassword")}
               </span>
-              <input
-                className={inputClassName}
-                type="password"
-                value={passwordConfirm}
-                onChange={(e) => setPasswordConfirm(e.target.value)}
-                placeholder={tx("auth.login.form.confirmPasswordPlaceholder")}
-                required
-                autoComplete="new-password"
-                minLength={6}
-                disabled={requirementsLoading}
-              />
+              <div className="relative">
+                <input
+                  className={`${inputClassName} pr-10`}
+                  type={showPasswordConfirm ? "text" : "password"}
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  placeholder={tx("auth.login.form.confirmPasswordPlaceholder")}
+                  required
+                  autoComplete="new-password"
+                  minLength={6}
+                  disabled={requirementsLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordConfirm((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                  aria-label={showPasswordConfirm ? "ซ่อนยืนยันรหัสผ่าน" : "แสดงยืนยันรหัสผ่าน"}
+                >
+                  {showPasswordConfirm ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
             </label>
           ) : null}
           {!needsSetup ? (
