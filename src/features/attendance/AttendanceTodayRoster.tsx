@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { AlertTriangle, Briefcase, Clock3, LogIn, Plane } from "lucide-react"
+import { AlertTriangle, Briefcase, Clock3, LogIn, LogOut, Plane } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -61,15 +61,23 @@ function EmployeeRosterCard({
   contextLabel?: string
   returnTo?: string | null
 }) {
+  const isCompleted = Boolean(employee.checkedInAt && employee.checkedOutAt)
+
   return (
     <Link
       key={employee.id}
       href={appendReturnTo(employee.employeeHref, returnTo)}
-      className="block w-full rounded-xl border border-border/70 bg-background px-3 py-2.5 transition hover:border-brand-red/30 hover:bg-brand-red/5"
+      className={cn(
+        "block w-full rounded-xl border bg-background px-3 py-2.5 transition hover:border-brand-red/30 hover:bg-brand-red/5",
+        isCompleted
+          ? "border-red-200/80 bg-red-50/25 hover:bg-red-100/40"
+          : "border-border/70"
+      )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-medium">
+            {isCompleted ? <LogOut className="mr-2 inline-block size-4 shrink-0 text-red-600" /> : null}
             {employee.name}{" "}
             <span className="text-xs font-normal tabular-nums text-muted-foreground">
               ({employee.employeeCode})
@@ -214,7 +222,10 @@ export function AttendanceTodayRoster({
                         }
                       </span>
                       <span>
-                        ออกแล้ว{" "}
+                        <span className="inline-flex items-center gap-1 text-red-700">
+                          <LogOut className="size-3" />
+                          ออกแล้ว{" "}
+                        </span>
                         {
                           group.employees.filter(
                             (employee) =>
