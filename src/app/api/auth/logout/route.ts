@@ -4,6 +4,10 @@ import { clearOfficerPasswordVerifiedCookie } from "@/lib/auth/officer-password-
 import { createClient } from "@/lib/supabase/server"
 
 function loginUrl(request: NextRequest) {
+  const hostname = request.nextUrl.hostname
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return new URL("/login", request.nextUrl.origin)
+  }
   const configured = process.env.NEXT_PUBLIC_BASE_URL?.trim()
   return new URL("/login", configured || request.nextUrl.origin)
 }

@@ -15,6 +15,10 @@ import { exchangeCode, verifyIdToken } from "@/lib/auth/line-login"
 const STATE_COOKIE = "line_login_state"
 
 function publicOrigin(request: NextRequest): string {
+  const hostname = request.nextUrl.hostname
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return request.nextUrl.origin
+  }
   const configured = process.env.NEXT_PUBLIC_BASE_URL?.trim()
   return configured || request.nextUrl.origin
 }

@@ -67,11 +67,6 @@ export default async function LoginPage({
     ? (ERROR_KEYS[error] ?? ERROR_KEYS.line_login_failed)
     : undefined
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim()
-  const lineStartUrl = baseUrl
-    ? `${baseUrl}/api/auth/line/start`
-    : "/api/auth/line/start"
-
   return (
     <LoginPageContent
       initialLocale={initialLocale}
@@ -79,7 +74,7 @@ export default async function LoginPage({
       errorMessageKey={errorMessageKey}
       hasEmployee={Boolean(employee)}
       hasUser={Boolean(user)}
-      lineStartUrl={lineStartUrl}
+      lineStartUrl="/api/auth/line/start"
       showOfficerPasswordForm={showOfficerPasswordForm}
     />
   )

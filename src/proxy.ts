@@ -6,6 +6,10 @@ import { updateSession } from "@/lib/supabase/middleware"
 // logged-in user. Role-level checks (hr/admin) live in admin/layout.tsx —
 // they need a DB read, which stays out of the proxy hot path.
 function publicOrigin(request: NextRequest): string {
+  const hostname = request.nextUrl.hostname
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return request.nextUrl.origin
+  }
   const configured = process.env.NEXT_PUBLIC_BASE_URL?.trim()
   return configured || request.nextUrl.origin
 }
