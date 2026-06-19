@@ -79,15 +79,41 @@ export function AttendanceFilters({
     <div
       className={cn(
         mode === "employee"
-          ? "flex flex-wrap items-end gap-3 rounded-xl border border-border/70 bg-muted/15 px-3 py-3"
-          : "rounded-2xl border border-border/70 bg-muted/10 p-4 shadow-sm"
+          ? "flex flex-wrap items-end gap-3 rounded-2xl border border-border/70 bg-muted/15 px-3 py-3"
+          : "overflow-hidden rounded-[1.75rem] border border-border/70 bg-gradient-to-br from-background via-background to-muted/15 shadow-sm"
       )}
     >
+      {mode === "full" ? (
+        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border/60 px-4 py-4">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-foreground">History command bar</p>
+            <p className="text-xs text-muted-foreground">
+              กรองช่วงเวลา พนักงาน และหน่วยงานก่อนลงดู ledger ย้อนหลัง
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="rounded-full border border-border/70 bg-background px-3 py-1.5 font-medium text-muted-foreground">
+              ช่วงวันที่ {values.from} ถึง {values.to}
+            </span>
+            {values.employee ? (
+              <span className="rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 font-medium text-brand-red">
+                ค้นหา {values.employee}
+              </span>
+            ) : null}
+            {values.branch_id ? (
+              <span className="rounded-full border border-border/70 bg-background px-3 py-1.5 font-medium text-muted-foreground">
+                สาขาถูกกรองแล้ว
+              </span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
       <div
         className={
           mode === "employee"
             ? "contents"
-            : "grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+            : "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         }
       >
         <label
@@ -160,7 +186,7 @@ export function AttendanceFilters({
                 className={inputClassName}
                 value={values.employee}
                 onChange={(e) => update("employee", e.target.value)}
-                placeholder="พิมพ์ชื่หรือรหัสพนักงาน"
+                placeholder="พิมพ์ชื่อหรือรหัสพนักงาน"
               />
               <datalist id="attendance-employee-options">
                 {employees.map((employee) => (
@@ -176,7 +202,7 @@ export function AttendanceFilters({
         ) : null}
       </div>
       {mode === "full" ? (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-1">
           <button
             type="button"
             className="rounded-full border border-border/80 bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-brand-red/30 hover:bg-brand-red/5 hover:text-foreground"
