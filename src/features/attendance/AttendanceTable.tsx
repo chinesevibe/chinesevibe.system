@@ -15,6 +15,7 @@ import {
   AttendanceLocationReviewActions,
 } from "@/features/attendance/AttendanceHrActions"
 import type { AttendanceRow } from "@/features/attendance/types"
+import { appendReturnTo } from "@/lib/navigation/return-to"
 
 const STATUS_VARIANT: Record<
   AttendanceRow["status"],
@@ -52,11 +53,13 @@ export function AttendanceTable({
   rows,
   canManage = false,
   employeeView = false,
+  returnTo,
 }: {
   rows: AttendanceRow[]
   canManage?: boolean
   /** Hide employee/dept columns on single-employee pages */
   employeeView?: boolean
+  returnTo?: string | null
 }) {
   if (rows.length === 0) {
     return (
@@ -132,7 +135,7 @@ export function AttendanceTable({
                   <div className="space-y-1">
                     <p className="font-semibold text-foreground">
                       <Link
-                        href={row.employeeHref}
+                        href={appendReturnTo(row.employeeHref, returnTo)}
                         className="transition hover:text-brand-red hover:underline hover:underline-offset-4"
                       >
                         {employeeLabel(row)}

@@ -28,6 +28,13 @@ export default async function AdminAttendancePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const rawParams = await searchParams
+  const currentParams = new URLSearchParams()
+  for (const [key, value] of Object.entries(rawParams)) {
+    if (typeof value === "string" && value) currentParams.set(key, value)
+  }
+  const currentPath = currentParams.toString()
+    ? `/admin/attendance?${currentParams.toString()}`
+    : "/admin/attendance"
   const view = typeof rawParams.view === "string" && rawParams.view === "history" ? "history" : "today"
   const params = normalizeAttendanceParams(rawParams)
   const todayParams = {
@@ -75,7 +82,7 @@ export default async function AdminAttendancePage({
               values={todayParams}
             />
           </Suspense>
-          <AttendanceTodayRoster roster={roster} />
+          <AttendanceTodayRoster roster={roster} returnTo={currentPath} />
         </div>
       </AdminPageShell>
     )
@@ -126,7 +133,7 @@ export default async function AdminAttendancePage({
           />
         </Suspense>
         <AttendanceSummaryCard summary={summary} />
-        <AttendanceTable rows={rows} canManage={canManage} />
+        <AttendanceTable rows={rows} canManage={canManage} returnTo={currentPath} />
         <Suspense fallback={null}>
           <AttendancePagination page={params.page} total={total} />
         </Suspense>

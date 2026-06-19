@@ -24,10 +24,18 @@ export default async function AdminEmployeesPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const rawSearchParams = await searchParams
   const [employee, params] = await Promise.all([
     getCurrentEmployee(),
-    normalizeParams(await searchParams),
+    normalizeParams(rawSearchParams),
   ])
+  const currentParams = new URLSearchParams()
+  for (const [key, value] of Object.entries(rawSearchParams)) {
+    if (typeof value === "string" && value) currentParams.set(key, value)
+  }
+  const currentPath = currentParams.toString()
+    ? `/admin/employees?${currentParams.toString()}`
+    : "/admin/employees"
   const readOnly = employee ? isCeo(employee.role) && !isDev(employee.role) : false
   const [{ employees, total }, departments, branches, onboardingPending] =
     await Promise.all([
@@ -74,7 +82,7 @@ export default async function AdminEmployeesPage({
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
           <EmployeeFilters departments={departments} branches={branches} />
           <div className="min-h-0 flex-1 overflow-hidden">
-            <EmployeeTable employees={employees} scrollable />
+            <EmployeeTable employees={employees} scrollable returnTo={currentPath} />
           </div>
           <EmployeePagination
             page={params.page}

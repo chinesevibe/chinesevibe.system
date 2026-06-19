@@ -42,10 +42,12 @@ export function EmployeeProfileView({
   profile,
   actions,
   canViewSalary = false,
+  attendanceHref,
 }: {
   profile: EmployeeProfile
   actions?: React.ReactNode
   canViewSalary?: boolean
+  attendanceHref: string
 }) {
   const employeeCode =
     profile.employee_code?.trim() || profile.id.slice(0, 8).toUpperCase()
@@ -103,7 +105,7 @@ export function EmployeeProfileView({
                 Download QR
               </Link>
               <Link
-                href={`/admin/employees/${profile.id}/attendance`}
+                href={attendanceHref}
                 className={profileActionLinkClass}
               >
                 Attendance

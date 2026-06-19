@@ -8,6 +8,7 @@ import { EmployeeDangerZone } from "@/features/employees/profile/EmployeeDangerZ
 import { EmployeeProfileForm } from "@/features/employees/profile/EmployeeProfileForm"
 import { EmployeeProfileView } from "@/features/employees/profile/EmployeeProfileView"
 import { LifecyclePanel } from "@/features/employees/profile/LifecyclePanel"
+import { OfficerPortalPasswordPanel } from "@/features/employees/profile/OfficerPortalPasswordPanel"
 import { PendingRegistrationApproval } from "@/features/employees/profile/PendingRegistrationApproval"
 import type { EmployeeProfile } from "@/features/employees/profile/data"
 
@@ -34,6 +35,7 @@ export function EmployeeProfilePageClient({
   workShifts,
   readOnly = false,
   canViewSalary = false,
+  attendanceHref,
 }: {
   profile: EmployeeProfile
   notes: ComplianceNote[]
@@ -43,6 +45,7 @@ export function EmployeeProfilePageClient({
   workShifts: WorkShiftSummary[]
   readOnly?: boolean
   canViewSalary?: boolean
+  attendanceHref: string
 }) {
   const isPendingRegistration =
     profile.status === "inactive" && profile.role === "employee"
@@ -86,6 +89,7 @@ export function EmployeeProfilePageClient({
       <EmployeeProfileView
         profile={profile}
         canViewSalary={canViewSalary}
+        attendanceHref={attendanceHref}
         actions={
           readOnly ? null : (
             <Button
@@ -105,6 +109,12 @@ export function EmployeeProfilePageClient({
         <h2 className="mb-3 text-sm font-semibold">วงจรพนักงาน</h2>
         <LifecyclePanel profile={profile} notes={notes} />
       </section>
+      {!readOnly ? (
+        <OfficerPortalPasswordPanel
+          employeeId={profile.id}
+          department={profile.department}
+        />
+      ) : null}
       {!readOnly ? <EmployeeDangerZone profile={profile} /> : null}
     </div>
   )

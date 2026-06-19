@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { KpiCard } from "@/components/brand/KpiCard"
 import type { DailyRoster, DailyRosterEmployeeStatus } from "@/lib/attendance/daily-roster"
+import { appendReturnTo } from "@/lib/navigation/return-to"
 import { cn } from "@/lib/utils"
 
 function badgeVariant(status: DailyRosterEmployeeStatus) {
@@ -54,14 +55,16 @@ function buildRosterItems(
 function EmployeeRosterCard({
   employee,
   contextLabel,
+  returnTo,
 }: {
   employee: RosterEmployee
   contextLabel?: string
+  returnTo?: string | null
 }) {
   return (
     <Link
       key={employee.id}
-      href={employee.employeeHref}
+      href={appendReturnTo(employee.employeeHref, returnTo)}
       className="block w-full rounded-xl border border-border/70 bg-background px-3 py-2.5 transition hover:border-brand-red/30 hover:bg-brand-red/5"
     >
       <div className="flex items-start justify-between gap-2">
@@ -100,10 +103,12 @@ function RosterSection({
   title,
   emptyText,
   items,
+  returnTo,
 }: {
   title: string
   emptyText: string
   items: RosterListItem[]
+  returnTo?: string | null
 }) {
   return (
     <Card>
@@ -119,6 +124,7 @@ function RosterSection({
               key={`${employee.id}-${contextLabel ?? "none"}`}
               employee={employee}
               contextLabel={contextLabel}
+              returnTo={returnTo}
             />
           ))
         )}
@@ -127,7 +133,13 @@ function RosterSection({
   )
 }
 
-export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
+export function AttendanceTodayRoster({
+  roster,
+  returnTo,
+}: {
+  roster: DailyRoster
+  returnTo?: string | null
+}) {
   const leaveEmployees = buildRosterItems(
     roster.groups,
     (employee) => employee.status === "on_leave"
@@ -247,7 +259,11 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                       ) : (
                         <div className="grid gap-3 md:grid-cols-2">
                           {activeEmployees.map((employee) => (
-                            <EmployeeRosterCard key={employee.id} employee={employee} />
+                            <EmployeeRosterCard
+                              key={employee.id}
+                              employee={employee}
+                              returnTo={returnTo}
+                            />
                           ))}
                         </div>
                       )}
@@ -262,7 +278,11 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                           </div>
                           <div className="grid gap-3 md:grid-cols-2">
                             {completedEmployees.map((employee) => (
-                              <EmployeeRosterCard key={employee.id} employee={employee} />
+                              <EmployeeRosterCard
+                                key={employee.id}
+                                employee={employee}
+                                returnTo={returnTo}
+                              />
                             ))}
                           </div>
                         </div>
@@ -277,8 +297,18 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <RosterSection title="ลางาน" emptyText="ไม่มีพนักงานลางาน" items={leaveEmployees} />
-        <RosterSection title="ขาดงาน" emptyText="ไม่มีพนักงานขาดงาน" items={absentEmployees} />
+        <RosterSection
+          title="ลางาน"
+          emptyText="ไม่มีพนักงานลางาน"
+          items={leaveEmployees}
+          returnTo={returnTo}
+        />
+        <RosterSection
+          title="ขาดงาน"
+          emptyText="ไม่มีพนักงานขาดงาน"
+          items={absentEmployees}
+          returnTo={returnTo}
+        />
         <Card>
           <CardHeader>
             <CardTitle className="text-base">รายการอื่นๆ</CardTitle>
@@ -296,6 +326,7 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                         key={`${employee.id}-${contextLabel ?? "pending"}`}
                         employee={employee}
                         contextLabel={contextLabel}
+                        returnTo={returnTo}
                       />
                     ))}
                   </div>
@@ -308,6 +339,7 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                         key={`${employee.id}-${contextLabel ?? "upcoming"}`}
                         employee={employee}
                         contextLabel={contextLabel}
+                        returnTo={returnTo}
                       />
                     ))}
                   </div>
@@ -320,6 +352,7 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                         key={`${employee.id}-${contextLabel ?? "off"}`}
                         employee={employee}
                         contextLabel={contextLabel}
+                        returnTo={returnTo}
                       />
                     ))}
                   </div>
@@ -332,6 +365,7 @@ export function AttendanceTodayRoster({ roster }: { roster: DailyRoster }) {
                         key={`${employee.id}-${contextLabel ?? "unassigned"}`}
                         employee={employee}
                         contextLabel={contextLabel}
+                        returnTo={returnTo}
                       />
                     ))}
                   </div>

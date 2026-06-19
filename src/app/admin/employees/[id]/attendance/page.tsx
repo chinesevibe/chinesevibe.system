@@ -19,6 +19,7 @@ import {
 } from "@/features/attendance/data"
 import { getEmployeeProfile } from "@/features/employees/profile/data"
 import { canManageHr } from "@/lib/auth/roles"
+import { sanitizeReturnTo } from "@/lib/navigation/return-to"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
 function currentMonth(): string {
@@ -48,6 +49,9 @@ export default async function EmployeeAttendancePage({
       : currentMonth()
   const highlightDate =
     typeof rawParams.date === "string" ? rawParams.date : null
+  const returnTo = sanitizeReturnTo(
+    typeof rawParams.returnTo === "string" ? rawParams.returnTo : null
+  )
 
   const listParams = normalizeAttendanceParams({
     ...rawParams,
@@ -67,15 +71,29 @@ export default async function EmployeeAttendancePage({
   const employeeCode =
     profile.employee_code?.trim() || profile.id.slice(0, 8).toUpperCase()
   const basePath = `/admin/employees/${profile.id}/attendance`
+  const backHref = returnTo ?? `/admin/employees/${profile.id}`
+  const backLabel =
+    returnTo && !returnTo.startsWith(`/admin/employees/${profile.id}`)
+      ? "← กลับหน้าก่อนหน้า"
+      : `← กลับโปรไฟล์ ${profile.name}`
+  const monthLinkQuery: Record<string, string> = {}
+  if (returnTo) monthLinkQuery.returnTo = returnTo
+  if (listParams.from) monthLinkQuery.from = listParams.from
+  if (listParams.to) monthLinkQuery.to = listParams.to
+  if (listParams.page > 1) monthLinkQuery.page = String(listParams.page)
+  if (listParams.branch_id) monthLinkQuery.branch_id = listParams.branch_id
+  if (listParams.dept) monthLinkQuery.dept = listParams.dept
+
+  const dayLinkQuery: Record<string, string> = {}
+  if (returnTo) dayLinkQuery.returnTo = returnTo
+  if (listParams.branch_id) dayLinkQuery.branch_id = listParams.branch_id
+  if (listParams.dept) dayLinkQuery.dept = listParams.dept
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col gap-2 overflow-hidden">
       <p className="shrink-0 text-sm">
-        <Link
-          href={`/admin/employees/${profile.id}`}
-          className="text-brand-red hover:underline"
-        >
-          ← กลับโปรไฟล์ {profile.name}
+        <Link href={backHref} className="text-brand-red hover:underline">
+          {backLabel}
         </Link>
       </p>
       <AdminPageShell
@@ -101,6 +119,9 @@ export default async function EmployeeAttendancePage({
               days={calendar.days}
               basePath={basePath}
               selectedDate={highlightDate}
+              monthLinkQuery={monthLinkQuery}
+              dayLinkQuery={dayLinkQuery}
+              linkDays
               compact
             />
           </div>
@@ -126,6 +147,7 @@ export default async function EmployeeAttendancePage({
                 rows={rows}
                 canManage={canManage}
                 employeeView
+                returnTo={returnTo}
               />
             </div>
             <Suspense fallback={null}>

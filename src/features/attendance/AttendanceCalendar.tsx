@@ -119,7 +119,28 @@ function shiftMonth(month: string, delta: number): string {
 }
 
 function buildMonthHref(basePath: string, month: string, extra?: Record<string, string>) {
-  const params = new URLSearchParams({ month, ...extra })
+  const params = new URLSearchParams({ month })
+  for (const [key, value] of Object.entries(extra ?? {})) {
+    if (!value) continue
+    params.set(key, value)
+  }
+  return `${basePath}?${params.toString()}`
+}
+
+function buildDayHref(basePath: string, day: AttendanceDayCell, extra?: Record<string, string>) {
+  const params = new URLSearchParams({
+    month: day.date.slice(0, 7),
+    date: day.date,
+    from: day.date,
+    to: day.date,
+    page: "1",
+  })
+
+  for (const [key, value] of Object.entries(extra ?? {})) {
+    if (!value) continue
+    params.set(key, value)
+  }
+
   return `${basePath}?${params.toString()}`
 }
 
@@ -271,6 +292,9 @@ export function AttendanceCalendar({
   onDayClick,
   showLegend = true,
   compact = false,
+  monthLinkQuery,
+  dayLinkQuery,
+  linkDays = false,
 }: {
   month: string
   days: AttendanceDayCell[]
@@ -280,6 +304,9 @@ export function AttendanceCalendar({
   showLegend?: boolean
   /** Denser grid for side-by-side layouts */
   compact?: boolean
+  monthLinkQuery?: Record<string, string>
+  dayLinkQuery?: Record<string, string>
+  linkDays?: boolean
 }) {
   const grid = buildCalendarGrid(month)
   const byDate = useMemo(() => new Map(days.map((d) => [d.date, d])), [days])
@@ -321,20 +348,20 @@ export function AttendanceCalendar({
 
         <div className="flex items-center gap-1 self-start rounded-lg border border-border/80 bg-muted/30 p-0.5 sm:self-auto">
           <Link
-            href={buildMonthHref(basePath, shiftMonth(month, -1))}
+            href={buildMonthHref(basePath, shiftMonth(month, -1), monthLinkQuery)}
             className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-background hover:text-foreground"
             aria-label="เดือนก่อน"
           >
             <ChevronLeft className="size-4" />
           </Link>
           <Link
-            href={buildMonthHref(basePath, month)}
+            href={buildMonthHref(basePath, ictToday().slice(0, 7), monthLinkQuery)}
             className="hidden min-w-[4.5rem] px-2 text-center text-xs font-medium text-foreground sm:block"
           >
             เดือนนี้
           </Link>
           <Link
-            href={buildMonthHref(basePath, shiftMonth(month, 1))}
+            href={buildMonthHref(basePath, shiftMonth(month, 1), monthLinkQuery)}
             className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-background hover:text-foreground"
             aria-label="เดือนถัดไป"
           >
@@ -427,6 +454,7 @@ export function AttendanceCalendar({
           const style = STATUS[status]
           const isToday = cell.date === today
           const clickable = Boolean(day && onDayClick && day.retroEligible)
+          const linkable = Boolean(day && linkDays && status !== "future")
           const isSelected = selectedDate === cell.date
           const colIndex = i % 7
           const isWeekend = colIndex === 0 || colIndex === 6
@@ -454,9 +482,21 @@ export function AttendanceCalendar({
             isWeekend && status === "future" && "bg-muted/10",
             isToday && "ring-2 ring-brand-red/30 ring-offset-1",
             isSelected && "ring-2 ring-brand-red/60 ring-offset-1",
-            clickable && "cursor-pointer hover:shadow-sm active:scale-[0.98]",
-            !clickable && onDayClick && "cursor-default"
+            (clickable || linkable) && "cursor-pointer hover:shadow-sm active:scale-[0.98]",
+            !clickable && !linkable && onDayClick && "cursor-default"
           )
+
+          if (linkable && day) {
+            return (
+              <Link
+                key={i}
+                href={buildDayHref(basePath, day, dayLinkQuery)}
+                className={cellClass}
+              >
+                {inner}
+              </Link>
+            )
+          }
 
           if (clickable && day) {
             return (
