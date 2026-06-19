@@ -8,6 +8,8 @@ export type Employee = {
   name: string
   position: string | null
   department: string | null
+  branch_id: string | null
+  work_shift_id: string | null
   role: "employee" | "hr" | "inventory" | "branch_manager" | "ceo" | "dev"
   status: "active" | "inactive"
   avatar_path: string | null
@@ -41,7 +43,7 @@ export async function getCurrentEmployee(): Promise<Employee | null> {
   const { data } = await supabase
     .from("hr_employees")
     .select(
-      "id, line_user_id, name, position, department, role, status, avatar_path, preferred_locale"
+      "id, line_user_id, name, position, department, branch_id, work_shift_id, role, status, avatar_path, preferred_locale"
     )
     .eq("line_user_id", lineUserId)
     .maybeSingle()
@@ -55,6 +57,8 @@ export async function getCurrentEmployee(): Promise<Employee | null> {
     name: data.name as string,
     position: (data.position as string | null) ?? null,
     department: (data.department as string | null) ?? null,
+    branch_id: (data.branch_id as string | null) ?? null,
+    work_shift_id: (data.work_shift_id as string | null) ?? null,
     role: data.role as Employee["role"],
     status: data.status as Employee["status"],
     avatar_path,
