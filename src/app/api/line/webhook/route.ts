@@ -2,6 +2,7 @@ import type { webhook } from "@line/bot-sdk"
 
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { handleEvents } from "@/lib/line/handlers"
+import { logLineWebhookEvents } from "@/lib/line/webhook-event-log"
 import { verifyLineSignature } from "@/lib/line/verify-signature"
 
 const HR_GROUP_CONFIG_KEY = "hr_line_group_id"
@@ -28,7 +29,11 @@ export async function POST(request: Request) {
   }
 
   const body = JSON.parse(rawBody) as webhook.CallbackRequest
-  for (const event of body.events ?? []) {
+  const events = body.events ?? []
+
+  await logLineWebhookEvents(events)
+
+  for (const event of events) {
     const groupId =
       "source" in event && event.source?.type === "group"
         ? event.source.groupId
@@ -37,7 +42,7 @@ export async function POST(request: Request) {
       await captureGroupId(groupId)
     }
   }
-  await handleEvents(body.events ?? [])
+  await handleEvents(events)
 
   return Response.json({ ok: true })
 }
