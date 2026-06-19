@@ -51,6 +51,7 @@ export async function createOrRefreshRun(
 
   const taxEnabled = config.tax_enabled
   const taxRate = config.tax_rate
+  const ssoEnabled = config.sso_enabled
 
   const skipped: string[] = []
   let totalGross = 0
@@ -97,7 +98,7 @@ export async function createOrRefreshRun(
       continue
     }
 
-    const calc = calculatePayslip(summary, config, { taxEnabled, taxRate })
+    const calc = calculatePayslip(summary, config, { taxEnabled, taxRate, ssoEnabled })
     if (!calc) {
       skipped.push(`${summary.employee_name}: ไม่สามารถคำนวณได้`)
       continue

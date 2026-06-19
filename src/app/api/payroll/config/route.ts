@@ -66,6 +66,17 @@ export async function PATCH(request: NextRequest) {
       if ((key as PayrollConfigKey) === "payroll_cutoff_day" && (n < 1 || n > 31)) {
         return NextResponse.json({ error: "payroll_cutoff_day must be 1-31" }, { status: 400 })
       }
+      continue
+    }
+
+    if (
+      (key as PayrollConfigKey) === "sso_enabled" ||
+      (key as PayrollConfigKey) === "tax_enabled" ||
+      (key as PayrollConfigKey) === "leave_sick_deduct_enabled"
+    ) {
+      if (!["true", "false", "1", "0"].includes(trimmed.toLowerCase())) {
+        return NextResponse.json({ error: `invalid boolean for ${key}` }, { status: 400 })
+      }
     }
 
     const { error } = await supabase

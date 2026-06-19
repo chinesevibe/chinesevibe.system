@@ -14,6 +14,7 @@ type FormState = {
   ot_multiplier: string
   sso_cap: string
   sso_rate: string
+  sso_enabled: string
   work_entry_regular: string
   work_entry_ot: string
   work_entry_sick: string
@@ -32,6 +33,7 @@ function toFormState(config: PayrollConfig): FormState {
     ot_multiplier: String(config.ot_multiplier),
     sso_cap: String(config.sso_cap),
     sso_rate: String(config.sso_rate),
+    sso_enabled: config.sso_enabled ? "true" : "false",
     work_entry_regular: config.work_entry_regular,
     work_entry_ot: config.work_entry_ot,
     work_entry_sick: config.work_entry_sick,
@@ -140,7 +142,7 @@ export function PayrollSettingsPanel({ initialConfig }: { initialConfig: Payroll
       <form onSubmit={onSave}>
         <WidgetCard title="ค่าที่ใช้คำนวณ (แก้ไขได้)">
           <p className="mb-4 text-sm text-muted-foreground">
-            ค่าเหล่านี้ใช้ตอนคำนวณเงินเดือนรอบถัดไป โดยตอนนี้ระบบคิดรายได้จริงและไม่หัก SSO/Tax
+            ค่าเหล่านี้ใช้ตอนคำนวณเงินเดือนรอบถัดไป — SSO และ Tax คุมด้วยปุ่มเปิด/ปิดด้านล่าง
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm">
@@ -211,56 +213,100 @@ export function PayrollSettingsPanel({ initialConfig }: { initialConfig: Payroll
             </label>
           </div>
           <div className="mt-6 rounded-xl border border-dashed border-muted-foreground/40 p-4">
-            <h4 className="text-sm font-semibold">ส่วนหักเงิน (เก็บค่าไว้เฉยๆ ยังไม่ใช้คำนวณ)</h4>
+            <h4 className="text-sm font-semibold">เปิดใช้งานการหักเงิน</h4>
             <p className="mt-1 text-xs text-muted-foreground">
-              ระบบปัจจุบันยังไม่หักภาษีและประกันสังคม แต่เก็บค่าพวกนี้ไว้เผื่อเปิดใช้งานภายหลัง
+              เปิดปุ่มเพื่อเริ่มหัก SSO/ภาษีในการคำนวณ และซ่อนการตั้งค่าเมื่อปิด
             </p>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              <label className="block text-sm">
-                <span className="text-muted-foreground">SSO cap (บาท)</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  className={inputClass}
-                  value={form.sso_cap}
-                  onChange={(e) => setField("sso_cap", e.target.value)}
-                />
-              </label>
-              <label className="block text-sm">
-                <span className="text-muted-foreground">SSO rate</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="1"
-                  step="0.001"
-                  className={inputClass}
-                  value={form.sso_rate}
-                  onChange={(e) => setField("sso_rate", e.target.value)}
-                />
-              </label>
-              <label className="block text-sm">
-                <span className="text-muted-foreground">tax_enabled</span>
-                <select
-                  className={inputClass}
-                  value={form.tax_enabled}
-                  disabled
-                  onChange={(e) => setField("tax_enabled", e.target.value)}
-                >
-                  <option value="false">false</option>
-                  <option value="true">true</option>
-                </select>
-              </label>
-              <label className="block text-sm">
-                <span className="text-muted-foreground">tax_rate</span>
-                <input
-                  type="number"
-                  className={inputClass}
-                  value={form.tax_rate}
-                  disabled
-                  onChange={(e) => setField("tax_rate", e.target.value)}
-                />
-              </label>
+            <div className="mt-3 space-y-4">
+              <div className="rounded-lg border p-3">
+                <div className="mb-3 flex items-center justify-between gap-4">
+                  <span className="text-sm">ปิด/เปิด SSO</span>
+                  <div className="inline-flex rounded-md border p-1">
+                    <button
+                      type="button"
+                      className={`rounded-md px-3 py-1 text-xs ${
+                        form.sso_enabled === "true" ? "bg-brand-red text-white" : "hover:bg-muted"
+                      }`}
+                      onClick={() => setField("sso_enabled", "true")}
+                    >
+                      เปิด
+                    </button>
+                    <button
+                      type="button"
+                      className={`rounded-md px-3 py-1 text-xs ${
+                        form.sso_enabled !== "true" ? "bg-brand-red text-white" : "hover:bg-muted"
+                      }`}
+                      onClick={() => setField("sso_enabled", "false")}
+                    >
+                      ปิด
+                    </button>
+                  </div>
+                </div>
+                <div className={`grid gap-4 sm:grid-cols-2 ${form.sso_enabled === "true" ? "block" : "hidden"}`}>
+                  <label className="block text-sm">
+                    <span className="text-muted-foreground">SSO cap (บาท)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      className={inputClass}
+                      value={form.sso_cap}
+                      onChange={(e) => setField("sso_cap", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="text-muted-foreground">SSO rate</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.001"
+                      className={inputClass}
+                      value={form.sso_rate}
+                      onChange={(e) => setField("sso_rate", e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+              <div className="rounded-lg border p-3">
+                <div className="mb-3 flex items-center justify-between gap-4">
+                  <span className="text-sm">ปิด/เปิด Tax</span>
+                  <div className="inline-flex rounded-md border p-1">
+                    <button
+                      type="button"
+                      className={`rounded-md px-3 py-1 text-xs ${
+                        form.tax_enabled === "true" ? "bg-brand-red text-white" : "hover:bg-muted"
+                      }`}
+                      onClick={() => setField("tax_enabled", "true")}
+                    >
+                      เปิด
+                    </button>
+                    <button
+                      type="button"
+                      className={`rounded-md px-3 py-1 text-xs ${
+                        form.tax_enabled !== "true" ? "bg-brand-red text-white" : "hover:bg-muted"
+                      }`}
+                      onClick={() => setField("tax_enabled", "false")}
+                    >
+                      ปิด
+                    </button>
+                  </div>
+                </div>
+                <div className={`grid gap-4 sm:grid-cols-2 ${form.tax_enabled === "true" ? "block" : "hidden"}`}>
+                  <label className="block text-sm">
+                    <span className="text-muted-foreground">tax_rate</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.001"
+                      className={inputClass}
+                      value={form.tax_rate}
+                      onChange={(e) => setField("tax_rate", e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">

@@ -7,6 +7,7 @@ export type PayrollConfig = {
   ot_multiplier: number
   sso_cap: number
   sso_rate: number
+  sso_enabled: boolean
   work_entry_regular: string
   work_entry_ot: string
   work_entry_sick: string
@@ -24,6 +25,7 @@ export const PAYROLL_CONFIG_KEYS = [
   "ot_multiplier",
   "sso_cap",
   "sso_rate",
+  "sso_enabled",
   "work_entry_regular",
   "work_entry_ot",
   "work_entry_sick",
@@ -43,6 +45,7 @@ const DEFAULTS: Record<PayrollConfigKey, string> = {
   ot_multiplier: "1.5",
   sso_cap: "750",
   sso_rate: "0.05",
+  sso_enabled: "false",
   work_entry_regular: "WORK100",
   work_entry_ot: "OT",
   work_entry_sick: "LEAVE110",
@@ -94,6 +97,7 @@ function parseConfig(map: Map<string, string>): PayrollConfig {
     ot_multiplier: num("ot_multiplier", 1.5),
     sso_cap: num("sso_cap", 750),
     sso_rate: num("sso_rate", 0.05),
+    sso_enabled: bool("sso_enabled", false),
     work_entry_regular: str("work_entry_regular"),
     work_entry_ot: str("work_entry_ot"),
     work_entry_sick: str("work_entry_sick"),

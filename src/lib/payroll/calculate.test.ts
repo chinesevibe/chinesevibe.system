@@ -10,6 +10,7 @@ const baseConfig: PayrollConfig = {
   ot_multiplier: 1.5,
   sso_cap: 750,
   sso_rate: 0.05,
+  sso_enabled: false,
   work_entry_regular: "WORK100",
   work_entry_ot: "OT",
   work_entry_sick: "LEAVE110",
@@ -63,7 +64,7 @@ describe("calculatePayslip", () => {
     assert.equal(result.tax_deduction, 0)
   })
 
-  it("ignores tax inputs while tax is disabled in runtime", () => {
+  it("applies deductions when feature flags are enabled", () => {
     const summary: PayrollSummary = {
       employee_id: "3",
       employee_name: "Taxed",
@@ -76,8 +77,9 @@ describe("calculatePayslip", () => {
       sick_leave_hours: 0,
       annual_leave_hours: 0,
     }
-    const result = calculatePayslip(summary, baseConfig, { taxEnabled: true, taxRate: 0.1 })!
-    assert.equal(result.tax_deduction, 0)
-    assert.equal(result.net_amount, 10000)
+    const result = calculatePayslip(summary, baseConfig, { taxEnabled: true, taxRate: 0.1, ssoEnabled: true })!
+    assert.equal(result.sso_deduction, 500)
+    assert.equal(result.tax_deduction, 1000)
+    assert.equal(result.net_amount, 8500)
   })
 })
