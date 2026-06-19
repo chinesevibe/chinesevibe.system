@@ -17,7 +17,7 @@ export function AttendanceFilters({
 }: {
   departments: string[]
   branches?: BranchFilterOption[]
-  employees: Array<{ id: string; name: string }>
+  employees: Array<{ id: string; name: string; employeeCode: string }>
   values: {
     from: string
     to: string
@@ -153,20 +153,24 @@ export function AttendanceFilters({
                 ))}
               </select>
             </label>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium text-muted-foreground">พนักงาน</span>
-              <select
+          <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-muted-foreground">พนักงาน / รหัสพนักงาน</span>
+              <input
+                list="attendance-employee-options"
                 className={inputClassName}
                 value={values.employee}
                 onChange={(e) => update("employee", e.target.value)}
-              >
-                <option value="">ทั้งหมด</option>
-                {employees.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
+                placeholder="พิมพ์ชื่หรือรหัสพนักงาน"
+              />
+              <datalist id="attendance-employee-options">
+                {employees.map((employee) => (
+                  <option
+                    key={employee.id}
+                    value={employee.employeeCode}
+                    label={`${employee.name} (${employee.employeeCode})`}
+                  />
                 ))}
-              </select>
+              </datalist>
             </label>
           </>
         ) : null}

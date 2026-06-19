@@ -21,6 +21,12 @@ import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
 export { ATTENDANCE_PAGE_SIZE } from "@/features/attendance/types"
 export type { AttendanceRow, AttendanceSummary } from "@/features/attendance/types"
 
+export type AttendanceEmployeeOption = {
+  id: string
+  name: string
+  employeeCode: string
+}
+
 export type AttendanceListParams = {
   from?: string
   to?: string
@@ -305,11 +311,11 @@ export async function getAttendanceDepartments(): Promise<string[]> {
 
 export async function getAttendanceEmployees(
   branchId = ""
-): Promise<Array<{ id: string; name: string }>> {
+): Promise<AttendanceEmployeeOption[]> {
   const supabase = await createClient()
   let query = supabase
     .from("hr_employees")
-    .select("id, name")
+    .select("id, name, employee_code")
     .eq("status", "active")
     .order("name")
   if (branchId === "__none__") {
@@ -319,7 +325,11 @@ export async function getAttendanceEmployees(
   }
   const { data, error } = await query
   if (error) throw error
-  return (data ?? []) as Array<{ id: string; name: string }>
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    name: row.name as string,
+    employeeCode: formatEmployeeCode(row.id as string, row.employee_code as string | null | undefined),
+  }))
 }
 
 export async function getAttendanceRecords(params: Required<AttendanceListParams>) {
@@ -332,10 +342,18 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   const attendanceDateFilter = buildAttendanceDateFilter(params, rangeStart, rangeEnd)
 
   let employeeIds: string[] | null = null
-  if (params.dept || params.employee || params.branch_id) {
+  const employeeSearch = params.employee.trim()
+  if (params.dept || employeeSearch || params.branch_id) {
     let empQuery = supabase.from("hr_employees").select("id")
     if (params.dept) empQuery = empQuery.eq("department", params.dept)
-    if (params.employee) empQuery = empQuery.eq("id", params.employee)
+    if (employeeSearch) {
+      const like = `%${employeeSearch.replace(/[%_]/g, "\\$&")}%`
+      const terms = [`name.ilike.${like}`, `employee_code.ilike.${like}`]
+      if (/^[0-9a-f-]{36}$/i.test(employeeSearch)) {
+        terms.push(`id.eq.${employeeSearch}`)
+      }
+      empQuery = empQuery.or(terms.join(","))
+    }
     if (params.branch_id === "__none__") {
       empQuery = empQuery.is("branch_id", null)
     } else if (params.branch_id) {
