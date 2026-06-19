@@ -68,7 +68,9 @@ export async function generatePayslipPdf(input: PayslipPdfInput): Promise<Uint8A
 
   y -= 8
   draw(`Tong Gross: ${formatMoney(input.grossAmount)}`, 11, true)
-  draw(`SSO: -${formatMoney(input.ssoDeduction)}`)
+  if (input.ssoDeduction > 0) {
+    draw(`SSO: -${formatMoney(input.ssoDeduction)}`)
+  }
   if (input.taxDeduction > 0) {
     draw(`Tax: -${formatMoney(input.taxDeduction)}`)
   }

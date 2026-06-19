@@ -65,7 +65,17 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const run = await getRunByPeriod(period)
+    const cutoffDayParam = req.nextUrl.searchParams.get("cutoffDay")
+    const cutoffDay =
+      cutoffDayParam && cutoffDayParam.trim() !== "" ? Number(cutoffDayParam) : undefined
+    if (
+      cutoffDayParam &&
+      (!Number.isFinite(cutoffDay) || Number(cutoffDay) < 1 || Number(cutoffDay) > 31)
+    ) {
+      return NextResponse.json({ error: "cutoffDay must be 1-31" }, { status: 400 })
+    }
+
+    const run = await getRunByPeriod(period, cutoffDay)
     if (!run) {
       return NextResponse.json({ error: "Run not found" }, { status: 404 })
     }

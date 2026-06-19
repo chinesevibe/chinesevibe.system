@@ -38,8 +38,9 @@ describe("calculatePayslip", () => {
     }
     const result = calculatePayslip(summary, baseConfig)!
     assert.equal(result.gross_amount, 17500)
-    assert.equal(result.sso_deduction, 750)
-    assert.equal(result.net_amount, 16750)
+    assert.equal(result.sso_deduction, 0)
+    assert.equal(result.tax_deduction, 0)
+    assert.equal(result.net_amount, 17500)
   })
 
   it("calculates monthly salary with OT", () => {
@@ -62,7 +63,7 @@ describe("calculatePayslip", () => {
     assert.equal(result.tax_deduction, 0)
   })
 
-  it("applies tax when enabled", () => {
+  it("ignores tax inputs while tax is disabled in runtime", () => {
     const summary: PayrollSummary = {
       employee_id: "3",
       employee_name: "Taxed",
@@ -76,7 +77,7 @@ describe("calculatePayslip", () => {
       annual_leave_hours: 0,
     }
     const result = calculatePayslip(summary, baseConfig, { taxEnabled: true, taxRate: 0.1 })!
-    assert.equal(result.tax_deduction, 1000)
-    assert.equal(result.net_amount, 8500)
+    assert.equal(result.tax_deduction, 0)
+    assert.equal(result.net_amount, 10000)
   })
 })

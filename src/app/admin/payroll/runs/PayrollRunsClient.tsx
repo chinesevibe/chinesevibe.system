@@ -76,7 +76,7 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/payroll/runs?period=${period}`)
+      const res = await fetch(`/api/payroll/runs?period=${period}&cutoffDay=${cutoffDay}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? "ไม่พบรอบ")
       setRun(data.run)
@@ -135,7 +135,7 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
                 <th className="px-3 py-2">ประเภท</th>
                 <th className="px-3 py-2">ชม.</th>
                 <th className="px-3 py-2">Gross</th>
-                <th className="px-3 py-2">SSO</th>
+                <th className="px-3 py-2">หักเพิ่ม</th>
                 <th className="px-3 py-2">Net</th>
                 <th className="px-3 py-2">วันจ่าย</th>
               </tr>
@@ -149,7 +149,9 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
                     {(p.regular_hours + p.ot_hours).toFixed(1)}
                   </td>
                   <td className="px-3 py-2">{formatMoney(p.gross_amount)}</td>
-                  <td className="px-3 py-2">{formatMoney(p.sso_deduction)}</td>
+                  <td className="px-3 py-2">
+                    {formatMoney(p.sso_deduction + p.tax_deduction + p.other_deductions)}
+                  </td>
                   <td className="px-3 py-2 font-medium">{formatMoney(p.net_amount)}</td>
                   <td className="px-3 py-2">{p.payment_date}</td>
                 </tr>
@@ -164,10 +166,12 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
   return (
     <AdminPageShell
       title="คำนวณเงินเดือน"
-      description="กำหนดวันตัดรอบ คำนวณ SSO lock รอบ และสร้าง PDF สลิป"
+      description="กำหนดวันตัดรอบ คำนวณรายได้จริงแบบ gross = net ตอนนี้ แล้ว lock รอบเพื่อสร้าง PDF"
     >
       <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
         Batch วันจ่าย: {payDayLabel(4)} · {payDayLabel(5)} — จ่ายเดือนถัดจากรอบอ้างอิง
+        <br />
+        โหมดปัจจุบันยังไม่หักภาษีและประกันสังคม จึงใช้ยอดรายได้สุทธิจาก gross โดยตรง
       </div>
 
       <div className="mb-4 flex flex-wrap items-end gap-4 rounded-xl border p-4">

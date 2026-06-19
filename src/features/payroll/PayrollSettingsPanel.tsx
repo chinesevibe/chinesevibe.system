@@ -130,13 +130,17 @@ export function PayrollSettingsPanel({ initialConfig }: { initialConfig: Payroll
               Portal → สลิปเงินเดือน
             </Link>
           </li>
+          <li>
+            โหมด payroll ปัจจุบันใช้โครงสร้างสากลแบบ <strong>Earnings / Net Pay</strong> โดยยัง
+            <strong>ไม่หักภาษี</strong> และ <strong>ไม่หักประกันสังคม</strong>
+          </li>
         </ul>
       </WidgetCard>
 
       <form onSubmit={onSave}>
         <WidgetCard title="ค่าที่ใช้คำนวณ (แก้ไขได้)">
           <p className="mb-4 text-sm text-muted-foreground">
-            ค่าเหล่านี้ใช้ตอนคำนวณเงินเดือน — เปลี่ยนแล้วรอบถัดไปจะใช้ค่าใหม่
+            ค่าเหล่านี้ใช้ตอนคำนวณเงินเดือนรอบถัดไป โดยตอนนี้ระบบคิดรายได้จริงและไม่หัก SSO/Tax
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm">
@@ -159,29 +163,6 @@ export function PayrollSettingsPanel({ initialConfig }: { initialConfig: Payroll
                 className={inputClass}
                 value={form.ot_multiplier}
                 onChange={(e) => setField("ot_multiplier", e.target.value)}
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="text-muted-foreground">SSO cap (บาท)</span>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                className={inputClass}
-                value={form.sso_cap}
-                onChange={(e) => setField("sso_cap", e.target.value)}
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="text-muted-foreground">SSO rate</span>
-              <input
-                type="number"
-                min="0"
-                max="1"
-                step="0.001"
-                className={inputClass}
-                value={form.sso_rate}
-                onChange={(e) => setField("sso_rate", e.target.value)}
               />
             </label>
             <label className="block text-sm">
@@ -229,12 +210,35 @@ export function PayrollSettingsPanel({ initialConfig }: { initialConfig: Payroll
               />
             </label>
           </div>
-          <div className="mt-6 rounded-xl border border-dashed border-muted-foreground/40 p-4 opacity-70">
-            <h4 className="text-sm font-semibold">หักภาษี (ปิดใช้งาน — Phase 5)</h4>
+          <div className="mt-6 rounded-xl border border-dashed border-muted-foreground/40 p-4">
+            <h4 className="text-sm font-semibold">ส่วนหักเงิน (เก็บค่าไว้เฉยๆ ยังไม่ใช้คำนวณ)</h4>
             <p className="mt-1 text-xs text-muted-foreground">
-              MVP ไม่คำนวณ PIT — เก็บ config ไว้เปิดทีหลัง
+              ระบบปัจจุบันยังไม่หักภาษีและประกันสังคม แต่เก็บค่าพวกนี้ไว้เผื่อเปิดใช้งานภายหลัง
             </p>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
+              <label className="block text-sm">
+                <span className="text-muted-foreground">SSO cap (บาท)</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  className={inputClass}
+                  value={form.sso_cap}
+                  onChange={(e) => setField("sso_cap", e.target.value)}
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="text-muted-foreground">SSO rate</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.001"
+                  className={inputClass}
+                  value={form.sso_rate}
+                  onChange={(e) => setField("sso_rate", e.target.value)}
+                />
+              </label>
               <label className="block text-sm">
                 <span className="text-muted-foreground">tax_enabled</span>
                 <select

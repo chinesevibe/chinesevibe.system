@@ -86,8 +86,8 @@ export async function aggregatePayrollPeriod(
     .from("hr_leaves")
     .select("employee_id, type, start_date, end_date, leave_hours, status")
     .eq("status", "approved")
-    .gte("start_date", periodStart)
-    .lt("end_date", periodEndExclusive)
+    .lt("start_date", periodEndExclusive)
+    .gte("end_date", periodStart)
 
   if (leavesError) {
     throw new Error(`Failed to fetch leaves: ${leavesError.message}`)

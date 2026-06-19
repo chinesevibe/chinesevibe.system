@@ -20,8 +20,6 @@ export function calculatePayslip(
   const housingAllowance = summary.housing_allowance > 0 ? summary.housing_allowance : 0
   if (!salary || salary <= 0) return null
 
-  const taxEnabled = options.taxEnabled ?? false
-  const taxRate = options.taxRate ?? 0
   const lines: PayslipCalculation["lines"] = []
 
   let gross = 0
@@ -61,17 +59,10 @@ export function calculatePayslip(
     }
   }
 
-  const ssoDeduction = round2(Math.min(config.sso_cap, gross * config.sso_rate))
-  const taxDeduction = taxEnabled ? round2(gross * taxRate) : 0
+  const ssoDeduction = 0
+  const taxDeduction = 0
   const otherDeductions = 0
   const netAmount = round2(gross - ssoDeduction - taxDeduction - otherDeductions)
-
-  if (ssoDeduction > 0) {
-    lines.push({ code: "SSO", label: "ประกันสังคม", amount: -ssoDeduction, sort_order: 90 })
-  }
-  if (taxDeduction > 0) {
-    lines.push({ code: "TAX", label: "ภาษี", amount: -taxDeduction, sort_order: 91 })
-  }
 
   return {
     gross_amount: gross,
