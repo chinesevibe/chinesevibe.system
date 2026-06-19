@@ -14,6 +14,7 @@ import type { WorkShiftSummary } from "@/features/shifts/types"
 import { employeeAvatarPublicUrl } from "@/lib/employees/avatar"
 import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 import { parseOffDays } from "@/lib/employees/off-days"
+import { getAdminClient } from "@/lib/auth/admin-client"
 import { createClient } from "@/lib/supabase/server"
 
 export type { SalaryPaymentMethod } from "@/features/employees/profile/payment-method"
@@ -231,8 +232,8 @@ export async function getEmployeeProfile(
 }
 
 export async function getComplianceNotes(employeeId: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase
+  const admin = getAdminClient()
+  const { data, error } = await admin
     .from("hr_compliance_notes")
     .select(
       "id, category, note, created_at, attachment_file_path, attachment_file_name, attachment_uploaded_at"
@@ -250,7 +251,7 @@ export async function getComplianceNotes(employeeId: string) {
       let attachmentUrl: string | null = null
 
       if (attachmentPath) {
-        const { data: signed } = await supabase.storage
+        const { data: signed } = await admin.storage
           .from("hr-compliance-notes")
           .createSignedUrl(attachmentPath, 60 * 60)
         attachmentUrl = signed?.signedUrl ?? null

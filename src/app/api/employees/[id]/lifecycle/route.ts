@@ -1,13 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server"
 
 import { canManageHr } from "@/lib/auth/roles"
+import { getAdminClient } from "@/lib/auth/admin-client"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { isAllowedComplianceAttachment } from "@/lib/employees/compliance-attachment"
 import {
   deleteComplianceAttachment,
   uploadComplianceAttachment,
 } from "@/lib/employees/upload-compliance-attachment"
-import { createClient } from "@/lib/supabase/server"
 
 export async function POST(
   request: NextRequest,
@@ -49,7 +49,7 @@ export async function POST(
     }
   }
 
-  const supabase = await createClient()
+  const supabase = getAdminClient()
 
   if (body.action === "probation") {
     const outcome = body.outcome
