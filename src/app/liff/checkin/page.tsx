@@ -3,14 +3,8 @@
 import { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
+import { LiffPageShell } from "@/components/liff/LiffPageShell"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { MessageKey } from "@/lib/i18n/translate"
 
@@ -155,57 +149,77 @@ function CheckinForm() {
 
   if (!token) {
     return (
-      <CardContent className="text-sm text-muted-foreground">
-        {tx("liff.checkin.noToken")}
-      </CardContent>
+      <p className="px-4 py-6 text-sm text-gray-400">{tx("liff.checkin.noToken")}</p>
     )
   }
 
   return (
-    <CardContent className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4">
       {state.phase === "done" ? (
-        <p
-          className={`text-sm ${state.ok ? "text-foreground" : "text-destructive"}`}
+        <div
+          className={`rounded-xl border p-5 text-center ${
+            state.ok
+              ? "border-green-100 bg-green-50"
+              : "border-red-100 bg-red-50"
+          }`}
         >
-          <span className="font-semibold">{state.title}</span>
-          <br />
-          {state.detail}
-        </p>
+          <p className={`text-2xl ${state.ok ? "text-green-600" : "text-[#E80012]"}`}>
+            {state.ok ? "✓" : "✕"}
+          </p>
+          <p className={`mt-2 font-semibold ${state.ok ? "text-green-700" : "text-[#E80012]"}`}>
+            {state.title}
+          </p>
+          <p className="mt-1 text-sm text-gray-500">{state.detail}</p>
+        </div>
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">
-            {tx("liff.checkin.intro")} ระบบจะพยายามจับพิกัดความละเอียดสูงก่อนส่งเช็กอิน
-          </p>
-          <Button
+          {/* Status pill */}
+          <div className="rounded-xl border border-gray-100 bg-white p-5 text-center shadow-sm">
+            <p className="text-4xl">
+              {state.phase === "idle" ? "📍" : state.phase === "locating" ? "🔍" : "⏳"}
+            </p>
+            <p className="mt-3 text-sm text-gray-500">
+              {state.phase === "idle"
+                ? tx("liff.checkin.intro")
+                : state.phase === "locating"
+                  ? tx("liff.checkin.locating")
+                  : tx("liff.checkin.submitting")}
+            </p>
+            {state.phase === "idle" && (
+              <p className="mt-1 text-xs text-gray-400">
+                ระบบจะพยายามจับพิกัดความละเอียดสูงก่อนส่งเช็กอิน
+              </p>
+            )}
+          </div>
+
+          <button
             onClick={start}
             disabled={state.phase !== "idle"}
-            className="w-full bg-[#06C755] hover:bg-[#06C755]/80"
+            className="w-full rounded-xl bg-[#E80012] py-4 text-base font-medium text-white disabled:opacity-50 active:opacity-80"
           >
-            {state.phase === "locating"
-              ? tx("liff.checkin.locating")
-              : state.phase === "submitting"
-                ? tx("liff.checkin.submitting")
-                : tx("liff.checkin.button")}
-          </Button>
+            {state.phase === "idle"
+              ? tx("liff.checkin.button")
+              : state.phase === "locating"
+                ? `${tx("liff.checkin.locating")}...`
+                : `${tx("liff.checkin.submitting")}...`}
+          </button>
         </>
       )}
-    </CardContent>
+    </div>
   )
 }
 
 export default function CheckinLiffPage() {
   const { tx } = useLocale()
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>{tx("liff.checkin.pageTitle")}</CardTitle>
-          <CardDescription>{tx("liff.checkin.pageDesc")}</CardDescription>
-        </CardHeader>
-        <Suspense>
-          <CheckinForm />
-        </Suspense>
-      </Card>
-    </main>
+    <LiffPageShell
+      title={tx("liff.checkin.pageTitle")}
+      subtitle={tx("liff.checkin.pageDesc")}
+    >
+      <Suspense>
+        <CheckinForm />
+      </Suspense>
+      <LiffBottomNav />
+    </LiffPageShell>
   )
 }

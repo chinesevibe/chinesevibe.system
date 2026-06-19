@@ -3,13 +3,8 @@
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
+import { LiffPageShell } from "@/components/liff/LiffPageShell"
 import { AttendanceCorrectableBanner } from "@/features/attendance/AttendanceCalendar"
 import { useLocale } from "@/features/portal/LocaleProvider"
 
@@ -161,34 +156,37 @@ export function AttendanceManualClient({
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 p-4">
-      <AttendanceCorrectableBanner items={correctable} />
+    <LiffPageShell
+      title={tx("liff.attendance.pageTitle")}
+      subtitle={tx("liff.attendance.pageDesc")}
+    >
+      <div className="flex flex-col gap-4 p-4">
+        <AttendanceCorrectableBanner items={correctable} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{tx("liff.attendance.pageTitle")}</CardTitle>
-          <CardDescription>{tx("liff.attendance.pageDesc")}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            {tx("liff.attendance.retroQuota", {
-              used: String(quota.used),
-              limit: String(quota.limit),
-            })}
-          </p>
-          {deadlineLabel ? (
-            <p className="text-xs text-muted-foreground">
-              {tx("liff.attendance.retroDeadline", { deadline: deadlineLabel })}
+        {/* Quota + form card */}
+        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-400">
+              {tx("liff.attendance.retroQuota", {
+                used: String(quota.used),
+                limit: String(quota.limit),
+              })}
             </p>
-          ) : null}
+            {deadlineLabel ? (
+              <p className="text-xs text-gray-400">
+                {tx("liff.attendance.retroDeadline", { deadline: deadlineLabel })}
+              </p>
+            ) : null}
+          </div>
+
           {retroBlocked ? (
-            <p className="text-sm text-destructive">
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-[#E80012]">
               {tx("liff.attendance.retroExpired")}
             </p>
           ) : null}
 
           <label className="grid gap-1 text-sm">
-            <span className="font-medium">{tx("liff.attendance.date")}</span>
+            <span className="font-medium text-gray-700">{tx("liff.attendance.date")}</span>
             <input
               type="date"
               className={FIELD_CLASS}
@@ -196,9 +194,10 @@ export function AttendanceManualClient({
               onChange={(event) => setDate(event.target.value)}
             />
           </label>
+
           <div className="grid grid-cols-2 gap-3">
             <label className="grid gap-1 text-sm">
-              <span className="font-medium">{tx("liff.attendance.checkinTime")}</span>
+              <span className="font-medium text-gray-700">{tx("liff.attendance.checkinTime")}</span>
               <input
                 type="time"
                 className={FIELD_CLASS}
@@ -207,7 +206,7 @@ export function AttendanceManualClient({
               />
             </label>
             <label className="grid gap-1 text-sm">
-              <span className="font-medium">{tx("liff.attendance.checkoutTime")}</span>
+              <span className="font-medium text-gray-700">{tx("liff.attendance.checkoutTime")}</span>
               <input
                 type="time"
                 className={FIELD_CLASS}
@@ -217,7 +216,7 @@ export function AttendanceManualClient({
             </label>
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-2 pt-1">
             <Button
               onClick={() => submitManual("checkin")}
               disabled={busyMode !== "idle" || !canCheckin}
@@ -248,23 +247,28 @@ export function AttendanceManualClient({
           </div>
 
           {manualMsg ? (
-            <p
-              className={`text-sm ${manualMsg.ok ? "text-emerald-600" : "text-destructive"}`}
+            <div
+              className={`rounded-lg px-3 py-2 text-sm ${
+                manualMsg.ok
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-[#E80012]"
+              }`}
             >
               <span className="font-semibold">{manualMsg.title}</span>
               <br />
               {manualMsg.message}
-            </p>
+            </div>
           ) : null}
-        </CardContent>
-      </Card>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{tx("liff.attendance.autoTitle")}</CardTitle>
-          <CardDescription>{tx("liff.attendance.autoDesc")}</CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
+        {/* Auto checkin info */}
+        <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+          <p className="text-sm font-medium text-gray-900">{tx("liff.attendance.autoTitle")}</p>
+          <p className="mt-0.5 text-xs text-gray-400">{tx("liff.attendance.autoDesc")}</p>
+        </div>
+      </div>
+
+      <LiffBottomNav />
+    </LiffPageShell>
   )
 }

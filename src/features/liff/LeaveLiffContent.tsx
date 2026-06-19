@@ -1,12 +1,7 @@
 "use client"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
+import { LiffPageShell } from "@/components/liff/LiffPageShell"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import {
   LeaveBalanceCard,
@@ -24,17 +19,15 @@ export function LeaveLiffContent({
   const { tx } = useLocale()
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 p-4">
-      <LeaveBalanceCard balances={balances} />
-      <Card>
-        <CardHeader>
-          <CardTitle>{tx("leave.page.title")}</CardTitle>
-          <CardDescription>{employeeName}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LeaveForm />
-        </CardContent>
-      </Card>
-    </main>
+    <LiffPageShell
+      title={tx("leave.page.title")}
+      subtitle={employeeName}
+    >
+      <div className="flex flex-col gap-4 p-4">
+        <LeaveBalanceCard balances={balances} />
+        <LeaveForm />
+      </div>
+      <LiffBottomNav />
+    </LiffPageShell>
   )
 }

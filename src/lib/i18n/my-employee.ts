@@ -653,4 +653,27 @@ export const myEmployee: Record<string, string> = {
   "auth.register.error.departmentRequired": "ဌာန ရွေးပါ",
   "auth.register.error.positionRequired": "ရာထူး ရွေးပါ",
   "auth.register.error.submitFailed": "စာရင်းသွင်းမှု မအောင်မြင်ပါ",
+
+  // LIFF shell & navigation
+  "liff.nav.back": "← နောက်သို့",
+  "liff.nav.leaveOt": "ခွင့်/OT",
+
+  // LIFF home page
+  "liff.home.greetingMorning": "မင်္ဂလာနံနက်ခင်း 👋",
+  "liff.home.greetingAfternoon": "မင်္ဂလာနေ့လည်ခင်း 👋",
+  "liff.home.greetingEvening": "မင်္ဂလာညနေခင်း 👋",
+  "liff.home.todayShift": "ယနေ့အလှည့်",
+  "liff.home.nextDayClock": "ထွက်ချိန်: {time} (နောက်တစ်နေ့)",
+  "liff.home.checkInLabel": "ဝင်ချိန်",
+  "liff.home.checkOutLabel": "ထွက်ချိန်",
+  "liff.home.clockInBtn": "⏰ ဝင်ချိန် မှတ်သားပါ",
+  "liff.home.clockOutBtn": "🏠 ထွက်ချိန် မှတ်သားပါ",
+  "liff.home.allDoneBtn": "✓ မှတ်တမ်းတင်ပြီးပြီ",
+  "liff.home.menuSection": "ပင်မမီနူး",
+  "liff.home.historyTitle": "တောင်းဆိုမှု မှတ်တမ်း",
+  "liff.home.historyDesc": "အခြေအနေ ကြည့်ရှုပါ",
+  "liff.home.leaveDesc": "နာမကျန်း/ကိုယ်ရေး/အနားယူ",
+  "liff.home.otDesc": "အချိန်ပိုတောင်းဆိုပါ",
+  "liff.home.docDesc": "လက်မှတ်/လစာဇယား",
+  "liff.home.complaintDesc": "တိုင်ကြားချက် (လျှို့ဝှက်)",
 }

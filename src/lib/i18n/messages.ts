@@ -53,6 +53,19 @@ const th: MessageCatalog = {
   "auth.login.form.submitSetup": "ตั้งรหัสผ่านและเข้าสู่ระบบ",
   "auth.login.form.error.passwordRequired": "กรุณากรอกรหัสผ่าน",
   "auth.login.form.error.passwordMismatch": "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน",
+  "auth.login.lineButton": "เข้าสู่ระบบด้วย LINE",
+  "auth.login.orDivider": "หรือ",
+  "auth.login.forgot.link": "ลืมรหัสผ่าน?",
+  "auth.login.forgot.intro":
+    "ยืนยันรหัสพนักงานและสาขา — ระบบจะรีเซ็ตรหัสผ่าน Officer แล้วให้ตั้งรหัสใหม่เมื่อ login",
+  "auth.login.forgot.submit": "รีเซ็ตรหัสผ่าน",
+  "auth.login.forgot.submitting": "กำลังรีเซ็ต…",
+  "auth.login.forgot.back": "กลับหน้าเข้าสู่ระบบ",
+  "auth.login.forgot.success":
+    "รีเซ็ตรหัสผ่านแล้ว — เข้าสู่ระบบอีกครั้งเพื่อตั้งรหัสผ่านใหม่",
+  "auth.login.forgot.error": "รีเซ็ตรหัสผ่านไม่สำเร็จ",
+  "auth.login.officerForgotHint": "ลืมรหัสผ่าน?",
+  "auth.login.officerForgotAction": "ออกจากระบบแล้วใช้ลืมรหัสผ่าน",
   "auth.register.title": "ลงทะเบียนพนักงาน",
   "auth.register.intro":
     "กรอกข้อมูลให้ครบ ระบบจะผูกบัญชี LINE (ถ้ามี) แล้วส่งให้ HR อนุมัติ",
@@ -607,6 +620,26 @@ const th: MessageCatalog = {
   "line.pendingQueue.complaint": "ร้องเรียน",
   "line.pendingQueue.attendance": "พิกัด",
 
+  "liff.approvals.title": "คิวรออนุมัติ",
+  "liff.approvals.lineIntro": "แตะปุ่มด้านล่างเพื่อเปิดคิวอนุมัติใน LINE — อนุมัติหรือปฏิเสธได้ในหน้าเดียว",
+  "liff.approvals.notConfigured": "ยังไม่ได้ตั้งค่า LIFF URL — ติดต่อผู้ดูแลระบบ",
+  "liff.approvals.all": "ทั้งหมด",
+  "liff.approvals.emptyTitle": "ไม่มีรายการรออนุมัติ",
+  "liff.approvals.refresh": "รีเฟรช",
+  "liff.approvals.loadFailed": "โหลดคิวไม่สำเร็จ",
+  "liff.approvals.actionFailed": "ดำเนินการไม่สำเร็จ",
+  "liff.approvals.rejectPlaceholder": "เหตุผลการปฏิเสธ (อย่างน้อย 3 ตัวอักษร)",
+  "liff.approvals.rejectNoteRequired": "กรุณาระบุเหตุผลอย่างน้อย 3 ตัวอักษร",
+  "liff.approvals.confirmReject": "ยืนยันปฏิเสธ",
+  "liff.approvals.cancel": "ยกเลิก",
+  "liff.approvals.hrOfficerOnly": "รายการนี้ต้องอนุมัติโดย HR Officer",
+  "liff.approvals.complaintPlaceholder": "ข้อความตอบกลับ (อย่างน้อย 3 ตัวอักษร)",
+  "liff.approvals.replyNoteRequired": "กรุณาระบุข้อความอย่างน้อย 3 ตัวอักษร",
+  "liff.approvals.complaintReply": "ตอบกลับ",
+  "liff.approvals.complaintSend": "ส่งคำตอบ",
+  "liff.approvals.complaintClose": "ปิดเรื่อง",
+  "liff.approvals.forbidden": "คุณไม่มีสิทธิ์เปิดคิวอนุมัติ",
+
   "line.attendanceReview.alt": "ตรวจพิกัด: {name}",
   "line.attendanceReview.title": "พิกัดน่าสงสัย",
   "line.attendanceReview.subtitle": "รอ HR ตรวจสอบ",
@@ -839,6 +872,29 @@ const th: MessageCatalog = {
   "complaint.form.submitFailed": "ส่งเรื่องไม่สำเร็จ",
   "complaint.form.validation.subject": "หัวข้ออย่างน้อย 3 ตัวอักษร",
   "complaint.form.validation.body": "รายละเอียดอย่างน้อย 10 ตัวอักษร",
+
+  // LIFF shell & navigation
+  "liff.nav.back": "← ย้อนกลับ",
+  "liff.nav.leaveOt": "ลา/OT",
+
+  // LIFF home page
+  "liff.home.greetingMorning": "สวัสดีตอนเช้า 👋",
+  "liff.home.greetingAfternoon": "สวัสดีตอนบ่าย 👋",
+  "liff.home.greetingEvening": "สวัสดีตอนเย็น 👋",
+  "liff.home.todayShift": "กะวันนี้",
+  "liff.home.nextDayClock": "ออกงาน: {time} น. ของวันถัดไป",
+  "liff.home.checkInLabel": "เข้างาน",
+  "liff.home.checkOutLabel": "ออกงาน",
+  "liff.home.clockInBtn": "⏰ กดเข้างาน",
+  "liff.home.clockOutBtn": "🏠 กดออกงาน",
+  "liff.home.allDoneBtn": "✓ บันทึกเวลาครบแล้ว",
+  "liff.home.menuSection": "เมนูหลัก",
+  "liff.home.historyTitle": "ประวัติคำขอ",
+  "liff.home.historyDesc": "ติดตามสถานะ",
+  "liff.home.leaveDesc": "ลาป่วย/กิจ/พักร้อน",
+  "liff.home.otDesc": "ทำงานล่วงเวลา",
+  "liff.home.docDesc": "หนังสือรับรอง/Payslip",
+  "liff.home.complaintDesc": "แจ้งปัญหา (ปิดบัง)",
 }
 
 const en: MessageCatalog = {
@@ -889,6 +945,19 @@ const en: MessageCatalog = {
   "auth.login.form.submitSetup": "Set password and sign in",
   "auth.login.form.error.passwordRequired": "Please enter your password",
   "auth.login.form.error.passwordMismatch": "Passwords do not match",
+  "auth.login.lineButton": "Sign in with LINE",
+  "auth.login.orDivider": "or",
+  "auth.login.forgot.link": "Forgot password?",
+  "auth.login.forgot.intro":
+    "Confirm your employee code and branch — the system will reset your Officer password so you can set a new one at sign-in",
+  "auth.login.forgot.submit": "Reset password",
+  "auth.login.forgot.submitting": "Resetting…",
+  "auth.login.forgot.back": "Back to sign in",
+  "auth.login.forgot.success":
+    "Password reset — sign in again to set a new password",
+  "auth.login.forgot.error": "Password reset failed",
+  "auth.login.officerForgotHint": "Forgot password?",
+  "auth.login.officerForgotAction": "Sign out and use forgot password",
   "auth.register.title": "Employee registration",
   "auth.register.intro":
     "Complete all fields. Your LINE account (if any) will be linked and sent to HR for approval.",
@@ -1441,6 +1510,26 @@ const en: MessageCatalog = {
   "line.pendingQueue.complaint": "Complaints",
   "line.pendingQueue.attendance": "Location",
 
+  "liff.approvals.title": "Approval queue",
+  "liff.approvals.lineIntro": "Tap below to open the approval queue — review and decide in one screen.",
+  "liff.approvals.notConfigured": "LIFF URL is not configured — contact your administrator.",
+  "liff.approvals.all": "All",
+  "liff.approvals.emptyTitle": "No pending approvals",
+  "liff.approvals.refresh": "Refresh",
+  "liff.approvals.loadFailed": "Could not load queue",
+  "liff.approvals.actionFailed": "Action failed",
+  "liff.approvals.rejectPlaceholder": "Rejection reason (min. 3 characters)",
+  "liff.approvals.rejectNoteRequired": "Please enter at least 3 characters",
+  "liff.approvals.confirmReject": "Confirm reject",
+  "liff.approvals.cancel": "Cancel",
+  "liff.approvals.hrOfficerOnly": "HR Officer approval required",
+  "liff.approvals.complaintPlaceholder": "Reply message (min. 3 characters)",
+  "liff.approvals.replyNoteRequired": "Please enter at least 3 characters",
+  "liff.approvals.complaintReply": "Reply",
+  "liff.approvals.complaintSend": "Send reply",
+  "liff.approvals.complaintClose": "Close case",
+  "liff.approvals.forbidden": "You do not have access to the approval queue",
+
   "line.attendanceReview.alt": "Location review: {name}",
   "line.attendanceReview.title": "Suspicious location",
   "line.attendanceReview.subtitle": "Waiting for HR review",
@@ -1674,6 +1763,29 @@ const en: MessageCatalog = {
   "complaint.form.submitFailed": "Failed to submit",
   "complaint.form.validation.subject": "Subject must be at least 3 characters",
   "complaint.form.validation.body": "Details must be at least 10 characters",
+
+  // LIFF shell & navigation
+  "liff.nav.back": "← Back",
+  "liff.nav.leaveOt": "Leave/OT",
+
+  // LIFF home page
+  "liff.home.greetingMorning": "Good morning 👋",
+  "liff.home.greetingAfternoon": "Good afternoon 👋",
+  "liff.home.greetingEvening": "Good evening 👋",
+  "liff.home.todayShift": "Today's shift",
+  "liff.home.nextDayClock": "Clock out: {time} (next day)",
+  "liff.home.checkInLabel": "Clock in",
+  "liff.home.checkOutLabel": "Clock out",
+  "liff.home.clockInBtn": "⏰ Clock in",
+  "liff.home.clockOutBtn": "🏠 Clock out",
+  "liff.home.allDoneBtn": "✓ All times recorded",
+  "liff.home.menuSection": "Main menu",
+  "liff.home.historyTitle": "Request history",
+  "liff.home.historyDesc": "Track status",
+  "liff.home.leaveDesc": "Sick/personal/annual",
+  "liff.home.otDesc": "Overtime work",
+  "liff.home.docDesc": "Certificate/Payslip",
+  "liff.home.complaintDesc": "Report issue (anonymous)",
 }
 
 const zh: MessageCatalog = {

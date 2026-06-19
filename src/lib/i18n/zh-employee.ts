@@ -647,4 +647,27 @@ export const zhEmployee: Record<string, string> = {
   "auth.register.error.departmentRequired": "请选择部门",
   "auth.register.error.positionRequired": "请选择职位",
   "auth.register.error.submitFailed": "注册失败",
+
+  // LIFF shell & navigation
+  "liff.nav.back": "← 返回",
+  "liff.nav.leaveOt": "请假/OT",
+
+  // LIFF home page
+  "liff.home.greetingMorning": "早上好 👋",
+  "liff.home.greetingAfternoon": "下午好 👋",
+  "liff.home.greetingEvening": "晚上好 👋",
+  "liff.home.todayShift": "今日班次",
+  "liff.home.nextDayClock": "下班打卡：{time}（次日）",
+  "liff.home.checkInLabel": "上班",
+  "liff.home.checkOutLabel": "下班",
+  "liff.home.clockInBtn": "⏰ 打卡上班",
+  "liff.home.clockOutBtn": "🏠 打卡下班",
+  "liff.home.allDoneBtn": "✓ 打卡完成",
+  "liff.home.menuSection": "主菜单",
+  "liff.home.historyTitle": "申请记录",
+  "liff.home.historyDesc": "跟踪状态",
+  "liff.home.leaveDesc": "病假/事假/年假",
+  "liff.home.otDesc": "加班申请",
+  "liff.home.docDesc": "证明/工资单",
+  "liff.home.complaintDesc": "反馈问题（匿名）",
 }
