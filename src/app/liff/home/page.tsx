@@ -167,7 +167,7 @@ export default async function LiffHomePage() {
             </div>
 
             {/* Clock-in / out button */}
-            <Link href="/liff/checkin">
+            <Link href="/liff/clock">
               <button className="mt-3 w-full rounded-xl bg-[#E80012] py-3 text-sm font-medium text-white active:opacity-90">
                 {!checkInTime
                   ? tx("liff.home.clockInBtn")

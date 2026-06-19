@@ -1,12 +1,5 @@
 "use client"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import { LEAVE_TYPES, type LeaveType } from "@/features/leave/types"
 import type { MessageKey } from "@/lib/i18n/messages"
@@ -21,49 +14,48 @@ function leaveTypeKey(type: LeaveType): MessageKey {
   return `leave.type.${type}` as MessageKey
 }
 
-const DISPLAY_LEAVE_TYPES = LEAVE_TYPES.filter((type) => type !== "other")
+const DISPLAY_LEAVE_TYPES = LEAVE_TYPES.filter((t) => t !== "other")
 
 export function LeaveBalanceCard({ balances }: { balances: LeaveBalance[] }) {
   const { tx } = useLocale()
   const byType = new Map(balances.map((b) => [b.leave_type, b]))
 
+  const totalRemaining = DISPLAY_LEAVE_TYPES.reduce((sum, type) => {
+    const b = byType.get(type)
+    return sum + (b ? b.total_days - b.used_days : 0)
+  }, 0)
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{tx("leave.balance.title")}</CardTitle>
-        <CardDescription>{tx("leave.balance.subtitle")}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {DISPLAY_LEAVE_TYPES.map((type) => {
-            const balance = byType.get(type)
-            const remaining = balance
-              ? balance.total_days - balance.used_days
-              : null
-            return (
-              <div key={type} className="rounded-lg bg-muted/50 p-3">
-                <dt className="text-xs text-muted-foreground">
-                  {tx(leaveTypeKey(type))}
-                </dt>
-                <dd className="mt-1 text-lg font-medium tabular-nums">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm font-medium text-gray-700">{tx("leave.balance.title")}</p>
+        <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-[#E80012]">
+          คงเหลือ {totalRemaining} วัน
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {DISPLAY_LEAVE_TYPES.map((type) => {
+          const balance = byType.get(type)
+          const remaining = balance ? balance.total_days - balance.used_days : null
+          return (
+            <div key={type} className="rounded-lg bg-[#F5F5F5] px-3 py-2.5">
+              <p className="text-xs text-gray-400">{tx(leaveTypeKey(type))}</p>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="text-xl font-semibold tabular-nums text-gray-900">
                   {remaining === null ? (
-                    <span className="text-sm font-normal text-muted-foreground">
-                      {tx("leave.balance.notSet")}
-                    </span>
+                    <span className="text-sm font-normal text-gray-300">–</span>
                   ) : (
-                    <>
-                      {remaining}{" "}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        / {balance!.total_days} {tx("leave.balance.daysUnit")}
-                      </span>
-                    </>
+                    remaining
                   )}
-                </dd>
+                </span>
+                {remaining !== null && balance && (
+                  <span className="text-xs text-gray-400">/ {balance.total_days} วัน</span>
+                )}
               </div>
-            )
-          })}
-        </dl>
-      </CardContent>
-    </Card>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
