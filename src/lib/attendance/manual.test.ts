@@ -48,4 +48,22 @@ describe("isOvernightOpenShiftCheckout", () => {
       false
     )
   })
+
+  it("does not treat 14:00 check-out-next-day as open shift after grace window", () => {
+    assert.equal(
+      isOvernightOpenShiftCheckout({
+        mode: "checkout",
+        existing: {
+          id: "att-1",
+          check_in_at: "2026-06-18T07:00:00.000Z",
+          check_out_at: null,
+          work_hours: null,
+          shift_date: "2026-06-18",
+        },
+        shift: branchNight,
+        now: new Date("2026-06-19T14:00:00.000Z"),
+      }),
+      false
+    )
+  })
 })

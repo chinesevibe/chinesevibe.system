@@ -110,6 +110,7 @@ export function normalizeParams(raw: {
   [key: string]: string | string[] | undefined
 }): Required<EmployeeListParams> {
   const get = (k: string) => (typeof raw[k] === "string" ? (raw[k] as string) : "")
+  const normalizeId = (value: string) => value.trim()
   const sort = SORT_COLUMNS.includes(get("sort") as SortColumn)
     ? (get("sort") as SortColumn)
     : "name"
@@ -119,13 +120,13 @@ export function normalizeParams(raw: {
     ? (get("status") as EmployeeStatusFilter)
     : "all"
   const page = Math.max(1, Number.parseInt(get("page"), 10) || 1)
-  const branchRaw = get("branch_id")
+  const branchRaw = normalizeId(get("branch_id"))
   const branch_id =
     branchRaw === "__none__" ||
     /^[0-9a-f-]{36}$/i.test(branchRaw)
       ? branchRaw
       : ""
-  const shiftRaw = get("shift_id")
+  const shiftRaw = normalizeId(get("shift_id") || get("shift"))
   const work_shift_id =
     shiftRaw === "__none__" || /^[0-9a-f-]{36}$/i.test(shiftRaw) ? shiftRaw : ""
   return {
