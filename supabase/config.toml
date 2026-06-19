@@ -477,3 +477,9 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/shift-attendance-summary/deno.json"
 entrypoint = "./functions/shift-attendance-summary/index.ts"
+
+[functions.attendance-cutoff]
+enabled = true
+verify_jwt = false
+import_map = "./functions/attendance-cutoff/deno.json"
+entrypoint = "./functions/attendance-cutoff/index.ts"
