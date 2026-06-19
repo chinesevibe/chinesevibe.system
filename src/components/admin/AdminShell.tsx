@@ -1,4 +1,5 @@
 import { AdminContextTabsProvider } from "@/components/admin/AdminContextTabsProvider"
+import { AdminContentViewport } from "@/components/admin/AdminContentViewport"
 import { AdminHeader } from "@/components/admin/AdminHeader"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import type { AdminNavGroup, AdminNavItem } from "@/components/admin/admin-nav"
@@ -51,9 +52,7 @@ export function AdminShell({
             devAllMode={devAllMode}
             devView={devView}
           />
-          <main className="flex min-h-0 flex-1 flex-col overflow-y-auto p-3 md:p-4 lg:p-5">
-            {children}
-          </main>
+          <AdminContentViewport>{children}</AdminContentViewport>
         </div>
       </div>
     </AdminContextTabsProvider>

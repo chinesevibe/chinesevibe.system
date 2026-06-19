@@ -196,7 +196,7 @@ export function AdminContextTabsProvider({
       if (closingActive) {
         const fallback = nextTabs[index - 1] ?? nextTabs[index] ?? null
         setActiveId(fallback?.id ?? null)
-        router.push(fallback?.href ?? "/admin")
+        router.push(fallback?.href ?? "/admin", { scroll: false })
       }
 
       return nextTabs

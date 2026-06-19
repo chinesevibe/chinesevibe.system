@@ -26,6 +26,7 @@ export function AdminContextTabs() {
           >
             <Link
               href={tab.href}
+              scroll={false}
               className="max-w-[12rem] truncate text-sm font-medium"
             >
               {tab.label}
