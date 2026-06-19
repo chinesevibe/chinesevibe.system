@@ -69,20 +69,42 @@ export async function GET() {
 
   // ── Today's attendance ─────────────────────────────────────────────────
   const now = new Date()
-  const { start, end } = ictDayRangeUtc(now)
-
-  const { data: att } = await admin
+  const openWindowStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  const { data: openRecord } = await admin
     .from("hr_attendance")
     .select("check_in_at, check_out_at")
     .eq("employee_id", employee.id)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
+    .is("check_out_at", null)
+    .gte("check_in_at", openWindowStart.toISOString())
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  const checkInAt = att?.check_in_at ? new Date(att.check_in_at as string).toISOString() : null
-  const checkOutAt = att?.check_out_at ? new Date(att.check_out_at as string).toISOString() : null
+  let checkInAt: string | null = null
+  let checkOutAt: string | null = null
+  if (openRecord) {
+    checkInAt = openRecord.check_in_at ? new Date(openRecord.check_in_at as string).toISOString() : null
+    checkOutAt = openRecord.check_out_at ? new Date(openRecord.check_out_at as string).toISOString() : null
+  }
+
+  if (!openRecord) {
+    const { start, end } = ictDayRangeUtc(now)
+
+    const { data: att } = await admin
+      .from("hr_attendance")
+      .select("check_in_at, check_out_at")
+      .eq("employee_id", employee.id)
+      .gte("check_in_at", start.toISOString())
+      .lt("check_in_at", end.toISOString())
+      .order("check_in_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (att?.check_in_at) {
+      checkInAt = new Date(att.check_in_at as string).toISOString()
+      checkOutAt = att.check_out_at ? new Date(att.check_out_at as string).toISOString() : null
+    }
+  }
 
   return NextResponse.json({
     employeeId: employee.id,
