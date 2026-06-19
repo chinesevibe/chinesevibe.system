@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import type { BranchFilterOption } from "@/features/employees/data"
@@ -31,13 +32,24 @@ export function AttendanceFilters({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [employeeInput, setEmployeeInput] = useState(values.employee)
+
+  useEffect(() => {
+    setEmployeeInput(values.employee)
+  }, [values.employee])
+
+  useEffect(() => {
+    if (employeeInput === values.employee) return
+    const timer = window.setTimeout(() => update("employee", employeeInput), 300)
+    return () => clearTimeout(timer)
+  }, [employeeInput, values.employee])
 
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set(key, value)
     else params.delete(key)
     params.delete("page")
-    router.push(`${pathname}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`)
   }
 
   function updateMany(next: Record<string, string>) {
@@ -47,7 +59,7 @@ export function AttendanceFilters({
       else params.delete(key)
     }
     params.delete("page")
-    router.push(`${pathname}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`)
   }
 
   function formatDateInput(date: Date): string {
@@ -184,8 +196,8 @@ export function AttendanceFilters({
               <input
                 list="attendance-employee-options"
                 className={inputClassName}
-                value={values.employee}
-                onChange={(e) => update("employee", e.target.value)}
+                value={employeeInput}
+                onChange={(e) => setEmployeeInput(e.target.value)}
                 placeholder="พิมพ์ชื่อหรือรหัสพนักงาน"
               />
               <datalist id="attendance-employee-options">

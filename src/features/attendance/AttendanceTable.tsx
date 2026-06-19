@@ -62,6 +62,18 @@ export function AttendanceTable({
   employeeView?: boolean
   returnTo?: string | null
 }) {
+  const summary = rows.reduce(
+    (acc, row) => {
+      if (row.status === "late") acc.late += 1
+      if (row.status === "in_progress") {
+        acc.inProgress += 1
+      }
+      if (row.locationReviewStatus === "pending_hr") acc.pendingReview += 1
+      return acc
+    },
+    { late: 0, inProgress: 0, pendingReview: 0 }
+  )
+
   if (rows.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">
@@ -85,17 +97,17 @@ export function AttendanceTable({
               ทั้งหมด {rows.length} รายการ
             </span>
             <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 font-medium text-amber-800">
-              มาสาย {rows.filter((row) => row.status === "late").length}
+              มาสาย {summary.late}
             </span>
             <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 font-medium text-sky-800">
-              ยังไม่เช็คออก {rows.filter((row) => row.status === "in_progress").length}
+              ยังไม่เช็คออก {summary.inProgress}
             </span>
           </div>
         </div>
         <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-0 md:px-5">
           <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700">
             <AlertTriangle className="size-3.5" />
-            รอตรวจพิกัด {rows.filter((row) => row.locationReviewStatus === "pending_hr").length}
+            รอตรวจพิกัด {summary.pendingReview}
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700">
             <Clock3 className="size-3.5" />
