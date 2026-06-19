@@ -424,9 +424,91 @@ describe("buildDailyRosterSnapshot", () => {
     )
     assert.equal(
       roster.groups[0]?.employees.find((employee) => employee.id === "emp-night-off")?.status,
-      "absent"
+      "upcoming"
     )
     assert.equal(roster.totals.checkedIn, 1)
-    assert.equal(roster.totals.absent, 1)
+    assert.equal(roster.totals.absent, 0)
+  })
+
+  it("does not apply overnight carryover to whole shift when only some employees are open", () => {
+    const branchNight = {
+      id: "shift-night",
+      code: "BRANCH_NIGHT",
+      name: "Branch Night",
+      start_hour: 14,
+      start_minute: 0,
+      end_hour: 2,
+      end_minute: 0,
+      crosses_midnight: true,
+      grace_minutes: 10,
+      standard_hours: 10,
+      is_active: true,
+    }
+
+    const roster = buildDailyRosterSnapshot(
+      {
+        date: "2026-06-19",
+        now: new Date("2026-06-19T01:30:00.000Z"),
+        goLiveDate: "2026-06-18",
+        employees: [
+          {
+            id: "emp-overnight",
+            employee_code: "EMP-010",
+            name: "Overnight Open",
+            position: "Ops",
+            department: "Ops",
+            branch_id: "branch-1",
+            line_user_id: null,
+            work_shift_id: "shift-night",
+            default_check_in_time: null,
+            default_check_out_time: null,
+            hr_branches: { name: "Branch" },
+          },
+          {
+            id: "emp-midnight",
+            employee_code: "EMP-011",
+            name: "Midnight Checkin",
+            position: "Ops",
+            department: "Ops",
+            branch_id: "branch-1",
+            line_user_id: null,
+            work_shift_id: "shift-night",
+            default_check_in_time: null,
+            default_check_out_time: null,
+            hr_branches: { name: "Branch" },
+          },
+        ],
+        shifts: [branchNight],
+      },
+      [
+        {
+          employee_id: "emp-overnight",
+          check_in_at: "2026-06-18T07:10:00.000Z",
+          check_out_at: null,
+          is_late: false,
+          shift_date: "2026-06-18",
+        },
+        {
+          employee_id: "emp-midnight",
+          check_in_at: "2026-06-18T18:10:00.000Z",
+          check_out_at: null,
+          is_late: false,
+          shift_date: "2026-06-19",
+        },
+      ],
+      []
+    )
+
+    const group = roster.groups[0]
+    assert.equal(group.state, "active")
+
+    const midnightEmployee = group.employees.find((employee) => employee.id === "emp-midnight")
+    assert.ok(midnightEmployee)
+    assert.equal(midnightEmployee?.status, "present")
+
+    const overnightEmployee = group.employees.find((employee) => employee.id === "emp-overnight")
+    assert.ok(overnightEmployee)
+    assert.equal(overnightEmployee?.status, "present")
+    assert.equal(roster.totals.checkedIn, 2)
   })
 })

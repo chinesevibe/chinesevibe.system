@@ -335,7 +335,7 @@ export function buildDailyRosterSnapshot(
   const shiftById = new Map(input.shifts.map((shift) => [shift.id, shift]))
   const attendanceByEmployee = new Map<string, RosterAttendanceRow[]>()
   const employeeById = new Map(input.employees.map((employee) => [employee.id, employee]))
-  const carryoverGroupDates = new Map<string, string>()
+  const carryoverEmployeeDates = new Map<string, string>()
 
   for (const row of attendanceRows) {
     const existing = attendanceByEmployee.get(row.employee_id)
@@ -354,7 +354,7 @@ export function buildDailyRosterSnapshot(
       const shiftId = employee?.work_shift_id
       const shift = shiftId ? shiftById.get(shiftId) : null
       if (!shiftId || !shift?.crosses_midnight) continue
-      carryoverGroupDates.set(shiftId, previousDate)
+      carryoverEmployeeDates.set(row.employee_id, previousDate)
     }
   }
 
@@ -392,9 +392,8 @@ export function buildDailyRosterSnapshot(
     if (existing) return existing
 
     const shift = shiftId ? (shiftById.get(shiftId) ?? null) : null
-    const effectiveDate = carryoverGroupDates.get(key) ?? input.date
-    const state = groupStateForDate(effectiveDate, today, input.now, shift)
-    const startAt = shift ? getShiftStartUtc(effectiveDate, scheduleFromShift(shift)) : null
+    const state = groupStateForDate(input.date, today, input.now, shift)
+    const startAt = shift ? getShiftStartUtc(input.date, scheduleFromShift(shift)) : null
     const graceAt = startAt
       ? new Date(startAt.getTime() + shift!.grace_minutes * 60_000)
       : null
@@ -427,7 +426,7 @@ export function buildDailyRosterSnapshot(
     const shift = employee.work_shift_id
       ? (shiftById.get(employee.work_shift_id) ?? null)
       : null
-    const groupDate = carryoverGroupDates.get(group.id) ?? input.date
+    const groupDate = carryoverEmployeeDates.get(employee.id) ?? input.date
     const onLeave = isEmployeeOnLeave(leaveByEmployee.get(employee.id) ?? [], groupDate)
     const offDays = parseOffDays(employee.off_days)
     if (!onLeave && isEmployeeOffOnDate(groupDate, offDays)) {
