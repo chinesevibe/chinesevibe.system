@@ -1,7 +1,7 @@
 "use client"
 
 import { Eye, EyeOff } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ type PasswordRequirements = {
 
 export function OfficerPasswordVerifyForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { tx } = useLocale()
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
@@ -50,6 +51,7 @@ export function OfficerPasswordVerifyForm() {
   }, [])
 
   const needsSetup = requirements?.needsSetup ?? false
+  const next = searchParams.get("next")
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -71,6 +73,7 @@ export function OfficerPasswordVerifyForm() {
         credentials: "include",
         body: JSON.stringify({
           password,
+          ...(next ? { next } : {}),
           ...(needsSetup ? { password_confirm: passwordConfirm } : {}),
         }),
       })

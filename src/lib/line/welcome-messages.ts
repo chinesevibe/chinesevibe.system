@@ -10,14 +10,12 @@ const REGISTER_GUIDE_PATHS = [
 ] as const
 
 function publicBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ??
-    "https://hr-app-two-iota.vercel.app"
-  )
+  return process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
 }
 
 function registerUrl(): string {
-  return `${publicBaseUrl()}/register`
+  const base = publicBaseUrl()
+  return base ? `${base}/register` : "/register"
 }
 
 function imageMessage(url: string): messagingApi.ImageMessage {
@@ -30,6 +28,7 @@ function imageMessage(url: string): messagingApi.ImageMessage {
 
 function buildGuideImageMessages(): messagingApi.ImageMessage[] {
   const base = publicBaseUrl()
+  if (!base) return []
   return REGISTER_GUIDE_PATHS.map((path) =>
     imageMessage(`${base}${path}`)
   )

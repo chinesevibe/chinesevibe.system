@@ -59,7 +59,7 @@ function FormSection({
 
 export function RegisterForm() {
   const router = useRouter()
-  const { tx } = useLocale()
+  const { tx, locale } = useLocale()
   const {
     lineReady,
     idToken,
@@ -84,7 +84,13 @@ export function RegisterForm() {
     null
   )
 
-  const lineStartUrl = "/api/auth/line/start"
+  const lineStartUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      lang: locale,
+      next: `/register?lang=${locale}`,
+    })
+    return `/api/auth/line/start?${params.toString()}`
+  }, [locale])
 
   const lineLinkHint =
     linked && linkedName

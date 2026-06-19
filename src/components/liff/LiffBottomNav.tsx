@@ -4,29 +4,29 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { useLocale } from "@/features/portal/LocaleProvider"
+import { liffHref } from "@/lib/i18n/liff-url"
 
 export function LiffBottomNav() {
   const pathname = usePathname()
-  const { tx } = useLocale()
+  const { tx, locale } = useLocale()
 
   const NAV_ITEMS = [
-    { href: "/liff/home",       icon: "🏠", label: tx("portal.nav.home") },
-    { href: "/liff/attendance", icon: "⏰", label: tx("portal.nav.attendance") },
-    { href: "/liff/leave",      icon: "📋", label: tx("liff.nav.leaveOt") },
-    { href: "/liff/documents",  icon: "📄", label: tx("portal.nav.documents") },
+    { path: "/liff/home", icon: "🏠", label: tx("portal.nav.home") },
+    { path: "/liff/attendance", icon: "⏰", label: tx("portal.nav.attendance") },
+    { path: "/liff/leave", icon: "📋", label: tx("liff.nav.leaveOt") },
+    { path: "/liff/documents", icon: "📄", label: tx("portal.nav.documents") },
   ]
 
   return (
     <nav className="sticky bottom-0 z-10 flex border-t border-gray-100 bg-white">
-      {NAV_ITEMS.map(({ href, icon, label }) => {
+      {NAV_ITEMS.map(({ path, icon, label }) => {
+        const href = liffHref(path, locale)
         const isActive =
-          href === "/liff/home"
-            ? pathname === "/liff/home"
-            : pathname.startsWith(href)
+          path === "/liff/home" ? pathname === path : pathname.startsWith(path)
 
         return (
           <Link
-            key={href}
+            key={path}
             href={href}
             className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
               isActive ? "text-[#E80012]" : "text-gray-400"

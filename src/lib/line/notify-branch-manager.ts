@@ -58,8 +58,7 @@ export async function notifyBranchManager({
       return { pushed: false }
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://hr-app-two-iota.vercel.app"
-    const path = "/admin/branch"
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
     const label = KIND_LABEL[kind]
 
     await pushToLineUser(lineUserId, [
@@ -70,7 +69,7 @@ export async function notifyBranchManager({
           `พนักงาน: ${employeeName}`,
           branch.name ? `สาขา: ${branch.name as string}` : null,
           detail ? `รายละเอียด: ${detail}` : null,
-          `อนุมัติภายใน 48 ชม.: ${baseUrl}${path}`,
+          baseUrl ? `อนุมัติภายใน 48 ชม.: ${baseUrl}/admin/branch` : null,
         ]
           .filter(Boolean)
           .join("\n"),

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { t } from "@/lib/i18n/translate"
+import { liffHref } from "@/lib/i18n/liff-url"
 import { coerceLocale } from "@/lib/i18n/types"
 import { createClient } from "@/lib/supabase/server"
 
@@ -26,11 +27,23 @@ function todayWorkDate(crossesMidnight: boolean): string {
   return now.toISOString().slice(0, 10)
 }
 
-export default async function LiffHomePage() {
+export default async function LiffHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
+  const { lang } = await searchParams
   const employee = await getCurrentEmployee()
-  if (!employee) redirect("/login")
+  const locale = coerceLocale(lang ?? employee?.preferred_locale)
+  if (!employee) {
+    const params = new URLSearchParams({
+      lang: locale,
+      next: `/liff/home?lang=${locale}`,
+    })
+    redirect(`/login?${params.toString()}`)
+  }
 
-  const locale = coerceLocale(employee.preferred_locale)
+  const liff = (path: string) => liffHref(path, locale)
   const tx = (key: Parameters<typeof t>[0], vars?: Parameters<typeof t>[2]) =>
     t(key, locale, vars)
 
@@ -111,10 +124,10 @@ export default async function LiffHomePage() {
         : tx("liff.home.greetingEvening")
 
   const MENU = [
-    { href: "/liff/leave",     icon: "📋", label: tx("portal.home.shortcutLeave"),     sub: tx("liff.home.leaveDesc"),     bg: "bg-red-50"    },
-    { href: "/liff/overtime",  icon: "⌚", label: tx("portal.home.shortcutOt"),        sub: tx("liff.home.otDesc"),         bg: "bg-orange-50" },
-    { href: "/liff/documents", icon: "📄", label: tx("portal.home.shortcutDoc"),       sub: tx("liff.home.docDesc"),        bg: "bg-blue-50"   },
-    { href: "/liff/complaint", icon: "📢", label: tx("portal.home.shortcutComplaint"), sub: tx("liff.home.complaintDesc"),  bg: "bg-green-50"  },
+    { href: liff("/liff/leave"),     icon: "📋", label: tx("portal.home.shortcutLeave"),     sub: tx("liff.home.leaveDesc"),     bg: "bg-red-50"    },
+    { href: liff("/liff/overtime"),  icon: "⌚", label: tx("portal.home.shortcutOt"),        sub: tx("liff.home.otDesc"),         bg: "bg-orange-50" },
+    { href: liff("/liff/documents"), icon: "📄", label: tx("portal.home.shortcutDoc"),       sub: tx("liff.home.docDesc"),        bg: "bg-blue-50"   },
+    { href: liff("/liff/complaint"), icon: "📢", label: tx("portal.home.shortcutComplaint"), sub: tx("liff.home.complaintDesc"),  bg: "bg-green-50"  },
   ]
 
   return (
@@ -167,7 +180,7 @@ export default async function LiffHomePage() {
             </div>
 
             {/* Clock-in / out button */}
-            <Link href="/liff/clock">
+            <Link href={liff("/liff/clock")}>
               <button className="mt-3 w-full rounded-xl bg-[#E80012] py-3 text-sm font-medium text-white active:opacity-90">
                 {!checkInTime
                   ? tx("liff.home.clockInBtn")
@@ -200,7 +213,7 @@ export default async function LiffHomePage() {
         </div>
 
         {/* History link */}
-        <Link href="/liff/approvals">
+        <Link href={liff("/liff/approvals")}>
           <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm active:bg-gray-50">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-xl">

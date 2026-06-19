@@ -19,10 +19,7 @@ const DEFAULT_KEYWORDS = [
 ] as const
 
 function publicBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ??
-    "https://hr-app-two-iota.vercel.app"
-  )
+  return process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
 }
 
 function configuredKeywords(): string[] {
@@ -59,8 +56,9 @@ export function shouldSendLineAutoReply(text: string): boolean {
 export async function buildLineAutoReplyMessages(
   locale: AppLocale
 ): Promise<messagingApi.Message[]> {
+  const base = publicBaseUrl()
   const text = t("line.welcome.greeting", locale, {
-    registerUrl: `${publicBaseUrl()}/register`,
+    registerUrl: base ? `${base}/register` : "/register",
   })
 
   return [{ type: "text", text }]

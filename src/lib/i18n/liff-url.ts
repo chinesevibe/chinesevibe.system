@@ -1,9 +1,23 @@
 import type { AppLocale } from "@/lib/i18n/types"
 
-/** Build absolute LIFF URL with optional lang query for session-less fallback. */
+function withLangQuery(path: string, locale: AppLocale): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`
+  const [beforeHash, hash = ""] = normalized.split("#", 2)
+  const [pathname, search = ""] = beforeHash.split("?", 2)
+  const params = new URLSearchParams(search)
+  params.set("lang", locale)
+  const query = params.toString()
+  return `${pathname}${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`
+}
+
+/** Build relative LIFF href that preserves the active lang query. */
+export function liffHref(path: string, locale: AppLocale): string {
+  return withLangQuery(path, locale)
+}
+
+/** Build absolute LIFF URL with lang query for session-less fallback. */
 export function liffUrl(path: string, locale: AppLocale): string | undefined {
   const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "")
   if (!base) return undefined
-  const normalized = path.startsWith("/") ? path : `/${path}`
-  return `${base}${normalized}?lang=${locale}`
+  return `${base}${withLangQuery(path, locale)}`
 }

@@ -9,7 +9,12 @@ import { adminLoginPath } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { coerceLocale, LOCALE_COOKIE } from "@/lib/i18n/types"
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
+  const { lang } = await searchParams
   const employee = await getCurrentEmployee()
   if (employee) {
     if (isPendingRegistration(employee)) {
@@ -28,9 +33,8 @@ export default async function RegisterPage() {
   }
 
   const cookieStore = await cookies()
-  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value
   const initialLocale = coerceLocale(
-    cookieLocale ?? employee?.preferred_locale
+    lang ?? cookieStore.get(LOCALE_COOKIE)?.value ?? employee?.preferred_locale
   )
 
   return (

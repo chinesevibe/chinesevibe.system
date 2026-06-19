@@ -11,16 +11,24 @@ import {
   isOfficerPasswordVerified,
 } from "@/lib/auth/officer-password-session"
 import { adminLoginPath } from "@/lib/auth/roles"
+import { sanitizeReturnTo } from "@/lib/navigation/return-to"
 import { getCurrentEmployee } from "@/lib/auth/session"
-import { coerceLocale, LOCALE_COOKIE } from "@/lib/i18n/types"
+import { coerceLocale, LOCALE_COOKIE, type AppLocale } from "@/lib/i18n/types"
 import { createClient } from "@/lib/supabase/server"
+
+function buildLineStartUrl(locale: AppLocale, next?: string | null): string {
+  const params = new URLSearchParams({ lang: locale })
+  if (next) params.set("next", next)
+  return `/api/auth/line/start?${params.toString()}`
+}
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; lang?: string; next?: string }>
 }) {
-  const { error } = await searchParams
+  const { error, lang, next } = await searchParams
+  const nextPath = sanitizeReturnTo(next)
 
   const supabase = await createClient()
   const {
@@ -37,6 +45,9 @@ export default async function LoginPage({
     : null
 
   const cookieStore = await cookies()
+  const initialLocale = coerceLocale(
+    lang ?? cookieStore.get(LOCALE_COOKIE)?.value ?? employee?.preferred_locale
+  )
   const officerPasswordRequired = employee
     ? requiresOfficerPortalPassword(employee.department)
     : false
@@ -58,11 +69,6 @@ export default async function LoginPage({
     redirect(dashboardPath)
   }
 
-  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value
-  const initialLocale = coerceLocale(
-    cookieLocale ?? employee?.preferred_locale
-  )
-
   const errorMessageKey = error
     ? (ERROR_KEYS[error] ?? ERROR_KEYS.line_login_failed)
     : undefined
@@ -74,7 +80,7 @@ export default async function LoginPage({
       errorMessageKey={errorMessageKey}
       hasEmployee={Boolean(employee)}
       hasUser={Boolean(user)}
-      lineStartUrl="/api/auth/line/start"
+      lineStartUrl={buildLineStartUrl(initialLocale, nextPath)}
       showOfficerPasswordForm={showOfficerPasswordForm}
     />
   )

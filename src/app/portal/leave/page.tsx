@@ -6,13 +6,22 @@ import { LeaveBalanceCard } from "@/features/leave/LeaveBalanceCard"
 import { LeaveForm } from "@/features/leave/LeaveForm"
 import { getEmployeeLeaveBalances } from "@/features/portal/data"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { liffUrl } from "@/lib/i18n/liff-url"
+import { coerceLocale } from "@/lib/i18n/types"
 import { Button } from "@/components/ui/button"
 
-export default async function PortalLeavePage() {
+export default async function PortalLeavePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
+  const { lang } = await searchParams
   const employee = await getCurrentEmployee()
   if (!employee) return null
 
   const balances = await getEmployeeLeaveBalances(employee.id)
+  const locale = coerceLocale(lang ?? employee.preferred_locale)
+  const liffLeaveUrl = liffUrl("/liff/leave", locale) ?? "/liff/leave"
 
   return (
     <AdminPageShell
@@ -24,7 +33,7 @@ export default async function PortalLeavePage() {
           size="sm"
           nativeButton={false}
           render={
-            <Link href="/liff/leave" className="inline-flex items-center gap-1.5">
+            <Link href={liffLeaveUrl} className="inline-flex items-center gap-1.5">
               เปิดใน LIFF
               <ExternalLink className="size-3.5" />
             </Link>

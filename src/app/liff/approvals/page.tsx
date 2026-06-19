@@ -7,16 +7,29 @@ import { t } from "@/lib/i18n/translate"
 import { coerceLocale } from "@/lib/i18n/types"
 import { cookies } from "next/headers"
 
-export default async function ApprovalsLiffPage() {
+export default async function ApprovalsLiffPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
+  const { lang } = await searchParams
+  const requestedLocale = coerceLocale(lang)
   const employee = await getCurrentEmployee()
 
   if (!employee) {
-    return <LiffLoginPrompt titleKey="liff.approvals.title" />
+    return (
+      <LiffLoginPrompt
+        titleKey="liff.approvals.title"
+        locale={requestedLocale}
+      />
+    )
   }
 
   if (!canManageHr(employee.role)) {
     const cookieStore = await cookies()
-    const locale = coerceLocale(cookieStore.get("hr_locale")?.value ?? employee.preferred_locale)
+    const locale = coerceLocale(
+      lang ?? cookieStore.get("hr_locale")?.value ?? employee.preferred_locale
+    )
     return (
       <main className="flex min-h-screen items-center justify-center p-4">
         <p className="text-center text-sm text-muted-foreground">

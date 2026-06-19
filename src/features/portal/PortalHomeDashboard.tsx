@@ -19,6 +19,7 @@ import { LEAVE_TYPE_LABELS, LEAVE_TYPES } from "@/features/leave/types"
 import type { LeaveBalance } from "@/features/leave/LeaveBalanceCard"
 import type { TodayAttendanceStatus } from "@/features/portal/data"
 import { useLocale } from "@/features/portal/LocaleProvider"
+import { liffHref } from "@/lib/i18n/liff-url"
 
 function LiffLink({
   href,
@@ -49,7 +50,7 @@ export function PortalHomeDashboard({
   balances: LeaveBalance[]
   announcements: AnnouncementRow[]
 }) {
-  const { tx } = useLocale()
+  const { tx, locale } = useLocale()
   const byType = new Map(balances.map((b) => [b.leave_type, b]))
   const topBalances = LEAVE_TYPES.filter((type) => type !== "other")
 
@@ -154,11 +155,11 @@ export function PortalHomeDashboard({
 
       <WidgetCard compact title={tx("portal.home.shortcuts")}>
         <div className="flex flex-wrap gap-2">
-          <LiffLink href="/liff/leave">
+          <LiffLink href={liffHref("/liff/leave", locale)}>
             <CalendarDays className="size-4 text-brand-red" />
             {tx("portal.home.shortcutLeave")}
           </LiffLink>
-          <LiffLink href="/liff/attendance">
+          <LiffLink href={liffHref("/liff/attendance", locale)}>
             <Clock className="size-4 text-brand-red" />
             {tx("portal.home.shortcutManualTime")}
           </LiffLink>
@@ -166,15 +167,15 @@ export function PortalHomeDashboard({
             <QrCode className="size-4 text-brand-red" />
             {tx("portal.home.shortcutQr")}
           </LiffLink>
-          <LiffLink href="/liff/documents">
+          <LiffLink href={liffHref("/liff/documents", locale)}>
             <ExternalLink className="size-4 text-brand-red" />
             {tx("portal.home.shortcutDoc")}
           </LiffLink>
-          <LiffLink href="/liff/overtime">
+          <LiffLink href={liffHref("/liff/overtime", locale)}>
             <Timer className="size-4 text-brand-red" />
             {tx("portal.home.shortcutOt")}
           </LiffLink>
-          <LiffLink href="/liff/complaint">
+          <LiffLink href={liffHref("/liff/complaint", locale)}>
             <MessageSquareWarning className="size-4 text-brand-red" />
             {tx("portal.home.shortcutComplaint")}
           </LiffLink>

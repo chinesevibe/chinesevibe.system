@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 
+import { isAppLocale } from "@/lib/i18n/types"
 import { updateSession } from "@/lib/supabase/middleware"
 
 // Session refresh on all matched routes; /admin/* additionally requires a
@@ -14,6 +15,19 @@ function publicOrigin(request: NextRequest): string {
   return configured || request.nextUrl.origin
 }
 
+function loginRedirect(request: NextRequest, origin: string): NextResponse {
+  const params = new URLSearchParams()
+  const lang = request.nextUrl.searchParams.get("lang")
+  if (isAppLocale(lang)) {
+    params.set("lang", lang)
+  }
+  const next = `${request.nextUrl.pathname}${request.nextUrl.search}`
+  params.set("next", next)
+  return NextResponse.redirect(
+    new URL(`/login?${params.toString()}`, origin)
+  )
+}
+
 export async function proxy(request: NextRequest) {
   const { response, user } = await updateSession(request)
   const { pathname } = request.nextUrl
@@ -23,7 +37,7 @@ export async function proxy(request: NextRequest) {
     (pathname.startsWith("/admin") || pathname.startsWith("/portal")) &&
     !user
   ) {
-    return NextResponse.redirect(new URL("/login", origin))
+    return loginRedirect(request, origin)
   }
 
   // Never auto-redirect /login → /admin here (caused ERR_TOO_MANY_REDIRECTS when

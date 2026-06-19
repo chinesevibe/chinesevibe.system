@@ -3,6 +3,7 @@
 import Link from "next/link"
 
 import { useLocale } from "@/features/portal/LocaleProvider"
+import { liffHref } from "@/lib/i18n/liff-url"
 
 interface LiffPageShellProps {
   /** ชื่อหน้า แสดงใน red header */
@@ -23,7 +24,8 @@ export function LiffPageShell({
   hideBack = false,
   children,
 }: LiffPageShellProps) {
-  const { tx } = useLocale()
+  const { tx, locale } = useLocale()
+  const href = liffHref(backHref, locale)
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5]">
@@ -31,7 +33,7 @@ export function LiffPageShell({
       <div className="bg-[#E80012] px-4 pb-4 pt-3 text-white">
         {!hideBack && (
           <Link
-            href={backHref}
+            href={href}
             className="mb-2 inline-flex items-center gap-1 text-sm text-white/80 active:text-white"
           >
             {tx("liff.nav.back")}

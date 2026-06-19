@@ -12,8 +12,10 @@ import {
 } from "@/lib/auth/portal-password"
 import { adminLoginPath } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { sanitizeReturnTo } from "@/lib/navigation/return-to"
 
 type VerifyPasswordBody = {
+  next?: string
   password?: string
   password_confirm?: string
 }
@@ -68,6 +70,7 @@ export async function POST(request: Request) {
 
   const password = body.password ?? ""
   const passwordConfirm = body.password_confirm ?? ""
+  const next = sanitizeReturnTo(body.next)
   const admin = getAdminClient()
 
   try {
@@ -116,12 +119,14 @@ export async function POST(request: Request) {
       }
     }
 
-    const redirect = adminLoginPath(
-      employee.role,
-      employee.status,
-      employee.department,
-      employee.position
-    )
+    const redirect =
+      next ??
+      adminLoginPath(
+        employee.role,
+        employee.status,
+        employee.department,
+        employee.position
+      )
     const response = NextResponse.json({ redirect, passwordSetupComplete: needsSetup })
     setOfficerPasswordVerifiedCookie(response, employee.id)
     return response

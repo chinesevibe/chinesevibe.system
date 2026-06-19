@@ -466,8 +466,11 @@ async function pushRetroReminders(
   lineApiBase: string,
   lineToken: string,
 ): Promise<number> {
-  const appBase = (Deno.env.get("APP_PUBLIC_URL") ??
-    "https://hr-app-two-iota.vercel.app").replace(/\/$/, "");
+  const appBase = (
+    Deno.env.get("APP_PUBLIC_URL") ??
+    Deno.env.get("NEXT_PUBLIC_BASE_URL") ??
+    ""
+  ).replace(/\/$/, "");
 
   const shiftIds = [
     ...new Set(

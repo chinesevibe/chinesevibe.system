@@ -12,10 +12,12 @@ import Link from "next/link"
 import { useMemo } from "react"
 
 import { buildCalendarGrid } from "@/features/attendance/calendar-grid"
+import { useLocale } from "@/features/portal/LocaleProvider"
 import type {
   AttendanceDayCell,
   AttendanceDayStatus,
 } from "@/features/attendance/calendar-types"
+import { liffHref } from "@/lib/i18n/liff-url"
 import { cn } from "@/lib/utils"
 
 const WEEKDAYS = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"]
@@ -530,9 +532,10 @@ export function AttendanceCorrectableBanner({
     workDate: string
     issue: "missing_checkin" | "missing_checkout"
     deadline: string
-  }>
+  }> 
   liffBasePath?: string
 }) {
+  const { locale } = useLocale()
   if (items.length === 0) return null
 
   return (
@@ -550,7 +553,7 @@ export function AttendanceCorrectableBanner({
         {items.map((item) => (
           <li key={item.workDate}>
             <Link
-              href={`${liffBasePath}?date=${item.workDate}`}
+              href={liffHref(`${liffBasePath}?date=${item.workDate}`, locale)}
               className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition hover:bg-amber-50/80"
             >
               <span className="font-medium text-foreground">{item.workDate}</span>
