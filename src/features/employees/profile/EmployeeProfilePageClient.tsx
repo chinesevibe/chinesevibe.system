@@ -8,6 +8,7 @@ import { EmployeeDangerZone } from "@/features/employees/profile/EmployeeDangerZ
 import { EmployeeProfileForm } from "@/features/employees/profile/EmployeeProfileForm"
 import { EmployeeProfileView } from "@/features/employees/profile/EmployeeProfileView"
 import { LifecyclePanel } from "@/features/employees/profile/LifecyclePanel"
+import { OfficerPortalPasswordPanel } from "@/features/employees/profile/OfficerPortalPasswordPanel"
 import { PendingRegistrationApproval } from "@/features/employees/profile/PendingRegistrationApproval"
 import type { EmployeeProfile } from "@/features/employees/profile/data"
 
@@ -107,6 +108,12 @@ export function EmployeeProfilePageClient({
           )
         }
       />
+      {!readOnly ? (
+        <OfficerPortalPasswordPanel
+          employeeId={profile.id}
+          department={profile.department}
+        />
+      ) : null}
       <section className="shrink-0 rounded-xl border border-border/80 bg-card p-4">
         <h2 className="mb-3 text-sm font-semibold">วงจรพนักงาน</h2>
         <LifecyclePanel profile={profile} notes={notes} />
