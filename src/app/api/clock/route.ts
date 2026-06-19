@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     longitude,
     accuracy_m: accuracy_m ?? null,
     captured_at: captured_at ?? new Date().toISOString(),
-    source: "liff_gps" as const,
+    source: "liff_geolocation" as const,
     speed_mps: null,
     heading: null,
     device_platform: null,

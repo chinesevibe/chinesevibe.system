@@ -7,21 +7,18 @@ import { z } from "zod"
 
 import { useLocale } from "@/features/portal/LocaleProvider"
 import { formatLeaveApiError } from "@/features/leave/balance"
-import { countLeaveDays, LEAVE_TYPES, type LeaveType } from "@/features/leave/types"
+import {
+  countLeaveDays,
+  LEAVE_TYPE_LABELS,
+  LEAVE_TYPES,
+  type LeaveType,
+} from "@/features/leave/types"
 import type { MessageKey } from "@/lib/i18n/messages"
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"]
 
 const DISPLAY_TYPES = LEAVE_TYPES.filter((t) => t !== "other") as LeaveType[]
-
-const LEAVE_LABELS: Record<LeaveType, string> = {
-  sick: "ลาป่วย",
-  personal: "ลากิจ",
-  vacation: "ลาพักร้อน",
-  maternity: "ลาคลอด",
-  other: "อื่นๆ",
-}
 
 function leaveTypeKey(type: LeaveType): MessageKey {
   return `leave.type.${type}` as MessageKey
@@ -161,7 +158,7 @@ export function LeaveForm() {
                   : "border-gray-200 bg-white text-gray-600 active:bg-gray-50"
               }`}
             >
-              {LEAVE_LABELS[t]}
+              {LEAVE_TYPE_LABELS[t]}
             </button>
           ))}
         </div>
