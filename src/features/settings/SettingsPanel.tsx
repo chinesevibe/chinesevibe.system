@@ -44,7 +44,7 @@ export function SettingsPanel({
         const body = (await res.json().catch(() => null)) as { error?: string } | null
         throw new Error(body?.error ?? "บันทึกไม่สำเร็จ")
       }
-      setMessage("บันทึกแล้ว — เวลาเริ่มงานมีผลกับเช็คอินครั้งถัดไป")
+      setMessage("บันทึกแล้ว — เวลาเริ่มงานสำรองจะมีผลกับเช็คอินครั้งถัดไปของคนที่ยังไม่มีกะ")
       router.refresh()
     } catch (e) {
       setError(e instanceof Error ? e.message : "บันทึกไม่สำเร็จ")
@@ -58,7 +58,7 @@ export function SettingsPanel({
       <h3 className="mb-3 text-sm font-semibold">ตั้งค่าระบบ (runtime)</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">
-          <span className="mb-1 block text-muted-foreground">เวลาเริ่มงาน (ชม.)</span>
+          <span className="mb-1 block text-muted-foreground">เวลาเริ่มงานสำรอง (ชม.)</span>
           <input
             className="h-9 w-full rounded-lg border px-2"
             value={workHour}
@@ -66,7 +66,7 @@ export function SettingsPanel({
           />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-muted-foreground">นาที</span>
+          <span className="mb-1 block text-muted-foreground">เวลาเริ่มงานสำรอง (นาที)</span>
           <input
             className="h-9 w-full rounded-lg border px-2"
             value={workMinute}
@@ -83,6 +83,9 @@ export function SettingsPanel({
           />
         </label>
       </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        ใช้เฉพาะพนักงานที่ยังไม่ได้กำหนดกะหรือเวลาเข้างานส่วนตัว ไม่ได้ใช้เป็น cutoff ปิดรอบงาน
+      </p>
       {message ? <p className="mt-2 text-sm text-green-600">{message}</p> : null}
       {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
       <Button className="mt-3" size="sm" disabled={busy} onClick={save}>

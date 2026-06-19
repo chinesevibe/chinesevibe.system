@@ -34,12 +34,12 @@ export default async function AdminSettingsPage() {
         <MorningPushSettingsPanel rows={configRows ?? []} />
         <div className="grid gap-4 md:grid-cols-2">
           <section className="rounded-xl border p-4">
-            <h3 className="mb-3 text-sm font-semibold">เวลาทำงาน (effective)</h3>
+            <h3 className="mb-3 text-sm font-semibold">เวลาเริ่มงานสำรองที่ใช้งานอยู่</h3>
             <p className="text-sm">
               {workStart.hour}:{String(workStart.minute).padStart(2, "0")} ICT
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Fallback สำหรับพนักงานที่ยังไม่กำหนดกะ · LINE User Chat:{" "}
+              ใช้เฉพาะกรณีไม่มีกะหรือไม่มีเวลาเข้างานส่วนตัว · LINE User Chat:{" "}
               {process.env.LINE_USER_CHAT_ENABLED === "true" ? "เปิด" : "ปิด"}
             </p>
           </section>
