@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import type { BranchFilterOption } from "@/features/employees/data"
+import type { WorkShiftSummary } from "@/features/shifts/types"
+import { formatShiftTimeRange } from "@/features/shifts/format"
 
 const inputClass =
   "h-9 rounded-lg border border-border/80 bg-muted/30 px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
@@ -11,9 +13,11 @@ const inputClass =
 export function EmployeeFilters({
   departments,
   branches,
+  workShifts,
 }: {
   departments: string[]
   branches: BranchFilterOption[]
+  workShifts: WorkShiftSummary[]
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -76,6 +80,20 @@ export function EmployeeFilters({
         {departments.map((d) => (
           <option key={d} value={d}>
             {d}
+          </option>
+        ))}
+      </select>
+      <select
+        value={searchParams.get("shift_id") ?? ""}
+        onChange={(e) => push({ shift_id: e.target.value })}
+        className={inputClass}
+        aria-label="กรองตามกะ"
+      >
+        <option value="">ทุกกะ</option>
+        <option value="__none__">ยังไม่กำหนดกะ</option>
+        {workShifts.map((shift) => (
+          <option key={shift.id} value={shift.id}>
+            {`${shift.name} (${formatShiftTimeRange(shift)})`}
           </option>
         ))}
       </select>
