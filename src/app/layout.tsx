@@ -1,24 +1,6 @@
 import type { Metadata } from "next"
-import { Inter, Noto_Sans_SC, Prompt } from "next/font/google"
 
 import "./globals.css"
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-})
-
-const notoSansSc = Noto_Sans_SC({
-  variable: "--font-noto-sc",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const prompt = Prompt({
-  variable: "--font-prompt",
-  subsets: ["latin", "thai"],
-  weight: ["400", "500", "600", "700"],
-})
 
 export const metadata: Metadata = {
   title: "CNV WorkHub — HR Admin",
@@ -31,10 +13,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="th"
-      className={`${inter.variable} ${notoSansSc.variable} ${prompt.variable} h-full antialiased`}
-    >
+    <html lang="th" className="h-full antialiased">
       <body
         className="min-h-full flex flex-col font-sans"
         style={{

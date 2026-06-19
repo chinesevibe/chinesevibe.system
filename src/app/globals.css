@@ -50,6 +50,9 @@
 }
 
 :root {
+  --font-inter: "Inter", "Noto Sans Thai", "Prompt", "Noto Sans", "Microsoft YaHei", sans-serif;
+  --font-noto-sc: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Noto Sans", "Inter", sans-serif;
+  --font-prompt: "Prompt", "Inter", "Noto Sans SC", "Noto Sans Thai", "Microsoft YaHei", sans-serif;
   --brand-red: #E80012;
   --background: #F5F5F5;
   --foreground: oklch(0.145 0 0);
