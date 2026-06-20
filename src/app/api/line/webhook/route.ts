@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const body = JSON.parse(rawBody) as webhook.CallbackRequest
   const events = body.events ?? []
 
-  await logLineWebhookEvents(events)
+  const logResult = await logLineWebhookEvents(events)
 
   for (const event of events) {
     const groupId =
@@ -44,5 +44,23 @@ export async function POST(request: Request) {
   }
   await handleEvents(events)
 
-  return Response.json({ ok: true })
+  const response = Response.json({ ok: true })
+
+  // ponytail: temporary prod debug headers -> remove after webhook insert root cause is confirmed.
+  if (request.headers.get("x-codex-debug") === "1") {
+    response.headers.set(
+      "x-line-webhook-log-status",
+      logResult.ok ? "ok" : "error"
+    )
+    response.headers.set("x-line-webhook-log-rows", String(logResult.rowCount))
+    response.headers.set("x-line-webhook-db-host", logResult.dbHost)
+    if (logResult.errorMessage) {
+      response.headers.set(
+        "x-line-webhook-log-error",
+        encodeURIComponent(logResult.errorMessage).slice(0, 512)
+      )
+    }
+  }
+
+  return response
 }

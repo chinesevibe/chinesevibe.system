@@ -127,6 +127,7 @@ function menuItemRow(
 }
 
 export function attendancePickerFlex(
+  clockUrl: string | undefined,
   locale: AppLocale = DEFAULT_LOCALE
 ): messagingApi.FlexMessage {
   return flexMessage(t("line.attendancePicker.alt", locale), {
@@ -227,22 +228,18 @@ export function attendancePickerFlex(
           style: "primary",
           color: "#06C755",
           height: "sm",
-          action: {
-            type: "postback",
-            label: t("line.attendancePicker.btnCheckin", locale),
-            data: "action=checkin_in",
-          },
+          action: clockUrl
+            ? ({ type: "uri", label: t("line.attendancePicker.btnCheckin", locale), uri: clockUrl } as messagingApi.URIAction)
+            : ({ type: "postback", label: t("line.attendancePicker.btnCheckin", locale), data: "action=checkin_in" } as messagingApi.PostbackAction),
         },
         {
           type: "button",
           style: "primary",
           color: "#1E6FD9",
           height: "sm",
-          action: {
-            type: "postback",
-            label: t("line.attendancePicker.btnCheckout", locale),
-            data: "action=checkout",
-          },
+          action: clockUrl
+            ? ({ type: "uri", label: t("line.attendancePicker.btnCheckout", locale), uri: clockUrl } as messagingApi.URIAction)
+            : ({ type: "postback", label: t("line.attendancePicker.btnCheckout", locale), data: "action=checkout" } as messagingApi.PostbackAction),
         },
       ],
     },

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import type { BranchFilterOption } from "@/features/employees/data"
@@ -32,17 +32,15 @@ export function AttendanceFilters({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [employeeInput, setEmployeeInput] = useState(values.employee)
+  const employeeInputTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
-    setEmployeeInput(values.employee)
-  }, [values.employee])
-
-  useEffect(() => {
-    if (employeeInput === values.employee) return
-    const timer = window.setTimeout(() => update("employee", employeeInput), 300)
-    return () => clearTimeout(timer)
-  }, [employeeInput, values.employee])
+    return () => {
+      if (employeeInputTimerRef.current != null) {
+        window.clearTimeout(employeeInputTimerRef.current)
+      }
+    }
+  }, [])
 
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -60,6 +58,15 @@ export function AttendanceFilters({
     }
     params.delete("page")
     router.replace(`${pathname}?${params.toString()}`)
+  }
+
+  function handleEmployeeInputChange(value: string) {
+    if (employeeInputTimerRef.current != null) {
+      window.clearTimeout(employeeInputTimerRef.current)
+    }
+    employeeInputTimerRef.current = window.setTimeout(() => {
+      update("employee", value)
+    }, 300)
   }
 
   function formatDateInput(date: Date): string {
@@ -194,10 +201,11 @@ export function AttendanceFilters({
           <label className="flex flex-col gap-1 text-sm">
               <span className="font-medium text-muted-foreground">พนักงาน / รหัสพนักงาน</span>
               <input
+                key={values.employee}
                 list="attendance-employee-options"
                 className={inputClassName}
-                value={employeeInput}
-                onChange={(e) => setEmployeeInput(e.target.value)}
+                defaultValue={values.employee}
+                onChange={(e) => handleEmployeeInputChange(e.target.value)}
                 placeholder="พิมพ์ชื่อหรือรหัสพนักงาน"
               />
               <datalist id="attendance-employee-options">

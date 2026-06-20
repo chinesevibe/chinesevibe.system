@@ -1,5 +1,6 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase, type WithSupabaseConfig } from "@supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const ICT_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -111,87 +112,17 @@ function getShiftEndUtc(workDate: string, shift: PaidWorkShiftWindow): Date {
   );
 }
 
-function computeOverlap(
-  actualIn: Date,
-  actualOut: Date,
-  windowStart: Date,
-  windowEnd: Date,
-  graceMinutes: number,
-) {
-  const graceMs = Math.max(0, graceMinutes) * 60_000;
-  const effectiveIn =
-    actualIn.getTime() > windowStart.getTime() &&
-      actualIn.getTime() <= windowStart.getTime() + graceMs
-      ? windowStart
-      : actualIn;
-  const overlapMs = Math.max(
-    0,
-    Math.min(actualOut.getTime(), windowEnd.getTime()) -
-      Math.max(effectiveIn.getTime(), windowStart.getTime()),
-  );
-  return overlapMs;
-}
-
 function computePaidWorkMinutes({
-  workDate,
-  shift,
   checkInAt,
   checkOutAt,
-  defaultCheckInTime,
-  defaultCheckOutTime,
 }: {
-  workDate: string;
-  shift: PaidWorkShiftWindow | null;
   checkInAt: Date;
   checkOutAt: Date;
-  defaultCheckInTime?: string | null;
-  defaultCheckOutTime?: string | null;
 }): PaidWorkMinutesResult {
   const rawMinutes = Math.max(
     0,
     Math.floor((checkOutAt.getTime() - checkInAt.getTime()) / 60_000),
   );
-
-  if (shift) {
-    const windowStart = ictLocalToUtc(workDate, `${pad2(shift.start_hour)}:${pad2(shift.start_minute)}`);
-    let windowEnd = ictLocalToUtc(workDate, `${pad2(shift.end_hour)}:${pad2(shift.end_minute)}`);
-    if (shift.crosses_midnight || windowEnd.getTime() <= windowStart.getTime()) {
-      windowEnd = new Date(windowEnd.getTime() + DAY_MS);
-    }
-
-    const paidMinutes = Math.floor(
-      computeOverlap(
-        checkInAt,
-        checkOutAt,
-        windowStart,
-        windowEnd,
-        shift.grace_minutes ?? 0,
-      ) / 60_000,
-    );
-    return {
-      rawMinutes,
-      paidMinutes,
-      paidHours: Math.round((paidMinutes / 60) * 100) / 100,
-    };
-  }
-
-  const inTime = normalizeTimeToHHMM(defaultCheckInTime);
-  const outTime = normalizeTimeToHHMM(defaultCheckOutTime);
-  if (inTime && outTime) {
-    const windowStart = ictLocalToUtc(workDate, inTime);
-    let windowEnd = ictLocalToUtc(workDate, outTime);
-    if (windowEnd.getTime() <= windowStart.getTime()) {
-      windowEnd = new Date(windowEnd.getTime() + DAY_MS);
-    }
-    const paidMinutes = Math.floor(
-      computeOverlap(checkInAt, checkOutAt, windowStart, windowEnd, 0) / 60_000,
-    );
-    return {
-      rawMinutes,
-      paidMinutes,
-      paidHours: Math.round((paidMinutes / 60) * 100) / 100,
-    };
-  }
 
   return {
     rawMinutes,
@@ -237,7 +168,7 @@ function resolveCutoffCheckoutAt(
 
 function ensurePeriodIdByDate(
   periodCache: Map<PeriodCacheKey, string>,
-  admin: any,
+  admin: SupabaseClient,
   workDate: string,
   branchId: string | null,
 ) {
@@ -360,12 +291,8 @@ const handler = {
         }
 
         const result = computePaidWorkMinutes({
-          workDate,
-          shift,
           checkInAt,
           checkOutAt: checkoutAt,
-          defaultCheckInTime: employee.default_check_in_time,
-          defaultCheckOutTime: employee.default_check_out_time,
         });
 
         const { data: updatedRows, error: updateError } = await admin

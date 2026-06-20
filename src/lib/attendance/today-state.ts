@@ -38,25 +38,10 @@ export async function getLineTodayAttendanceState(
   if (openError) throw openError
   if (openRecord) return { kind: "checked_in", checkInAt: new Date(openRecord.check_in_at) }
 
-  // 2. Already checked-out today (ICT day).
+  // 2. Any check-in record today (ICT day) — determines checked_in / checked_out state.
+  // Filter by check_in_at (not check_out_at) so overnight checkouts (00:07 ICT = prev-day UTC)
+  // don't incorrectly land in the next day's window and block re-check-in.
   const { start, end } = ictDayRangeUtc(now)
-  const { data: checkedOutRecord, error: checkedOutError } = await admin
-    .from("hr_attendance")
-    .select("check_out_at")
-    .eq("employee_id", employee.id)
-    .not("check_out_at", "is", null)
-    .gte("check_out_at", start.toISOString())
-    .lt("check_out_at", end.toISOString())
-    .order("check_out_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  if (checkedOutError) throw checkedOutError
-  if (checkedOutRecord?.check_out_at) {
-    return { kind: "checked_out", checkOutAt: new Date(checkedOutRecord.check_out_at) }
-  }
-
-  // 3. Fallback: any check-in record today (handles edge cases / same-day without open record).
   const { data: record, error: recordError } = await admin
     .from("hr_attendance")
     .select("check_in_at, check_out_at")

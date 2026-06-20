@@ -132,23 +132,26 @@ export function AdminContextTabsProvider({
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY)
-      if (!raw) {
+    const timer = window.setTimeout(() => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY)
+        if (!raw) return
+        const parsed = JSON.parse(raw) as {
+          tabs?: AdminContextTab[]
+          activeId?: string | null
+        }
+        setTabs(Array.isArray(parsed.tabs) ? parsed.tabs : [])
+        setActiveId(parsed.activeId ?? null)
+      } catch {
+        setTabs([])
+        setActiveId(null)
+      } finally {
         hydratedRef.current = true
-        return
       }
-      const parsed = JSON.parse(raw) as {
-        tabs?: AdminContextTab[]
-        activeId?: string | null
-      }
-      setTabs(Array.isArray(parsed.tabs) ? parsed.tabs : [])
-      setActiveId(parsed.activeId ?? null)
-    } catch {
-      setTabs([])
-      setActiveId(null)
-    } finally {
-      hydratedRef.current = true
+    }, 0)
+
+    return () => {
+      window.clearTimeout(timer)
     }
   }, [])
 

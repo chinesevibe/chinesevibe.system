@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# hr-app
 
-## Getting Started
+Next.js app for CNV WorkHub HR, payroll-hours, portal, LIFF, and inventory surfaces
 
-First, run the development server:
+> Current owner: Codex. Production web may move over time; read `NEXT_PUBLIC_BASE_URL` and the current Vercel deployment instead of hardcoding old preview links.
+
+## Read First
+
+1. [../GROUND_TRUTH.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/GROUND_TRUTH.md)
+2. [../orchestration/CURRENT_TASK.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/orchestration/CURRENT_TASK.md)
+3. [../MILESTONES.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/MILESTONES.md)
+
+## App Surfaces
+
+- Admin: `src/app/admin/*`
+- API routes: `src/app/api/*`
+- LIFF: `src/app/liff/*`
+- Portal: `src/app/portal/*`
+- Supabase: `supabase/*`
+
+## Local Commands
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run typecheck
+npm run lint
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Production domain: current customer-owned deployment (see `NEXT_PUBLIC_BASE_URL`)
+- Vercel project link is stored in `.vercel/project.json`
+- Deploy runbook: [docs/DEPLOY_RUNBOOK.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/docs/DEPLOY_RUNBOOK.md)
+- Speed Insights is installed in `src/app/layout.tsx`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Docs Map
 
-## Learn More
+- Runbooks: [docs/README.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/docs/README.md)
+- Reports and audits: [reports/README.md](/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/reports/README.md)
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `reports/` contains many historical snapshots; do not treat every file there as active truth
+- active scope always comes from root orchestration docs, not from ad-hoc reports

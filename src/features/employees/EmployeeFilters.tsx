@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import type { BranchFilterOption } from "@/features/employees/data"
 import type { WorkShiftSummary } from "@/features/shifts/types"
 import { formatShiftTimeRange } from "@/features/shifts/format"
+import { cn } from "@/lib/utils"
 
 const inputClass =
   "h-9 rounded-lg border border-border/80 bg-muted/30 px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
@@ -47,19 +48,19 @@ export function EmployeeFilters({
   }, [q])
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
       <input
         type="search"
         placeholder="ค้นหาชื่อหรือรหัสพนักงาน..."
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        className={`${inputClass} w-56`}
+        className={cn(inputClass, "w-full sm:col-span-2 xl:col-span-1")}
         aria-label="ค้นหาชื่อหรือรหัสพนักงาน"
       />
       <select
         value={searchParams.get("branch_id") ?? ""}
         onChange={(e) => push({ branch_id: e.target.value })}
-        className={inputClass}
+        className={cn(inputClass, "w-full")}
         aria-label="กรองตามสาขา"
       >
         <option value="">ทุกสาขา</option>
@@ -73,7 +74,7 @@ export function EmployeeFilters({
       <select
         value={searchParams.get("dept") ?? ""}
         onChange={(e) => push({ dept: e.target.value })}
-        className={inputClass}
+        className={cn(inputClass, "w-full")}
         aria-label="กรองตามแผนก"
       >
         <option value="">ทุกแผนก</option>
@@ -86,7 +87,7 @@ export function EmployeeFilters({
       <select
         value={searchParams.get("shift_id") ?? ""}
         onChange={(e) => push({ shift_id: e.target.value })}
-        className={inputClass}
+        className={cn(inputClass, "w-full")}
         aria-label="กรองตามกะ"
       >
         <option value="">ทุกกะ</option>
@@ -115,7 +116,7 @@ export function EmployeeFilters({
           const [sort, dir] = e.target.value.split(":")
           push({ sort, dir })
         }}
-        className={inputClass}
+        className={cn(inputClass, "w-full")}
         aria-label="เรียงลำดับ"
       >
         <option value="name:asc">ชื่อ (ก→ฮ)</option>

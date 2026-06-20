@@ -12,7 +12,7 @@ const FIELD_CLASS =
   "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
 
 type SubmitMessageState = {
-  mode: "checkin" | "checkout" | "both"
+  mode: "checkin"
   ok: boolean
   title: string
   message: string
@@ -45,10 +45,7 @@ export function AttendanceManualClient({
   const [date, setDate] = useState(defaultDate)
   const [shiftId] = useState("")
   const [checkInTime, setCheckInTime] = useState(defaultTime)
-  const [checkOutTime, setCheckOutTime] = useState("")
-  const [busyMode, setBusyMode] = useState<"idle" | "checkin" | "checkout" | "both">(
-    "idle"
-  )
+  const [busyMode, setBusyMode] = useState<"idle" | "checkin">("idle")
   const [manualMsg, setManualMsg] = useState<SubmitMessageState | null>(null)
   const [windowOpen, setWindowOpen] = useState(withinRetroWindow)
   const [deadlineIso, setDeadlineIso] = useState(retroDeadline)
@@ -86,29 +83,17 @@ export function AttendanceManualClient({
   }, [deadlineIso])
 
   const canCheckin = Boolean(date && checkInTime) && !retroBlocked
-  const canCheckout = Boolean(date && checkOutTime) && !retroBlocked
-  const canBoth = canCheckin && canCheckout
 
-  async function submitManual(mode: "checkin" | "checkout" | "full") {
-    setBusyMode(mode === "full" ? "both" : mode)
+  async function submitManual() {
+    setBusyMode("checkin")
     setManualMsg(null)
 
     try {
       const payload = {
         date,
         shiftId: shiftId || null,
-        mode:
-          mode === "full"
-            ? "full"
-            : mode === "checkin"
-              ? "checkin"
-              : "checkout",
-        ...(mode === "checkout"
-          ? { checkOutTime: checkOutTime.trim() }
-          : {
-              checkInTime: checkInTime.trim(),
-              ...(checkOutTime ? { checkOutTime: checkOutTime.trim() } : {}),
-            }),
+        mode: "checkin",
+        checkInTime: checkInTime.trim(),
       }
 
       const res = await fetch("/api/attendance/manual", {
@@ -125,27 +110,15 @@ export function AttendanceManualClient({
         throw new Error(data?.error ?? tx("liff.attendance.saveFailed"))
       }
 
-      const title =
-        mode === "full"
-          ? tx("liff.attendance.successBoth")
-          : mode === "checkin"
-            ? tx("liff.attendance.successCheckin")
-            : tx("liff.attendance.successCheckout")
-
       setManualMsg({
-        mode:
-          mode === "full"
-            ? "both"
-            : mode === "checkin"
-              ? "checkin"
-              : "checkout",
+        mode: "checkin",
         ok: true,
-        title,
+        title: tx("liff.attendance.successCheckin"),
         message: data?.message ?? tx("liff.attendance.success"),
       })
     } catch (e) {
       setManualMsg({
-        mode: mode === "full" ? "both" : mode,
+        mode: "checkin",
         ok: false,
         title: tx("liff.attendance.errorTitle"),
         message: e instanceof Error ? e.message : tx("liff.attendance.saveFailed"),
@@ -195,54 +168,25 @@ export function AttendanceManualClient({
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="grid gap-1 text-sm">
-              <span className="font-medium text-gray-700">{tx("liff.attendance.checkinTime")}</span>
-              <input
-                type="time"
-                className={FIELD_CLASS}
-                value={checkInTime}
-                onChange={(event) => setCheckInTime(event.target.value)}
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="font-medium text-gray-700">{tx("liff.attendance.checkoutTime")}</span>
-              <input
-                type="time"
-                className={FIELD_CLASS}
-                value={checkOutTime}
-                onChange={(event) => setCheckOutTime(event.target.value)}
-              />
-            </label>
-          </div>
+          <label className="grid gap-1 text-sm">
+            <span className="font-medium text-gray-700">{tx("liff.attendance.checkinTime")}</span>
+            <input
+              type="time"
+              className={FIELD_CLASS}
+              value={checkInTime}
+              onChange={(event) => setCheckInTime(event.target.value)}
+            />
+          </label>
 
           <div className="grid gap-2 pt-1">
             <Button
-              onClick={() => submitManual("checkin")}
+              onClick={() => submitManual()}
               disabled={busyMode !== "idle" || !canCheckin}
               className="w-full bg-[#06C755] hover:bg-[#06C755]/80"
             >
               {busyMode === "checkin"
                 ? tx("liff.attendance.savingCheckin")
                 : tx("liff.attendance.saveCheckin")}
-            </Button>
-            <Button
-              onClick={() => submitManual("checkout")}
-              disabled={busyMode !== "idle" || !canCheckout}
-              variant="outline"
-            >
-              {busyMode === "checkout"
-                ? tx("liff.attendance.savingCheckout")
-                : tx("liff.attendance.saveCheckout")}
-            </Button>
-            <Button
-              onClick={() => submitManual("full")}
-              disabled={busyMode !== "idle" || !canBoth}
-              variant="secondary"
-            >
-              {busyMode === "both"
-                ? tx("liff.attendance.savingBoth")
-                : tx("liff.attendance.saveBoth")}
             </Button>
           </div>
 

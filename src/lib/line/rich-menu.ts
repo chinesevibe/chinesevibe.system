@@ -12,71 +12,73 @@ const H = 810
 const COL = W / 3
 const ROW = H / 2
 
-export const HR_RICH_MENU: messagingApi.RichMenuRequest = {
-  size: { width: W, height: H },
-  selected: true,
-  name: "hr-main-menu-v3",
-  chatBarText: "เมนู HR",
-  areas: [
-    {
-      bounds: { x: 0, y: 0, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=checkin",
-        label: "เช็คอิน-เช็คเอาท์",
+export function buildHrRichMenu(clockLiffUri?: string): messagingApi.RichMenuRequest {
+  const clockAction: messagingApi.RichMenuArea["action"] = clockLiffUri
+    ? { type: "uri", uri: clockLiffUri, label: "เช็คอิน-เช็คเอาท์" }
+    : { type: "postback", data: "action=checkin", label: "เช็คอิน-เช็คเอาท์" }
+
+  return {
+    size: { width: W, height: H },
+    selected: true,
+    name: "hr-main-menu-v4",
+    chatBarText: "เมนู HR",
+    areas: [
+      {
+        bounds: { x: 0, y: 0, width: COL, height: ROW },
+        action: clockAction,
       },
-    },
-    {
-      bounds: { x: COL, y: 0, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=overtime",
-        label: "ขอทำงานล่วงเวลา",
+      {
+        bounds: { x: COL, y: 0, width: COL, height: ROW },
+        action: {
+          type: "postback",
+          data: "action=overtime",
+          label: "ขอทำงานล่วงเวลา",
+        },
       },
-    },
-    {
-      bounds: { x: COL * 2, y: 0, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=document",
-        label: "ขอเอกสารสำคัญ",
+      {
+        bounds: { x: COL * 2, y: 0, width: COL, height: ROW },
+        action: {
+          type: "postback",
+          data: "action=document",
+          label: "ขอเอกสารสำคัญ",
+        },
       },
-    },
-    {
-      bounds: { x: 0, y: ROW, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=leave",
-        label: "ขอลา",
+      {
+        bounds: { x: 0, y: ROW, width: COL, height: ROW },
+        action: {
+          type: "postback",
+          data: "action=leave",
+          label: "ขอลา",
+        },
       },
-    },
-    {
-      bounds: { x: COL, y: ROW, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=complaint",
-        label: "แจ้งเรื่องร้องเรียน",
+      {
+        bounds: { x: COL, y: ROW, width: COL, height: ROW },
+        action: {
+          type: "postback",
+          data: "action=complaint",
+          label: "แจ้งเรื่องร้องเรียน",
+        },
       },
-    },
-    {
-      bounds: { x: COL * 2, y: ROW, width: COL, height: ROW },
-      action: {
-        type: "postback",
-        data: "action=contact_hr",
-        label: "ติดต่อ HR",
+      {
+        bounds: { x: COL * 2, y: ROW, width: COL, height: ROW },
+        action: {
+          type: "postback",
+          data: "action=contact_hr",
+          label: "ติดต่อ HR",
+        },
       },
-    },
-  ],
+    ],
+  }
 }
 
-// Requires LINE_CHANNEL_ACCESS_TOKEN. Run via scripts/register-rich-menu.ts.
-export async function registerRichMenu(imagePath: string): Promise<string> {
+// Requires LINE_CHANNEL_ACCESS_TOKEN + NEXT_PUBLIC_BASE_URL. Run via scripts/register-rich-menu.ts.
+export async function registerRichMenu(imagePath: string, clockLiffUri?: string): Promise<string> {
   const image = await readFile(imagePath)
   const contentType = imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")
     ? "image/jpeg"
     : "image/png"
 
-  const { richMenuId } = await getLineClient().createRichMenu(HR_RICH_MENU)
+  const { richMenuId } = await getLineClient().createRichMenu(buildHrRichMenu(clockLiffUri))
   await getLineBlobClient().setRichMenuImage(
     richMenuId,
     new Blob([new Uint8Array(image)], { type: contentType })

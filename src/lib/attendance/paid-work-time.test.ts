@@ -28,7 +28,7 @@ describe("computePaidWorkMinutes", () => {
     grace_minutes: 10,
   }
 
-  it("Branch Day: early check-in and late check-out clamp to window (720 min / 12.00 h)", () => {
+  it("Branch Day: early check-in and late check-out uses raw duration (740 min / 12.33 h)", () => {
     const checkIn = ict("2026-06-18", "09:50")
     const checkOut = ict("2026-06-18", "22:10")
     const result = computePaidWorkMinutes({
@@ -36,12 +36,12 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: branchDayShift,
     })
-    assert.equal(result.paidMinutes, 720)
-    assert.equal(result.paidHours, 12.00)
+    assert.equal(result.paidMinutes, 740)
+    assert.equal(result.paidHours, 12.33)
     assert.equal(result.hasPayWindow, true)
   })
 
-  it("Branch Day: late check-in and slightly late check-out (665 min / 11.08 h)", () => {
+  it("Branch Day: late check-in and slightly late check-out uses raw duration (670 min / 11.17 h)", () => {
     const checkIn = ict("2026-06-18", "10:55")
     const checkOut = ict("2026-06-18", "22:05")
     const result = computePaidWorkMinutes({
@@ -49,12 +49,12 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: branchDayShift,
     })
-    assert.equal(result.paidMinutes, 665)
-    assert.equal(result.paidHours, 11.08)
+    assert.equal(result.paidMinutes, 670)
+    assert.equal(result.paidHours, 11.17)
     assert.equal(result.hasPayWindow, true)
   })
 
-  it("Branch Day: check-in within grace and complete shift pays full 12.00 h", () => {
+  it("Branch Day: check-in within grace still uses actual timestamps (723 min / 12.05 h)", () => {
     const checkIn = ict("2026-06-18", "10:01")
     const checkOut = ict("2026-06-18", "22:04")
     const result = computePaidWorkMinutes({
@@ -62,8 +62,8 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: branchDayShift,
     })
-    assert.equal(result.paidMinutes, 720)
-    assert.equal(result.paidHours, 12.0)
+    assert.equal(result.paidMinutes, 723)
+    assert.equal(result.paidHours, 12.05)
     assert.equal(result.hasPayWindow, true)
   })
 
@@ -80,7 +80,7 @@ describe("computePaidWorkMinutes", () => {
     assert.equal(result.hasPayWindow, true)
   })
 
-  it("Branch Day: shift window 11:00–22:00, check-in before window (660 min / 11.00 h)", () => {
+  it("Branch Day: 11:00–22:00 shift still uses raw duration (670 min / 11.17 h)", () => {
     const shift1100 = {
       start_hour: 11,
       start_minute: 0,
@@ -95,8 +95,8 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: shift1100,
     })
-    assert.equal(result.paidMinutes, 660)
-    assert.equal(result.paidHours, 11.00)
+    assert.equal(result.paidMinutes, 670)
+    assert.equal(result.paidHours, 11.17)
     assert.equal(result.hasPayWindow, true)
   })
 
@@ -109,7 +109,7 @@ describe("computePaidWorkMinutes", () => {
     crosses_midnight: true,
   }
 
-  it("Branch Night: early check-in and late check-out clamp to window (720 min / 12.00 h)", () => {
+  it("Branch Night: early check-in and late check-out uses raw duration (740 min / 12.33 h)", () => {
     const checkIn = ict("2026-06-18", "13:50")
     const checkOut = ict("2026-06-19", "02:10")
     const result = computePaidWorkMinutes({
@@ -118,8 +118,8 @@ describe("computePaidWorkMinutes", () => {
       shift: branchNightShift,
       shiftDate: "2026-06-18",
     })
-    assert.equal(result.paidMinutes, 720)
-    assert.equal(result.paidHours, 12.00)
+    assert.equal(result.paidMinutes, 740)
+    assert.equal(result.paidHours, 12.33)
     assert.equal(result.hasPayWindow, true)
   })
 

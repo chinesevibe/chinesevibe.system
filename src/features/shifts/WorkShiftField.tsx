@@ -1,4 +1,4 @@
-import { formatShiftTimeRange } from "@/features/shifts/format"
+import { formatShiftDurationHours, formatShiftTimeRange } from "@/features/shifts/format"
 import type { WorkShiftSummary } from "@/features/shifts/types"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +21,7 @@ export function WorkShiftField({
   const toOptionLabel = (shift: WorkShiftSummary): string => {
     const range = formatShiftTimeRange(shift)
     const name = shift.name.includes(range) ? shift.name : `${shift.name} (${range})`
-    return `${name} (${shift.standard_hours}h)`
+    return `${name} (${formatShiftDurationHours(shift)}h)`
   }
 
   return (

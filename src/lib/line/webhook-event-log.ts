@@ -19,6 +19,13 @@ type WebhookEventRow = {
   event_payload: Record<string, unknown>
 }
 
+export type LineWebhookLogResult = {
+  ok: boolean
+  rowCount: number
+  dbHost: string
+  errorMessage: string | null
+}
+
 function redactWebhookEvent(event: webhook.Event): Record<string, unknown> {
   const payload = JSON.parse(JSON.stringify(event)) as Record<string, unknown>
   if ("replyToken" in payload) {
@@ -116,8 +123,48 @@ function buildWebhookEventRow(event: webhook.Event): WebhookEventRow {
   }
 }
 
-export async function logLineWebhookEvents(events: webhook.Event[]): Promise<void> {
-  if (events.length === 0) return
+function currentSupabaseHost(): string {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  if (!raw) return "missing"
+
+  try {
+    return new URL(raw).host
+  } catch {
+    return "invalid"
+  }
+}
+
+function formatSupabaseError(error: unknown): string {
+  if (!error || typeof error !== "object") {
+    return "unknown"
+  }
+
+  const candidate = error as {
+    code?: string
+    details?: string
+    hint?: string
+    message?: string
+  }
+
+  return JSON.stringify({
+    code: candidate.code ?? null,
+    details: candidate.details ?? null,
+    hint: candidate.hint ?? null,
+    message: candidate.message ?? "unknown",
+  })
+}
+
+export async function logLineWebhookEvents(
+  events: webhook.Event[]
+): Promise<LineWebhookLogResult> {
+  if (events.length === 0) {
+    return {
+      ok: true,
+      rowCount: 0,
+      dbHost: currentSupabaseHost(),
+      errorMessage: null,
+    }
+  }
 
   const rows: WebhookEventRow[] = []
   for (const event of events) {
@@ -129,9 +176,38 @@ export async function logLineWebhookEvents(events: webhook.Event[]): Promise<voi
     })
   }
 
-  const admin = getAdminClient()
-  const { error } = await admin.from("hr_line_webhook_events").insert(rows)
-  if (error) {
-    console.error("logLineWebhookEvents failed", error)
+  try {
+    const admin = getAdminClient()
+    const { error } = await admin.from("hr_line_webhook_events").insert(rows)
+    if (error) {
+      const errorMessage = formatSupabaseError(error)
+      console.error("logLineWebhookEvents failed", errorMessage)
+      return {
+        ok: false,
+        rowCount: rows.length,
+        dbHost: currentSupabaseHost(),
+        errorMessage,
+      }
+    }
+
+    console.info("logLineWebhookEvents ok", {
+      rowCount: rows.length,
+      dbHost: currentSupabaseHost(),
+    })
+    return {
+      ok: true,
+      rowCount: rows.length,
+      dbHost: currentSupabaseHost(),
+      errorMessage: null,
+    }
+  } catch (error) {
+    const errorMessage = formatSupabaseError(error)
+    console.error("logLineWebhookEvents threw", errorMessage)
+    return {
+      ok: false,
+      rowCount: rows.length,
+      dbHost: currentSupabaseHost(),
+      errorMessage,
+    }
   }
 }

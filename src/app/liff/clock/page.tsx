@@ -25,7 +25,7 @@ type ClockInfo = {
   checkOutAt: string | null
 }
 
-type Phase = "idle" | "locating" | "submitting"
+type Phase = "idle" | "locating_in" | "locating_out" | "submitting_in" | "submitting_out"
 
 type ResultState =
   | { ok: true; title: string; detail: string }
@@ -52,7 +52,7 @@ function fmtTime(date: Date) {
 
 function fmtDate(date: Date) {
   return date.toLocaleDateString("th-TH", {
-    weekday: "long", day: "numeric", month: "long",
+    day: "numeric", month: "short", year: "numeric",
     timeZone: "Asia/Bangkok",
   })
 }
@@ -61,6 +61,32 @@ function fmtShortTime(iso: string) {
   return new Date(iso).toLocaleTimeString("th-TH", {
     hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
   })
+}
+
+function signalLabel(accuracyM: number): string {
+  if (accuracyM <= 10) return "ดีมาก"
+  if (accuracyM <= 25) return "ดี"
+  if (accuracyM <= 50) return "พอใช้"
+  return "อ่อน"
+}
+
+function SignalBars({ accuracyM }: { accuracyM: number }) {
+  const level = accuracyM <= 10 ? 4 : accuracyM <= 25 ? 3 : accuracyM <= 50 ? 2 : 1
+  const heights = [4, 7, 11, 16]
+  return (
+    <span className="flex items-end gap-0.5" style={{ height: 16 }}>
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          className="w-1 rounded-sm"
+          style={{
+            height: h,
+            background: i < level ? "#16a34a" : "#d1d5db",
+          }}
+        />
+      ))}
+    </span>
+  )
 }
 
 // ── Main page ──────────────────────────────────────────────────────────────
@@ -105,10 +131,9 @@ export default function ClockPage() {
   }, [result])
 
   // ── Submit ─────────────────────────────────────────────────────────────
-  const submit = useCallback(async (pos: GeolocationPosition) => {
+  const doSubmit = useCallback(async (action: "checkin" | "checkout", pos: GeolocationPosition) => {
     if (!info) return
-    const action = !info.checkInAt ? "checkin" : "checkout"
-    setPhase("submitting")
+    setPhase(action === "checkin" ? "submitting_in" : "submitting_out")
 
     try {
       const res = await fetch("/api/clock", {
@@ -141,7 +166,6 @@ export default function ClockPage() {
         }
 
         setResult({ ok: true, title: isCheckIn ? "เช็คอินสำเร็จ" : "เช็คออกสำเร็จ", detail })
-        // Refresh info
         const newInfo = await fetch("/api/clock/info").then(r => r.json()).catch(() => null) as ClockInfo | null
         if (newInfo) setInfo(newInfo)
       } else if (res.status === 403 && (data.error as string) === "outside_geofence") {
@@ -157,22 +181,22 @@ export default function ClockPage() {
     }
   }, [info])
 
-  const handlePress = useCallback(() => {
+  const handlePress = useCallback((action: "checkin" | "checkout") => {
     if (!navigator.geolocation) {
       setResult({ ok: false, title: "ไม่รองรับ GPS", detail: "เบราว์เซอร์นี้ไม่รองรับ GPS" })
       return
     }
-    setPhase("locating")
+    setPhase(action === "checkin" ? "locating_in" : "locating_out")
     const deadline = Date.now() + 8000
     const poll = setInterval(() => {
       const pos = bestPosRef.current
       if (!pos) return
       if (pos.coords.accuracy <= 50 || Date.now() >= deadline) {
         clearInterval(poll)
-        void submit(pos)
+        void doSubmit(action, pos)
       }
     }, 500)
-  }, [submit])
+  }, [doSubmit])
 
   // ── Derived ────────────────────────────────────────────────────────────
   const hasLocation = info?.latitude && info?.longitude
@@ -183,40 +207,54 @@ export default function ClockPage() {
   const isOutside = info?.geofenceEnabled && distanceM !== undefined && distanceM > info.geofenceRadiusM
   const hasCheckedIn = !!info?.checkInAt
   const hasCheckedOut = !!info?.checkOutAt
-  const isAllDone = hasCheckedIn && hasCheckedOut
-  const canPress = phase === "idle" && !isOutside && !isAllDone && !result
+  const isIdle = phase === "idle"
 
-  const btnLabel = !hasCheckedIn ? "ยืนยันเข้างาน" : !hasCheckedOut ? "ยืนยันออกงาน" : "เสร็จสิ้นวันนี้"
-  const actionLabel =
-    phase === "locating" ? "กำลังหาพิกัด..." :
-    phase === "submitting" ? "กำลังบันทึก..." :
-    btnLabel
+  const checkinDisabled = hasCheckedIn || !!isOutside || !isIdle || !!result
+  const checkoutDisabled = !hasCheckedIn || hasCheckedOut || !!isOutside || !isIdle || !!result
+
+  const checkinLabel =
+    phase === "locating_in" ? "กำลังหาพิกัด..." :
+    phase === "submitting_in" ? "กำลังบันทึก..." :
+    "เช็คอินเข้างาน"
+
+  const checkoutLabel =
+    phase === "locating_out" ? "กำลังหาพิกัด..." :
+    phase === "submitting_out" ? "กำลังบันทึก..." :
+    "เช็คเอาท์ออกงาน"
+
+  const mapsUrl = hasLocation
+    ? `https://maps.google.com/?q=${info!.latitude},${info!.longitude}`
+    : null
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5]">
-      {/* Red header */}
-      <div className="bg-[#E80012] px-4 pb-4 pt-10 text-white">
-        <p className="text-sm text-white/70">
-          {info ? info.employeeName : "กำลังโหลด..."}
-        </p>
-        <p className="mt-1 font-mono text-4xl font-bold tabular-nums tracking-tight">
-          {fmtTime(now)}
-        </p>
-        <p className="mt-0.5 text-xs text-white/70">{fmtDate(now)}</p>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-gray-100 bg-white px-4 pb-3 pt-12">
+        <button
+          onClick={() => window.history.back()}
+          className="text-xl font-semibold text-[#E80012] px-1"
+        >
+          ‹
+        </button>
+        <p className="text-base font-bold text-gray-900">เช็คอิน / เช็คเอาท์</p>
+        <div className="relative px-1">
+          <span className="text-xl text-gray-500">🔔</span>
+          <span className="absolute right-1 top-0 h-2 w-2 rounded-full border border-white bg-[#E80012]" />
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 px-4 py-3 pb-24">
+      <div className="flex flex-1 flex-col gap-3 px-4 py-3 pb-28">
 
         {infoError && (
-          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-[#E80012]">
+          <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-[#E80012]">
             {infoError}
           </div>
         )}
 
         {/* ── Result card ── */}
         {result && (
-          <div className={`rounded-xl border p-4 text-center ${result.ok ? "border-green-100 bg-green-50" : "border-red-100 bg-red-50"}`}>
+          <div className={`rounded-2xl border p-4 text-center ${result.ok ? "border-green-100 bg-green-50" : "border-red-100 bg-red-50"}`}>
             <p className="text-2xl">{result.ok ? "✅" : "⛔"}</p>
             <p className={`mt-1 font-semibold ${result.ok ? "text-green-700" : "text-[#E80012]"}`}>{result.title}</p>
             <p className="mt-0.5 text-sm text-gray-500">{result.detail}</p>
@@ -241,82 +279,156 @@ export default function ClockPage() {
             distanceM={distanceM}
           />
         ) : (
-          <div className="flex h-[200px] items-center justify-center rounded-xl border border-gray-100 bg-white shadow-sm">
+          <div className="flex h-[200px] items-center justify-center rounded-2xl border border-gray-100 bg-white shadow-sm">
             <p className="text-sm text-gray-400">
               {info ? "ไม่มีข้อมูลพิกัดสาขา" : "กำลังโหลดแผนที่..."}
             </p>
           </div>
         )}
 
+        {/* ── Coordinates card ── */}
+        {hasLocation && (
+          <div className="flex items-center justify-between gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-base">
+                📍
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-gray-900 tabular-nums">
+                  พิกัดงาน: {info!.latitude!.toFixed(4)}, {info!.longitude!.toFixed(4)}
+                </p>
+                {info!.branchName && (
+                  <p className="mt-0.5 truncate text-xs text-gray-500">{info!.branchName}</p>
+                )}
+              </div>
+            </div>
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-shrink-0 items-center gap-1 rounded-lg border border-red-100 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-[#E80012]"
+              >
+                🗺 ดูบนแผนที่
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* ── Status card ── */}
+        {!result && (
+          userPos === null ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3.5 shadow-sm">
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg">
+                ⊙
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gray-500">กำลังหาพิกัด GPS...</p>
+                <p className="mt-0.5 text-xs text-gray-400">รอสักครู่ระบบกำลังระบุตำแหน่ง</p>
+              </div>
+            </div>
+          ) : isOutside ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3.5">
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#E80012] text-lg text-white font-bold">
+                ✕
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[#E80012]">อยู่นอกพื้นที่ กรุณาเข้าใกล้</p>
+                <p className="mt-0.5 text-xs text-red-500">
+                  คุณอยู่ห่างจากจุดพิกัด {Math.round(distanceM!)} เมตร (ระยะอนุญาต {info!.geofenceRadiusM} ม.)
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 rounded-2xl border border-green-200 bg-green-50 px-4 py-3.5">
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-lg text-white font-bold">
+                ✓
+              </div>
+              <div>
+                <p className="text-sm font-bold text-green-700">อยู่ในระยะ สามารถเช็คอินได้</p>
+                <p className="mt-0.5 text-xs text-green-600">
+                  {distanceM !== undefined
+                    ? `คุณอยู่ห่างจากจุดพิกัด ${Math.round(distanceM)} เมตร`
+                    : "อยู่ในพื้นที่"}
+                </p>
+              </div>
+            </div>
+          )
+        )}
+
+        {/* ── GPS accuracy + Signal strength ── */}
+        {userPos && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+              <p className="text-xs text-gray-400">ความแม่นยำ GPS</p>
+              <p className="mt-1 text-sm font-bold text-gray-900">⊙ ±{Math.round(userPos.accuracyM)} เมตร</p>
+            </div>
+            <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+              <p className="text-xs text-gray-400">สถานะสัญญาณ</p>
+              <div className="mt-1 flex items-center gap-1.5">
+                <SignalBars accuracyM={userPos.accuracyM} />
+                <p className="text-sm font-bold text-gray-900">{signalLabel(userPos.accuracyM)}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Shift info ── */}
         {info?.shift && (
-          <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-gray-50 px-4 py-2.5">
               <p className="text-xs font-medium text-gray-400">กะการทำงาน</p>
-              <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-[#E80012]">
+              <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-[#E80012]">
                 {info.shift.name}
               </span>
             </div>
-            <div className="px-4 py-3">
-              <p className="text-lg font-semibold tabular-nums text-gray-900">{info.shift.label}</p>
-              {info.shift.crosses_midnight && (
-                <p className="mt-0.5 text-xs text-gray-400">ข้ามคืน</p>
-              )}
-            </div>
-            <div className="flex border-t border-gray-50">
+            <div className="flex">
               <div className="flex-1 px-4 py-2.5 text-center">
                 <p className="text-xs text-gray-400">เข้างาน</p>
-                <p className={`mt-0.5 text-sm font-semibold ${hasCheckedIn ? "text-green-600" : "text-gray-300"}`}>
-                  {info.checkInAt ? fmtShortTime(info.checkInAt) : "–"}
+                <p className={`mt-0.5 text-sm font-bold ${hasCheckedIn ? "text-green-600" : "text-gray-300"}`}>
+                  {info.checkInAt ? fmtShortTime(info.checkInAt) : info.shift.label.split("–")[0]?.trim() ?? "–"}
                 </p>
               </div>
               <div className="w-px bg-gray-100" />
               <div className="flex-1 px-4 py-2.5 text-center">
                 <p className="text-xs text-gray-400">ออกงาน</p>
-                <p className={`mt-0.5 text-sm font-semibold ${hasCheckedOut ? "text-[#E80012]" : "text-gray-300"}`}>
-                  {info.checkOutAt ? fmtShortTime(info.checkOutAt) : "–"}
+                <p className={`mt-0.5 text-sm font-bold ${hasCheckedOut ? "text-[#E80012]" : "text-gray-300"}`}>
+                  {info.checkOutAt ? fmtShortTime(info.checkOutAt) : info.shift.label.split("–")[1]?.trim() ?? "–"}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* ── Outside warning ── */}
-        {isOutside && distanceM !== undefined && (
-          <div className="flex items-start gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm">
-            <span className="mt-0.5">⚠️</span>
-            <p className="text-red-700">
-              อยู่นอกพื้นที่ ({Math.round(distanceM)} เมตร) — กรุณาเข้าใกล้สำนักงาน
-            </p>
+        {/* ── Date/time card ── */}
+        <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+          <span className="text-xl">📅</span>
+          <p className="text-sm font-semibold text-gray-900">
+            {fmtDate(now)} เวลา {fmtTime(now)} น.
+          </p>
+        </div>
+
+        {/* ── Action buttons ── */}
+        {!result && (
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => handlePress("checkin")}
+              disabled={checkinDisabled}
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-green-600 py-4 text-sm font-bold text-white transition-opacity active:opacity-80 disabled:opacity-40"
+            >
+              <span>↪</span> {checkinLabel}
+            </button>
+            <button
+              onClick={() => handlePress("checkout")}
+              disabled={checkoutDisabled}
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-[#E80012] py-4 text-sm font-bold text-white transition-opacity active:opacity-80 disabled:opacity-40"
+            >
+              <span>↩</span> {checkoutLabel}
+            </button>
           </div>
         )}
 
-        {/* ── GPS accuracy ── */}
-        {userPos && !isOutside && (
-          <p className="text-center text-xs text-gray-400">
-            📡 GPS ±{Math.round(userPos.accuracyM)} ม.
-            {distanceM !== undefined && ` · ห่าง ${Math.round(distanceM)} ม.`}
-          </p>
-        )}
-
-        {/* ── Action button ── */}
-        {!result && (
-          <button
-            onClick={handlePress}
-            disabled={!canPress || phase !== "idle"}
-            className={`w-full rounded-xl py-4 text-base font-semibold text-white transition-opacity ${
-              isAllDone
-                ? "bg-gray-300"
-                : isOutside
-                  ? "bg-gray-300"
-                  : "bg-[#E80012] active:opacity-80"
-            } disabled:opacity-50`}
-          >
-            {actionLabel}
-          </button>
-        )}
-
-        <p className="text-center text-xs text-gray-400">ระบบบันทึกพิกัดอัตโนมัติ</p>
+        <p className="text-center text-xs text-gray-400">🛡 ระบบบันทึกพิกัดอัตโนมัติ</p>
       </div>
 
       <LiffBottomNav />

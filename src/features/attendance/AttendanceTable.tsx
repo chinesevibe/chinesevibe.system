@@ -37,9 +37,9 @@ const REVIEW_VARIANT: Record<
   rejected: "rejected",
 }
 
-function wholeHours(hours: number | null): string {
+function formatHours(hours: number | null): string {
   if (hours == null) return "—"
-  return String(Math.floor(hours))
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1)
 }
 
 function rowMeta(row: AttendanceRow): string {
@@ -189,7 +189,7 @@ export function AttendanceTable({
               <TableCell className="font-medium tabular-nums">{row.checkOutText}</TableCell>
               <TableCell className="font-semibold tabular-nums text-foreground">
                 <div className="space-y-1">
-                  <p className="font-semibold tabular-nums text-foreground">{wholeHours(row.workHours)}</p>
+                  <p className="font-semibold tabular-nums text-foreground">{formatHours(row.workHours)}</p>
                   <p className="text-xs text-muted-foreground">
                     {row.workHours == null ? "รอคำนวณ" : "ชั่วโมงจริงหลังตัดกะ"}
                   </p>

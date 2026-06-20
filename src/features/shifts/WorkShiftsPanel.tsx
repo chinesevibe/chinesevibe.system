@@ -1,4 +1,4 @@
-import { formatShiftTimeRange } from "@/features/shifts/format"
+import { formatShiftDurationHours, formatShiftTimeRange } from "@/features/shifts/format"
 import type { WorkShiftSummary } from "@/features/shifts/types"
 
 export function WorkShiftsPanel({ shifts }: { shifts: WorkShiftSummary[] }) {
@@ -21,7 +21,7 @@ export function WorkShiftsPanel({ shifts }: { shifts: WorkShiftSummary[] }) {
               <div className="text-right text-xs text-muted-foreground">
                 <p>{formatShiftTimeRange(shift)} ICT</p>
                 <p>
-                  {shift.standard_hours}h · grace {shift.grace_minutes}m
+                  {formatShiftDurationHours(shift)}h · grace {shift.grace_minutes}m
                   {shift.crosses_midnight ? " · ข้ามวัน" : ""}
                 </p>
               </div>

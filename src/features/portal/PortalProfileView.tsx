@@ -66,13 +66,6 @@ export function PortalProfileView({ profile }: { profile: EmployeeProfile }) {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Link
-                href={`/api/checkin/qr?emp_id=${profile.id}`}
-                target="_blank"
-                className="rounded-lg border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-medium hover:bg-white/20"
-              >
-                Download QR
-              </Link>
-              <Link
                 href="/portal/attendance"
                 className="rounded-lg border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-medium hover:bg-white/20"
               >

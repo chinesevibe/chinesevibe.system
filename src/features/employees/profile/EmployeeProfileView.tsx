@@ -10,7 +10,7 @@ import Link from "next/link"
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { StatusPill } from "@/components/brand/StatusPill"
 import { buttonVariants } from "@/components/ui/button"
-import { formatShiftTimeRange } from "@/features/shifts/format"
+import { formatShiftDurationHours, formatShiftTimeRange } from "@/features/shifts/format"
 import type { EmployeeProfile } from "@/features/employees/profile/data"
 import { paymentMethodLabel } from "@/features/employees/profile/payment-method"
 import {
@@ -97,14 +97,6 @@ export function EmployeeProfileView({
             <div className="relative z-10 flex flex-wrap items-center gap-2">
               {actions}
               <Link
-                href={`/api/checkin/qr?emp_id=${profile.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className={profileActionLinkClass}
-              >
-                Download QR
-              </Link>
-              <Link
                 href={attendanceHref}
                 className={profileActionLinkClass}
               >
@@ -158,7 +150,7 @@ export function EmployeeProfileView({
             label="กะทำงาน"
             value={
               profile.workShift
-                ? `${profile.workShift.name} · ${formatShiftTimeRange(profile.workShift)} · ${profile.workShift.standard_hours}h`
+                ? `${profile.workShift.name} · ${formatShiftTimeRange(profile.workShift)} · ${formatShiftDurationHours(profile.workShift)}h`
                 : "— ใช้ Settings fallback —"
             }
           />

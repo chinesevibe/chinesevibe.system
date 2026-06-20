@@ -1,4 +1,8 @@
-import { formatShiftLabel, formatShiftTimeRange } from "@/features/shifts/format"
+import {
+  formatShiftDurationHours,
+  formatShiftLabel,
+  formatShiftTimeRange,
+} from "@/features/shifts/format"
 import { suggestWorkShiftCode } from "@/features/shifts/defaults"
 import type { WorkShiftSummary } from "@/features/shifts/types"
 
@@ -22,7 +26,7 @@ export function suggestShiftId(
 }
 
 export function workShiftOptionLabel(shift: WorkShiftSummary): string {
-  return `${shift.name} · ${formatShiftTimeRange(shift)} · ${shift.standard_hours}h`
+  return `${shift.name} · ${formatShiftTimeRange(shift)} · ${formatShiftDurationHours(shift)}h`
 }
 
 export function findWorkShift(

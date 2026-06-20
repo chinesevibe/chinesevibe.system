@@ -93,6 +93,7 @@ export function AddEmployeeForm({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [draftId, setDraftId] = useState<string | null>(null)
+  const [orgSelectionNotice, setOrgSelectionNotice] = useState<string | null>(null)
   const draftIdRef = useRef<string | null>(null)
 
   const [form, setForm] = useState({
@@ -148,9 +149,14 @@ export function AddEmployeeForm({
     return ASSIGNABLE_ROLES.filter((role) => allowed.includes(role))
   }, [form.department, form.position])
 
+  const branchDepartments = useMemo(() => {
+    if (!form.branch_id) return []
+    return departments.filter((d) => d.branch_id === form.branch_id)
+  }, [departments, form.branch_id])
+
   const selectedDepartmentId = useMemo(() => {
-    return departments.find((d) => d.name === form.department)?.id ?? null
-  }, [departments, form.department])
+    return branchDepartments.find((d) => d.name === form.department)?.id ?? null
+  }, [branchDepartments, form.department])
 
   const departmentPositions = useMemo(() => {
     if (!selectedDepartmentId) return []
@@ -481,18 +487,75 @@ export function AddEmployeeForm({
         </ProfileSectionCard>
 
         <ProfileSectionCard title="Work Information" icon={Building2}>
+          <FormField label="สาขา">
+            <select
+              className={inputClassName}
+              value={form.branch_id}
+              onChange={(e) => {
+                const nextBranchId = e.target.value
+                const branch = branches.find((b) => b.id === nextBranchId)
+                setForm((prev) => {
+                  const nextDepts = nextBranchId
+                    ? departments.filter((d) => d.branch_id === nextBranchId)
+                    : []
+                  const nextDept = nextDepts.some((d) => d.name === prev.department)
+                    ? prev.department
+                    : ""
+                  const nextDeptId = nextDepts.find((d) => d.name === nextDept)?.id
+                  const nextPosition = positions.some(
+                    (p) =>
+                      p.name === prev.position &&
+                      Boolean(nextDeptId) &&
+                      p.department_id === nextDeptId
+                  )
+                    ? prev.position
+                    : ""
+                  const nextRole = defaultRoleForDepartment(nextDept, nextPosition)
+                  const allowed = allowedRolesForDepartment(nextDept, nextPosition)
+                  const role = allowed.includes(prev.role) ? prev.role : nextRole
+                  const cleared =
+                    prev.department && !nextDept
+                      ? "เปลี่ยนสาขาแล้ว ระบบล้างแผนกและตำแหน่งที่ไม่ตรงกับสาขาใหม่"
+                      : prev.position && !nextPosition
+                        ? "เปลี่ยนสาขาแล้ว ระบบล้างตำแหน่งที่ไม่ตรงกับแผนกในสาขาใหม่"
+                        : null
+                  setOrgSelectionNotice(cleared)
+                  return {
+                    ...prev,
+                    branch_id: nextBranchId,
+                    department: nextDept,
+                    position: nextPosition,
+                    role,
+                    pay_type: defaultPayTypeForBranchCode(branch?.code ?? null),
+                  }
+                })
+              }}
+            >
+              <option value="">— เลือกสาขาก่อน —</option>
+              {branches.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                  {b.code ? ` (${b.code})` : ""}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              เลือกสาขาก่อน เพื่อกรองแผนกและตำแหน่งให้ตรงกัน
+            </p>
+          </FormField>
           <FormField label="Department">
             <select
               className={inputClassName}
               value={form.department}
               onChange={(e) => {
                 const nextDept = e.target.value
+                setOrgSelectionNotice(null)
                 setForm((prev) => {
+                  const nextDeptId = branchDepartments.find((d) => d.name === nextDept)?.id
                   const stillValid = positions.some(
                     (p) =>
                       p.name === prev.position &&
-                      departments.find((d) => d.name === nextDept)?.id ===
-                        p.department_id
+                      nextDeptId === p.department_id
                   )
                   const nextRole = defaultRoleForDepartment(
                     nextDept,
@@ -511,16 +574,19 @@ export function AddEmployeeForm({
                   }
                 })
               }}
+              disabled={!form.branch_id}
             >
-              <option value="">— เลือกแผนก —</option>
-              {departments.map((d) => (
+              <option value="">
+                {form.branch_id ? "— เลือกแผนก —" : "— เลือกสาขาก่อน —"}
+              </option>
+              {branchDepartments.map((d) => (
                 <option key={d.id} value={d.name}>
                   {d.name}
                 </option>
               ))}
             </select>
             <p className="mt-1 text-[10px] text-muted-foreground">
-              จาก Organization — เพิ่มแผนกที่{" "}
+              {form.branch_id ? "จาก Organization" : "เลือกสาขาก่อนเพื่อดูแผนก"} — เพิ่มแผนกที่{" "}
               <Link href="/admin/organization" className="text-brand-red hover:underline">
                 /admin/organization
               </Link>
@@ -532,6 +598,7 @@ export function AddEmployeeForm({
               value={form.position}
               onChange={(e) => {
                 const nextPosition = e.target.value
+                setOrgSelectionNotice(null)
                 setForm((prev) => {
                   const nextRole = defaultRoleForDepartment(
                     prev.department,
@@ -542,13 +609,17 @@ export function AddEmployeeForm({
                     nextPosition
                   )
                   const role = allowed.includes(prev.role) ? prev.role : nextRole
-                  return { ...prev, position: nextPosition, role }
+                    return { ...prev, position: nextPosition, role }
                 })
               }}
-              disabled={!form.department}
+              disabled={!form.branch_id || !form.department}
             >
               <option value="">
-                {form.department ? "— เลือกตำแหน่ง —" : "— เลือกแผนกก่อน —"}
+                {!form.branch_id
+                  ? "— เลือกสาขาก่อน —"
+                  : form.department
+                    ? "— เลือกตำแหน่ง —"
+                    : "— เลือกแผนกก่อน —"}
               </option>
               {departmentPositions.map((p) => (
                 <option key={p.id} value={p.name}>
@@ -556,6 +627,13 @@ export function AddEmployeeForm({
                 </option>
               ))}
             </select>
+            {orgSelectionNotice ? (
+              <p className="mt-1 text-[10px] text-amber-700">{orgSelectionNotice}</p>
+            ) : (
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                ตำแหน่งจะอิงตามแผนกในสาขาที่เลือก
+              </p>
+            )}
           </FormField>
           <FormField label="เวลาเข้างาน (เริ่มต้น)" className="col-span-2 sm:col-span-1">
             <input
@@ -617,29 +695,6 @@ export function AddEmployeeForm({
               value={form.probation_end}
               onChange={(e) => setField("probation_end", e.target.value)}
             />
-          </FormField>
-          <FormField label="สาขา">
-            <select
-              className={inputClassName}
-              value={form.branch_id}
-              onChange={(e) => {
-                const nextBranchId = e.target.value
-                const branch = branches.find((b) => b.id === nextBranchId)
-                setForm((prev) => ({
-                  ...prev,
-                  branch_id: nextBranchId,
-                  pay_type: defaultPayTypeForBranchCode(branch?.code ?? null),
-                }))
-              }}
-            >
-              <option value="">— ไม่ระบุ —</option>
-              {branches.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                  {b.code ? ` (${b.code})` : ""}
-                </option>
-              ))}
-            </select>
           </FormField>
           <FormField label="ประเภทการจ่าย">
             <select

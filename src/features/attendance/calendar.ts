@@ -3,6 +3,7 @@ import type {
   AttendanceDayCell,
 } from "@/features/attendance/calendar-types"
 import { deriveAttendanceDayStatus } from "@/features/attendance/day-status"
+import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { effectiveAttendanceIsLate } from "@/lib/attendance/late"
 import { ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { isEmployeeOffOnDate, parseOffDays } from "@/lib/employees/off-days"
@@ -51,10 +52,11 @@ async function loadEmployeeSchedule(
   shift: ShiftSchedule | null
   offDays: number[]
   defaultCheckInTime: string | null
+  defaultCheckOutTime: string | null
 }> {
   const selectAttempts = [
-    "work_shift_id, off_days, default_check_in_time",
-    "work_shift_id, default_check_in_time",
+    "work_shift_id, off_days, default_check_in_time, default_check_out_time",
+    "work_shift_id, default_check_in_time, default_check_out_time",
     "work_shift_id",
   ]
 
@@ -62,6 +64,7 @@ async function loadEmployeeSchedule(
     work_shift_id: string | null
     off_days?: unknown
     default_check_in_time?: string | null
+    default_check_out_time?: string | null
   }
 
   let employee: EmployeeScheduleRow | null = null
@@ -79,13 +82,14 @@ async function loadEmployeeSchedule(
     if (!error.message?.includes("does not exist")) throw error
   }
 
-  if (!employee?.work_shift_id) {
-    return {
-      shift: null,
-      offDays: parseOffDays(employee?.off_days),
-      defaultCheckInTime: (employee?.default_check_in_time as string | null) ?? null,
+    if (!employee?.work_shift_id) {
+      return {
+        shift: null,
+        offDays: parseOffDays(employee?.off_days),
+        defaultCheckInTime: (employee?.default_check_in_time as string | null) ?? null,
+        defaultCheckOutTime: (employee?.default_check_out_time as string | null) ?? null,
+      }
     }
-  }
 
   const { data: shift, error } = await supabase
     .from("hr_work_shifts")
@@ -101,7 +105,34 @@ async function loadEmployeeSchedule(
     shift: (shift as ShiftSchedule | null) ?? null,
     offDays: parseOffDays(employee.off_days),
     defaultCheckInTime: (employee.default_check_in_time as string | null) ?? null,
+    defaultCheckOutTime: (employee.default_check_out_time as string | null) ?? null,
   }
+}
+
+export function resolveCalendarWorkHours(input: {
+  checkInAt: string
+  checkOutAt: string | null
+  workHours: number | null
+  shiftDate?: string | null
+  shift: ShiftSchedule | null
+  defaultCheckInTime: string | null
+  defaultCheckOutTime: string | null
+}): number | null {
+  if (!input.checkOutAt) {
+    return input.workHours != null ? Number(input.workHours) : null
+  }
+
+  const computed = computePaidWorkMinutes({
+    workDate: input.shiftDate ?? undefined,
+    shiftDate: input.shiftDate ?? undefined,
+    checkInAt: new Date(input.checkInAt),
+    checkOutAt: new Date(input.checkOutAt),
+    shift: input.shift,
+    defaultCheckInTime: input.defaultCheckInTime,
+    defaultCheckOutTime: input.defaultCheckOutTime,
+  })
+
+  return Number.isFinite(computed.paidHours) ? computed.paidHours : input.workHours
 }
 
 async function loadLeaveDates(
@@ -175,7 +206,7 @@ export async function getEmployeeAttendanceCalendar(
       .lt("check_in_at", rangeEnd.toISOString()),
     getAttendanceGoLiveDate(),
   ])
-  const { shift, offDays, defaultCheckInTime } = schedule
+  const { shift, offDays, defaultCheckInTime, defaultCheckOutTime } = schedule
 
   if (attendanceRes.error) throw attendanceRes.error
   const byDate = attendanceByDate(attendanceRes.data ?? [])
@@ -237,7 +268,17 @@ export async function getEmployeeAttendanceCalendar(
       status: expired ? "retro_expired" : status,
       checkIn: record ? formatIctTime(record.check_in_at) : null,
       checkOut: record?.check_out_at ? formatIctTime(record.check_out_at) : null,
-      hours: record?.work_hours != null ? Number(record.work_hours) : null,
+      hours: record
+        ? resolveCalendarWorkHours({
+            checkInAt: record.check_in_at,
+            checkOutAt: record.check_out_at,
+            workHours: record.work_hours != null ? Number(record.work_hours) : null,
+            shiftDate: record.shift_date,
+            shift,
+            defaultCheckInTime,
+            defaultCheckOutTime,
+          })
+        : null,
       retroEligible: withinRetro,
       retroExpired: expired,
       deadline:
