@@ -55,7 +55,13 @@ export async function getLineTodayAttendanceState(
   if (recordError) throw recordError
   if (!record) return { kind: "none" }
   if (record.check_out_at) {
-    return { kind: "checked_out", checkOutAt: new Date(record.check_out_at) }
+    const checkOutAt = new Date(record.check_out_at)
+    // Overnight shift (e.g. 14:00–02:00): if checked out ≥8 h ago, treat as fresh day
+    // so the next shift's check-in is not blocked by the previous shift's same-ICT-day record.
+    if (now.getTime() - checkOutAt.getTime() >= 8 * 60 * 60 * 1000) {
+      return { kind: "none" }
+    }
+    return { kind: "checked_out", checkOutAt }
   }
   return { kind: "checked_in", checkInAt: new Date(record.check_in_at) }
 }

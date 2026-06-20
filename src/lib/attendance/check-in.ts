@@ -118,10 +118,11 @@ export async function checkIn({
   const { start, end } = ictDayRangeUtc(now)
   const { data: existing, error: existingError } = await admin
     .from("hr_attendance")
-    .select("check_in_at")
+    .select("check_in_at, check_out_at")
     .eq("employee_id", employee.id)
     .gte("check_in_at", start.toISOString())
     .lt("check_in_at", end.toISOString())
+    .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
@@ -129,9 +130,15 @@ export async function checkIn({
     throw existingError
   }
   if (existing) {
-    return {
-      status: "already_checked_in",
-      checkInAt: new Date(existing.check_in_at),
+    // Same overnight-shift gap rule: if fully checked out ≥8 h ago, allow re-check-in.
+    const checkedOutAt = existing.check_out_at ? new Date(existing.check_out_at) : null
+    if (checkedOutAt && now.getTime() - checkedOutAt.getTime() >= 8 * 60 * 60 * 1000) {
+      // fall through to allow check-in
+    } else {
+      return {
+        status: "already_checked_in",
+        checkInAt: new Date(existing.check_in_at),
+      }
     }
   }
 
