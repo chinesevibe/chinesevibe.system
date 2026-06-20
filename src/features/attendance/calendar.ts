@@ -5,6 +5,7 @@ import type {
 import { deriveAttendanceDayStatus } from "@/features/attendance/day-status"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { effectiveAttendanceIsLate } from "@/lib/attendance/late"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import { ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { isEmployeeOffOnDate, parseOffDays } from "@/lib/employees/off-days"
 import {
@@ -55,13 +56,12 @@ async function loadEmployeeSchedule(
   defaultCheckOutTime: string | null
 }> {
   const selectAttempts = [
-    "work_shift_id, off_days, default_check_in_time, default_check_out_time",
-    "work_shift_id, default_check_in_time, default_check_out_time",
-    "work_shift_id",
+    "off_days, default_check_in_time, default_check_out_time",
+    "default_check_in_time, default_check_out_time",
+    "id",
   ]
 
   type EmployeeScheduleRow = {
-    work_shift_id: string | null
     off_days?: unknown
     default_check_in_time?: string | null
     default_check_out_time?: string | null
@@ -82,30 +82,14 @@ async function loadEmployeeSchedule(
     if (!error.message?.includes("does not exist")) throw error
   }
 
-    if (!employee?.work_shift_id) {
-      return {
-        shift: null,
-        offDays: parseOffDays(employee?.off_days),
-        defaultCheckInTime: (employee?.default_check_in_time as string | null) ?? null,
-        defaultCheckOutTime: (employee?.default_check_out_time as string | null) ?? null,
-      }
-    }
-
-  const { data: shift, error } = await supabase
-    .from("hr_work_shifts")
-    .select(
-      "start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
-    )
-    .eq("id", employee.work_shift_id)
-    .eq("is_active", true)
-    .maybeSingle()
-  if (error) throw error
+  const defaultCheckInTime = (employee?.default_check_in_time as string | null) ?? null
+  const defaultCheckOutTime = (employee?.default_check_out_time as string | null) ?? null
 
   return {
-    shift: (shift as ShiftSchedule | null) ?? null,
-    offDays: parseOffDays(employee.off_days),
-    defaultCheckInTime: (employee.default_check_in_time as string | null) ?? null,
-    defaultCheckOutTime: (employee.default_check_out_time as string | null) ?? null,
+    shift: profileScheduleFromTimes(defaultCheckInTime, defaultCheckOutTime),
+    offDays: parseOffDays(employee?.off_days),
+    defaultCheckInTime,
+    defaultCheckOutTime,
   }
 }
 

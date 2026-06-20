@@ -3,8 +3,9 @@ import {
   getRetroDeadline,
   getRetroUsage,
   isWithinRetroWindow,
-  type ShiftSchedule,
 } from "@/lib/attendance/retro-limit"
+import { autoCloseOpenAttendanceSessions } from "@/lib/attendance/session-cycle"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
 import { AttendanceManualClient } from "./page-client"
@@ -27,35 +28,30 @@ function ictTimeNow(): string {
   }).format(new Date())
 }
 
-async function loadShift(employeeId: string): Promise<ShiftSchedule | null> {
+async function loadProfileSchedule(employeeId: string) {
   const supabase = await createClient()
   const { data: employee } = await supabase
     .from("hr_employees")
-    .select("work_shift_id")
+    .select("default_check_in_time, default_check_out_time")
     .eq("id", employeeId)
     .maybeSingle()
-  if (!employee?.work_shift_id) return null
-
-  const { data: shift } = await supabase
-    .from("hr_work_shifts")
-    .select(
-      "start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
-    )
-    .eq("id", employee.work_shift_id)
-    .eq("is_active", true)
-    .maybeSingle()
-  return (shift as ShiftSchedule | null) ?? null
+  const defaultCheckInTime = (employee?.default_check_in_time as string | null) ?? null
+  const defaultCheckOutTime = (employee?.default_check_out_time as string | null) ?? null
+  return {
+    shift: profileScheduleFromTimes(defaultCheckInTime, defaultCheckOutTime),
+    defaultCheckInTime,
+    defaultCheckOutTime,
+  }
 }
 
 async function loadOpenAttendanceWorkDate(employeeId: string, now: Date): Promise<string | null> {
+  await autoCloseOpenAttendanceSessions({ employeeId, now })
   const supabase = await createClient()
-  const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
   const { data, error } = await supabase
     .from("hr_attendance")
     .select("shift_date, check_in_at")
     .eq("employee_id", employeeId)
     .is("check_out_at", null)
-    .gte("check_in_at", window36hStart.toISOString())
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -85,8 +81,8 @@ export default async function AttendanceLiffPage({
 
   const supabase = await createClient()
   const now = new Date()
-  const [shift, retroUsage, correctable, openWorkDate] = await Promise.all([
-    loadShift(employee.id),
+  const [{ shift }, retroUsage, correctable, openWorkDate] = await Promise.all([
+    loadProfileSchedule(employee.id),
     getRetroUsage(supabase, employee.id, now),
     getCorrectableDays(employee.id, now),
     loadOpenAttendanceWorkDate(employee.id, now),

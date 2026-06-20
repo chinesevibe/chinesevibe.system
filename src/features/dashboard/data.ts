@@ -1,6 +1,6 @@
 // Dashboard aggregation — read-only through the caller's session client so
 // RLS (hr_is_hr_admin) is the authorization layer. No service role here.
-import { ictDayRangeUtc } from "@/lib/attendance/late"
+import { sessionCycleStartUtc } from "@/lib/attendance/session-cycle"
 import { createClient } from "@/lib/supabase/server"
 import { probationNeedsComplianceAlert } from "@/lib/employees/probation-compliance"
 
@@ -46,8 +46,8 @@ export async function getDashboardStats(
 ): Promise<DashboardStats> {
   const supabase = await createClient()
 
-  const { start: todayStart, end: todayEnd } = ictDayRangeUtc(now)
-  const windowStart = new Date(todayStart.getTime() - 6 * DAY_MS)
+  const cycleStart = sessionCycleStartUtc(now)
+  const windowStart = new Date(cycleStart.getTime() - 6 * DAY_MS)
   const todayIct = ictDateString(now)
   const expiryLimit = ictDateString(
     new Date(now.getTime() + EXPIRY_WINDOW_DAYS * DAY_MS)
@@ -76,7 +76,7 @@ export async function getDashboardStats(
         .from("hr_attendance")
         .select("check_in_at, is_late")
         .gte("check_in_at", windowStart.toISOString())
-        .lt("check_in_at", todayEnd.toISOString()),
+        .lt("check_in_at", new Date(cycleStart.getTime() + DAY_MS).toISOString()),
       supabase
         .from("hr_leaves")
         .select("id", { count: "exact", head: true })
@@ -139,7 +139,7 @@ export async function getDashboardStats(
     if (index >= 0 && index < 7) {
       buckets[index].count += 1
     }
-    if (t >= todayStart.getTime()) {
+    if (t >= cycleStart.getTime()) {
       checkedInToday += 1
       if (row.is_late) {
         lateToday += 1

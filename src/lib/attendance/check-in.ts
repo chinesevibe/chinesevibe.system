@@ -3,47 +3,19 @@
 // (no user session); RLS is bypassed by design (T02).
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
-import {
-  ictDayRangeUtc,
-  lateMinutesAtCheckIn,
-  type ShiftLateSchedule,
-} from "@/lib/attendance/late"
+import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   evaluateAttendanceLocation,
   suspiciousLocationMessage,
   type AttendanceLocationInput,
 } from "@/lib/attendance/location-security"
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCutoffUtcForCheckIn,
+} from "@/lib/attendance/session-cycle"
 import { getWorkStart } from "@/lib/runtime-config"
 
 export type CheckInLocation = AttendanceLocationInput
-
-async function loadEmployeeWorkShift(
-  admin: ReturnType<typeof getAdminClient>,
-  employeeId: string
-): Promise<(ShiftLateSchedule & { id: string }) | null> {
-  const { data: employee, error: employeeError } = await admin
-    .from("hr_employees")
-    .select("work_shift_id")
-    .eq("id", employeeId)
-    .maybeSingle()
-
-  if (employeeError) throw employeeError
-  if (!employee?.work_shift_id) return null
-
-  const { data: shift, error: shiftError } = await admin
-    .from("hr_work_shifts")
-    .select(
-      "id, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
-    )
-    .eq("id", employee.work_shift_id)
-    .eq("is_active", true)
-    .maybeSingle()
-
-  if (shiftError) throw shiftError
-  if (!shift) return null
-
-  return shift as ShiftLateSchedule & { id: string }
-}
 
 export type CheckInResult =
   | {
@@ -53,6 +25,7 @@ export type CheckInResult =
       lateMinutes: number
     }
   | { status: "already_checked_in"; checkInAt: Date }
+  | { status: "requires_retro_checkout"; checkInAt: Date; cutoffAt: Date }
   | {
       status: "outside_geofence"
       distanceM: number
@@ -83,62 +56,34 @@ export async function checkIn({
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
-  if (employeeError) {
-    throw employeeError
-  }
-  if (!row) {
-    return { status: "not_registered" }
-  }
-  if (row.status !== "active") {
-    return { status: "pending_approval" }
-  }
+  if (employeeError) throw employeeError
+  if (!row) return { status: "not_registered" }
+  if (row.status !== "active") return { status: "pending_approval" }
+
   const employee = row
 
-  const openWindowStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  await autoCloseOpenAttendanceSessions({
+    admin,
+    employeeId: employee.id as string,
+    now,
+  })
+
   const { data: openRecord, error: openRecordError } = await admin
     .from("hr_attendance")
     .select("check_in_at")
     .eq("employee_id", employee.id)
     .is("check_out_at", null)
-    .gte("check_in_at", openWindowStart.toISOString())
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  if (openRecordError) {
-    throw openRecordError
-  }
+  if (openRecordError) throw openRecordError
   if (openRecord) {
+    const checkInAt = new Date(openRecord.check_in_at)
     return {
-      status: "already_checked_in",
-      checkInAt: new Date(openRecord.check_in_at),
-    }
-  }
-
-  const { start, end } = ictDayRangeUtc(now)
-  const { data: existing, error: existingError } = await admin
-    .from("hr_attendance")
-    .select("check_in_at, check_out_at")
-    .eq("employee_id", employee.id)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
-    .order("check_in_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  if (existingError) {
-    throw existingError
-  }
-  if (existing) {
-    // Same overnight-shift gap rule: if fully checked out ≥8 h ago, allow re-check-in.
-    const checkedOutAt = existing.check_out_at ? new Date(existing.check_out_at) : null
-    if (checkedOutAt && now.getTime() - checkedOutAt.getTime() >= 8 * 60 * 60 * 1000) {
-      // fall through to allow check-in
-    } else {
-      return {
-        status: "already_checked_in",
-        checkInAt: new Date(existing.check_in_at),
-      }
+      status: "requires_retro_checkout",
+      checkInAt,
+      cutoffAt: sessionCutoffUtcForCheckIn(checkInAt),
     }
   }
 
@@ -158,30 +103,53 @@ export async function checkIn({
   }
 
   const { hour, minute } = await getWorkStart()
-  const shift = await loadEmployeeWorkShift(admin, employee.id as string)
   const late = lateMinutesAtCheckIn(
     now,
-    shift,
+    null,
     { hour, minute },
     employee.default_check_in_time as string | null
   )
   const suspicious = locationDecision.status === "suspicious_location"
 
-  const { data: inserted, error: insertError } = await admin.from("hr_attendance").insert({
-    employee_id: employee.id,
-    check_in_at: now.toISOString(),
-    check_in_location: locationDecision.payload,
-    is_late: late > 0,
-    work_shift_id: shift?.id ?? null,
-    shift_date: ictDateFromUtc(now),
-    location_review_status: suspicious ? "pending_hr" : "clear",
-    location_review_flags: locationDecision.flags,
-    location_review_note: suspicious ? suspiciousLocationMessage(locationDecision.flags) : null,
-    location_reviewed_by: null,
-    location_reviewed_at: null,
-  }).select("id").single()
+  const { data: inserted, error: insertError } = await admin
+    .from("hr_attendance")
+    .insert({
+      employee_id: employee.id,
+      check_in_at: now.toISOString(),
+      check_in_location: locationDecision.payload,
+      is_late: late > 0,
+      work_shift_id: null,
+      shift_date: ictDateFromUtc(now),
+      location_review_status: suspicious ? "pending_hr" : "clear",
+      location_review_flags: locationDecision.flags,
+      location_review_note: suspicious ? suspiciousLocationMessage(locationDecision.flags) : null,
+      location_reviewed_by: null,
+      location_reviewed_at: null,
+    })
+    .select("id")
+    .single()
 
   if (insertError) {
+    if (String(insertError.message ?? "").includes("open attendance record")) {
+      const { data: currentOpen, error: currentOpenError } = await admin
+        .from("hr_attendance")
+        .select("check_in_at")
+        .eq("employee_id", employee.id)
+        .is("check_out_at", null)
+        .order("check_in_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (currentOpenError) throw currentOpenError
+      if (currentOpen) {
+        const checkInAt = new Date(currentOpen.check_in_at)
+        return {
+          status: "requires_retro_checkout",
+          checkInAt,
+          cutoffAt: sessionCutoffUtcForCheckIn(checkInAt),
+        }
+      }
+    }
     throw insertError
   }
 

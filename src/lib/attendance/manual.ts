@@ -4,6 +4,7 @@ import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-r
 import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import {
   assertRetroAllowance,
   assertRetroWindow,
@@ -184,7 +185,6 @@ async function findOtherOpenAttendance(
 
 async function resolveShift(
   supabase: SupabaseClient,
-  employeeId: string,
   requestedShiftId?: string | null
 ): Promise<ActiveShift | null> {
   if (requestedShiftId) {
@@ -203,32 +203,12 @@ async function resolveShift(
     }
     return data as ActiveShift
   }
-
-  const { data: employee, error: employeeError } = await supabase
-    .from("hr_employees")
-    .select("work_shift_id")
-    .eq("id", employeeId)
-    .maybeSingle()
-
-  if (employeeError) throw employeeError
-  if (!employee?.work_shift_id) return null
-
-  const { data, error } = await supabase
-    .from("hr_work_shifts")
-    .select(
-      "id, code, name, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes"
-    )
-    .eq("id", employee.work_shift_id)
-    .eq("is_active", true)
-    .maybeSingle()
-
-  if (error) throw error
-  return (data as ActiveShift | null) ?? null
+  return null
 }
 
 async function isLate(
   checkInAt: Date,
-  shift: ActiveShift | null,
+  shift: ShiftSchedule | null,
   defaultCheckInTime: string | null
 ): Promise<boolean> {
   const { hour, minute } = await getWorkStart()
@@ -291,7 +271,7 @@ export async function saveManualAttendance(
     : undefined
 
   const supabase = await createClient()
-  const shift = await resolveShift(supabase, payload.employeeId, payload.shiftId)
+  const requestedShift = await resolveShift(supabase, payload.shiftId)
 
   const { data: employeeRow, error: employeeError } = await supabase
     .from("hr_employees")
@@ -305,6 +285,8 @@ export async function saveManualAttendance(
     (employeeRow?.default_check_in_time as string | null) ?? null
   const defaultCheckOutTime =
     (employeeRow?.default_check_out_time as string | null) ?? null
+  const profileShift = profileScheduleFromTimes(defaultCheckInTime, defaultCheckOutTime)
+  const shift = requestedShift ?? profileShift
 
   const source = payload.source ?? "employee"
   const now = new Date()
@@ -396,7 +378,7 @@ export async function saveManualAttendance(
       .from("hr_attendance")
       .insert({
         employee_id: payload.employeeId,
-        work_shift_id: shift?.id ?? null,
+        work_shift_id: requestedShift?.id ?? null,
         shift_date: workDate,
         check_in_at: finalCheckInAt.toISOString(),
         check_out_at: finalCheckOutAt
@@ -441,7 +423,7 @@ export async function saveManualAttendance(
   }
 
   const updates: Record<string, unknown> = {
-    work_shift_id: shift?.id ?? null,
+    work_shift_id: requestedShift?.id ?? null,
     shift_date: workDate,
     is_late: isLateNow,
     work_hours: finalWorkHours,

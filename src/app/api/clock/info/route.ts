@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server"
 
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDayRangeUtc } from "@/lib/attendance/late"
 
 function fmtTime(h: number, m: number) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
@@ -69,13 +72,17 @@ export async function GET() {
 
   // ── Today's attendance ─────────────────────────────────────────────────
   const now = new Date()
-  const openWindowStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  await autoCloseOpenAttendanceSessions({
+    admin,
+    employeeId: employee.id as string,
+    now,
+  })
+
   const { data: openRecord } = await admin
     .from("hr_attendance")
     .select("check_in_at, check_out_at")
     .eq("employee_id", employee.id)
     .is("check_out_at", null)
-    .gte("check_in_at", openWindowStart.toISOString())
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -88,14 +95,14 @@ export async function GET() {
   }
 
   if (!openRecord) {
-    const { start, end } = ictDayRangeUtc(now)
+    const cycleStart = sessionCycleStartUtc(now)
 
     const { data: att } = await admin
       .from("hr_attendance")
       .select("check_in_at, check_out_at")
       .eq("employee_id", employee.id)
-      .gte("check_in_at", start.toISOString())
-      .lt("check_in_at", end.toISOString())
+      .gte("check_in_at", cycleStart.toISOString())
+      .lte("check_in_at", now.toISOString())
       .order("check_in_at", { ascending: false })
       .limit(1)
       .maybeSingle()

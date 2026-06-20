@@ -10,7 +10,11 @@ import {
   getDashboardComplianceReminders,
   type ComplianceReminderItem,
 } from "@/features/dashboard/compliance-data"
-import { ictDayRangeUtc, formatIctTime } from "@/lib/attendance/late"
+import { formatIctTime } from "@/lib/attendance/late"
+import {
+  sessionCycleStartUtc,
+  sessionCutoffUtcForCheckIn,
+} from "@/lib/attendance/session-cycle"
 import { createClient } from "@/lib/supabase/server"
 import { BRANCH_VIA_EMPLOYEE } from "@/lib/supabase/branch-embeds"
 import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
@@ -103,7 +107,9 @@ const PENDING_APPROVAL_DISPLAY_LIMIT = 8
 
 export async function getDashboardWidgets() {
   const supabase = await createClient()
-  const { start: todayStart, end: todayEnd } = ictDayRangeUtc(new Date())
+  const now = new Date()
+  const cycleStart = sessionCycleStartUtc(now)
+  const cycleEnd = new Date(cycleStart.getTime() + 86_400_000)
 
   const [
     pendingLeavesRes,
@@ -138,8 +144,8 @@ export async function getDashboardWidgets() {
       .select(
         `id, check_in_at, check_out_at, is_late, ${EMPLOYEE_VIA_ATTENDANCE}!inner(name)`
       )
-      .gte("check_in_at", todayStart.toISOString())
-      .lt("check_in_at", todayEnd.toISOString())
+      .gte("check_in_at", cycleStart.toISOString())
+      .lt("check_in_at", cycleEnd.toISOString())
       .order("check_in_at", { ascending: false })
       .limit(20),
     supabase
@@ -277,12 +283,14 @@ export async function getDashboardWidgets() {
       })
     }
     if (!row.check_out_at) {
-      exceptions.push({
-        id: `${row.id}-out`,
-        employeeName: name,
-        kind: "no_checkout",
-        detail: "No check-out yet",
-      })
+      if (now.getTime() < sessionCutoffUtcForCheckIn(new Date(row.check_in_at)).getTime()) {
+        exceptions.push({
+          id: `${row.id}-out`,
+          employeeName: name,
+          kind: "no_checkout",
+          detail: "No check-out yet",
+        })
+      }
     }
   }
 

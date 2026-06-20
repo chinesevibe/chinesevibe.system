@@ -2,15 +2,18 @@
 // Service-role client by design (webhook has no user session, T02).
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDayRangeUtc } from "@/lib/attendance/late"
 import type { CheckInLocation } from "@/lib/attendance/check-in"
-import { ictToday } from "@/lib/datetime/thailand"
+import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 import {
   evaluateAttendanceLocation,
   mergeLocationFlags,
   suspiciousLocationMessage,
 } from "@/lib/attendance/location-security"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 
 export type CheckOutResult =
   | {
@@ -50,63 +53,51 @@ export async function checkOut({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select(
-      "id, name, status, branch_id, pay_type, work_shift_id, default_check_in_time, default_check_out_time"
-    )
+    .select("id, name, status, branch_id, pay_type")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
-  if (employeeError) {
-    throw employeeError
-  }
-  if (!row) {
-    return { status: "not_registered" }
-  }
-  if (row.status !== "active") {
-    return { status: "pending_approval" }
-  }
+  if (employeeError) throw employeeError
+  if (!row) return { status: "not_registered" }
+  if (row.status !== "active") return { status: "pending_approval" }
+
   const employee = row
 
-  // Branch Night fix: look back 36 h for an open record first (covers 14:00–02:00 shifts).
-  const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
+  await autoCloseOpenAttendanceSessions({
+    admin,
+    employeeId: employee.id as string,
+    now,
+  })
+
   const { data: openRecord, error: openRecordError } = await admin
     .from("hr_attendance")
     .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
     .eq("employee_id", employee.id)
     .is("check_out_at", null)
-    .gte("check_in_at", window36hStart.toISOString())
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  if (openRecordError) {
-    throw openRecordError
-  }
+  if (openRecordError) throw openRecordError
 
-  let record: typeof openRecord
-  if (openRecord) {
-    record = openRecord
-  } else {
-    // No open record — fall back to current ICT day to surface already_checked_out.
-    const { start, end } = ictDayRangeUtc(now)
-    const { data: dayRecord, error: dayRecordError } = await admin
+  let record: typeof openRecord = openRecord
+  if (!record) {
+    const cycleStart = sessionCycleStartUtc(now)
+    const { data: cycleRecord, error: cycleRecordError } = await admin
       .from("hr_attendance")
       .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
       .eq("employee_id", employee.id)
-      .gte("check_in_at", start.toISOString())
-      .lt("check_in_at", end.toISOString())
+      .gte("check_in_at", cycleStart.toISOString())
+      .lte("check_in_at", now.toISOString())
+      .order("check_in_at", { ascending: false })
       .limit(1)
       .maybeSingle()
 
-    if (dayRecordError) {
-      throw dayRecordError
-    }
-    record = dayRecord
+    if (cycleRecordError) throw cycleRecordError
+    record = cycleRecord
   }
 
-  if (!record) {
-    return { status: "not_checked_in" }
-  }
+  if (!record) return { status: "not_checked_in" }
   if (record.check_out_at) {
     return {
       status: "already_checked_out",
@@ -114,9 +105,7 @@ export async function checkOut({
     }
   }
 
-  let suspiciousFlags = mergeLocationFlags(
-    (record.location_review_flags as string[] | null) ?? [],
-  )
+  let suspiciousFlags = mergeLocationFlags((record.location_review_flags as string[] | null) ?? [])
   const reviewStatus = (record.location_review_status as string | null) ?? "clear"
   let nextReviewStatus = reviewStatus
   let hasNewSuspiciousSignal = reviewStatus === "pending_hr"
@@ -147,38 +136,17 @@ export async function checkOut({
   }
 
   const checkInAt = new Date(record.check_in_at)
-  const workDate = (record.shift_date as string | null) ?? ictToday()
-
-  // Resolve active shift window if employee has a work_shift_id.
-  let shiftWindow: import("@/lib/attendance/paid-work-time").PaidWorkShiftWindow | null = null
-  if (employee.work_shift_id) {
-    const { data: shiftRow } = await admin
-      .from("hr_work_shifts")
-      .select("start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes")
-      .eq("id", employee.work_shift_id)
-      .eq("is_active", true)
-      .maybeSingle()
-    if (shiftRow) {
-      shiftWindow = shiftRow as import("@/lib/attendance/paid-work-time").PaidWorkShiftWindow
-    }
-  }
-
+  const workDate = (record.shift_date as string | null) ?? ictDateFromUtc(checkInAt)
   const paidResult = computePaidWorkMinutes({
-    workDate,
-    shiftDate: workDate,
     checkInAt,
     checkOutAt: now,
-    shift: shiftWindow,
-    defaultCheckInTime: (employee.default_check_in_time as string | null) ?? undefined,
-    defaultCheckOutTime: (employee.default_check_out_time as string | null) ?? undefined,
+    shift: null,
   })
 
   const workMinutes = paidResult.paidMinutes
-  // Stored as hours with 2 decimals — numeric(5,2) cannot hold minutes.
   const workHours = paidResult.paidHours
   const showWorkDuration = (employee.pay_type as string | null) !== "monthly"
 
-  // Conditional update: a concurrent check-out loses the race and matches 0 rows.
   const { data: updated, error: updateError } = await admin
     .from("hr_attendance")
     .update({
@@ -201,9 +169,7 @@ export async function checkOut({
     .is("check_out_at", null)
     .select("id")
 
-  if (updateError) {
-    throw updateError
-  }
+  if (updateError) throw updateError
   if (!updated || updated.length === 0) {
     return { status: "already_checked_out", checkOutAt: now }
   }

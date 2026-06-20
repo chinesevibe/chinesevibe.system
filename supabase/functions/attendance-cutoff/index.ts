@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 const ICT_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SLA_HOURS = 48;
+const SESSION_CUTOFF_TIME = "06:00";
 
 type AttendanceCutoffShift = {
   id: string;
@@ -141,29 +142,17 @@ function buildAttendanceWorkDate(row: AttendanceCutoffRow): string {
 
 function resolveCutoffCheckoutAt(
   checkInAt: Date,
-  workDate: string,
-  shift: AttendanceCutoffShift | null,
-  employee: EmployeeRow,
-  now: Date,
+  _workDate: string,
+  _shift: AttendanceCutoffShift | null,
+  _employee: EmployeeRow,
+  _now: Date,
 ): Date {
-  if (shift) {
-    return getShiftEndUtc(workDate, shift);
+  const workDate = ictDateFromUtc(checkInAt);
+  let cutoffAt = ictLocalToUtc(workDate, SESSION_CUTOFF_TIME);
+  if (cutoffAt.getTime() <= checkInAt.getTime()) {
+    cutoffAt = new Date(cutoffAt.getTime() + DAY_MS);
   }
-
-  const defaultOut = normalizeTimeToHHMM(employee.default_check_out_time);
-  const defaultIn = normalizeTimeToHHMM(employee.default_check_in_time);
-  if (defaultIn && defaultOut) {
-    let fallbackOut = ictLocalToUtc(workDate, defaultOut);
-    const fallbackIn = ictLocalToUtc(workDate, defaultIn);
-    if (fallbackOut.getTime() <= fallbackIn.getTime()) {
-      fallbackOut = new Date(fallbackOut.getTime() + DAY_MS);
-    }
-    if (fallbackOut.getTime() > checkInAt.getTime() && fallbackOut.getTime() <= now.getTime()) {
-      return fallbackOut;
-    }
-  }
-
-  return now;
+  return cutoffAt;
 }
 
 function ensurePeriodIdByDate(

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance Kanban Time Buckets</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --panel: #fffdf8;
+      --panel-2: #f8f4ec;
+      --line: #e7dece;
+      --text: #241f17;
+      --muted: #766b5b;
+      --red: #c9412d;
+      --red-soft: #fbe3dc;
+      --green: #217a5a;
+      --green-soft: #dff3eb;
+      --amber: #b97712;
+      --amber-soft: #fcefd2;
+      --blue: #2f6fa3;
+      --blue-soft: #ddebf8;
+      --shadow: 0 18px 44px rgba(36, 31, 23, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Sarabun", "Noto Sans Thai", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(201, 65, 45, 0.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(47, 111, 163, 0.08), transparent 24%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 32px 24px 48px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1.5fr 0.9fr;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .summary-card,
+    .board-card,
+    .list-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 28px;
+      background:
+        linear-gradient(135deg, rgba(201, 65, 45, 0.08), transparent 48%),
+        var(--panel);
+    }
+
+    .hero-card h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.05;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 78ch;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .summary-card {
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      background:
+        linear-gradient(180deg, rgba(47, 111, 163, 0.08), transparent 45%),
+        var(--panel);
+    }
+
+    .summary-card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kpi {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi span {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .list-card,
+    .board-card {
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .counter {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--red-soft);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .small-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .small-person {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .small-person-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .small-person-head strong {
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 8px 0;
+    }
+
+    .mini-row + .mini-row {
+      border-top: 1px dashed #d8ccb8;
+    }
+
+    .mini-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #d66754, #b8321b);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mini-code {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .mini-time {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .kanban {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .column {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px;
+      min-height: 540px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .column-head {
+      padding: 12px 12px 14px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .column-head strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .column-head span {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .column-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ticket {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 9px;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticket.late { border-color: #efc178; background: #fffaf0; }
+    .ticket.done { border-color: #b7dfcf; background: #f4fbf8; }
+    .ticket.alert { border-color: #efb3a8; background: #fff6f4; }
+
+    .ticket-top {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .ticket-id {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .ticket-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #d66754, #b8321b);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      flex: none;
+    }
+
+    .ticket-top strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.2;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1280px) {
+      .small-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .column-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 780px) {
+      .page { padding: 18px 14px 36px; }
+      .small-grid,
+      .kanban,
+      .summary-grid { grid-template-columns: 1fr; }
+      .column-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-head { align-items: start; flex-direction: column; }
+      .hero-card h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <h1>Attendance Kanban by Time Window</h1>
+        <p>
+          ตัวอย่างนี้เปลี่ยนจากมุมมองตามกะงานเป็นมุมมองตามช่วงเวลาใช้งานจริงบนหน้างาน
+          และแยกส่วน “ยังไม่เข้างาน” ออกมาเป็นการ์ดสี่เหลี่ยมเล็ก ๆ ให้ HR สแกนชื่อ รหัสพนักงาน
+          และเวลามาตรฐานเข้า-ออกงานได้ทันทีโดยไม่ต้องเปิดรายละเอียดเพิ่ม
+        </p>
+        <div class="hero-meta">
+          <div class="chip">วันที่ 20 มิ.ย. 2026</div>
+          <div class="chip">ทุกสาขา</div>
+          <div class="chip">ทุกแผนก</div>
+          <div class="chip">ไม่มีคำว่า “กะ” บนหน้า board</div>
+        </div>
+      </div>
+
+      <aside class="summary-card">
+        <h2>Snapshot</h2>
+        <div class="summary-grid">
+          <div class="kpi"><strong>48</strong><span>พนักงานทั้งหมด</span></div>
+          <div class="kpi"><strong>31</strong><span>เช็คอินแล้ว</span></div>
+          <div class="kpi"><strong>9</strong><span>ยังไม่เข้างาน</span></div>
+          <div class="kpi"><strong>4</strong><span>มาสาย / ต้องตาม</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="list-card">
+      <div class="section-head">
+        <div>
+          <h2>รายชื่อที่ยังไม่เข้างาน</h2>
+          <p>การ์ดแน่นแบบ 3 แถวต่อใบ ใช้รหัสพนักงานและเวลาเข้า-ออกงานเท่านั้นเพื่อลดความรก</p>
+        </div>
+        <div class="counter">ยังไม่เข้างาน 9 คน</div>
+      </div>
+
+      <div class="small-grid">
+        <article class="small-person">
+          <div class="small-person-head">
+            <strong>10:00 - 19:00</strong>
+            <div class="status-pending">pending</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">1</div>
+            <div>
+              <span class="mini-code">B7D62088</span>
+              <div class="mini-time">เวลา 10:00 - 19:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">2</div>
+            <div>
+              <span class="mini-code">B7D62102</span>
+              <div class="mini-time">เวลา 10:00 - 19:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">3</div>
+            <div>
+              <span class="mini-code">B7D62031</span>
+              <div class="mini-time">เวลา 10:00 - 19:00</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="small-person">
+          <div class="small-person-head">
+            <strong>13:00 - 22:00</strong>
+            <div class="status-pending">pending</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">1</div>
+            <div>
+              <span class="mini-code">B7D62091</span>
+              <div class="mini-time">เวลา 13:00 - 22:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">2</div>
+            <div>
+              <span class="mini-code">B7D62113</span>
+              <div class="mini-time">เวลา 13:00 - 22:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">3</div>
+            <div>
+              <span class="mini-code">B7D62084</span>
+              <div class="mini-time">เวลา 13:00 - 22:00</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="small-person">
+          <div class="small-person-head">
+            <strong>19:00 - 03:00</strong>
+            <div class="status-pending">pending</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">1</div>
+            <div>
+              <span class="mini-code">B7D62121</span>
+              <div class="mini-time">เวลา 19:00 - 23:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">2</div>
+            <div>
+              <span class="mini-code">B7D62074</span>
+              <div class="mini-time">เวลา 00:00 - 03:00</div>
+            </div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-icon">3</div>
+            <div>
+              <span class="mini-code">B7D62145</span>
+              <div class="mini-time">เวลา 00:00 - 03:00</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="board-card">
+      <div class="section-head">
+        <div>
+          <h2>Kanban ตามช่วงเวลา</h2>
+          <p>card แสดงแค่รหัสพนักงาน และระบบจริงจะย้าย card ข้ามคอลัมน์ตามเวลาจริงอัตโนมัติ</p>
+        </div>
+        <div class="counter" style="background: var(--blue-soft); color: var(--blue);">4 คอลัมน์คงที่</div>
+      </div>
+
+      <div class="kanban">
+        <section class="column">
+          <div class="column-head">
+            <strong>10:00 - 12:00</strong>
+            <span>เช็คคนรอบเช้าและคนที่ยังไม่เริ่มงาน</span>
+          </div>
+          <div class="column-grid">
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">1</div><div><strong>B7D62018</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket late">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">2</div><div><strong>B7D62027</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">3</div><div><strong>B7D62039</strong></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="column">
+          <div class="column-head">
+            <strong>13:00 - 18:00</strong>
+            <span>คอลัมน์หลักสำหรับรอบกลางวัน</span>
+          </div>
+          <div class="column-grid">
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">1</div><div><strong>B7D62088</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket done">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">2</div><div><strong>B7D62113</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">3</div><div><strong>B7D62084</strong></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="column">
+          <div class="column-head">
+            <strong>19:00 - 23:00</strong>
+            <span>รอบเย็นสำหรับร้าน/สาขาที่เปิดดึก</span>
+          </div>
+          <div class="column-grid">
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">1</div><div><strong>B7D62121</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket alert">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">2</div><div><strong>B7D62131</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">3</div><div><strong>B7D62136</strong></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="column">
+          <div class="column-head">
+            <strong>00:00 - 03:00</strong>
+            <span>รองรับรอบข้ามวันโดยไม่ต้องโชว์คำว่า overnight shift</span>
+          </div>
+          <div class="column-grid">
+            <article class="ticket done">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">1</div><div><strong>B7D62074</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">2</div><div><strong>B7D62095</strong></div></div>
+              </div>
+            </article>
+            <article class="ticket done">
+              <div class="ticket-top">
+                <div class="ticket-id"><div class="ticket-icon">3</div><div><strong>B7D62145</strong></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

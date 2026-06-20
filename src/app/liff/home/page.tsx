@@ -2,30 +2,16 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 import { t } from "@/lib/i18n/translate"
 import { liffHref } from "@/lib/i18n/liff-url"
 import { coerceLocale } from "@/lib/i18n/types"
 import { createClient } from "@/lib/supabase/server"
-
-// ฟอร์แมตเวลา HH:MM จาก hour + minute
-function fmtTime(h: number, m: number) {
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
-}
-
-// work_date วันนี้ใน ICT — คำนึง crosses_midnight
-function todayWorkDate(crossesMidnight: boolean): string {
-  const now = new Date(
-    new Date().toLocaleString("en-CA", { timeZone: "Asia/Bangkok" })
-  )
-  const hour = now.getHours()
-  if (crossesMidnight && hour < 6) {
-    const d = new Date(now)
-    d.setDate(d.getDate() - 1)
-    return d.toISOString().slice(0, 10)
-  }
-  return now.toISOString().slice(0, 10)
-}
 
 export default async function LiffHomePage({
   searchParams,
@@ -49,16 +35,14 @@ export default async function LiffHomePage({
 
   const supabase = await createClient()
 
-  // ดึง branch + shift ของพนักงาน
+  // ดึง branch + profile schedule ของพนักงาน
   const { data: empDetail } = await supabase
     .from("hr_employees")
     .select(`
       branch_id,
-      branch:hr_branches(name),
-      work_shift:hr_work_shifts(
-        name, start_hour, start_minute,
-        end_hour, end_minute, crosses_midnight
-      )
+      default_check_in_time,
+      default_check_out_time,
+      branch:hr_branches(name)
     `)
     .eq("id", employee.id)
     .maybeSingle()
@@ -66,26 +50,33 @@ export default async function LiffHomePage({
   const branchRaw = empDetail?.branch as unknown as { name: string } | { name: string }[] | null
   const branch = Array.isArray(branchRaw) ? (branchRaw[0]?.name ?? null) : (branchRaw?.name ?? null)
 
-  type ShiftRow = {
-    name: string
-    start_hour: number
-    start_minute: number
-    end_hour: number
-    end_minute: number
-    crosses_midnight: boolean
-  }
-  const shiftRaw = empDetail?.work_shift as unknown as ShiftRow | ShiftRow[] | null
-  const shift: ShiftRow | null = Array.isArray(shiftRaw) ? (shiftRaw[0] ?? null) : (shiftRaw ?? null)
+  const defaultCheckInTime = normalizeTimeToHHMM(
+    (empDetail?.default_check_in_time as string | null) ?? null
+  )
+  const defaultCheckOutTime = normalizeTimeToHHMM(
+    (empDetail?.default_check_out_time as string | null) ?? null
+  )
 
-  const workDate = shift
-    ? todayWorkDate(shift.crosses_midnight)
-    : new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" })
+  const shiftLabel =
+    defaultCheckInTime && defaultCheckOutTime
+      ? `${defaultCheckInTime} – ${defaultCheckOutTime}`
+      : null
+
+  const isNightShift =
+    Boolean(defaultCheckInTime && defaultCheckOutTime) &&
+    defaultCheckOutTime <= defaultCheckInTime
+
+  const now = new Date()
+  await autoCloseOpenAttendanceSessions({ employeeId: employee.id, now })
+  const cycleStart = sessionCycleStartUtc(now)
 
   const { data: attendance } = await supabase
     .from("hr_attendance")
     .select("check_in_at, check_out_at")
     .eq("employee_id", employee.id)
-    .eq("shift_date", workDate)
+    .gte("check_in_at", cycleStart.toISOString())
+    .lte("check_in_at", now.toISOString())
+    .order("check_in_at", { ascending: false })
     .maybeSingle()
 
   // ใช้ locale ของพนักงานในการ format เวลา
@@ -106,12 +97,6 @@ export default async function LiffHomePage({
         timeZone: "Asia/Bangkok",
       })
     : null
-
-  const shiftLabel = shift
-    ? `${fmtTime(shift.start_hour, shift.start_minute)} – ${fmtTime(shift.end_hour, shift.end_minute)}`
-    : null
-
-  const isNightShift = shift?.crosses_midnight ?? false
 
   const nowHour = parseInt(
     new Date().toLocaleString("en-GB", { hour: "numeric", timeZone: "Asia/Bangkok" })
@@ -145,7 +130,7 @@ export default async function LiffHomePage({
 
       <div className="flex flex-1 flex-col gap-3 px-4 py-3">
         {/* Shift card */}
-        {shift && (
+        {shiftLabel && (
           <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
             <p className="text-xs text-gray-400">{tx("liff.home.todayShift")}</p>
             <div className="mt-1.5 flex items-center justify-between">
@@ -153,12 +138,12 @@ export default async function LiffHomePage({
                 <p className="text-2xl font-medium text-gray-900">{shiftLabel}</p>
                 {isNightShift && (
                   <p className="mt-0.5 text-xs text-gray-400">
-                    {tx("liff.home.nextDayClock", { time: fmtTime(shift.end_hour, shift.end_minute) })}
+                    {tx("liff.home.nextDayClock", { time: defaultCheckOutTime })}
                   </p>
                 )}
               </div>
               <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-[#E80012]">
-                {shift.name}
+                Profile Time
               </span>
             </div>
 

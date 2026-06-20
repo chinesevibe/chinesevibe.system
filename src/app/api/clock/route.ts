@@ -58,6 +58,18 @@ export async function POST(request: NextRequest) {
             hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
           }),
         })
+      case "requires_retro_checkout":
+        return NextResponse.json(
+          {
+            error: "requires_retro_checkout",
+            checkInAt: result.checkInAt.toISOString(),
+            cutoffAt: result.cutoffAt.toISOString(),
+            timeText: result.checkInAt.toLocaleTimeString("th-TH", {
+              hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
+            }),
+          },
+          { status: 409 }
+        )
       case "outside_geofence":
         return NextResponse.json(
           { error: "outside_geofence", distanceM: result.distanceM, limitM: result.limitM },

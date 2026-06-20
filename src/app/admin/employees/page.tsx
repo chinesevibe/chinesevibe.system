@@ -38,6 +38,7 @@ export default async function AdminEmployeesPage({
     ? `/admin/employees?${currentParams.toString()}`
     : "/admin/employees"
   const readOnly = employee ? isCeo(employee.role) && !isDev(employee.role) : false
+  const canToggleNightShift = employee ? isDev(employee.role) : false
   const [{ employees, total }, departments, branches, onboardingPending, workShifts] =
     await Promise.all([
       getEmployees(params),
@@ -46,6 +47,10 @@ export default async function AdminEmployeesPage({
       getOnboardingPendingCount(),
       listWorkShifts(),
     ])
+
+  const nightShiftId = canToggleNightShift
+    ? (workShifts.find((s) => s.code === "BRANCH_NIGHT")?.id ?? null)
+    : null
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
@@ -84,7 +89,7 @@ export default async function AdminEmployeesPage({
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
           <EmployeeFilters departments={departments} branches={branches} workShifts={workShifts} />
           <div className="min-h-0 flex-1 overflow-hidden">
-            <EmployeeTable employees={employees} scrollable returnTo={currentPath} />
+            <EmployeeTable employees={employees} scrollable returnTo={currentPath} nightShiftId={nightShiftId} />
           </div>
           <EmployeePagination
             page={params.page}

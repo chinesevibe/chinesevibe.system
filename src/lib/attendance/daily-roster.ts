@@ -10,6 +10,7 @@ import type { ShiftSchedule } from "@/lib/attendance/retro-limit"
 import { getShiftStartUtc } from "@/lib/attendance/retro-limit"
 import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 import { effectiveAttendanceIsLate } from "@/lib/attendance/late"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import { isEmployeeOffOnDate, parseOffDays } from "@/lib/employees/off-days"
 
 const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
@@ -189,17 +190,53 @@ function scheduleFromShift(shift: RosterShiftRow): ShiftSchedule {
   }
 }
 
+function profileGroupId(employee: Pick<RosterEmployeeRow, "default_check_in_time" | "default_check_out_time">): string | null {
+  if (!employee.default_check_in_time || !employee.default_check_out_time) return null
+  return `profile:${employee.default_check_in_time}-${employee.default_check_out_time}`
+}
+
+function resolveEmployeeScheduleMeta(
+  employee: Pick<
+    RosterEmployeeRow,
+    "work_shift_id" | "default_check_in_time" | "default_check_out_time"
+  >,
+  shiftById: Map<string, RosterShiftRow>
+): {
+  groupId: string | null
+  shiftRow: RosterShiftRow | null
+  schedule: ShiftSchedule | null
+} {
+  const shiftRow = employee.work_shift_id ? (shiftById.get(employee.work_shift_id) ?? null) : null
+  if (shiftRow) {
+    return {
+      groupId: shiftRow.id,
+      shiftRow,
+      schedule: scheduleFromShift(shiftRow),
+    }
+  }
+
+  const schedule = profileScheduleFromTimes(
+    employee.default_check_in_time,
+    employee.default_check_out_time
+  )
+  return {
+    groupId: schedule ? profileGroupId(employee) : null,
+    shiftRow: null,
+    schedule,
+  }
+}
+
 function groupStateForDate(
   date: string,
   today: string,
   now: Date,
-  shift: RosterShiftRow | null
+  schedule: ShiftSchedule | null
 ): DailyRosterGroupState {
-  if (!shift) return "unassigned"
+  if (!schedule) return "unassigned"
   if (date > today) return "upcoming"
   if (date < today) return "closed"
-  const startAt = getShiftStartUtc(date, scheduleFromShift(shift))
-  const graceAt = new Date(startAt.getTime() + shift.grace_minutes * 60_000)
+  const startAt = getShiftStartUtc(date, schedule)
+  const graceAt = new Date(startAt.getTime() + schedule.grace_minutes * 60_000)
   if (now.getTime() < startAt.getTime()) return "upcoming"
   if (now.getTime() <= graceAt.getTime()) return "grace"
   return "closed"
@@ -351,9 +388,9 @@ export function buildDailyRosterSnapshot(
       if (row.check_out_at) continue
       if (attendanceWorkDate(row) !== previousDate) continue
       const employee = employeeById.get(row.employee_id)
-      const shiftId = employee?.work_shift_id
-      const shift = shiftId ? shiftById.get(shiftId) : null
-      if (!shiftId || !shift?.crosses_midnight) continue
+      if (!employee) continue
+      const resolved = resolveEmployeeScheduleMeta(employee, shiftById)
+      if (!resolved.schedule?.crosses_midnight) continue
       carryoverEmployeeDates.set(row.employee_id, previousDate)
     }
   }
@@ -386,23 +423,38 @@ export function buildDailyRosterSnapshot(
     pending: 0,
   }
 
-  function ensureGroup(shiftId: string | null): DailyRosterGroup {
-    const key = shiftId ?? UNASSIGNED_SHIFT_ID
+  function ensureGroup(
+    employee: Pick<
+      RosterEmployeeRow,
+      "work_shift_id" | "default_check_in_time" | "default_check_out_time"
+    >
+  ): DailyRosterGroup {
+    const resolved = resolveEmployeeScheduleMeta(employee, shiftById)
+    const key = resolved.groupId ?? UNASSIGNED_SHIFT_ID
     const existing = groups.get(key)
     if (existing) return existing
 
-    const shift = shiftId ? (shiftById.get(shiftId) ?? null) : null
-    const state = groupStateForDate(input.date, today, input.now, shift)
-    const startAt = shift ? getShiftStartUtc(input.date, scheduleFromShift(shift)) : null
+    const state = groupStateForDate(input.date, today, input.now, resolved.schedule)
+    const startAt = resolved.schedule ? getShiftStartUtc(input.date, resolved.schedule) : null
     const graceAt = startAt
-      ? new Date(startAt.getTime() + shift!.grace_minutes * 60_000)
+      ? new Date(startAt.getTime() + resolved.schedule!.grace_minutes * 60_000)
       : null
 
     const group: DailyRosterGroup = {
       id: key,
-      code: shift?.code ?? null,
-      name: shift?.name ?? "No shift assigned",
-      timeRange: shift ? formatShiftTimeRange(shift) : "—",
+      code: resolved.shiftRow?.code ?? null,
+      name:
+        resolved.shiftRow?.name ??
+        (resolved.schedule ? "Profile time" : "No shift assigned"),
+      timeRange: resolved.shiftRow
+        ? formatShiftTimeRange(resolved.shiftRow)
+        : resolved.schedule
+          ? formatEmployeeWorkTimeText({
+              default_check_in_time: employee.default_check_in_time,
+              default_check_out_time: employee.default_check_out_time,
+              workShift: null,
+            })
+          : "—",
       state,
       stateLabel: groupStateLabel(state),
       startAt: startAt?.toISOString() ?? null,
@@ -422,10 +474,9 @@ export function buildDailyRosterSnapshot(
   }
 
   for (const employee of input.employees) {
-    const group = ensureGroup(employee.work_shift_id)
-    const shift = employee.work_shift_id
-      ? (shiftById.get(employee.work_shift_id) ?? null)
-      : null
+    const group = ensureGroup(employee)
+    const resolved = resolveEmployeeScheduleMeta(employee, shiftById)
+    const shift = resolved.shiftRow
     const groupDate = carryoverEmployeeDates.get(employee.id) ?? input.date
     const onLeave = isEmployeeOnLeave(leaveByEmployee.get(employee.id) ?? [], groupDate)
     const offDays = parseOffDays(employee.off_days)
@@ -471,11 +522,11 @@ export function buildDailyRosterSnapshot(
     const effectiveRecord = record
       ? { ...record, is_late: effectiveIsLate }
       : null
-    const dayStatus = deriveAttendanceDayStatus(
+      const dayStatus = deriveAttendanceDayStatus(
       groupDate,
       today,
       input.now,
-      shift ? scheduleFromShift(shift) : null,
+      resolved.schedule,
       onLeave,
       effectiveRecord,
       input.goLiveDate
@@ -574,9 +625,7 @@ async function loadRosterEmployees(
     if (filters.dept) {
       employeeQuery = employeeQuery.eq("department", filters.dept)
     }
-    if (filters.shift_id === UNASSIGNED_SHIFT_ID) {
-      employeeQuery = employeeQuery.is("work_shift_id", null)
-    } else if (filters.shift_id) {
+    if (filters.shift_id && filters.shift_id !== UNASSIGNED_SHIFT_ID && !filters.shift_id.startsWith("profile:")) {
       employeeQuery = employeeQuery.eq("work_shift_id", filters.shift_id)
     }
 
@@ -650,16 +699,33 @@ export async function getDailyRoster(filters: DailyRosterFilters): Promise<Daily
   if (attendanceResult.error) throw attendanceResult.error
   if (leaveResult.error) throw leaveResult.error
 
+  const shiftById = new Map(
+    ((shiftResult.data ?? []) as RosterShiftRow[]).map((shift) => [shift.id, shift])
+  )
+  const filteredEmployees = employeeRows.filter((employee) => {
+    if (!filters.shift_id) return true
+    const resolved = resolveEmployeeScheduleMeta(employee, shiftById)
+    const groupId = resolved.groupId ?? UNASSIGNED_SHIFT_ID
+    return groupId === filters.shift_id
+  })
+  const filteredEmployeeIds = new Set(filteredEmployees.map((employee) => employee.id))
+  const filteredAttendanceRows = ((attendanceResult.data ?? []) as RosterAttendanceRow[]).filter((row) =>
+    filteredEmployeeIds.has(row.employee_id)
+  )
+  const filteredLeaveRows = ((leaveResult.data ?? []) as RosterLeaveRow[]).filter((row) =>
+    filteredEmployeeIds.has(row.employee_id)
+  )
+
   return buildDailyRosterSnapshot(
     {
       date: filters.date,
       now,
       goLiveDate: (configResult.data?.value as string | null) ?? null,
-      employees: employeeRows,
+      employees: filteredEmployees,
       shifts: (shiftResult.data ?? []) as RosterShiftRow[],
     },
-    (attendanceResult.data ?? []) as RosterAttendanceRow[],
-    (leaveResult.data ?? []) as RosterLeaveRow[]
+    filteredAttendanceRows,
+    filteredLeaveRows
   )
 }
 

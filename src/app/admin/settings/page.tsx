@@ -1,15 +1,30 @@
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { MorningPushSettingsPanel } from "@/features/settings/MorningPushSettingsPanel"
 import { SettingsPanel } from "@/features/settings/SettingsPanel"
+import { ShiftsCrudPanel } from "@/features/shifts/ShiftsCrudPanel"
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { isDev } from "@/lib/auth/roles"
+import { getCurrentEmployee } from "@/lib/auth/session"
 import { getWorkStart } from "@/lib/runtime-config"
 
 export default async function AdminSettingsPage() {
   const admin = getAdminClient()
-  const [{ data: configRows }, workStart] = await Promise.all([
+  const [{ data: configRows }, workStart, caller] = await Promise.all([
     admin.from("hr_runtime_config").select("key, value, updated_at"),
     getWorkStart(),
+    getCurrentEmployee(),
   ])
+
+  const devAccess = caller ? isDev(caller.role) : false
+
+  const { data: allShifts } = devAccess
+    ? await admin
+        .from("hr_work_shifts")
+        .select(
+          "id, code, name, start_hour, start_minute, end_hour, end_minute, crosses_midnight, grace_minutes, standard_hours, is_active"
+        )
+        .order("start_hour")
+    : { data: [] }
 
   const groupId =
     configRows?.find((r) => r.key === "hr_line_group_id")?.value ??
@@ -32,6 +47,9 @@ export default async function AdminSettingsPage() {
           envWorkMinute={String(workStart.minute)}
         />
         <MorningPushSettingsPanel rows={configRows ?? []} />
+        {devAccess && (
+          <ShiftsCrudPanel shifts={(allShifts ?? []) as import("@/features/shifts/types").WorkShiftSummary[]} />
+        )}
         <div className="grid gap-4 md:grid-cols-2">
           <section className="rounded-xl border p-4">
             <h3 className="mb-3 text-sm font-semibold">เวลาเริ่มงานสำรองที่ใช้งานอยู่</h3>

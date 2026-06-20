@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FileText, MoreVertical } from "lucide-react"
+import { FileText, Moon, MoreVertical } from "lucide-react"
+import { useTransition } from "react"
 
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { StatusPill } from "@/components/brand/StatusPill"
@@ -92,12 +93,55 @@ function EmployeeMobileCard({
   )
 }
 
+function NightShiftToggle({
+  employeeId,
+  currentShiftId,
+  nightShiftId,
+}: {
+  employeeId: string
+  currentShiftId: string | null
+  nightShiftId: string
+}) {
+  const router = useRouter()
+  const [pending, startTransition] = useTransition()
+  const isNight = currentShiftId === nightShiftId
+
+  function toggle() {
+    startTransition(async () => {
+      await fetch(`/api/employees/${employeeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ work_shift_id: isNight ? null : nightShiftId }),
+      })
+      router.refresh()
+    })
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={pending}
+      title={isNight ? "ถอด BRANCH_NIGHT" : "ตั้งเป็น BRANCH_NIGHT"}
+      className={cn(
+        "inline-flex size-7 items-center justify-center rounded-md border transition-colors disabled:opacity-40",
+        isNight
+          ? "border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+          : "border-border text-muted-foreground hover:bg-muted"
+      )}
+    >
+      <Moon className={cn("size-3.5", isNight && "fill-indigo-600")} />
+    </button>
+  )
+}
+
 function EmployeeTableRow({
   employee: e,
   returnTo,
+  nightShiftId,
 }: {
   employee: EmployeeRow
   returnTo?: string | null
+  nightShiftId?: string | null
 }) {
   const router = useRouter()
   const profileHref = appendReturnTo(`/admin/employees/${e.id}`, returnTo)
@@ -228,6 +272,15 @@ function EmployeeTableRow({
           <span className="text-sm text-muted-foreground">—</span>
         )}
       </TableCell>
+      {nightShiftId && (
+        <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
+          <NightShiftToggle
+            employeeId={e.id}
+            currentShiftId={e.work_shift_id}
+            nightShiftId={nightShiftId}
+          />
+        </TableCell>
+      )}
       <TableCell onClick={stopRowNav}>
         <Link
           href={profileHref}
@@ -245,10 +298,12 @@ export function EmployeeTable({
   employees,
   scrollable = false,
   returnTo,
+  nightShiftId,
 }: {
   employees: EmployeeRow[]
   scrollable?: boolean
   returnTo?: string | null
+  nightShiftId?: string | null
 }) {
   if (employees.length === 0) {
     return (
@@ -290,12 +345,13 @@ export function EmployeeTable({
               <TableHead>วีซ่า</TableHead>
               <TableHead>Work Permit</TableHead>
               <TableHead>สัญญา</TableHead>
+              {nightShiftId && <TableHead className="w-10" title="กะกลางคืน"><Moon className="size-3.5" /></TableHead>}
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {employees.map((e) => (
-              <EmployeeTableRow key={e.id} employee={e} returnTo={returnTo} />
+              <EmployeeTableRow key={e.id} employee={e} returnTo={returnTo} nightShiftId={nightShiftId} />
             ))}
           </TableBody>
         </Table>

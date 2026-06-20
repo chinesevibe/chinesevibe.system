@@ -1,11 +1,14 @@
 import {
   effectiveAttendanceIsLate,
   formatIctTime,
-  ictDayRangeUtc,
   type ShiftLateSchedule,
 } from "@/lib/attendance/late"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
-import { getShiftEndUtc } from "@/lib/attendance/retro-limit"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
+import {
+  sessionCycleStartUtc,
+  sessionCutoffUtcForCheckIn,
+} from "@/lib/attendance/session-cycle"
 import { createClient } from "@/lib/supabase/server"
 import type {
   AttendanceLocationReviewStatus,
@@ -56,10 +59,10 @@ function ictDateFromIso(iso: string): string {
 
 function defaultRange(): { from: string; to: string } {
   const now = new Date()
-  const { start } = ictDayRangeUtc(now)
   const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
-  const to = new Date(start.getTime() + ICT_OFFSET_MS).toISOString().slice(0, 10)
-  const fromDate = new Date(start.getTime() - 29 * 86_400_000 + ICT_OFFSET_MS)
+  const cycleStart = sessionCycleStartUtc(now)
+  const to = new Date(cycleStart.getTime() + ICT_OFFSET_MS).toISOString().slice(0, 10)
+  const fromDate = new Date(cycleStart.getTime() - 29 * 86_400_000 + ICT_OFFSET_MS)
   const from = fromDate.toISOString().slice(0, 10)
   return { from, to }
 }
@@ -93,16 +96,12 @@ function deriveStatus(
   isLate: boolean,
   checkOutAt: string | null,
   checkInAt: string,
-  shift: WorkShiftJoin | null,
-  workDate: string
+  now: Date
 ): AttendanceStatus {
   if (!checkOutAt) {
-    if (shift && new Date() < getShiftEndUtc(workDate, shift)) {
+    if (now.getTime() < sessionCutoffUtcForCheckIn(new Date(checkInAt)).getTime()) {
       return "in_progress"
     }
-    const { end } = ictDayRangeUtc(new Date())
-    const isToday = new Date(checkInAt).getTime() >= ictDayRangeUtc(new Date()).start.getTime()
-    if (isToday && new Date() < end) return "in_progress"
   }
   return isLate ? "late" : "normal"
 }
@@ -225,7 +224,11 @@ function scheduleFromJoin(
   return {
     defaultCheckInTime: emp?.default_check_in_time ?? null,
     defaultCheckOutTime: emp?.default_check_out_time ?? null,
-    shift,
+    shift:
+      profileScheduleFromTimes(
+        emp?.default_check_in_time ?? null,
+        emp?.default_check_out_time ?? null
+      ) ?? shift,
   }
 }
 
@@ -286,7 +289,11 @@ function employeeJoin(
       : branchRaw.name
     : null
   const rawShift = Array.isArray(emp.hr_work_shifts) ? emp.hr_work_shifts[0] : emp.hr_work_shifts
-  const shift = shiftFromJoin(emp.hr_work_shifts)
+  const profileShift = profileScheduleFromTimes(
+    emp.default_check_in_time ?? null,
+    emp.default_check_out_time ?? null
+  )
+  const shift = profileShift ?? shiftFromJoin(emp.hr_work_shifts)
   return {
     name: emp.name,
     employeeCode: formatEmployeeCode(emp.id ?? "", emp.employee_code ?? null),
@@ -295,7 +302,7 @@ function employeeJoin(
     defaultCheckInTime: emp.default_check_in_time ?? null,
     defaultCheckOutTime: emp.default_check_out_time ?? null,
     shift,
-    shiftWindow: rawShift ?? null,
+    shiftWindow: rawShift ?? profileShift,
   }
 }
 
@@ -334,6 +341,7 @@ export async function getAttendanceEmployees(
 
 export async function getAttendanceRecords(params: Required<AttendanceListParams>) {
   const supabase = await createClient()
+  const now = new Date()
   const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
   const rangeStart = new Date(Date.parse(`${params.from}T00:00:00Z`) - ICT_OFFSET_MS)
   const rangeEnd = new Date(
@@ -440,8 +448,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       isLate,
       row.check_out_at,
       row.check_in_at,
-      emp.shiftWindow,
-      workDate
+      now
     )
     const workHours = resolvePaidWorkHours({
       checkInAt: row.check_in_at,
@@ -536,7 +543,11 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     workDays: (summaryRows ?? []).length,
     totalHours: resolvedSummaryRows.reduce((sum, row) => sum + (row.workHours ?? 0), 0),
     lateCount: resolvedSummaryRows.filter((row) => row.isLate).length,
-    inProgressCount: ((summaryRows ?? []) as SummaryRow[]).filter((row) => !row.check_out_at).length,
+    inProgressCount: ((summaryRows ?? []) as SummaryRow[]).filter(
+      (row) =>
+        !row.check_out_at &&
+        now.getTime() < sessionCutoffUtcForCheckIn(new Date(row.check_in_at)).getTime()
+    ).length,
   }
 
   return { rows, total: count ?? 0, summary }

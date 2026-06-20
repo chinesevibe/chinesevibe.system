@@ -171,6 +171,15 @@ export default function ClockPage() {
       } else if (res.status === 403 && (data.error as string) === "outside_geofence") {
         const dist = Math.round((data.distanceM as number) ?? 0)
         setResult({ ok: false, title: "อยู่นอกพื้นที่", detail: `ห่างจากจุดพิกัด ${dist} เมตร กรุณาเข้าใกล้สำนักงาน` })
+      } else if (res.status === 409 && (data.error as string) === "requires_retro_checkout") {
+        const timeText = (data.timeText as string | undefined) ?? ""
+        setResult({
+          ok: false,
+          title: "มี session ค้าง",
+          detail: timeText
+            ? `พบการเข้างานค้างตั้งแต่ ${timeText} กรุณาเช็คออกย้อนหลังหรือรอระบบปิดอัตโนมัติ 06:00 น.`
+            : "กรุณาเช็คออกย้อนหลังหรือรอระบบปิดอัตโนมัติ 06:00 น.",
+        })
       } else {
         setResult({ ok: false, title: "เกิดข้อผิดพลาด", detail: (data.error as string | undefined) ?? "กรุณาลองใหม่" })
       }

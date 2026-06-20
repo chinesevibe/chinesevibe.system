@@ -1,8 +1,11 @@
 import { expiresAtFrom } from "@/lib/approval/types"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
-import { ictDayRangeUtc } from "@/lib/attendance/late"
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictToday } from "@/lib/datetime/thailand"
+import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 
 export type SubmitDailyResult =
   | { status: "success"; expiresAt: string; employeeId: string; employeeName: string }
@@ -31,20 +34,27 @@ export async function submitDailyAttendance({
   if (row.status !== "active") return { status: "pending_approval" }
   const employee = row
 
-  const { start, end } = ictDayRangeUtc(now)
+  await autoCloseOpenAttendanceSessions({
+    admin,
+    employeeId: employee.id as string,
+    now,
+  })
+
+  const cycleStart = sessionCycleStartUtc(now)
   const { data: attendance } = await admin
     .from("hr_attendance")
-    .select("id, check_out_at, work_hours")
+    .select("id, check_in_at, check_out_at, work_hours")
     .eq("employee_id", employee.id)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
+    .gte("check_in_at", cycleStart.toISOString())
+    .lte("check_in_at", now.toISOString())
+    .order("check_in_at", { ascending: false })
     .maybeSingle()
 
   if (!attendance) return { status: "not_checked_in" }
   if (!attendance.check_out_at) return { status: "not_checked_out" }
 
   const workHours = Number(attendance.work_hours ?? 0)
-  const workDate = ictToday()
+  const workDate = ictDateFromUtc(new Date(attendance.check_in_at as string))
   const expiresAt = expiresAtFrom(now)
 
   const result = await finalizeAttendanceRecord({

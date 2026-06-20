@@ -6,7 +6,11 @@ import {
   type DocStatus,
   type DocType,
 } from "@/features/documents/types"
-import { ictDayRangeUtc, formatIctTime } from "@/lib/attendance/late"
+import { formatIctTime } from "@/lib/attendance/late"
+import {
+  autoCloseOpenAttendanceSessions,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 import { createClient } from "@/lib/supabase/server"
 
 export type TodayAttendanceStatus =
@@ -38,14 +42,16 @@ export async function getTodayAttendanceStatus(
 ): Promise<TodayAttendanceStatus> {
   const supabase = await createClient()
   const now = new Date()
-  const { start, end } = ictDayRangeUtc(now)
+  await autoCloseOpenAttendanceSessions({ employeeId, now })
+  const cycleStart = sessionCycleStartUtc(now)
 
   const { data, error } = await supabase
     .from("hr_attendance")
     .select("check_in_at, check_out_at, is_late, work_hours")
     .eq("employee_id", employeeId)
-    .gte("check_in_at", start.toISOString())
-    .lt("check_in_at", end.toISOString())
+    .gte("check_in_at", cycleStart.toISOString())
+    .lte("check_in_at", now.toISOString())
+    .order("check_in_at", { ascending: false })
     .maybeSingle()
 
   if (error) throw error
@@ -53,7 +59,7 @@ export async function getTodayAttendanceStatus(
 
   const checkInAt = new Date(data.check_in_at)
   const checkOutAt = data.check_out_at ? new Date(data.check_out_at) : null
-  const inProgress = !checkOutAt && now < end
+  const inProgress = !checkOutAt
 
   return {
     checkedIn: true,
