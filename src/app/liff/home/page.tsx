@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
 import {
   autoCloseOpenAttendanceSessions,
+  isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
@@ -82,7 +83,12 @@ export default async function LiffHomePage({
   // ใช้ locale ของพนักงานในการ format เวลา
   const timeLocale = locale === "th" ? "th-TH" : locale === "zh" ? "zh-TW" : "en-GB"
 
-  const checkInTime = attendance?.check_in_at
+  const checkoutStillBlocks =
+    attendance?.check_out_at
+      ? isCheckoutStillInActiveCycle(new Date(attendance.check_out_at), now)
+      : true
+
+  const checkInTime = attendance?.check_in_at && checkoutStillBlocks
     ? new Date(attendance.check_in_at).toLocaleTimeString(timeLocale, {
         hour: "2-digit",
         minute: "2-digit",
@@ -90,7 +96,7 @@ export default async function LiffHomePage({
       })
     : null
 
-  const checkOutTime = attendance?.check_out_at
+  const checkOutTime = attendance?.check_out_at && checkoutStillBlocks
     ? new Date(attendance.check_out_at).toLocaleTimeString(timeLocale, {
         hour: "2-digit",
         minute: "2-digit",

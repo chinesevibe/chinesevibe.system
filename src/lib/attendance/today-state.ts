@@ -1,6 +1,7 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
 import {
   autoCloseOpenAttendanceSessions,
+  isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
 
@@ -60,7 +61,11 @@ export async function getLineTodayAttendanceState(
   if (recordError) throw recordError
   if (!record) return { kind: "none" }
   if (record.check_out_at) {
-    return { kind: "checked_out", checkOutAt: new Date(record.check_out_at) }
+    const checkOutAt = new Date(record.check_out_at)
+    if (!isCheckoutStillInActiveCycle(checkOutAt, now)) {
+      return { kind: "none" }
+    }
+    return { kind: "checked_out", checkOutAt }
   }
   return { kind: "checked_in", checkInAt: new Date(record.check_in_at) }
 }

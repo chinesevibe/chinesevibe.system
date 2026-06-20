@@ -20,8 +20,6 @@ import { EmployeeAvatarUpload } from "@/features/employees/profile/EmployeeAvata
 import { EmployeeContractUpload } from "@/features/employees/profile/EmployeeContractUpload"
 import { PendingRegistrationApproval } from "@/features/employees/profile/PendingRegistrationApproval"
 import { SalarySensitiveSection } from "@/features/employees/profile/SalarySensitiveSection"
-import type { WorkShiftSummary } from "@/features/shifts/types"
-import { formatShiftDurationHours, formatShiftTimeRange } from "@/features/shifts/format"
 import {
   PAYMENT_METHOD_OPTIONS,
   type SalaryPaymentMethod,
@@ -179,14 +177,12 @@ export function EmployeeProfileForm({
   branches,
   departments,
   positions,
-  workShifts,
   canViewSalary,
 }: {
   profile: EmployeeProfile
   branches: BranchRow[]
   departments: OrgDepartment[]
   positions: OrgPosition[]
-  workShifts: WorkShiftSummary[]
   canViewSalary: boolean
 }) {
   const router = useRouter()
@@ -612,20 +608,6 @@ export function EmployeeProfileForm({
               <p className="mt-1 text-xs text-muted-foreground">
                 เวลาเลิกงานปกติของพนักงานคนนี้
               </p>
-            </Field>
-            <Field label="กะทำงาน">
-              <select
-                className={inputClassName}
-                value={form.work_shift_id}
-                onChange={(e) => setField("work_shift_id", e.target.value)}
-              >
-                <option value="">— ใช้ Settings fallback —</option>
-                {workShifts.map((shift) => (
-                  <option key={shift.id} value={shift.id}>
-                    {shift.name} · {formatShiftTimeRange(shift)} · {formatShiftDurationHours(shift)}h
-                  </option>
-                ))}
-              </select>
             </Field>
             <WeeklyOffDaysPicker
               value={form.off_days}

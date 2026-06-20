@@ -4,6 +4,7 @@ import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 
 const SESSION_CUTOFF_TIME_ICT = "06:00"
+const MIN_NEXT_SESSION_GAP_MS = 8 * 60 * 60 * 1000
 
 type AdminClient = ReturnType<typeof getAdminClient>
 
@@ -35,6 +36,10 @@ export function sessionCycleStartUtc(now: Date): Date {
     return todayCutoff
   }
   return new Date(todayCutoff.getTime() - 24 * 60 * 60 * 1000)
+}
+
+export function isCheckoutStillInActiveCycle(checkOutAt: Date, now: Date): boolean {
+  return now.getTime() - checkOutAt.getTime() < MIN_NEXT_SESSION_GAP_MS
 }
 
 export async function autoCloseOpenAttendanceSessions({

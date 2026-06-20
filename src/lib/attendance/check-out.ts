@@ -12,6 +12,7 @@ import {
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import {
   autoCloseOpenAttendanceSessions,
+  isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
 
@@ -99,9 +100,13 @@ export async function checkOut({
 
   if (!record) return { status: "not_checked_in" }
   if (record.check_out_at) {
+    const checkOutAt = new Date(record.check_out_at)
+    if (!isCheckoutStillInActiveCycle(checkOutAt, now)) {
+      return { status: "not_checked_in" }
+    }
     return {
       status: "already_checked_out",
-      checkOutAt: new Date(record.check_out_at),
+      checkOutAt,
     }
   }
 

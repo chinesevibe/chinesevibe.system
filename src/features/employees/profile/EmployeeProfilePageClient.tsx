@@ -17,7 +17,6 @@ import type {
   OrgDepartment,
   OrgPosition,
 } from "@/features/organization/master-data"
-import type { WorkShiftSummary } from "@/features/shifts/types"
 
 type ComplianceNote = {
   id: string
@@ -35,7 +34,6 @@ export function EmployeeProfilePageClient({
   branches,
   departments,
   positions,
-  workShifts,
   readOnly = false,
   canViewSalary = false,
   attendanceHref,
@@ -45,7 +43,6 @@ export function EmployeeProfilePageClient({
   branches: BranchRow[]
   departments: OrgDepartment[]
   positions: OrgPosition[]
-  workShifts: WorkShiftSummary[]
   readOnly?: boolean
   canViewSalary?: boolean
   attendanceHref: string
@@ -76,7 +73,6 @@ export function EmployeeProfilePageClient({
             branches={branches}
             departments={departments}
             positions={positions}
-            workShifts={workShifts}
             canViewSalary={canViewSalary}
           />
         </div>

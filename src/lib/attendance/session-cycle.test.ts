@@ -1,7 +1,11 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import { sessionCutoffUtcForCheckIn, sessionCycleStartUtc } from "@/lib/attendance/session-cycle"
+import {
+  isCheckoutStillInActiveCycle,
+  sessionCutoffUtcForCheckIn,
+  sessionCycleStartUtc,
+} from "@/lib/attendance/session-cycle"
 
 function ict(dateStr: string, hour: number, minute = 0): Date {
   const [year, month, day] = dateStr.split("-").map(Number)
@@ -33,6 +37,22 @@ describe("session-cycle", () => {
     assert.equal(
       sessionCycleStartUtc(ict("2026-06-20", 6, 0)).toISOString(),
       "2026-06-19T23:00:00.000Z"
+    )
+  })
+
+  it("does not keep a checked-out session active after 8 hours", () => {
+    const checkOutAt = ict("2026-06-20", 2)
+    assert.equal(
+      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 9, 59)),
+      true
+    )
+    assert.equal(
+      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 10, 0)),
+      false
+    )
+    assert.equal(
+      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 16, 56)),
+      false
     )
   })
 })

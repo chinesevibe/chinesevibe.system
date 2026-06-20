@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import {
   autoCloseOpenAttendanceSessions,
+  isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
@@ -108,8 +109,12 @@ export async function GET() {
       .maybeSingle()
 
     if (att?.check_in_at) {
-      checkInAt = new Date(att.check_in_at as string).toISOString()
-      checkOutAt = att.check_out_at ? new Date(att.check_out_at as string).toISOString() : null
+      const nextCheckInAt = new Date(att.check_in_at as string).toISOString()
+      const nextCheckOutAt = att.check_out_at ? new Date(att.check_out_at as string) : null
+      if (!nextCheckOutAt || isCheckoutStillInActiveCycle(nextCheckOutAt, now)) {
+        checkInAt = nextCheckInAt
+        checkOutAt = nextCheckOutAt ? nextCheckOutAt.toISOString() : null
+      }
     }
   }
 

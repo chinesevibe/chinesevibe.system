@@ -1,4 +1,8 @@
+"use client"
+
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { AlertTriangle, Briefcase, Clock3, LogIn, Plane } from "lucide-react"
 
 import { KpiCard } from "@/components/brand/KpiCard"
@@ -154,7 +158,26 @@ export function AttendanceTodayRoster({
   roster: DailyRoster
   returnTo?: string | null
 }) {
+  const router = useRouter()
   const now = new Date()
+
+  useEffect(() => {
+    if (roster.date !== roster.today) return
+
+    const refresh = () => router.refresh()
+    const firstDelay = 60_000 - (Date.now() % 60_000)
+    let intervalId: number | undefined
+    const firstTimer = window.setTimeout(() => {
+      refresh()
+      intervalId = window.setInterval(refresh, 60_000)
+    }, firstDelay)
+
+    return () => {
+      window.clearTimeout(firstTimer)
+      if (intervalId) window.clearInterval(intervalId)
+    }
+  }, [roster.date, roster.today, router])
+
   const workingEmployees = buildRosterItems(roster.groups, isWorkingEmployee)
   const leaveEmployees = buildRosterItems(roster.groups, (employee) => employee.status === "on_leave")
   const offEmployees = buildRosterItems(roster.groups, (employee) => employee.status === "off")
@@ -216,7 +239,7 @@ export function AttendanceTodayRoster({
             <div className="space-y-1">
               <CardTitle className="text-xl">Kanban ตามช่วงเวลา</CardTitle>
               <p className="text-sm text-muted-foreground">
-                card แสดงแค่รหัสพนักงาน และระบบจะย้าย card ข้ามคอลัมน์ตามเวลาจริงอัตโนมัติ
+                card แสดงแค่รหัสพนักงาน และระบบจะย้าย card ข้ามคอลัมน์ตามเวลาจริงอัตโนมัติทุก 1 นาที
               </p>
             </div>
             <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700">

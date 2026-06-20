@@ -57,7 +57,7 @@ export default async function AdminAttendancePage({
     return (
       <AdminPageShell
         title="Attendance"
-        description="สถานะลงเวลาวันนี้แบบแยกตามกะ พร้อมรายชื่อคนมา สาย ลา และขาด"
+        description="ข้อมูลพนักงานที่กำลังทำงาน พร้อมรายชื่อคนมา สาย ลา และขาด"
         action={
           canManage ? (
             <AttendanceAddButton employees={employees} defaultDate={todayParams.date} />
@@ -85,9 +85,9 @@ export default async function AdminAttendancePage({
           <div className="rounded-[2rem] border border-border/70 bg-gradient-to-br from-background via-background to-muted/15 p-4 shadow-sm sm:p-5">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-border/60 pb-4">
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-foreground">Today operations board</p>
+                <p className="text-sm font-semibold text-foreground">ข้อมูลพนักงานที่กำลังทำงาน</p>
                 <p className="text-xs text-muted-foreground">
-                  โฟกัสคนที่ยังอยู่ในรอบงานก่อน แล้วค่อยตาม incident ที่เหลือทางด้านขวา
+                  ระบบจะอัปเดตบอร์ดตามเวลาจริง เพื่อให้รายชื่อย้ายตามช่วงเวลาใน kanban
                 </p>
               </div>
               <div className="rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 text-xs font-medium text-brand-red">
