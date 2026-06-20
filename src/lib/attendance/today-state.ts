@@ -20,7 +20,7 @@ export async function getLineTodayAttendanceState(
 
   const { data: employee, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id")
+    .select("id, default_check_in_time")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -47,7 +47,10 @@ export async function getLineTodayAttendanceState(
     return { kind: "checked_in", checkInAt: new Date(openRecord.check_in_at) }
   }
 
-  const cycleStart = sessionCycleStartUtc(now)
+  const cycleStart = sessionCycleStartUtc(
+    now,
+    (employee.default_check_in_time as string | null) ?? null
+  )
   const { data: record, error: recordError } = await admin
     .from("hr_attendance")
     .select("check_in_at, check_out_at")

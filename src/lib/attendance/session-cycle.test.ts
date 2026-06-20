@@ -40,6 +40,21 @@ describe("session-cycle", () => {
     )
   })
 
+  it("starts a profile-time cycle at 14:00 ICT for overnight employees", () => {
+    assert.equal(
+      sessionCycleStartUtc(ict("2026-06-20", 13, 59), "14:00").toISOString(),
+      "2026-06-19T07:00:00.000Z"
+    )
+    assert.equal(
+      sessionCycleStartUtc(ict("2026-06-20", 14, 0), "14:00").toISOString(),
+      "2026-06-20T07:00:00.000Z"
+    )
+    assert.equal(
+      sessionCycleStartUtc(ict("2026-06-20", 16, 56), "14:00").toISOString(),
+      "2026-06-20T07:00:00.000Z"
+    )
+  })
+
   it("does not keep a checked-out session active after 8 hours", () => {
     const checkOutAt = ict("2026-06-20", 2)
     assert.equal(

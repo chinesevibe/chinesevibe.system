@@ -2,6 +2,7 @@ import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 
 const SESSION_CUTOFF_TIME_ICT = "06:00"
 const MIN_NEXT_SESSION_GAP_MS = 8 * 60 * 60 * 1000
@@ -30,8 +31,14 @@ export function sessionCutoffUtcForCheckIn(checkInAt: Date): Date {
   return cutoffAt
 }
 
-export function sessionCycleStartUtc(now: Date): Date {
-  const todayCutoff = ictLocalToUtc(ictDateFromUtc(now), SESSION_CUTOFF_TIME_ICT)
+function resolveCycleStartTimeIct(defaultCheckInTime?: string | null): string {
+  const normalized = normalizeTimeToHHMM(defaultCheckInTime)
+  return normalized || SESSION_CUTOFF_TIME_ICT
+}
+
+export function sessionCycleStartUtc(now: Date, defaultCheckInTime?: string | null): Date {
+  const cycleStartTimeIct = resolveCycleStartTimeIct(defaultCheckInTime)
+  const todayCutoff = ictLocalToUtc(ictDateFromUtc(now), cycleStartTimeIct)
   if (now.getTime() >= todayCutoff.getTime()) {
     return todayCutoff
   }

@@ -19,6 +19,11 @@ export async function GET() {
   }
 
   const admin = getAdminClient()
+  const { data: employeeSchedule } = await admin
+    .from("hr_employees")
+    .select("default_check_in_time")
+    .eq("id", employee.id)
+    .maybeSingle()
 
   // ── Branch / geofence ──────────────────────────────────────────────────
   let branchInfo: {
@@ -96,7 +101,10 @@ export async function GET() {
   }
 
   if (!openRecord) {
-    const cycleStart = sessionCycleStartUtc(now)
+    const cycleStart = sessionCycleStartUtc(
+      now,
+      (employeeSchedule?.default_check_in_time as string | null) ?? null
+    )
 
     const { data: att } = await admin
       .from("hr_attendance")

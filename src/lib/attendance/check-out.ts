@@ -54,7 +54,7 @@ export async function checkOut({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id, pay_type")
+    .select("id, name, status, branch_id, pay_type, default_check_in_time")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -83,7 +83,10 @@ export async function checkOut({
 
   let record: typeof openRecord = openRecord
   if (!record) {
-    const cycleStart = sessionCycleStartUtc(now)
+    const cycleStart = sessionCycleStartUtc(
+      now,
+      (employee.default_check_in_time as string | null) ?? null
+    )
     const { data: cycleRecord, error: cycleRecordError } = await admin
       .from("hr_attendance")
       .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
