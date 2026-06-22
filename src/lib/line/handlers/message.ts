@@ -72,6 +72,7 @@ function checkInMessages(
           name: result.employeeName,
           timeText: formatIctTime(result.checkInAt),
           lateMinutes: result.lateMinutes,
+          monthSummary: result.monthSummary,
           locale,
         }),
       ]
@@ -99,6 +100,8 @@ function checkInMessages(
       return [pendingApprovalFlex(locale)]
     case "not_registered":
       return [notRegisteredFlex(locale)]
+    case "too_soon_after_checkout":
+      return [notCheckedInFlex(locale)]
   }
 }
 
@@ -115,6 +118,7 @@ function checkOutMessages(
           outText: formatIctTime(result.checkOutAt),
           workMinutes: result.workMinutes,
           showWorkDuration: result.showWorkDuration,
+          monthSummary: result.monthSummary,
           locale,
         }),
       ]

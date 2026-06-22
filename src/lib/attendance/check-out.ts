@@ -15,6 +15,10 @@ import {
   isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
+import {
+  getAttendanceMonthSummary,
+  type AttendanceMonthSummary,
+} from "@/lib/attendance/month-summary"
 
 export type CheckOutResult =
   | {
@@ -25,6 +29,7 @@ export type CheckOutResult =
       workMinutes: number
       overtimeMinutes: number
       showWorkDuration: boolean
+      monthSummary: AttendanceMonthSummary
     }
   | { status: "not_checked_in" }
   | { status: "already_checked_out"; checkOutAt: Date }
@@ -54,7 +59,7 @@ export async function checkOut({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id, pay_type, default_check_in_time")
+    .select("id, name, status, branch_id, pay_type, default_check_in_time, preferred_locale")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -207,6 +212,19 @@ export async function checkOut({
     }
   }
 
+  const { notifyCheckout } = await import("@/lib/line/notify-clock")
+  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
+  await notifyCheckout({
+    lineUserId,
+    name: employee.name,
+    checkInAt,
+    checkOutAt: now,
+    workMinutes,
+    showWorkDuration,
+    monthSummary,
+    locale: employee.preferred_locale as string | null,
+  }).catch((err) => console.error("notify checkout failed:", err))
+
   return {
     status: "success",
     employeeName: employee.name,
@@ -215,5 +233,6 @@ export async function checkOut({
     workMinutes,
     overtimeMinutes: 0,
     showWorkDuration,
+    monthSummary,
   }
 }

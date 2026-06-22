@@ -37,6 +37,7 @@ describe("checkoutSummaryFlex", () => {
         ...baseArgs,
         workMinutes: 665,
         showWorkDuration: true,
+        monthSummary: { workDays: 12, totalHours: 107.7 },
       })
       const json = flattenJson(msg)
       assert.ok(json.includes("รวมเวลา"), "should include รวมเวลา row label")
@@ -51,6 +52,7 @@ describe("checkoutSummaryFlex", () => {
         ...baseArgs,
         workMinutes: 665,
         showWorkDuration: true,
+        monthSummary: { workDays: 12, totalHours: 107.7 },
       })
       const json = flattenJson(msg)
       assert.ok(
@@ -71,6 +73,7 @@ describe("checkoutSummaryFlex", () => {
         ...baseArgs,
         workMinutes: 665,
         showWorkDuration: false,
+        monthSummary: { workDays: 12, totalHours: 107.7 },
       })
       const json = flattenJson(msg)
       assert.ok(
@@ -84,6 +87,7 @@ describe("checkoutSummaryFlex", () => {
         ...baseArgs,
         workMinutes: 665,
         showWorkDuration: false,
+        monthSummary: { workDays: 12, totalHours: 107.7 },
       })
       const json = flattenJson(msg)
       assert.ok(
@@ -96,5 +100,19 @@ describe("checkoutSummaryFlex", () => {
       )
       assert.ok(!json.includes("ขอ OT"), "should NOT include ขอ OT")
     })
+  })
+
+  it("includes monthly summary rows", () => {
+    const msg = checkoutSummaryFlex({
+      ...baseArgs,
+      workMinutes: 665,
+      showWorkDuration: true,
+      monthSummary: { workDays: 12, totalHours: 107.7 },
+    })
+    const json = flattenJson(msg)
+    assert.ok(json.includes("สรุปเดือนนี้"), "should include monthly summary label")
+    assert.ok(json.includes("จำนวนวันที่ทำ"), "should include work days label")
+    assert.ok(json.includes("12"), "should include work days count")
+    assert.ok(json.includes("107.7 ชม."), "should include total hours summary")
   })
 })

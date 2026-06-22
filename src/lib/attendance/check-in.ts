@@ -2,7 +2,7 @@
 // Runs in the webhook context, so writes go through the service-role client
 // (no user session); RLS is bypassed by design (T02).
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
+import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   evaluateAttendanceLocation,
@@ -14,6 +14,10 @@ import {
   sessionCutoffUtcForCheckIn,
 } from "@/lib/attendance/session-cycle"
 import { getWorkStart } from "@/lib/runtime-config"
+import {
+  getAttendanceMonthSummary,
+  type AttendanceMonthSummary,
+} from "@/lib/attendance/month-summary"
 
 export type CheckInLocation = AttendanceLocationInput
 
@@ -23,9 +27,11 @@ export type CheckInResult =
       employeeName: string
       checkInAt: Date
       lateMinutes: number
+      monthSummary: AttendanceMonthSummary
     }
   | { status: "already_checked_in"; checkInAt: Date }
   | { status: "requires_retro_checkout"; checkInAt: Date; cutoffAt: Date }
+  | { status: "too_soon_after_checkout"; nextCheckInAt: Date }
   | {
       status: "outside_geofence"
       distanceM: number
@@ -52,7 +58,7 @@ export async function checkIn({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id, default_check_in_time")
+    .select("id, name, status, branch_id, default_check_in_time, preferred_locale")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -84,6 +90,25 @@ export async function checkIn({
       status: "requires_retro_checkout",
       checkInAt,
       cutoffAt: sessionCutoffUtcForCheckIn(checkInAt),
+    }
+  }
+
+  // Block re-check-in before 06:00 ICT — prevents accidental re-entry after overnight shift ends
+  const ictDate = ictDateFromUtc(now)
+  const sixAmTodayUtc = ictLocalToUtc(ictDate, "06:00")
+  if (now < sixAmTodayUtc) {
+    const midnightTodayUtc = ictLocalToUtc(ictDate, "00:00")
+    const { data: recentCheckout, error: recentError } = await admin
+      .from("hr_attendance")
+      .select("check_out_at")
+      .eq("employee_id", employee.id)
+      .not("check_out_at", "is", null)
+      .gte("check_out_at", midnightTodayUtc.toISOString())
+      .limit(1)
+      .maybeSingle()
+    if (recentError) throw recentError
+    if (recentCheckout) {
+      return { status: "too_soon_after_checkout", nextCheckInAt: sixAmTodayUtc }
     }
   }
 
@@ -167,10 +192,22 @@ export async function checkIn({
     }
   }
 
+  const { notifyCheckin } = await import("@/lib/line/notify-clock")
+  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
+  await notifyCheckin({
+    lineUserId,
+    name: employee.name,
+    checkInAt: now,
+    lateMinutes: late,
+    monthSummary,
+    locale: employee.preferred_locale as string | null,
+  }).catch((err) => console.error("notify checkin failed:", err))
+
   return {
     status: "success",
     employeeName: employee.name,
     checkInAt: now,
     lateMinutes: late,
+    monthSummary,
   }
 }

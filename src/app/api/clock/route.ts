@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
           employeeName: result.employeeName,
           checkInAt: result.checkInAt.toISOString(),
           lateMinutes: result.lateMinutes,
+          monthSummary: result.monthSummary,
           timeText: result.checkInAt.toLocaleTimeString("th-TH", {
             hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
           }),
@@ -65,6 +66,17 @@ export async function POST(request: NextRequest) {
             checkInAt: result.checkInAt.toISOString(),
             cutoffAt: result.cutoffAt.toISOString(),
             timeText: result.checkInAt.toLocaleTimeString("th-TH", {
+              hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
+            }),
+          },
+          { status: 409 }
+        )
+      case "too_soon_after_checkout":
+        return NextResponse.json(
+          {
+            error: "too_soon_after_checkout",
+            nextCheckInAt: result.nextCheckInAt.toISOString(),
+            timeText: result.nextCheckInAt.toLocaleTimeString("th-TH", {
               hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
             }),
           },
@@ -104,6 +116,7 @@ export async function POST(request: NextRequest) {
         checkInAt: result.checkInAt.toISOString(),
         checkOutAt: result.checkOutAt.toISOString(),
         workMinutes: result.workMinutes,
+        monthSummary: result.monthSummary,
         timeText: result.checkOutAt.toLocaleTimeString("th-TH", {
           hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
         }),
