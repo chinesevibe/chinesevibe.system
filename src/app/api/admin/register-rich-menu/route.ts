@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { canManageHr } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { publicBaseUrl } from "@/lib/i18n/liff-url"
-import { buildClockLiffUri, registerRichMenu } from "@/lib/line/rich-menu"
+import { registerRichMenu } from "@/lib/line/rich-menu"
 
 export async function POST() {
   const caller = await getCurrentEmployee()
@@ -16,7 +16,7 @@ export async function POST() {
     return NextResponse.json({ error: "NEXT_PUBLIC_BASE_URL is not set" }, { status: 500 })
   }
 
-  const clockLiffUri = buildClockLiffUri(base, process.env.NEXT_PUBLIC_LINE_LIFF_ID)
+  const clockLiffUri = `${base}/liff/clock`
   const imageUrl = `${base}/rich-menu.png`
 
   try {

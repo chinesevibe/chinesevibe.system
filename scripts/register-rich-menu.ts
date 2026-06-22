@@ -7,7 +7,7 @@
 // imagePath defaults to public/rich-menu.png — 1200x810 PNG/JPEG, max 1MB.
 import { existsSync } from "node:fs"
 
-import { buildClockLiffUri, registerRichMenu } from "../src/lib/line/rich-menu"
+import { registerRichMenu } from "../src/lib/line/rich-menu"
 
 async function main() {
   if (!process.env.LINE_CHANNEL_ACCESS_TOKEN) {
@@ -15,10 +15,8 @@ async function main() {
     process.exit(1)
   }
 
-  const clockLiffUri = buildClockLiffUri(
-    process.env.NEXT_PUBLIC_BASE_URL,
-    process.env.NEXT_PUBLIC_LINE_LIFF_ID
-  )
+  const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "")
+  const clockLiffUri = base ? `${base}/liff/clock` : undefined
   if (clockLiffUri) {
     console.log(`Clock LIFF URI: ${clockLiffUri}`)
   } else {

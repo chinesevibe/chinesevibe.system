@@ -14,19 +14,6 @@ const H = 810
 const COL = W / 3
 const ROW = H / 2
 
-export function buildClockLiffUri(baseUrl?: string, liffId?: string): string | undefined {
-  const normalizedLiffId = liffId?.trim() || process.env.NEXT_PUBLIC_LINE_LIFF_ID?.trim()
-  if (normalizedLiffId) {
-    return `https://liff.line.me/${normalizedLiffId}`
-  }
-
-  const normalizedBase =
-    baseUrl?.trim().replace(/\/$/, "") ||
-    process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ||
-    ""
-  return normalizedBase ? `${normalizedBase}/liff/clock` : undefined
-}
-
 function contentTypeForImagePath(imagePath: string, fallback = "image/png") {
   return imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")
     ? "image/jpeg"
