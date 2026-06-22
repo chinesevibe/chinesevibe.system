@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 import {
   Bar,
   BarChart,
@@ -10,7 +11,6 @@ import {
   LineChart,
   Pie,
   PieChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -95,6 +95,42 @@ function alertTypeLabel(type: InventoryAlertRow["type"]) {
   return "ผิดปกติ"
 }
 
+function ChartFrame({
+  children,
+}: {
+  children: (size: { width: number; height: number }) => React.ReactNode
+}) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [width, setWidth] = useState(0)
+  const height = 288
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return
+
+    const update = () => {
+      setWidth(node.getBoundingClientRect().width)
+    }
+
+    update()
+
+    const observer = new ResizeObserver(() => update())
+    observer.observe(node)
+    window.addEventListener("resize", update)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener("resize", update)
+    }
+  }, [])
+
+  return (
+    <div ref={ref} className="h-72 min-w-0">
+      {width > 0 ? children({ width, height }) : <div className="h-full w-full rounded-lg bg-muted/20" />}
+    </div>
+  )
+}
+
 function ActionInbox({ rows }: { rows: InventoryAlertRow[] }) {
   return (
     <WidgetCard title="Alert / Action inbox">
@@ -150,6 +186,7 @@ export function InventoryExecutiveDashboard({
   alerts: InventoryAlertRow[]
 }) {
   const { kpis } = data
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
@@ -239,22 +276,22 @@ export function InventoryExecutiveDashboard({
 
       <div className="grid gap-4 xl:grid-cols-2">
         <WidgetCard title="มูลค่าสต๊อก 30 วัน">
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data.stockValueTrend}>
+          <ChartFrame>
+            {({ width, height }) => (
+              <LineChart width={width} height={height} data={data.stockValueTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke="#dc2626" strokeWidth={2} dot={false} />
               </LineChart>
-            </ResponsiveContainer>
-          </div>
+            )}
+          </ChartFrame>
         </WidgetCard>
         <WidgetCard title="รับเข้า vs ใช้จริง 12 สัปดาห์">
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.inboundVsConsumption}>
+          <ChartFrame>
+            {({ width, height }) => (
+              <BarChart width={width} height={height} data={data.inboundVsConsumption}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" />
                 <YAxis />
@@ -262,35 +299,41 @@ export function InventoryExecutiveDashboard({
                 <Bar dataKey="inbound" fill="#2563eb" />
                 <Bar dataKey="consumption" fill="#f97316" />
               </BarChart>
-            </ResponsiveContainer>
-          </div>
+            )}
+          </ChartFrame>
         </WidgetCard>
         <WidgetCard title="มูลค่าเสียหาย 6 เดือน">
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.damageTrend}>
+          <ChartFrame>
+            {({ width, height }) => (
+              <BarChart width={width} height={height} data={data.damageTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="damage" fill="#ef4444" />
               </BarChart>
-            </ResponsiveContainer>
-          </div>
+            )}
+          </ChartFrame>
         </WidgetCard>
         <WidgetCard title="สัดส่วนมูลค่าสต๊อกตามหมวดหมู่">
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={data.categoryShare} dataKey="value" nameKey="name" outerRadius={100} label>
+          <ChartFrame>
+            {({ width, height }) => (
+              <PieChart width={width} height={height}>
+                <Pie
+                  data={data.categoryShare}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={Math.max(72, Math.min(100, Math.floor(width / 4)))}
+                  label
+                >
                   {data.categoryShare.map((entry, index) => (
                     <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
-            </ResponsiveContainer>
-          </div>
+            )}
+          </ChartFrame>
         </WidgetCard>
       </div>
     </div>

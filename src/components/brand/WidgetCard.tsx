@@ -18,7 +18,7 @@ export function WidgetCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
+    <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
       <div
         className={
           compact
