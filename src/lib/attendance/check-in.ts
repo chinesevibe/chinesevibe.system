@@ -46,6 +46,18 @@ export type CheckInResult =
   | { status: "pending_approval" }
   | { status: "not_registered" }
 
+export function nextIctDayStartUtc(now: Date): Date {
+  const ictDate = ictDateFromUtc(now)
+  const [year, month, day] = ictDate.split("-").map(Number)
+  const nextDay = new Date(Date.UTC(year, month - 1, day + 1))
+  const nextIctDate = [
+    nextDay.getUTCFullYear(),
+    String(nextDay.getUTCMonth() + 1).padStart(2, "0"),
+    String(nextDay.getUTCDate()).padStart(2, "0"),
+  ].join("-")
+  return ictLocalToUtc(nextIctDate, "00:00")
+}
+
 export async function checkIn({
   lineUserId,
   location,
@@ -91,6 +103,24 @@ export async function checkIn({
       status: "requires_retro_checkout",
       checkInAt,
       cutoffAt: sessionCutoffUtcForCheckIn(checkInAt),
+    }
+  }
+
+  const { data: completedToday, error: completedTodayError } = await admin
+    .from("hr_attendance")
+    .select("check_out_at")
+    .eq("employee_id", employee.id)
+    .eq("shift_date", ictDateFromUtc(now))
+    .not("check_out_at", "is", null)
+    .order("check_out_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (completedTodayError) throw completedTodayError
+  if (completedToday) {
+    return {
+      status: "too_soon_after_checkout",
+      nextCheckInAt: nextIctDayStartUtc(now),
     }
   }
 
