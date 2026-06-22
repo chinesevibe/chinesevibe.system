@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { ClipboardList, PackageCheck, ScanSearch, TriangleAlert } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import { Button } from "@/components/ui/button"
@@ -46,6 +47,33 @@ const STATUS_LABELS: Record<InvStockCountDetail["count"]["status"], string> = {
   cancelled: "ยกเลิก",
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof ScanSearch
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export function StockCountDetailView({
   detail,
   canManage,
@@ -73,6 +101,11 @@ export function StockCountDetailView({
       return Number(raw) !== item.system_qty
     }).length,
     [detail.items, physicalQty],
+  )
+  const completedVarianceCount = useMemo(
+    () =>
+      detail.items.filter((item) => item.physical_qty != null && item.physical_qty !== item.system_qty).length,
+    [detail.items],
   )
 
   function buildSavePayload() {
@@ -124,6 +157,33 @@ export function StockCountDetailView({
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="สถานะรอบนับ"
+          value={STATUS_LABELS[detail.count.status]}
+          hint="ไหลจาก draft → counting → completed"
+        />
+        <SummaryCard
+          icon={ScanSearch}
+          label="กรอกแล้ว"
+          value={`${countedItems} / ${detail.items.length}`}
+          hint="ใช้ดูความคืบหน้าของ physical qty ในรอบนี้"
+        />
+        <SummaryCard
+          icon={TriangleAlert}
+          label="Variance ชั่วคราว"
+          value={String(detail.count.status === "completed" ? completedVarianceCount : varianceItems)}
+          hint="จำนวน SKU ที่ physical ไม่เท่ากับ system"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="ขอบเขต"
+          value={detail.count.warehouse_name}
+          hint={`สาขา ${detail.count.branch_name} · ทุก SKU ที่มี stock balance row`}
+        />
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
         <StatusPill label={STATUS_LABELS[detail.count.status]} variant={statusVariant(detail.count.status)} />
         <span className="text-sm text-muted-foreground">
@@ -166,7 +226,7 @@ export function StockCountDetailView({
         </p>
       ) : null}
 
-      <div className="rounded-xl border border-border p-4">
+      <section className="space-y-3 rounded-xl border border-border p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold">รายการตรวจนับ</h2>
@@ -174,7 +234,9 @@ export function StockCountDetailView({
               ระหว่างนับสามารถบันทึกซ้ำได้หลายครั้ง และ finalize ได้เมื่อกรอกครบทุก SKU
             </p>
           </div>
-          <div className="text-sm text-muted-foreground">Variance ชั่วคราว: {varianceItems} รายการ</div>
+          <div className="text-sm text-muted-foreground">
+            Variance ชั่วคราว: {detail.count.status === "completed" ? completedVarianceCount : varianceItems} รายการ
+          </div>
         </div>
 
         <div className="overflow-hidden rounded-xl border border-border">
@@ -231,7 +293,7 @@ export function StockCountDetailView({
             </TableBody>
           </Table>
         </div>
-      </div>
+      </section>
 
       {detail.count.status === "draft" && canManage ? (
         <section className="rounded-xl border border-border p-4">

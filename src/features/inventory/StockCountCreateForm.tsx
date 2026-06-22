@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useMemo, useState, useTransition } from "react"
+import { CalendarClock, ClipboardList, PackageCheck, Warehouse } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { InventoryFormField } from "@/features/inventory/InventoryFormFields"
@@ -10,6 +11,33 @@ import {
   type InvStockCountCreateOptions,
 } from "@/features/inventory/actions/stock-count"
 import { invInputClass } from "@/features/inventory/form-styles"
+
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof ClipboardList
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
 
 export function StockCountCreateForm({
   options,
@@ -55,6 +83,33 @@ export function StockCountCreateForm({
           {error}
         </p>
       ) : null}
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="ขอบเขต"
+          value="All stock rows"
+          hint="snapshot ทุก SKU ที่มี stock balance row ในคลังที่เลือก"
+        />
+        <SummaryCard
+          icon={Warehouse}
+          label="สาขา / คลัง"
+          value={branchId && warehouseId ? "เลือกแล้ว" : "รอเลือก"}
+          hint="เลือกให้ครบก่อนสร้าง cycle เพื่อ lock scope ของการนับ"
+        />
+        <SummaryCard
+          icon={CalendarClock}
+          label="วันที่วางแผน"
+          value={plannedAt || "ยังไม่ระบุ"}
+          hint="ใช้เป็นวันนัดหมายหรือรอบที่ต้องการให้ทีมเริ่มนับ"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="ผลลัพธ์หลัง finalize"
+          value="Adjustments"
+          hint="variance จะถูกสร้างเป็น stock adjustment หลังปิดรอบ"
+        />
+      </div>
 
       <div className="grid gap-4 rounded-xl border border-border p-4 md:grid-cols-2">
         <InventoryFormField label="สาขา">

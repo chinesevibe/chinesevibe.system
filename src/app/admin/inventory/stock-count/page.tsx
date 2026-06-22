@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { ClipboardList, PackageCheck, ScanSearch, TimerReset } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { StatusPill } from "@/components/brand/StatusPill"
@@ -12,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { InventoryHub } from "@/features/inventory/InventoryHub"
 import { InventoryLoadError } from "@/features/inventory/InventorySearchBar"
 import { listStockCounts } from "@/features/inventory/actions/stock-count"
 import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
@@ -34,6 +34,33 @@ const STATUS_LABELS = {
   cancelled: "ยกเลิก",
 } as const
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof ScanSearch
+  label: string
+  value: number
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{value.toLocaleString("th-TH")}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export default async function InventoryStockCountPage() {
   const employee = await requireInventoryPortal()
   if (!canManageInventory(employee) && !isCeo(employee.role) && !isDev(employee.role)) {
@@ -48,6 +75,11 @@ export default async function InventoryStockCountPage() {
     loadError = error instanceof Error ? error.message : "โหลดรอบตรวจนับไม่สำเร็จ"
   }
 
+  const draftCount = rows.filter((row) => row.status === "draft").length
+  const countingCount = rows.filter((row) => row.status === "counting").length
+  const completedCount = rows.filter((row) => row.status === "completed").length
+  const totalPendingItems = rows.reduce((sum, row) => sum + Math.max(0, row.item_count - row.counted_count), 0)
+
   return (
     <AdminPageShell
       title="ตรวจนับสต๊อก"
@@ -60,7 +92,46 @@ export default async function InventoryStockCountPage() {
     >
       {loadError ? <InventoryLoadError message={loadError} /> : null}
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ScanSearch}
+          label="รอบตรวจนับทั้งหมด"
+          value={rows.length}
+          hint="รวมทุก cycle ที่สร้างใน stock count workspace"
+        />
+        <SummaryCard
+          icon={ClipboardList}
+          label="แบบร่าง"
+          value={draftCount}
+          hint="รอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง"
+        />
+        <SummaryCard
+          icon={TimerReset}
+          label="กำลังนับ"
+          value={countingCount}
+          hint="รอบที่ทีมยังกรอก physical qty ไม่ครบ"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="เสร็จสิ้น"
+          value={completedCount}
+          hint={`ยังเหลือ ${totalPendingItems.toLocaleString("th-TH")} รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่`}
+        />
+      </div>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">Stock count queue</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ดูว่ารอบไหนยัง draft รอบไหนกำลังนับ และรอบไหน finalize แล้วพร้อมตรวจ variance
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Draft {draftCount.toLocaleString("th-TH")} · Counting {countingCount.toLocaleString("th-TH")}
+          </div>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -103,11 +174,8 @@ export default async function InventoryStockCountPage() {
             )}
           </TableBody>
         </Table>
-      </div>
-
-      <div className="mt-4">
-        <InventoryHub />
-      </div>
+        </div>
+      </section>
     </AdminPageShell>
   )
 }
