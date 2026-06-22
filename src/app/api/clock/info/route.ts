@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { autoCloseOpenAttendanceSessions } from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { isRealLineId } from "@/lib/auth/line-user-id"
 import { getAdminClient } from "@/lib/auth/admin-client"
 
 function fmtTime(h: number, m: number) {
@@ -10,7 +11,11 @@ function fmtTime(h: number, m: number) {
 
 export async function GET() {
   const employee = await getCurrentEmployee()
-  if (!employee || employee.status !== "active") {
+  if (
+    !employee ||
+    employee.status !== "active" ||
+    !isRealLineId(employee.line_user_id)
+  ) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
 

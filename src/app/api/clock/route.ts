@@ -1,12 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server"
 
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { isRealLineId } from "@/lib/auth/line-user-id"
 import { checkIn } from "@/lib/attendance/check-in"
 import { checkOut } from "@/lib/attendance/check-out"
 
 export async function POST(request: NextRequest) {
   const employee = await getCurrentEmployee()
-  if (!employee || employee.status !== "active" || !employee.line_user_id) {
+  if (
+    !employee ||
+    employee.status !== "active" ||
+    !isRealLineId(employee.line_user_id)
+  ) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
 
@@ -34,7 +39,7 @@ export async function POST(request: NextRequest) {
     device_platform: null,
   }
 
-  const lineUserId = employee.line_user_id as string
+  const lineUserId = employee.line_user_id
 
   if (action === "checkin") {
     const result = await checkIn({ lineUserId, location })
