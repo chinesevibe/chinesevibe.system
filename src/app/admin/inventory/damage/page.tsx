@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { AlertTriangle, ClipboardList, PackageCheck, ShieldAlert } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { buttonVariants } from "@/components/ui/button"
@@ -26,6 +27,33 @@ function parseStatus(status?: string): InvDamageStatus | undefined {
     : undefined
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof AlertTriangle
+  label: string
+  value: number
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{value.toLocaleString("th-TH")}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export default async function InventoryDamagePage({ searchParams }: PageProps) {
   await requireRole("employee", "branch_manager", "hr", "inventory", "ceo", "dev")
   const params = await searchParams
@@ -50,6 +78,10 @@ export default async function InventoryDamagePage({ searchParams }: PageProps) {
       error instanceof Error ? error.message : "โหลดรายงานความเสียหายไม่สำเร็จ"
   }
 
+  const pendingCount = damages.filter((row) => row.status === "pending").length
+  const approvedCount = damages.filter((row) => row.status === "approved").length
+  const rejectedCount = damages.filter((row) => row.status === "rejected").length
+
   return (
     <AdminPageShell
       title="รายงานความเสียหาย"
@@ -63,7 +95,34 @@ export default async function InventoryDamagePage({ searchParams }: PageProps) {
         </Link>
       }
     >
-      <form className="mb-4 flex flex-wrap items-end gap-3">
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="รายงานทั้งหมด"
+          value={damages.length}
+          hint="รวมรายการเสียหาย สูญหาย หมดอายุ และ adjustment"
+        />
+        <SummaryCard
+          icon={ShieldAlert}
+          label="รออนุมัติ"
+          value={pendingCount}
+          hint="รายการที่ยังต้องมีคนตัดสินก่อนตัด stock จริง"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="อนุมัติแล้ว"
+          value={approvedCount}
+          hint="รายการที่ระบบตัด stock และบันทึก movement แล้ว"
+        />
+        <SummaryCard
+          icon={AlertTriangle}
+          label="ถูกปฏิเสธ"
+          value={rejectedCount}
+          hint="รายการที่ยังควรย้อนดูเหตุผลหรือแก้ข้อมูลก่อนส่งใหม่"
+        />
+      </div>
+
+      <form className="mb-4 flex flex-wrap items-end gap-3 rounded-xl border border-border/80 bg-muted/20 p-3">
         <label className="grid gap-1 text-sm">
           <span className="font-medium">สถานะ</span>
           <select
@@ -111,7 +170,20 @@ export default async function InventoryDamagePage({ searchParams }: PageProps) {
         </p>
       ) : null}
 
-      <DamageListTable damages={damages} />
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">Damage / loss queue</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ดูรายการที่รออนุมัติ พร้อมแยกสาขา คลัง ประเภท และมูลค่าความเสียหาย
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Pending {pendingCount.toLocaleString("th-TH")} · Approved {approvedCount.toLocaleString("th-TH")}
+          </div>
+        </div>
+        <DamageListTable damages={damages} />
+      </section>
     </AdminPageShell>
   )
 }

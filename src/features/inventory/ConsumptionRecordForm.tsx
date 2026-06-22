@@ -27,6 +27,24 @@ const TYPE_LABELS: Record<InvConsumptionType, string> = {
   testing: "ทดสอบ",
 }
 
+function SummaryCard({
+  label,
+  value,
+  hint,
+}: {
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 function newItem(): DraftItem {
   return {
     key: crypto.randomUUID(),
@@ -118,6 +136,29 @@ export function ConsumptionRecordForm({
           {success}
         </p>
       ) : null}
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          label="รายการที่กำลังบันทึก"
+          value={`${items.length.toLocaleString("th-TH")} รายการ`}
+          hint="แตกตาม SKU ที่ถูกใช้จริงในรอบนี้"
+        />
+        <SummaryCard
+          label="ประเภทที่รองรับ"
+          value="Production / Sampling / Testing"
+          hint="ช่วยแยกการใช้จริงตามวัตถุประสงค์ของครัวหรือทีม"
+        />
+        <SummaryCard
+          label="ขอบเขต stock"
+          value={branchId && warehouseId ? "พร้อมบันทึก" : "รอเลือกสาขา/คลัง"}
+          hint="ต้องล็อก branch และ warehouse ให้ชัดก่อนตัด stock"
+        />
+        <SummaryCard
+          label="ผลลัพธ์"
+          value="Stock cut now"
+          hint="เมื่อบันทึกสำเร็จ ระบบจะตัด stock และบันทึก movement ทันที"
+        />
+      </div>
 
       <div className="grid gap-4 rounded-xl border border-border p-4 md:grid-cols-2">
         <InventoryFormField label="สาขา" htmlFor="branch_id">

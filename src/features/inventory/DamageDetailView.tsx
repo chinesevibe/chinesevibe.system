@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
+import { AlertTriangle, ClipboardList, PackageCheck, ShieldAlert } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import { Button } from "@/components/ui/button"
@@ -40,6 +41,33 @@ function unitLabel(detail: InvDamageDetail) {
     : detail.unit_name
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof AlertTriangle
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export function DamageDetailView({
   detail,
   canApprove,
@@ -68,6 +96,33 @@ export function DamageDetailView({
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="สถานะรายงาน"
+          value={DAMAGE_STATUS_LABELS[detail.status]}
+          hint="ใช้ดูว่าเคสนี้ยังรอตัดสิน หรือถูก apply ไปแล้ว"
+        />
+        <SummaryCard
+          icon={ShieldAlert}
+          label="ระดับอนุมัติ"
+          value={DAMAGE_APPROVAL_ROLE_LABELS[detail.approval_required_role]}
+          hint="บอกว่ารายการนี้ต้องผ่านใครก่อนตัด stock"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="SKU / จำนวน"
+          value={`${detail.sku_code} · ${formatQuantity(detail.qty)}`}
+          hint={`หน่วย ${unitLabel(detail) || "—"} · มูลค่า ${formatMoney(detail.cost_value)} บาท`}
+        />
+        <SummaryCard
+          icon={AlertTriangle}
+          label="ประเภทเหตุการณ์"
+          value={detail.damage_type}
+          hint={`ต้นทาง ${detail.branch_name} · ${detail.warehouse_name}`}
+        />
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
         <StatusPill
           label={DAMAGE_STATUS_LABELS[detail.status]}

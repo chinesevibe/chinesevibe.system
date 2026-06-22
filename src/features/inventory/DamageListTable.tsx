@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 
 import { DataTableShell } from "@/components/brand/DataTableShell"
 import { StatusPill } from "@/components/brand/StatusPill"
@@ -109,9 +110,13 @@ export function DamageListTable({ damages }: { damages: InvDamageRow[] }) {
                 <TableCell className="text-right">
                   <Link
                     href={`/admin/inventory/damage/${row.id}`}
-                    className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                    className={cn(
+                      buttonVariants({ size: "sm", variant: "outline" }),
+                      "inline-flex items-center gap-1"
+                    )}
                   >
-                    รายละเอียด
+                    ดูงาน
+                    <ArrowUpRight className="size-3.5" aria-hidden />
                   </Link>
                 </TableCell>
               </TableRow>
