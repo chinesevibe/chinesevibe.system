@@ -10,8 +10,6 @@ import { LiffLoginPrompt } from "@/features/liff/LiffLoginPrompt"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { AttendanceMonthSummary } from "@/lib/attendance/month-summary"
 import { isAppLocale, type AppLocale } from "@/lib/i18n/types"
-import { checkinConfirmFlex } from "@/lib/line/flex/checkin"
-import { checkoutSummaryFlex } from "@/lib/line/flex/checkout"
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -36,67 +34,21 @@ type ClockInfo = {
 type Phase = "idle" | "locating_in" | "locating_out" | "submitting_in" | "submitting_out"
 
 type ResultState =
-  | { ok: true; title: string; detail: string }
+  | {
+      ok: true
+      action: "checkin" | "checkout"
+      title: string
+      detail: string
+      employeeName: string
+      timeText: string
+      lateMinutes?: number
+      checkInAt?: string
+      checkOutAt?: string
+      workMinutes?: number
+      monthSummary?: AttendanceMonthSummary
+    }
   | { ok: false; title: string; detail: string }
   | null
-
-async function sendLineFallbackMessage({
-  action,
-  locale,
-  employeeName,
-  timeText,
-  lateMinutes,
-  checkInAt,
-  checkOutAt,
-  workMinutes,
-  monthSummary,
-}: {
-  action: "checkin" | "checkout"
-  locale: AppLocale
-  employeeName: string
-  timeText: string
-  lateMinutes?: number
-  checkInAt?: string
-  checkOutAt?: string
-  workMinutes?: number
-  monthSummary: AttendanceMonthSummary
-}) {
-  const liff = (await import("@line/liff")).default
-  if (!liff.isInClient() || !liff.isApiAvailable("sendMessages")) return
-
-  const message =
-    action === "checkin"
-      ? checkinConfirmFlex({
-          name: employeeName,
-          timeText,
-          lateMinutes: lateMinutes ?? 0,
-          monthSummary,
-          locale,
-        })
-      : checkoutSummaryFlex({
-          name: employeeName,
-          inText: checkInAt
-            ? new Date(checkInAt).toLocaleTimeString("th-TH", {
-                hour: "2-digit",
-                minute: "2-digit",
-                timeZone: "Asia/Bangkok",
-              })
-            : "",
-          outText: checkOutAt
-            ? new Date(checkOutAt).toLocaleTimeString("th-TH", {
-                hour: "2-digit",
-                minute: "2-digit",
-                timeZone: "Asia/Bangkok",
-              })
-            : timeText,
-          workMinutes: workMinutes ?? 0,
-          showWorkDuration: true,
-          monthSummary,
-          locale,
-        })
-
-  await liff.sendMessages([message as Parameters<typeof liff.sendMessages>[0][number]])
-}
 
 const CLOCK_COPY: Record<
   AppLocale,
@@ -369,6 +321,14 @@ function fmtShortTime(iso: string, locale: AppLocale) {
   })
 }
 
+function fmtHoursAndMinutes(totalHours: number) {
+  const totalMinutes = Math.round(totalHours * 60)
+  return {
+    hours: Math.floor(totalMinutes / 60),
+    minutes: totalMinutes % 60,
+  }
+}
+
 function signalLabel(accuracyM: number, locale: AppLocale): string {
   if (locale === "en") {
     if (accuracyM <= 10) return "Excellent"
@@ -513,28 +473,25 @@ export default function ClockPage() {
           detail = copy.checkOutSuccessAt(timeText, h, m)
         }
 
-        if (
-          data.status === "success" &&
-          data.lineNotified !== true &&
-          typeof data.employeeName === "string" &&
-          data.monthSummary
-        ) {
-          void sendLineFallbackMessage({
-            action,
-            locale,
-            employeeName: data.employeeName,
-            timeText,
-            lateMinutes: lateMin,
-            checkInAt: typeof data.checkInAt === "string" ? data.checkInAt : undefined,
-            checkOutAt: typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
-            workMinutes: typeof data.workMinutes === "number" ? data.workMinutes : undefined,
-            monthSummary: data.monthSummary as AttendanceMonthSummary,
-          }).catch((error) => {
-            console.error("LIFF fallback send failed:", error)
-          })
-        }
-
-        setResult({ ok: true, title: isCheckIn ? copy.checkInSuccess : copy.checkOutSuccess, detail })
+        setResult({
+          ok: true,
+          action,
+          title: isCheckIn ? copy.checkInSuccess : copy.checkOutSuccess,
+          detail,
+          employeeName:
+            typeof data.employeeName === "string"
+              ? data.employeeName
+              : info.employeeName,
+          timeText,
+          lateMinutes: lateMin,
+          checkInAt:
+            typeof data.checkInAt === "string" ? data.checkInAt : undefined,
+          checkOutAt:
+            typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
+          workMinutes:
+            typeof data.workMinutes === "number" ? data.workMinutes : undefined,
+          monthSummary: data.monthSummary as AttendanceMonthSummary | undefined,
+        })
         const newInfo = await fetch("/api/clock/info").then(r => r.json()).catch(() => null) as ClockInfo | null
         if (newInfo) setInfo(newInfo)
       } else if (res.status === 403 && (data.error as string) === "outside_geofence") {
@@ -562,7 +519,7 @@ export default function ClockPage() {
     } finally {
       setPhase("idle")
     }
-  }, [copy, info, locale])
+  }, [copy, info])
 
   const handlePress = useCallback((action: "checkin" | "checkout") => {
     if (!navigator.geolocation) {
@@ -611,6 +568,16 @@ export default function ClockPage() {
   const mapsUrl = hasLocation
     ? `https://maps.google.com/?q=${info!.latitude},${info!.longitude}`
     : null
+  const successResult = result?.ok ? result : null
+  const monthTotals = successResult?.monthSummary
+    ? fmtHoursAndMinutes(successResult.monthSummary.totalHours)
+    : null
+  const workDuration = successResult?.workMinutes !== undefined
+    ? {
+        hours: Math.floor(successResult.workMinutes / 60),
+        minutes: successResult.workMinutes % 60,
+      }
+    : null
 
   if (needsLogin) {
     return <LiffLoginPrompt titleKey="liff.checkin.pageTitle" locale={locale} />
@@ -648,21 +615,118 @@ export default function ClockPage() {
         )}
 
         {/* ── Result card ── */}
-        {result && (
-          <div className={`rounded-2xl border p-4 text-center ${result.ok ? "border-green-100 bg-green-50" : "border-red-100 bg-red-50"}`}>
-            <p className="text-2xl">{result.ok ? "✅" : "⛔"}</p>
-            <p className={`mt-1 font-semibold ${result.ok ? "text-green-700" : "text-[#E80012]"}`}>{result.title}</p>
+        {successResult ? (
+            <div className="space-y-3">
+              <div className={`overflow-hidden rounded-[28px] border shadow-sm ${successResult.action === "checkin" ? "border-emerald-200 bg-white" : "border-sky-200 bg-white"}`}>
+                <div className={`px-5 py-4 text-white ${successResult.action === "checkin" ? "bg-[linear-gradient(135deg,#16a34a,#22c55e)]" : "bg-[linear-gradient(135deg,#0f6cbd,#38bdf8)]"}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">
+                        CNV WorkHub
+                      </p>
+                      <p className="mt-2 text-2xl font-extrabold">{successResult.title}</p>
+                      <p className="mt-1 text-sm text-white/85">{successResult.detail}</p>
+                    </div>
+                    <div className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
+                      {successResult.action === "checkin" ? "IN" : "OUT"}
+                    </div>
+                  </div>
+                  <div className="mt-5 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-xs text-white/70">{successResult.employeeName}</p>
+                      <p className="text-4xl font-black leading-none">{successResult.timeText || "--:--"}</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/12 px-3 py-2 text-right text-xs text-white/85">
+                      <p>{info?.branchName ?? "-"}</p>
+                      <p className="mt-1">{info?.shift?.label ?? "-"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 px-5 py-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+                      <p className="text-xs text-gray-500">{copy.checkInLabel}</p>
+                      <p className="mt-1 text-lg font-bold text-gray-900">
+                        {successResult.checkInAt ? fmtShortTime(successResult.checkInAt, locale) : "—"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+                      <p className="text-xs text-gray-500">{copy.checkOutLabel}</p>
+                      <p className="mt-1 text-lg font-bold text-gray-900">
+                        {successResult.checkOutAt ? fmtShortTime(successResult.checkOutAt, locale) : "—"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
+                      <p className="text-xs text-gray-500">วันทำงานเดือนนี้</p>
+                      <p className="mt-1 text-2xl font-black text-gray-900">
+                        {successResult.monthSummary?.workDays ?? 0}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
+                      <p className="text-xs text-gray-500">ชั่วโมงสะสมเดือนนี้</p>
+                      <p className="mt-1 text-2xl font-black text-gray-900">
+                        {monthTotals ? `${monthTotals.hours}ชม ${monthTotals.minutes}น` : "0ชม 0น"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3">
+                      <p className="text-xs text-amber-700">มาสายวันนี้</p>
+                      <p className="mt-1 text-lg font-bold text-amber-900">
+                        {successResult.lateMinutes ?? 0} นาที
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <p className="text-xs text-slate-600">เวลาทำงานวันนี้</p>
+                      <p className="mt-1 text-lg font-bold text-slate-900">
+                        {workDuration ? `${workDuration.hours}ชม ${workDuration.minutes}น` : "รอสรุปตอนออกงาน"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-gray-100 bg-[#fafafa] px-4 py-3 text-sm text-gray-600">
+                    ข้อมูลวันนี้ถูกบันทึกเข้าระบบแล้ว สามารถตรวจสอบประวัติและสรุปเวลาได้ด้านล่าง
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => window.location.assign(`/liff/home?lang=${locale}`)}
+                  className="rounded-2xl bg-gray-900 px-4 py-3 text-sm font-bold text-white"
+                >
+                  กลับหน้าหลัก
+                </button>
+                <button
+                  onClick={() => window.location.assign(`/liff/attendance?lang=${locale}`)}
+                  className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-900"
+                >
+                  ดูประวัติการเข้างาน
+                </button>
+              </div>
+
+              <p className="text-center text-xs text-gray-400">
+                หากเวลาผิดปกติ กรุณาติดต่อ HR พร้อมแจ้งวันและเวลาที่ทำรายการ
+              </p>
+            </div>
+        ) : result ? (
+          <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-center">
+            <p className="text-2xl">⛔</p>
+            <p className="mt-1 font-semibold text-[#E80012]">{result.title}</p>
             <p className="mt-0.5 text-sm text-gray-500">{result.detail}</p>
-            {!result.ok && (
-              <button onClick={() => setResult(null)} className="mt-2 text-xs text-gray-400 underline">
-                {copy.retry}
-              </button>
-            )}
+            <button onClick={() => setResult(null)} className="mt-2 text-xs text-gray-400 underline">
+              {copy.retry}
+            </button>
           </div>
-        )}
+        ) : null}
 
         {/* ── Map ── */}
-        {hasLocation ? (
+        {!successResult && hasLocation ? (
           <GeofenceMap
             officeLat={info!.latitude!}
             officeLng={info!.longitude!}
@@ -673,16 +737,16 @@ export default function ClockPage() {
             accuracyM={userPos?.accuracyM}
             distanceM={distanceM}
           />
-        ) : (
+        ) : !successResult ? (
           <div className="flex h-[200px] items-center justify-center rounded-2xl border border-gray-100 bg-white shadow-sm">
             <p className="text-sm text-gray-400">
               {info ? copy.noBranchLocation : copy.loadingMap}
             </p>
           </div>
-        )}
+        ) : null}
 
         {/* ── Coordinates card ── */}
-        {hasLocation && (
+        {!successResult && hasLocation && (
           <div className="flex items-center justify-between gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-base">
@@ -776,7 +840,7 @@ export default function ClockPage() {
         )}
 
         {/* ── GPS accuracy + Signal strength ── */}
-        {userPos && (
+        {!successResult && userPos && (
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
               <p className="text-xs text-gray-400">{copy.gpsAccuracy}</p>
@@ -793,7 +857,7 @@ export default function ClockPage() {
         )}
 
         {/* ── Shift / session info ── */}
-        {info?.shift ? (
+        {!successResult && info?.shift ? (
           <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-gray-50 px-4 py-2.5">
               <p className="text-xs font-medium text-gray-400">{copy.shiftTitle}</p>
@@ -817,7 +881,7 @@ export default function ClockPage() {
               </div>
             </div>
           </div>
-        ) : (hasCheckedIn || hasCheckedOut) ? (
+        ) : !successResult && (hasCheckedIn || hasCheckedOut) ? (
           <div className="flex overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
             <div className="flex-1 px-4 py-3 text-center">
               <p className="text-xs text-gray-400">{copy.checkInLabel}</p>
