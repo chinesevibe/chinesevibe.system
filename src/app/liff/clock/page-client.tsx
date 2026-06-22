@@ -552,7 +552,6 @@ export default function ClockPage() {
 
         if (
           data.status === "success" &&
-          data.lineNotified !== true &&
           typeof data.employeeName === "string" &&
           data.monthSummary
         ) {
