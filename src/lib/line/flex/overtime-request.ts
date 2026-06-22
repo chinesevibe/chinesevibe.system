@@ -2,6 +2,7 @@ import type { messagingApi } from "@line/bot-sdk"
 
 import { BRAND_RED } from "@/lib/line/brand"
 import { flexMessage, simpleBubble } from "@/lib/line/flex/base"
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 import {
   approvalButtonFooter,
   buildApprovalPostbackData,
@@ -53,7 +54,7 @@ export function overtimeSubmitHrNotifyFlex(options: {
   locale?: AppLocale
 }): messagingApi.FlexMessage {
   const locale = options.locale ?? DEFAULT_LOCALE
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = publicBaseUrl()
   const adminUrl = baseUrl ? `${baseUrl}/admin/overtime` : undefined
 
   const buttons: PostbackButtonSpec[] = [

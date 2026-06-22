@@ -2,6 +2,8 @@
 // Layout: 2 rows × 3 columns — เช็คอิน | OT | เอกสาร / ขอลา | ร้องเรียน | ติดต่อ HR
 // เช็คสต็อก: พิมพ์ /stock ในแชท (LINE_STOCK_COMMAND_ENABLED=true)
 import { readFile } from "node:fs/promises"
+import { isAbsolute, resolve } from "node:path"
+import { Buffer } from "node:buffer"
 
 import type { messagingApi } from "@line/bot-sdk"
 
@@ -11,6 +13,14 @@ const W = 1200
 const H = 810
 const COL = W / 3
 const ROW = H / 2
+
+function contentTypeForImagePath(imagePath: string, fallback = "image/png") {
+  return imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")
+    ? "image/jpeg"
+    : imagePath.endsWith(".png")
+      ? "image/png"
+      : fallback
+}
 
 export function buildHrRichMenu(clockLiffUri?: string): messagingApi.RichMenuRequest {
   const clockAction: messagingApi.RichMenuArea["action"] = clockLiffUri
@@ -73,15 +83,27 @@ export function buildHrRichMenu(clockLiffUri?: string): messagingApi.RichMenuReq
 
 // Requires LINE_CHANNEL_ACCESS_TOKEN + NEXT_PUBLIC_BASE_URL. Run via scripts/register-rich-menu.ts.
 export async function registerRichMenu(imagePath: string, clockLiffUri?: string): Promise<string> {
-  const image = await readFile(imagePath)
-  const contentType = imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")
-    ? "image/jpeg"
-    : "image/png"
+  let image: Buffer
+  let contentType = contentTypeForImagePath(imagePath)
+
+  if (/^https?:\/\//i.test(imagePath)) {
+    const response = await fetch(imagePath)
+    if (!response.ok) {
+      throw new Error(`failed to fetch rich menu image: ${response.status} ${response.statusText}`)
+    }
+    image = Buffer.from(await response.arrayBuffer())
+    contentType = response.headers.get("content-type") ?? contentType
+  } else {
+    const resolvedImagePath = isAbsolute(imagePath)
+      ? imagePath
+      : resolve(process.cwd(), imagePath)
+    image = await readFile(resolvedImagePath)
+  }
 
   const { richMenuId } = await getLineClient().createRichMenu(buildHrRichMenu(clockLiffUri))
   await getLineBlobClient().setRichMenuImage(
     richMenuId,
-    new Blob([new Uint8Array(image)], { type: contentType })
+    new Blob([image as unknown as BlobPart], { type: contentType })
   )
   await getLineClient().setDefaultRichMenu(richMenuId)
 

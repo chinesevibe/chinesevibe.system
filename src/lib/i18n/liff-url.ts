@@ -15,9 +15,13 @@ export function liffHref(path: string, locale: AppLocale): string {
   return withLangQuery(path, locale)
 }
 
+export function publicBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
+}
+
 /** Build absolute LIFF URL with lang query for session-less fallback. */
 export function liffUrl(path: string, locale: AppLocale): string | undefined {
-  const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "")
+  const base = publicBaseUrl()
   if (!base) return undefined
   return `${base}${withLangQuery(path, locale)}`
 }

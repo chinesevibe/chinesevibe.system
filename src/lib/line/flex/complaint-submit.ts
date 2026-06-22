@@ -6,6 +6,7 @@ import { t } from "@/lib/i18n/translate"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 import { BRAND_RED } from "@/lib/line/brand"
 import { flexMessage, simpleBubble } from "@/lib/line/flex/base"
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 import {
   approvalButtonFooter,
   buildApprovalPostbackData,
@@ -60,7 +61,7 @@ export function complaintSubmitHrNotifyFlex(options: {
   locale?: AppLocale
 }): messagingApi.FlexMessage {
   const locale = options.locale ?? DEFAULT_LOCALE
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = publicBaseUrl()
   const adminUrl =
     options.adminUrl ?? (baseUrl ? `${baseUrl}/admin/complaints` : undefined)
 

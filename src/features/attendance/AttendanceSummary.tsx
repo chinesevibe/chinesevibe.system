@@ -1,4 +1,4 @@
-import { Wallet, Clock, CalendarDays, AlertTriangle, LogOut } from "lucide-react"
+import { Wallet, Clock, CalendarDays, AlertTriangle, LogOut, MapPinned, ShieldAlert } from "lucide-react"
 
 import { KpiCard } from "@/components/brand/KpiCard"
 import type { AttendanceSummary } from "@/features/attendance/types"
@@ -10,16 +10,20 @@ function formatHours(hours: number): string {
 
 export function AttendanceSummaryCard({
   summary,
+  pendingReviewCount = 0,
+  flaggedCount = 0,
   compact = false,
 }: {
   summary: AttendanceSummary
+  pendingReviewCount?: number
+  flaggedCount?: number
   compact?: boolean
 }) {
   return (
     <div
       className={cn(
         "grid gap-3",
-        compact ? "grid-cols-2 md:grid-cols-4" : "gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        compact ? "grid-cols-2 md:grid-cols-4" : "gap-4 sm:grid-cols-2 xl:grid-cols-6"
       )}
     >
       <div className={cn(!compact && "rounded-[1.5rem] border border-border/70 bg-gradient-to-br from-background to-muted/15 p-1 shadow-sm", compact && "contents")}>
@@ -59,6 +63,26 @@ export function AttendanceSummaryCard({
           icon={LogOut}
           accent="info"
           detail={compact ? undefined : "รอบงานที่ยังไม่มีเวลาออก"}
+        />
+      </div>
+      <div className={cn(!compact && "rounded-[1.5rem] border border-rose-200/70 bg-gradient-to-br from-rose-50/80 to-background p-1 shadow-sm", compact && "contents")}>
+        <KpiCard
+          compact={compact}
+          label="รอ HR ตรวจพิกัด"
+          value={pendingReviewCount}
+          icon={MapPinned}
+          accent="warning"
+          detail={compact ? undefined : "รายการพิกัดผิดปกติในผลลัพธ์ที่กำลังแสดง"}
+        />
+      </div>
+      <div className={cn(!compact && "rounded-[1.5rem] border border-violet-200/70 bg-gradient-to-br from-violet-50/80 to-background p-1 shadow-sm", compact && "contents")}>
+        <KpiCard
+          compact={compact}
+          label="รายการต้องจับตา"
+          value={flaggedCount}
+          icon={ShieldAlert}
+          accent="purple"
+          detail={compact ? undefined : "มาสาย ยังไม่เช็คออก หรือมีปัญหาพิกัดในผลลัพธ์ที่กำลังแสดง"}
         />
       </div>
       {summary.estimatedEarnings != null ? (

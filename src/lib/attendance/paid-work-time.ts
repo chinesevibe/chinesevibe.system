@@ -36,14 +36,16 @@ export function computePaidWorkMinutes({
   defaultCheckInTime?: string | null
   defaultCheckOutTime?: string | null
 }): PaidWorkMinutesResult {
+  const MAX_PAID_MINUTES = 12 * 60
   const rawMinutes = Math.max(
     0,
     Math.floor((checkOutAt.getTime() - checkInAt.getTime()) / 60_000)
   )
-  const paidHours = Math.round((rawMinutes / 60) * 100) / 100
+  const paidMinutes = Math.min(rawMinutes, MAX_PAID_MINUTES)
+  const paidHours = Math.round((paidMinutes / 60) * 100) / 100
   return {
     rawMinutes,
-    paidMinutes: rawMinutes,
+    paidMinutes,
     paidHours,
     hasPayWindow: Boolean(shift || (defaultCheckInTime && defaultCheckOutTime)),
   }

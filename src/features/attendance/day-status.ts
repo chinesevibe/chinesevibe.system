@@ -22,7 +22,6 @@ export function deriveAttendanceDayStatus(
 
   if (!record) {
     if (date === today && !isPastShiftStart(date, shift, now)) return "future"
-    if (date === today && !isPastShiftEnd(date, shift, now)) return "in_progress"
     if (!isPastShiftStart(date, shift, now)) return "future"
     return "missing_checkin"
   }

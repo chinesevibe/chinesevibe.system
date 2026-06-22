@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
   let lineUserId: string
   try {
-    const idToken = await exchangeCode(code)
+    const idToken = await exchangeCode(code, origin)
     const payload = await verifyIdToken(idToken)
     lineUserId = payload.sub
   } catch (error) {

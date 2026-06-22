@@ -17,6 +17,7 @@ import { StatusPill } from "@/components/brand/StatusPill"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { AutoSaveIndicator } from "@/features/employees/AutoSaveIndicator"
 import { buildAddEmployeeBody } from "@/features/employees/employee-form-payload"
+import { departmentsForBranch } from "@/features/employees/organization-filter"
 import { WeeklyOffDaysPicker } from "@/features/employees/WeeklyOffDaysPicker"
 import type { WeeklyOffDay } from "@/lib/employees/off-days"
 import { useDebouncedAutoSave } from "@/features/employees/use-debounced-auto-save"
@@ -150,8 +151,7 @@ export function AddEmployeeForm({
   }, [form.department, form.position])
 
   const branchDepartments = useMemo(() => {
-    if (!form.branch_id) return []
-    return departments.filter((d) => d.branch_id === form.branch_id)
+    return departmentsForBranch(departments, form.branch_id)
   }, [departments, form.branch_id])
 
   const selectedDepartmentId = useMemo(() => {
@@ -495,9 +495,7 @@ export function AddEmployeeForm({
                 const nextBranchId = e.target.value
                 const branch = branches.find((b) => b.id === nextBranchId)
                 setForm((prev) => {
-                  const nextDepts = nextBranchId
-                    ? departments.filter((d) => d.branch_id === nextBranchId)
-                    : []
+                  const nextDepts = departmentsForBranch(departments, nextBranchId)
                   const nextDept = nextDepts.some((d) => d.name === prev.department)
                     ? prev.department
                     : ""

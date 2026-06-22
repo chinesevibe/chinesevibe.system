@@ -16,6 +16,7 @@ import type {
   AttendanceStatus,
   AttendanceSummary,
 } from "@/features/attendance/types"
+import { formatShiftTimeRange } from "@/features/shifts/format"
 
 import { ATTENDANCE_PAGE_SIZE } from "@/features/attendance/types"
 import { EMPLOYEE_VIA_ATTENDANCE } from "@/lib/supabase/employee-embeds"
@@ -36,6 +37,8 @@ export type AttendanceListParams = {
   dept?: string
   employee?: string
   branch_id?: string
+  shift_id?: string
+  status?: string
   page?: number
 }
 
@@ -79,6 +82,8 @@ export function normalizeAttendanceParams(raw: {
     dept: get("dept"),
     employee: get("employee"),
     branch_id: get("branch_id"),
+    shift_id: get("shift_id"),
+    status: get("status"),
     page,
   }
 }
@@ -177,9 +182,12 @@ function resolvePaidWorkHours({
 }
 
 const EMPLOYEE_SCHEDULE_EMBED =
-  "default_check_in_time, default_check_out_time, hr_work_shifts(start_hour, start_minute, end_hour, end_minute, grace_minutes, crosses_midnight)"
+  "default_check_in_time, default_check_out_time, hr_work_shifts(id, code, name, start_hour, start_minute, end_hour, end_minute, grace_minutes, crosses_midnight)"
 
 type WorkShiftJoin = {
+  id?: string
+  code?: string | null
+  name?: string | null
   start_hour: number
   start_minute: number
   end_hour: number
@@ -280,6 +288,9 @@ function employeeJoin(
   defaultCheckOutTime: string | null
   shift: ShiftLateSchedule | null
   shiftWindow: WorkShiftJoin | null
+  shiftName: string | null
+  shiftTimeText: string | null
+  shiftCrossesMidnight: boolean
 } {
   const emp = Array.isArray(joined) ? joined[0] : joined
   const branchRaw = emp.hr_branches
@@ -303,6 +314,9 @@ function employeeJoin(
     defaultCheckOutTime: emp.default_check_out_time ?? null,
     shift,
     shiftWindow: rawShift ?? profileShift,
+    shiftName: rawShift?.name ?? rawShift?.code ?? null,
+    shiftTimeText: rawShift ? formatShiftTimeRange(rawShift) : null,
+    shiftCrossesMidnight: Boolean(rawShift?.crosses_midnight ?? profileShift?.crosses_midnight),
   }
 }
 
@@ -392,6 +406,18 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   if (employeeIds) {
     query = query.in("employee_id", employeeIds)
   }
+  if (params.shift_id === "__none__") {
+    query = query.is("work_shift_id", null)
+  } else if (params.shift_id) {
+    query = query.eq("work_shift_id", params.shift_id)
+  }
+  if (params.status === "late") {
+    query = query.eq("is_late", true)
+  } else if (params.status === "open") {
+    query = query.is("check_out_at", null)
+  } else if (params.status === "location_review") {
+    query = query.eq("location_review_status", "pending_hr")
+  }
 
   const { data, count, error } = await query.range(
     (params.page - 1) * ATTENDANCE_PAGE_SIZE,
@@ -469,6 +495,9 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       employeeHref: buildEmployeeAttendanceHref(row.employee_id, workDate),
       department: emp.department,
       branchName: emp.branchName,
+      shiftName: emp.shiftName,
+      shiftTimeText: emp.shiftTimeText,
+      shiftCrossesMidnight: emp.shiftCrossesMidnight,
       date: workDate,
       checkInAt: row.check_in_at,
       checkOutAt: row.check_out_at,
@@ -493,6 +522,18 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
 
   if (employeeIds) {
     summaryQuery = summaryQuery.in("employee_id", employeeIds)
+  }
+  if (params.shift_id === "__none__") {
+    summaryQuery = summaryQuery.is("work_shift_id", null)
+  } else if (params.shift_id) {
+    summaryQuery = summaryQuery.eq("work_shift_id", params.shift_id)
+  }
+  if (params.status === "late") {
+    summaryQuery = summaryQuery.eq("is_late", true)
+  } else if (params.status === "open") {
+    summaryQuery = summaryQuery.is("check_out_at", null)
+  } else if (params.status === "location_review") {
+    summaryQuery = summaryQuery.eq("location_review_status", "pending_hr")
   }
 
   const { data: summaryRows, error: summaryError } = await summaryQuery

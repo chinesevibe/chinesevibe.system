@@ -1,17 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo } from "react"
+import { useSearchParams } from "next/navigation"
 
 import { LocaleProvider } from "@/features/portal/LocaleProvider"
 import { isAppLocale, type AppLocale } from "@/lib/i18n/types"
 
-function resolveLiffLocale(initialLocale: AppLocale): AppLocale {
-  if (typeof window === "undefined") return initialLocale
-  const urlLang = new URLSearchParams(window.location.search).get("lang")
-  return isAppLocale(urlLang) ? urlLang : initialLocale
-}
-
-/** Read-only locale context for LIFF pages (no language switcher). */
+/** Locale context for LIFF pages, synced with `?lang=` when present. */
 export function LiffLocaleShell({
   initialLocale,
   children,
@@ -19,7 +14,11 @@ export function LiffLocaleShell({
   initialLocale: AppLocale
   children: React.ReactNode
 }) {
-  const [locale] = useState(() => resolveLiffLocale(initialLocale))
+  const searchParams = useSearchParams()
+  const locale = useMemo(() => {
+    const urlLang = searchParams.get("lang")
+    return isAppLocale(urlLang) ? urlLang : initialLocale
+  }, [initialLocale, searchParams])
 
   return (
     <LocaleProvider initialLocale={locale} key={locale}>

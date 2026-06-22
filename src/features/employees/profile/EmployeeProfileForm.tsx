@@ -18,6 +18,7 @@ import type {
 import type { ContractType, EmployeeProfile } from "@/features/employees/profile/data"
 import { EmployeeAvatarUpload } from "@/features/employees/profile/EmployeeAvatarUpload"
 import { EmployeeContractUpload } from "@/features/employees/profile/EmployeeContractUpload"
+import { departmentsForBranch } from "@/features/employees/organization-filter"
 import { PendingRegistrationApproval } from "@/features/employees/profile/PendingRegistrationApproval"
 import { SalarySensitiveSection } from "@/features/employees/profile/SalarySensitiveSection"
 import {
@@ -201,8 +202,7 @@ export function EmployeeProfileForm({
   const formSnapshot = useMemo(() => JSON.stringify(form), [form])
 
   const branchDepartments = useMemo(() => {
-    if (!form.branch_id) return departments
-    return departments.filter((d) => d.branch_id === form.branch_id)
+    return departmentsForBranch(departments, form.branch_id)
   }, [departments, form.branch_id])
 
   const selectedDepartmentId = useMemo(() => {
@@ -397,7 +397,7 @@ export function EmployeeProfileForm({
                   const nextBranchId = e.target.value
                   setForm((prev) => {
                     const nextDepts = nextBranchId
-                      ? departments.filter((d) => d.branch_id === nextBranchId)
+                      ? departmentsForBranch(departments, nextBranchId)
                       : []
                     const deptOk = nextDepts.some((d) => d.name === prev.department)
                     const nextDept = deptOk ? prev.department : ""

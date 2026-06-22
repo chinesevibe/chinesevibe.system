@@ -2,11 +2,13 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FileText, Moon, MoreVertical } from "lucide-react"
+import { Clock3, FileText, Moon, Phone, UserRound, View } from "lucide-react"
 import { useTransition } from "react"
 
+import { DevelopmentEmptyState } from "@/components/brand/DevelopmentEmptyState"
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { StatusPill } from "@/components/brand/StatusPill"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -18,29 +20,11 @@ import {
 import { employeeDisplayStatusPill } from "@/features/employees/employee-list-display"
 import type { EmployeeRow } from "@/features/employees/data"
 import { LineLinkBadge } from "@/features/employees/LineLinkBadge"
-import { formatThaiSlashDate } from "@/lib/datetime/thailand"
 import { appendReturnTo } from "@/lib/navigation/return-to"
-import { payTypeDisplayLabel } from "@/lib/payroll/pay-type"
 import { cn } from "@/lib/utils"
-
-const BRANCH_PILL_VARIANTS = [
-  "bg-emerald-100 text-emerald-800",
-  "bg-sky-100 text-sky-800",
-  "bg-violet-100 text-violet-800",
-  "bg-amber-100 text-amber-800",
-  "bg-rose-100 text-rose-800",
-] as const
 
 function displayEmployeeCode(e: EmployeeRow): string {
   return e.employee_code?.trim() || e.id.slice(0, 8).toUpperCase()
-}
-
-function branchPillClass(name: string): string {
-  let hash = 0
-  for (let i = 0; i < name.length; i += 1) {
-    hash = (hash + name.charCodeAt(i)) % BRANCH_PILL_VARIANTS.length
-  }
-  return BRANCH_PILL_VARIANTS[hash] ?? BRANCH_PILL_VARIANTS[0]
 }
 
 function stopRowNav(event: React.MouseEvent) {
@@ -50,11 +34,14 @@ function stopRowNav(event: React.MouseEvent) {
 function EmployeeMobileCard({
   employee: e,
   returnTo,
+  nightShiftId,
 }: {
   employee: EmployeeRow
   returnTo?: string | null
+  nightShiftId?: string | null
 }) {
   const profileHref = appendReturnTo(`/admin/employees/${e.id}`, returnTo)
+  const attendanceHref = appendReturnTo(`/admin/employees/${e.id}/attendance`, returnTo)
   const statusPill = employeeDisplayStatusPill(e.displayStatus)
   const branchLabel = e.branch_name
     ? e.branch_name
@@ -63,13 +50,9 @@ function EmployeeMobileCard({
       : "—"
 
   return (
-    <Link
-      href={profileHref}
-      className="block rounded-2xl border border-border/70 bg-background p-4 shadow-sm transition hover:border-brand-red/30 hover:bg-brand-red/5"
-      aria-label={`เปิดโปรไฟล์ ${e.name}`}
-    >
+    <div className="rounded-2xl border border-border/70 bg-background p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+        <Link href={profileHref} className="flex min-w-0 items-center gap-3" aria-label={`เปิดโปรไฟล์ ${e.name}`}>
           <EmployeeAvatar name={e.name} imageUrl={e.avatarUrl} size="sm" />
           <div className="min-w-0">
             <p className="truncate font-medium text-foreground">{e.name}</p>
@@ -77,19 +60,62 @@ function EmployeeMobileCard({
               {displayEmployeeCode(e)}
             </p>
           </div>
-        </div>
+        </Link>
         <StatusPill label={statusPill.label} variant={statusPill.variant} />
       </div>
 
-      <div className="mt-3 space-y-1.5 text-sm">
-        <p className="truncate text-muted-foreground">{e.position ?? e.department ?? "—"}</p>
-        <p className="whitespace-nowrap tabular-nums text-foreground">{e.work_time_text}</p>
-        <p className="truncate text-muted-foreground">{branchLabel}</p>
-        <p className="truncate text-xs text-muted-foreground">
-          {e.phone?.trim() ? `โทร ${e.phone}` : "ไม่มีเบอร์ติดต่อ"}
-        </p>
+      <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+        <div className="rounded-xl bg-muted/30 px-3 py-2">
+          <p className="text-xs text-muted-foreground">ตำแหน่ง / แผนก</p>
+          <p className="truncate font-medium text-foreground">{e.position ?? e.department ?? "—"}</p>
+        </div>
+        <div className="rounded-xl bg-muted/30 px-3 py-2">
+          <p className="text-xs text-muted-foreground">เวลาเข้า-ออก</p>
+          <p className="whitespace-nowrap font-medium tabular-nums text-foreground">{e.work_time_text}</p>
+        </div>
+        <div className="rounded-xl bg-muted/30 px-3 py-2">
+          <p className="text-xs text-muted-foreground">สาขา</p>
+          <p className="truncate font-medium text-foreground">{branchLabel}</p>
+        </div>
+        <div className="rounded-xl bg-muted/30 px-3 py-2">
+          <p className="text-xs text-muted-foreground">ติดต่อ</p>
+          <p className="truncate font-medium text-foreground">{e.phone?.trim() ? e.phone : "ไม่มีเบอร์ติดต่อ"}</p>
+        </div>
       </div>
-    </Link>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {e.phone?.trim() ? (
+          <a
+            href={`tel:${e.phone.replace(/\s/g, "")}`}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition hover:bg-muted"
+          >
+            <Phone className="size-3.5" />
+            โทร
+          </a>
+        ) : null}
+        {nightShiftId ? (
+          <NightShiftToggle
+            employeeId={e.id}
+            currentShiftId={e.work_shift_id}
+            nightShiftId={nightShiftId}
+          />
+        ) : null}
+        <Link
+          href={attendanceHref}
+          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "px-3")}
+        >
+          <Clock3 className="size-3.5" />
+          เวลาเข้างาน
+        </Link>
+        <Link
+          href={profileHref}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "ml-auto")}
+        >
+          <View className="size-3.5" />
+          เปิดโปรไฟล์
+        </Link>
+      </div>
+    </div>
   )
 }
 
@@ -145,11 +171,18 @@ function EmployeeTableRow({
 }) {
   const router = useRouter()
   const profileHref = appendReturnTo(`/admin/employees/${e.id}`, returnTo)
+  const attendanceHref = appendReturnTo(`/admin/employees/${e.id}/attendance`, returnTo)
   const statusPill = employeeDisplayStatusPill(e.displayStatus)
+  const departmentPosition = [e.department, e.position].filter(Boolean).join(" • ") || "—"
+  const branchLabel = e.branch_name
+    ? e.branch_name
+    : e.displayStatus === "onboarding" || e.displayStatus === "pending_approval"
+      ? "รอกำหนดสาขา"
+      : "—"
 
   return (
     <TableRow
-      className="cursor-pointer hover:bg-muted/30"
+      className="cursor-pointer border-b border-border/50 hover:bg-muted/20"
       onClick={() => router.push(profileHref)}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -161,116 +194,72 @@ function EmployeeTableRow({
       role="link"
       aria-label={`เปิดโปรไฟล์ ${e.name}`}
     >
-      <TableCell className="whitespace-nowrap text-sm font-medium tabular-nums text-muted-foreground">
-        <Link
-          href={profileHref}
-          className="hover:text-brand-red hover:underline"
-          onClick={stopRowNav}
-        >
-          {displayEmployeeCode(e)}
-        </Link>
-      </TableCell>
-      <TableCell className="min-w-[10rem]">
+      <TableCell className="min-w-[14rem]">
         <div className="flex min-w-0 items-center gap-2.5">
           <EmployeeAvatar name={e.name} imageUrl={e.avatarUrl} size="sm" />
-          <Link
-            href={profileHref}
-            className="min-w-0 font-medium text-foreground underline-offset-4 hover:text-brand-red hover:underline"
-            onClick={stopRowNav}
-          >
-            {e.name}
-          </Link>
+          <div className="min-w-0">
+            <Link
+              href={profileHref}
+              className="block truncate font-medium text-foreground underline-offset-4 hover:text-brand-red hover:underline"
+              onClick={stopRowNav}
+            >
+              {e.name}
+            </Link>
+            <p className="truncate text-xs font-medium tabular-nums text-muted-foreground">
+              {displayEmployeeCode(e)}
+            </p>
+          </div>
         </div>
       </TableCell>
-      <TableCell className="max-w-[8rem] truncate text-sm">
-        {e.department ?? "—"}
+      <TableCell className="max-w-[11rem] text-sm">
+        <div className="space-y-1">
+          <p className="truncate font-medium text-foreground">{departmentPosition}</p>
+          <p className="truncate text-xs text-muted-foreground">{branchLabel}</p>
+        </div>
       </TableCell>
-      <TableCell className="max-w-[9rem] truncate text-sm">
-        {e.position ?? "—"}
-      </TableCell>
-      <TableCell className="whitespace-nowrap text-sm tabular-nums">
+      <TableCell className="whitespace-nowrap text-sm tabular-nums font-medium">
         {e.work_time_text}
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        {e.branch_name ? (
-          <span
-            className={cn(
-              "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
-              branchPillClass(e.branch_name)
-            )}
-          >
-            {e.branch_name}
-          </span>
-        ) : e.displayStatus === "onboarding" ||
-          e.displayStatus === "pending_approval" ? (
-          <StatusPill label="รอกำหนดสาขา" variant="pending" />
-        ) : (
-          "—"
-        )}
       </TableCell>
       <TableCell className="whitespace-nowrap">
         <StatusPill label={statusPill.label} variant={statusPill.variant} />
       </TableCell>
-      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-        {payTypeDisplayLabel(e.pay_type)}
-      </TableCell>
-      <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
-        <LineLinkBadge lineUserId={e.line_user_id} />
-      </TableCell>
-      <TableCell className="whitespace-nowrap text-sm tabular-nums">
-        {e.phone?.trim() ? (
-          <a
-            href={`tel:${e.phone.replace(/\s/g, "")}`}
-            className="hover:text-brand-red hover:underline"
-            onClick={stopRowNav}
-          >
-            {e.phone}
-          </a>
-        ) : (
-          "—"
-        )}
-      </TableCell>
-      <TableCell className="whitespace-nowrap text-sm tabular-nums">
-        {formatThaiSlashDate(e.contract_start)}
-      </TableCell>
-      <TableCell className="whitespace-nowrap text-sm tabular-nums">
-        {formatThaiSlashDate(e.probation_end)}
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <StatusPill
-          label={e.visaStatus.label}
-          variant={e.visaStatus.variant}
-        />
-      </TableCell>
-      <TableCell className="whitespace-nowrap">
-        <StatusPill
-          label={e.workPermitStatus.label}
-          variant={e.workPermitStatus.variant}
-        />
-      </TableCell>
-      <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
-        {e.contract_file_path ? (
-          <a
-            href={`/api/employees/${e.id}/contract`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-brand-red hover:underline"
-          >
-            <FileText className="size-4 shrink-0" aria-hidden />
-            เปิดไฟล์
-          </a>
-        ) : e.contract_start ? (
-          <Link
-            href={profileHref}
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground hover:underline"
-            onClick={stopRowNav}
-          >
-            <FileText className="size-4 shrink-0" aria-hidden />
-            แนบสัญญา
-          </Link>
-        ) : (
-          <span className="text-sm text-muted-foreground">—</span>
-        )}
+      <TableCell className="max-w-[11rem]" onClick={stopRowNav}>
+        <div className="space-y-1.5 text-sm">
+          <LineLinkBadge lineUserId={e.line_user_id} />
+          {e.phone?.trim() ? (
+            <a
+              href={`tel:${e.phone.replace(/\s/g, "")}`}
+              className="block truncate tabular-nums hover:text-brand-red hover:underline"
+              onClick={stopRowNav}
+            >
+              {e.phone}
+            </a>
+          ) : (
+            <span className="block text-muted-foreground">ไม่มีเบอร์</span>
+          )}
+          {e.contract_file_path ? (
+            <a
+              href={`/api/employees/${e.id}/contract`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-brand-red hover:underline"
+            >
+              <FileText className="size-4 shrink-0" aria-hidden />
+              เปิดสัญญา
+            </a>
+          ) : e.contract_start ? (
+            <Link
+              href={profileHref}
+              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline"
+              onClick={stopRowNav}
+            >
+              <FileText className="size-4 shrink-0" aria-hidden />
+              แนบสัญญา
+            </Link>
+          ) : (
+            <span className="block text-muted-foreground">ไม่มีสัญญา</span>
+          )}
+        </div>
       </TableCell>
       {nightShiftId && (
         <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
@@ -281,14 +270,25 @@ function EmployeeTableRow({
           />
         </TableCell>
       )}
-      <TableCell onClick={stopRowNav}>
-        <Link
-          href={profileHref}
-          className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-          aria-label={`เปิดโปรไฟล์ ${e.name}`}
-        >
-          <MoreVertical className="size-4" />
-        </Link>
+      <TableCell className="whitespace-nowrap" onClick={stopRowNav}>
+        <div className="flex items-center justify-end gap-1.5">
+          <Link
+            href={attendanceHref}
+            aria-label={`เปิดเวลาเข้างาน ${e.name}`}
+            className={buttonVariants({ variant: "ghost", size: "sm" })}
+          >
+            <Clock3 className="size-3.5" />
+            เวลา
+          </Link>
+          <Link
+            href={profileHref}
+            aria-label={`เปิดโปรไฟล์ ${e.name}`}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            <UserRound className="size-3.5" />
+            โปรไฟล์
+          </Link>
+        </div>
       </TableCell>
     </TableRow>
   )
@@ -307,9 +307,13 @@ export function EmployeeTable({
 }) {
   if (employees.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-muted-foreground">
-        ไม่พบพนักงานตามเงื่อนไขที่เลือก
-      </p>
+      <div className="rounded-2xl border border-dashed border-border/80 bg-background">
+        <DevelopmentEmptyState
+          icon={UserRound}
+          title="ไม่พบพนักงานตามเงื่อนไขที่เลือก"
+          description="ลองล้างตัวกรองหรือเปลี่ยนคำค้นหาเพื่อดูรายชื่อพนักงานเพิ่มเติม"
+        />
+      </div>
     )
   }
 
@@ -320,33 +324,35 @@ export function EmployeeTable({
         scrollable && "overflow-auto"
       )}
     >
-      <div className="grid gap-3 p-3 sm:grid-cols-2 xl:hidden">
+      <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+        <div>
+          <p className="text-sm font-semibold text-foreground">รายการพนักงาน</p>
+          <p className="text-xs text-muted-foreground">เปิดโปรไฟล์ ดูสถานะ และจัดการเอกสารได้จากแต่ละแถว</p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 p-3 xl:hidden">
         {employees.map((e) => (
-          <EmployeeMobileCard key={e.id} employee={e} returnTo={returnTo} />
+          <EmployeeMobileCard
+            key={e.id}
+            employee={e}
+            returnTo={returnTo}
+            nightShiftId={nightShiftId}
+          />
         ))}
       </div>
 
       <div className="hidden xl:block">
         <Table>
-          <TableHeader className="sticky top-0 z-10 bg-card">
+          <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur">
             <TableRow>
-              <TableHead className="w-[5.5rem]">รหัส</TableHead>
-              <TableHead className="min-w-[10rem]">ชื่อ-นามสกุล</TableHead>
-              <TableHead>แผนก</TableHead>
-              <TableHead>ตำแหน่ง</TableHead>
+              <TableHead className="min-w-[14rem]">พนักงาน</TableHead>
+              <TableHead className="min-w-[11rem]">สังกัด</TableHead>
               <TableHead>เวลาเข้า-ออก</TableHead>
-              <TableHead>สาขา</TableHead>
               <TableHead>สถานะ</TableHead>
-              <TableHead>ประเภทจ้าง</TableHead>
-              <TableHead>LINE</TableHead>
-              <TableHead>โทร</TableHead>
-              <TableHead>เริ่มงาน</TableHead>
-              <TableHead>ทดลองถึง</TableHead>
-              <TableHead>วีซ่า</TableHead>
-              <TableHead>Work Permit</TableHead>
-              <TableHead>สัญญา</TableHead>
+              <TableHead className="min-w-[11rem]">ติดต่อ / เอกสาร</TableHead>
               {nightShiftId && <TableHead className="w-10" title="กะกลางคืน"><Moon className="size-3.5" /></TableHead>}
-              <TableHead className="w-10" />
+              <TableHead className="min-w-[11rem] text-right">การดำเนินการ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

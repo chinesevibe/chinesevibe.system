@@ -2,8 +2,12 @@
 
 import { useEffect, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { CalendarRange, FilterX, Search, Siren } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import type { BranchFilterOption } from "@/features/employees/data"
+import type { WorkShiftSummary } from "@/features/shifts/types"
+import { formatShiftTimeRange } from "@/features/shifts/format"
 import { cn } from "@/lib/utils"
 
 const inputClassName =
@@ -13,18 +17,22 @@ export function AttendanceFilters({
   departments,
   branches = [],
   employees,
+  shifts = [],
   values,
   mode = "full",
 }: {
   departments: string[]
   branches?: BranchFilterOption[]
   employees: Array<{ id: string; name: string; employeeCode: string }>
+  shifts?: WorkShiftSummary[]
   values: {
     from: string
     to: string
     dept: string
     employee: string
     branch_id: string
+    shift_id: string
+    status: string
   }
   /** employee: date range only (single-employee attendance page) */
   mode?: "full" | "employee"
@@ -33,6 +41,13 @@ export function AttendanceFilters({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const employeeInputTimerRef = useRef<number | null>(null)
+  const hasFilters = Boolean(
+    values.branch_id ||
+      values.dept ||
+      values.employee ||
+      values.shift_id ||
+      values.status
+  )
 
   useEffect(() => {
     return () => {
@@ -91,6 +106,8 @@ export function AttendanceFilters({
       branch_id: "",
       dept: "",
       employee: "",
+      shift_id: "",
+      status: "",
     })
   }
 
@@ -107,22 +124,35 @@ export function AttendanceFilters({
           <div className="space-y-1">
             <p className="text-sm font-semibold text-foreground">History command bar</p>
             <p className="text-xs text-muted-foreground">
-              กรองช่วงเวลา พนักงาน และหน่วยงานก่อนลงดู ledger ย้อนหลัง
+              กรองช่วงเวลา พนักงาน กะ และเคสผิดปกติก่อนลงดู ledger ย้อนหลัง
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full border border-border/70 bg-background px-3 py-1.5 font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3 py-1.5 font-medium text-muted-foreground">
+              <CalendarRange className="size-3.5" />
               ช่วงวันที่ {values.from} ถึง {values.to}
             </span>
             {values.employee ? (
-              <span className="rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 font-medium text-brand-red">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 font-medium text-brand-red">
+                <Search className="size-3.5" />
                 ค้นหา {values.employee}
               </span>
             ) : null}
-            {values.branch_id ? (
+            {values.status ? (
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 font-medium text-amber-800">
+                <Siren className="size-3.5" />
+                โฟกัสเคสผิดปกติ
+              </span>
+            ) : values.branch_id ? (
               <span className="rounded-full border border-border/70 bg-background px-3 py-1.5 font-medium text-muted-foreground">
                 สาขาถูกกรองแล้ว
               </span>
+            ) : null}
+            {hasFilters ? (
+              <Button type="button" variant="outline" size="sm" onClick={resetFilters}>
+                <FilterX className="size-3.5" />
+                ล้างตัวกรอง
+              </Button>
             ) : null}
           </div>
         </div>
@@ -132,7 +162,7 @@ export function AttendanceFilters({
         className={
           mode === "employee"
             ? "contents"
-            : "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+            : "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
         }
       >
         <label
@@ -198,7 +228,23 @@ export function AttendanceFilters({
                 ))}
               </select>
             </label>
-          <label className="flex flex-col gap-1 text-sm">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-muted-foreground">กะงาน</span>
+              <select
+                className={inputClassName}
+                value={values.shift_id}
+                onChange={(e) => update("shift_id", e.target.value)}
+              >
+                <option value="">ทุกกะ</option>
+                <option value="__none__">ยังไม่กำหนดกะ</option>
+                {shifts.map((shift) => (
+                  <option key={shift.id} value={shift.id}>
+                    {`${shift.name} (${formatShiftTimeRange(shift)})`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
               <span className="font-medium text-muted-foreground">พนักงาน / รหัสพนักงาน</span>
               <input
                 key={values.employee}
@@ -217,6 +263,19 @@ export function AttendanceFilters({
                   />
                 ))}
               </datalist>
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-muted-foreground">สถานะที่ต้องโฟกัส</span>
+              <select
+                className={inputClassName}
+                value={values.status}
+                onChange={(e) => update("status", e.target.value)}
+              >
+                <option value="">ทุกสถานะ</option>
+                <option value="late">มาสาย</option>
+                <option value="open">ยังไม่เช็คออก / incomplete</option>
+                <option value="location_review">รอ HR ตรวจพิกัด</option>
+              </select>
             </label>
           </>
         ) : null}
@@ -244,13 +303,15 @@ export function AttendanceFilters({
           >
             30 วัน
           </button>
-          <button
-            type="button"
-            className="rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 text-xs font-medium text-brand-red transition hover:border-brand-red/30 hover:bg-brand-red/10"
-            onClick={resetFilters}
-          >
-            ล้างตัวกรอง
-          </button>
+          {hasFilters ? (
+            <button
+              type="button"
+              className="rounded-full border border-brand-red/15 bg-brand-red/5 px-3 py-1.5 text-xs font-medium text-brand-red transition hover:border-brand-red/30 hover:bg-brand-red/10"
+              onClick={resetFilters}
+            >
+              ล้างตัวกรอง
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>

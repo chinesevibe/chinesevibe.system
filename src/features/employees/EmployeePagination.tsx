@@ -17,6 +17,8 @@ export function EmployeePagination({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const start = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const end = Math.min(page * pageSize, total)
 
   function goTo(next: number) {
     const params = new URLSearchParams(searchParams.toString())
@@ -25,11 +27,14 @@ export function EmployeePagination({
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
-        ทั้งหมด {total} คน — หน้า {page}/{totalPages}
-      </p>
-      <div className="flex gap-2">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-muted/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-1">
+        <p className="text-sm font-medium text-foreground">
+          {total === 0 ? "ยังไม่มีผลลัพธ์" : `แสดง ${start}-${end} จาก ${total} คน`}
+        </p>
+        <p className="text-xs text-muted-foreground">หน้า {page} จาก {totalPages}</p>
+      </div>
+      <div className="flex gap-2 self-start sm:self-auto">
         <Button
           variant="outline"
           size="sm"

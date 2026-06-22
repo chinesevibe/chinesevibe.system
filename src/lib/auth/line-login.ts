@@ -13,29 +13,30 @@ function requireEnv(name: string): string {
   return value
 }
 
-function redirectUri(): string {
-  return `${requireEnv("NEXT_PUBLIC_BASE_URL")}/api/auth/line/callback`
+function redirectUri(baseUrl?: string): string {
+  const origin = baseUrl?.trim().replace(/\/$/, "") || requireEnv("NEXT_PUBLIC_BASE_URL")
+  return `${origin}/api/auth/line/callback`
 }
 
-export function buildAuthorizeUrl(state: string): string {
+export function buildAuthorizeUrl(state: string, baseUrl?: string): string {
   const params = new URLSearchParams({
     response_type: "code",
     client_id: requireEnv("LINE_LOGIN_CHANNEL_ID"),
-    redirect_uri: redirectUri(),
+    redirect_uri: redirectUri(baseUrl),
     state,
     scope: "profile openid",
   })
   return `${LINE_AUTHORIZE_URL}?${params.toString()}`
 }
 
-export async function exchangeCode(code: string): Promise<string> {
+export async function exchangeCode(code: string, baseUrl?: string): Promise<string> {
   const response = await fetch(LINE_TOKEN_URL, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "authorization_code",
       code,
-      redirect_uri: redirectUri(),
+      redirect_uri: redirectUri(baseUrl),
       client_id: requireEnv("LINE_LOGIN_CHANNEL_ID"),
       client_secret: requireEnv("LINE_LOGIN_CHANNEL_SECRET"),
     }),

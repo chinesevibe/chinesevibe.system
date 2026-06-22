@@ -1,11 +1,29 @@
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
-import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
+import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 
-const SESSION_CUTOFF_TIME_ICT = "06:00"
-const MIN_NEXT_SESSION_GAP_MS = 8 * 60 * 60 * 1000
+// Stale-session window: auto-close any open record more than 24h old.
+const STALE_SESSION_MS = 24 * 60 * 60 * 1000
+
+// Display window: show a completed session on UI for 2h after checkout.
+const SESSION_DISPLAY_MS = 2 * 60 * 60 * 1000
+
+/**
+ * Start of the "current session query window" = now - 24h rolling.
+ * Pure session model: no ICT-day boundary, second param ignored.
+ */
+export function sessionCycleStartUtc(now: Date, _defaultCheckInTime?: string | null): Date {
+  return new Date(now.getTime() - STALE_SESSION_MS)
+}
+
+/**
+ * A completed session stays visible on UI for 2h after checkout.
+ * After that the state resets so the employee can start a new session.
+ */
+export function isCheckoutStillInActiveCycle(checkOutAt: Date, now: Date): boolean {
+  return now.getTime() - checkOutAt.getTime() < SESSION_DISPLAY_MS
+}
 
 type AdminClient = ReturnType<typeof getAdminClient>
 
@@ -22,31 +40,7 @@ type EmployeeBranchRow = {
 }
 
 export function sessionCutoffUtcForCheckIn(checkInAt: Date): Date {
-  const workDate = ictDateFromUtc(checkInAt)
-  let cutoffAt = ictLocalToUtc(workDate, SESSION_CUTOFF_TIME_ICT)
-  if (cutoffAt.getTime() <= checkInAt.getTime()) {
-    const nextDay = new Date(cutoffAt.getTime() + 24 * 60 * 60 * 1000)
-    cutoffAt = nextDay
-  }
-  return cutoffAt
-}
-
-function resolveCycleStartTimeIct(defaultCheckInTime?: string | null): string {
-  const normalized = normalizeTimeToHHMM(defaultCheckInTime)
-  return normalized || SESSION_CUTOFF_TIME_ICT
-}
-
-export function sessionCycleStartUtc(now: Date, defaultCheckInTime?: string | null): Date {
-  const cycleStartTimeIct = resolveCycleStartTimeIct(defaultCheckInTime)
-  const todayCutoff = ictLocalToUtc(ictDateFromUtc(now), cycleStartTimeIct)
-  if (now.getTime() >= todayCutoff.getTime()) {
-    return todayCutoff
-  }
-  return new Date(todayCutoff.getTime() - 24 * 60 * 60 * 1000)
-}
-
-export function isCheckoutStillInActiveCycle(checkOutAt: Date, now: Date): boolean {
-  return now.getTime() - checkOutAt.getTime() < MIN_NEXT_SESSION_GAP_MS
+  return new Date(checkInAt.getTime() + STALE_SESSION_MS)
 }
 
 export async function autoCloseOpenAttendanceSessions({

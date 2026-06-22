@@ -13,6 +13,7 @@ import {
   countLeaveDays,
   type LeaveType,
 } from "@/features/leave/types"
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 
 function leaveTypeLabel(type: LeaveType, locale: AppLocale): string {
   return t(`leave.type.${type}` as MessageKey, locale)
@@ -74,7 +75,7 @@ export function leaveSubmitHrNotifyFlex(options: {
 }): messagingApi.FlexMessage {
   const locale = options.locale ?? DEFAULT_LOCALE
   const days = countLeaveDays(options.startDate, options.endDate) ?? 0
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = publicBaseUrl()
   const adminUrl =
     options.adminUrl ?? (baseUrl ? `${baseUrl}/admin/leaves` : undefined)
 

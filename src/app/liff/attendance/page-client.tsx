@@ -9,7 +9,7 @@ import { AttendanceCorrectableBanner } from "@/features/attendance/AttendanceCal
 import { useLocale } from "@/features/portal/LocaleProvider"
 
 const FIELD_CLASS =
-  "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
+  "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/20"
 
 type SubmitMessageState = {
   mode: "checkin"

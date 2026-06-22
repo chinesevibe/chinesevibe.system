@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   const lang = request.nextUrl.searchParams.get("lang")
   const next = sanitizeReturnTo(request.nextUrl.searchParams.get("next"))
 
-  const response = NextResponse.redirect(buildAuthorizeUrl(state))
+  const response = NextResponse.redirect(buildAuthorizeUrl(state, request.nextUrl.origin))
   response.cookies.set(STATE_COOKIE, state, cookieOptions)
   if (next) {
     response.cookies.set(NEXT_COOKIE, next, cookieOptions)

@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 
+import { LiffLanguageSwitcher } from "@/components/liff/LiffLanguageSwitcher"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { MessageKey } from "@/lib/i18n/translate"
 import { t } from "@/lib/i18n/translate"
@@ -31,6 +32,9 @@ export function LiffLoginPrompt({
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#F5F5F5] p-4">
       <div className="w-full max-w-sm rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="mb-3 flex justify-end">
+          <LiffLanguageSwitcher />
+        </div>
         <div className="mb-2 text-3xl">🔐</div>
         <h2 className="text-base font-medium text-gray-900">{tx(titleKey)}</h2>
         <p className="mt-1 text-sm text-gray-400">{tx("liff.common.loginTitle")}</p>

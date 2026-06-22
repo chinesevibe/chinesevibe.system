@@ -60,7 +60,11 @@ export function RegisterLineProvider({ children }: { children: ReactNode }) {
 
       const liff = (await import("@line/liff")).default
       if (!liff.isLoggedIn()) {
-        liff.login({ redirectUri: window.location.href })
+        const current = `${window.location.pathname}${window.location.search}`
+        const lang = new URLSearchParams(window.location.search).get("lang")
+        const params = new URLSearchParams({ next: current })
+        if (lang) params.set("lang", lang)
+        window.location.href = `/api/auth/line/start?${params.toString()}`
         return
       }
 

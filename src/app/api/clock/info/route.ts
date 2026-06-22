@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server"
 
-import {
-  autoCloseOpenAttendanceSessions,
-  isCheckoutStillInActiveCycle,
-  sessionCycleStartUtc,
-} from "@/lib/attendance/session-cycle"
+import { autoCloseOpenAttendanceSessions } from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { getAdminClient } from "@/lib/auth/admin-client"
 
@@ -19,11 +15,6 @@ export async function GET() {
   }
 
   const admin = getAdminClient()
-  const { data: employeeSchedule } = await admin
-    .from("hr_employees")
-    .select("default_check_in_time")
-    .eq("id", employee.id)
-    .maybeSingle()
 
   // ── Branch / geofence ──────────────────────────────────────────────────
   let branchInfo: {
@@ -76,7 +67,9 @@ export async function GET() {
     }
   }
 
-  // ── Today's attendance ─────────────────────────────────────────────────
+  // ── Current session ────────────────────────────────────────────────────
+  // Pure session model: open record = active session; no ICT-day window.
+  // Auto-close stale open records older than 24h (forgot to check out).
   const now = new Date()
   await autoCloseOpenAttendanceSessions({
     admin,
@@ -84,46 +77,27 @@ export async function GET() {
     now,
   })
 
-  const { data: openRecord } = await admin
+  // Return the most recent record: open session, or a recently closed one
+  // (so the employee can see their completed session on the LIFF clock page).
+  const DISPLAY_WINDOW_MS = 2 * 60 * 60 * 1000 // 2h after checkout
+  const displaySince = new Date(now.getTime() - DISPLAY_WINDOW_MS)
+
+  const { data: recentRecord } = await admin
     .from("hr_attendance")
     .select("check_in_at, check_out_at")
     .eq("employee_id", employee.id)
-    .is("check_out_at", null)
+    .or(`check_out_at.is.null,check_out_at.gte.${displaySince.toISOString()}`)
     .order("check_in_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
   let checkInAt: string | null = null
   let checkOutAt: string | null = null
-  if (openRecord) {
-    checkInAt = openRecord.check_in_at ? new Date(openRecord.check_in_at as string).toISOString() : null
-    checkOutAt = openRecord.check_out_at ? new Date(openRecord.check_out_at as string).toISOString() : null
-  }
-
-  if (!openRecord) {
-    const cycleStart = sessionCycleStartUtc(
-      now,
-      (employeeSchedule?.default_check_in_time as string | null) ?? null
-    )
-
-    const { data: att } = await admin
-      .from("hr_attendance")
-      .select("check_in_at, check_out_at")
-      .eq("employee_id", employee.id)
-      .gte("check_in_at", cycleStart.toISOString())
-      .lte("check_in_at", now.toISOString())
-      .order("check_in_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    if (att?.check_in_at) {
-      const nextCheckInAt = new Date(att.check_in_at as string).toISOString()
-      const nextCheckOutAt = att.check_out_at ? new Date(att.check_out_at as string) : null
-      if (!nextCheckOutAt || isCheckoutStillInActiveCycle(nextCheckOutAt, now)) {
-        checkInAt = nextCheckInAt
-        checkOutAt = nextCheckOutAt ? nextCheckOutAt.toISOString() : null
-      }
-    }
+  if (recentRecord?.check_in_at) {
+    checkInAt = new Date(recentRecord.check_in_at as string).toISOString()
+    checkOutAt = recentRecord.check_out_at
+      ? new Date(recentRecord.check_out_at as string).toISOString()
+      : null
   }
 
   return NextResponse.json({

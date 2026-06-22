@@ -7,67 +7,72 @@ import {
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
 
-function ict(dateStr: string, hour: number, minute = 0): Date {
-  const [year, month, day] = dateStr.split("-").map(Number)
-  return new Date(Date.UTC(year, month - 1, day, hour - 7, minute, 0, 0))
-}
+// Pure session model — no ICT-day boundary, no timezone arithmetic.
 
 describe("session-cycle", () => {
-  it("cuts off a 14:00 ICT session at 06:00 ICT next day", () => {
-    const checkInAt = ict("2026-06-19", 14)
-    assert.equal(
-      sessionCutoffUtcForCheckIn(checkInAt).toISOString(),
-      "2026-06-19T23:00:00.000Z"
-    )
+  describe("sessionCutoffUtcForCheckIn", () => {
+    it("cuts off a session 24h after check-in (14:00 ICT shift)", () => {
+      // 14:00 ICT = 07:00 UTC
+      const checkInAt = new Date("2026-06-20T07:00:00.000Z")
+      assert.equal(
+        sessionCutoffUtcForCheckIn(checkInAt).toISOString(),
+        "2026-06-21T07:00:00.000Z"
+      )
+    })
+
+    it("cuts off a 03:00 ICT session 24h later", () => {
+      const checkInAt = new Date("2026-06-19T20:00:00.000Z") // 03:00 ICT 20 Jun
+      assert.equal(
+        sessionCutoffUtcForCheckIn(checkInAt).toISOString(),
+        "2026-06-20T20:00:00.000Z"
+      )
+    })
+
+    it("auto-close window does not overlap the next session start", () => {
+      // Employee checks in at 14:00 ICT, forgets to check out.
+      // Next check-in attempt at 14:00 ICT next day = exactly the cutoff.
+      const checkInAt = new Date("2026-06-20T07:00:00.000Z") // 14:00 ICT
+      const nextShiftStart = new Date("2026-06-21T07:00:00.000Z") // 14:00 ICT next day
+      const cutoff = sessionCutoffUtcForCheckIn(checkInAt)
+      assert.ok(cutoff.getTime() <= nextShiftStart.getTime())
+    })
   })
 
-  it("cuts off a 03:00 ICT session at 06:00 ICT same day", () => {
-    const checkInAt = ict("2026-06-20", 3)
-    assert.equal(
-      sessionCutoffUtcForCheckIn(checkInAt).toISOString(),
-      "2026-06-19T23:00:00.000Z"
-    )
+  describe("sessionCycleStartUtc", () => {
+    it("returns now minus 24h regardless of ICT time", () => {
+      const now = new Date("2026-06-20T11:00:00.000Z") // 18:00 ICT
+      assert.equal(
+        sessionCycleStartUtc(now).toISOString(),
+        "2026-06-19T11:00:00.000Z"
+      )
+    })
+
+    it("ignores the defaultCheckInTime param (pure session model)", () => {
+      const now = new Date("2026-06-20T07:00:00.000Z") // 14:00 ICT
+      assert.equal(
+        sessionCycleStartUtc(now, "14:00").toISOString(),
+        sessionCycleStartUtc(now).toISOString()
+      )
+    })
   })
 
-  it("starts a new cycle at 06:00 ICT", () => {
-    assert.equal(
-      sessionCycleStartUtc(ict("2026-06-20", 5, 59)).toISOString(),
-      "2026-06-18T23:00:00.000Z"
-    )
-    assert.equal(
-      sessionCycleStartUtc(ict("2026-06-20", 6, 0)).toISOString(),
-      "2026-06-19T23:00:00.000Z"
-    )
-  })
+  describe("isCheckoutStillInActiveCycle", () => {
+    it("returns true if checkout was less than 2h ago", () => {
+      const checkOutAt = new Date("2026-06-21T19:00:00.000Z") // 02:00 ICT
+      const now = new Date("2026-06-21T20:59:00.000Z")        // 1h59m later
+      assert.equal(isCheckoutStillInActiveCycle(checkOutAt, now), true)
+    })
 
-  it("starts a profile-time cycle at 14:00 ICT for overnight employees", () => {
-    assert.equal(
-      sessionCycleStartUtc(ict("2026-06-20", 13, 59), "14:00").toISOString(),
-      "2026-06-19T07:00:00.000Z"
-    )
-    assert.equal(
-      sessionCycleStartUtc(ict("2026-06-20", 14, 0), "14:00").toISOString(),
-      "2026-06-20T07:00:00.000Z"
-    )
-    assert.equal(
-      sessionCycleStartUtc(ict("2026-06-20", 16, 56), "14:00").toISOString(),
-      "2026-06-20T07:00:00.000Z"
-    )
-  })
+    it("returns false after 2h", () => {
+      const checkOutAt = new Date("2026-06-21T19:00:00.000Z") // 02:00 ICT
+      const now = new Date("2026-06-21T21:00:00.000Z")        // exactly 2h later
+      assert.equal(isCheckoutStillInActiveCycle(checkOutAt, now), false)
+    })
 
-  it("does not keep a checked-out session active after 8 hours", () => {
-    const checkOutAt = ict("2026-06-20", 2)
-    assert.equal(
-      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 9, 59)),
-      true
-    )
-    assert.equal(
-      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 10, 0)),
-      false
-    )
-    assert.equal(
-      isCheckoutStillInActiveCycle(checkOutAt, ict("2026-06-20", 16, 56)),
-      false
-    )
+    it("returns false long after checkout", () => {
+      const checkOutAt = new Date("2026-06-21T19:00:00.000Z")
+      const now = new Date("2026-06-21T23:00:00.000Z")        // 4h later
+      assert.equal(isCheckoutStillInActiveCycle(checkOutAt, now), false)
+    })
   })
 })

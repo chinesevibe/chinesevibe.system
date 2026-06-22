@@ -14,6 +14,7 @@ import {
   buildApprovalPostbackData,
   type PostbackButtonSpec,
 } from "@/lib/line/approval/flex-buttons"
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 
 function docTypeLabel(type: string, locale: AppLocale): string {
   if (!DOC_TYPES.includes(type as DocType)) return type
@@ -118,7 +119,7 @@ export function documentSubmitHrNotifyFlex(options: {
 }): messagingApi.FlexMessage {
   const locale = options.locale ?? DEFAULT_LOCALE
   const status = options.status ?? "pending"
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = publicBaseUrl()
   const adminUrl =
     options.adminUrl ?? (baseUrl ? `${baseUrl}/admin/documents` : undefined)
 

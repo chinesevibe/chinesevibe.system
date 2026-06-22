@@ -17,7 +17,7 @@ export function PageHeader({
           {badge}
         </div>
         {description ? (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <div className="mt-1 text-sm text-muted-foreground">{description}</div>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

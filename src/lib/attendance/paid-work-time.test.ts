@@ -28,7 +28,7 @@ describe("computePaidWorkMinutes", () => {
     grace_minutes: 10,
   }
 
-  it("Branch Day: early check-in and late check-out uses raw duration (740 min / 12.33 h)", () => {
+  it("Branch Day: early check-in and late check-out is capped at 12h (720 min / 12.00 h)", () => {
     const checkIn = ict("2026-06-18", "09:50")
     const checkOut = ict("2026-06-18", "22:10")
     const result = computePaidWorkMinutes({
@@ -36,8 +36,8 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: branchDayShift,
     })
-    assert.equal(result.paidMinutes, 740)
-    assert.equal(result.paidHours, 12.33)
+    assert.equal(result.paidMinutes, 720)
+    assert.equal(result.paidHours, 12.00)
     assert.equal(result.hasPayWindow, true)
   })
 
@@ -54,7 +54,7 @@ describe("computePaidWorkMinutes", () => {
     assert.equal(result.hasPayWindow, true)
   })
 
-  it("Branch Day: check-in within grace still uses actual timestamps (723 min / 12.05 h)", () => {
+  it("Branch Day: check-in within grace still capped at 12h (723 raw → 720 paid / 12.00 h)", () => {
     const checkIn = ict("2026-06-18", "10:01")
     const checkOut = ict("2026-06-18", "22:04")
     const result = computePaidWorkMinutes({
@@ -62,8 +62,8 @@ describe("computePaidWorkMinutes", () => {
       checkOutAt: checkOut,
       shift: branchDayShift,
     })
-    assert.equal(result.paidMinutes, 723)
-    assert.equal(result.paidHours, 12.05)
+    assert.equal(result.paidMinutes, 720)
+    assert.equal(result.paidHours, 12.00)
     assert.equal(result.hasPayWindow, true)
   })
 
@@ -109,7 +109,7 @@ describe("computePaidWorkMinutes", () => {
     crosses_midnight: true,
   }
 
-  it("Branch Night: early check-in and late check-out uses raw duration (740 min / 12.33 h)", () => {
+  it("Branch Night: early check-in and late check-out is capped at 12h (720 min / 12.00 h)", () => {
     const checkIn = ict("2026-06-18", "13:50")
     const checkOut = ict("2026-06-19", "02:10")
     const result = computePaidWorkMinutes({
@@ -118,8 +118,8 @@ describe("computePaidWorkMinutes", () => {
       shift: branchNightShift,
       shiftDate: "2026-06-18",
     })
-    assert.equal(result.paidMinutes, 740)
-    assert.equal(result.paidHours, 12.33)
+    assert.equal(result.paidMinutes, 720)
+    assert.equal(result.paidHours, 12.00)
     assert.equal(result.hasPayWindow, true)
   })
 

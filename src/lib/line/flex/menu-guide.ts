@@ -7,7 +7,7 @@ import {
   menuGuideBubble,
 } from "@/lib/line/flex/base"
 import { BRAND_RED } from "@/lib/line/brand"
-import { liffUrl as buildLiffUrl } from "@/lib/i18n/liff-url"
+import { liffUrl as buildLiffUrl, publicBaseUrl } from "@/lib/i18n/liff-url"
 import { t } from "@/lib/i18n/translate"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 
@@ -522,7 +522,7 @@ export function complaintGuideFlex(
 export function announcementGuideFlex(
   locale: AppLocale = DEFAULT_LOCALE
 ): messagingApi.FlexMessage {
-  const base = process.env.NEXT_PUBLIC_BASE_URL?.trim()
+  const base = publicBaseUrl()
   const portalUrl = base ? `${base}/portal?lang=${locale}` : undefined
 
   return guide(t("line.announcementGuide.alt", locale), {
@@ -658,7 +658,7 @@ export function inventoryGuideFlex(
 }
 
 function lineRegisterUrl(locale: AppLocale): string {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? ""
+  const baseUrl = publicBaseUrl()
   const params = new URLSearchParams({ lang: locale })
   const query = params.toString()
   const path = `/api/auth/line/start${query ? `?${query}` : ""}`

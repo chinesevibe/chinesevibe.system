@@ -2,18 +2,6 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import {
-  Briefcase,
-  CalendarDays,
-  Clock,
-  FileText,
-  MapPin,
-  MessageSquareWarning,
-  RefreshCw,
-  UserPlus,
-} from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { HrApprovalCounts } from "@/features/notifications/nav-badges"
@@ -29,35 +17,35 @@ import { cn } from "@/lib/utils"
 
 const CATEGORY_META: Record<
   PendingQueueCategory,
-  { icon: LucideIcon; accent: string; pill: string }
+  { icon: string; accent: string; pill: string }
 > = {
   registration: {
-    icon: UserPlus,
+    icon: "👤",
     accent: "border-l-[#B71C1C]",
     pill: "bg-[#FFF5F5] text-[#B71C1C] ring-[#FECACA]",
   },
   leave: {
-    icon: CalendarDays,
+    icon: "📋",
     accent: "border-l-[#2563EB]",
     pill: "bg-[#EFF6FF] text-[#1D4ED8] ring-[#BFDBFE]",
   },
   overtime: {
-    icon: Clock,
+    icon: "⌚",
     accent: "border-l-brand-red",
     pill: "bg-[#FFF5F5] text-brand-red ring-[#FECACA]",
   },
   document: {
-    icon: FileText,
+    icon: "📄",
     accent: "border-l-[#7B1FA2]",
     pill: "bg-[#F3E8FF] text-[#6B21A8] ring-[#E9D5FF]",
   },
   complaint: {
-    icon: MessageSquareWarning,
+    icon: "📢",
     accent: "border-l-[#D97706]",
     pill: "bg-[#FFFBEB] text-[#B45309] ring-[#FDE68A]",
   },
   attendance: {
-    icon: MapPin,
+    icon: "📍",
     accent: "border-l-[#059669]",
     pill: "bg-[#ECFDF5] text-[#047857] ring-[#A7F3D0]",
   },
@@ -112,7 +100,6 @@ type QueueCardProps = {
 function QueueCard({ item, canDecideHr, onDone, onError }: QueueCardProps) {
   const { tx } = useLocale()
   const meta = CATEGORY_META[item.category]
-  const Icon = meta.icon
   const [busy, setBusy] = useState(false)
   const [rejectOpen, setRejectOpen] = useState(false)
   const [replyOpen, setReplyOpen] = useState(false)
@@ -197,7 +184,7 @@ function QueueCard({ item, canDecideHr, onDone, onError }: QueueCardProps) {
             <p className="text-[15px] font-semibold leading-snug text-foreground">
               {item.title}
             </p>
-            <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <span className="shrink-0 text-base leading-none" aria-hidden>{meta.icon}</span>
           </div>
           {item.subtitle ? (
             <p className="text-sm text-foreground/80">{item.subtitle}</p>
@@ -420,10 +407,7 @@ export function ApprovalsLiffContent({
               className="flex size-10 items-center justify-center rounded-full bg-white/15 transition hover:bg-white/25 disabled:opacity-60"
               aria-label={tx("liff.approvals.refresh")}
             >
-              <RefreshCw
-                className={cn("size-5", refreshing && "animate-spin")}
-                aria-hidden
-              />
+              <span className={cn("text-lg leading-none", refreshing && "animate-spin inline-block")} aria-hidden>↻</span>
             </button>
           </div>
         </div>
@@ -468,7 +452,7 @@ export function ApprovalsLiffContent({
 
         {visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 px-6 py-14 text-center">
-            <Briefcase className="mb-3 size-10 text-muted-foreground/60" aria-hidden />
+            <span className="mb-3 text-4xl leading-none" aria-hidden>📭</span>
             <p className="text-base font-medium text-foreground">
               {tx("liff.approvals.emptyTitle")}
             </p>

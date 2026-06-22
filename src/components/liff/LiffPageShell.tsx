@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 
+import { LiffLanguageSwitcher } from "@/components/liff/LiffLanguageSwitcher"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import { liffHref } from "@/lib/i18n/liff-url"
 
@@ -31,14 +32,19 @@ export function LiffPageShell({
     <div className="flex min-h-screen flex-col bg-[#F5F5F5]">
       {/* Red header */}
       <div className="bg-[#E80012] px-4 pb-4 pt-3 text-white">
-        {!hideBack && (
-          <Link
-            href={href}
-            className="mb-2 inline-flex items-center gap-1 text-sm text-white/80 active:text-white"
-          >
-            {tx("liff.nav.back")}
-          </Link>
-        )}
+        <div className="mb-2 flex items-start justify-between gap-2">
+          {!hideBack ? (
+            <Link
+              href={href}
+              className="inline-flex items-center gap-1 text-sm text-white/80 active:text-white"
+            >
+              {tx("liff.nav.back")}
+            </Link>
+          ) : (
+            <span />
+          )}
+          <LiffLanguageSwitcher />
+        </div>
         <h1 className="text-lg font-medium leading-tight">{title}</h1>
         {subtitle && (
           <p className="mt-0.5 text-sm text-white/75">{subtitle}</p>

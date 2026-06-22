@@ -28,7 +28,7 @@ export function LiffBottomNav() {
           <Link
             key={path}
             href={href}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
+            className={`flex flex-1 flex-col items-center gap-0.5 py-3 text-xs transition-colors ${
               isActive ? "text-[#E80012]" : "text-gray-400"
             }`}
           >

@@ -11,7 +11,7 @@ export type LineTodayAttendanceState =
   | { kind: "checked_in"; checkInAt: Date }
   | { kind: "checked_out"; checkOutAt: Date }
 
-/** Current session state for a LINE user, based on the global 06:00 ICT cycle. */
+/** Current session state for a LINE user — pure session model, 24h rolling window. */
 export async function getLineTodayAttendanceState(
   lineUserId: string,
   now = new Date()

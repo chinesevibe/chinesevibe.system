@@ -15,6 +15,9 @@ export type AttendanceRow = {
   employeeHref: string
   department: string | null
   branchName: string | null
+  shiftName: string | null
+  shiftTimeText: string | null
+  shiftCrossesMidnight: boolean
   date: string
   checkInAt: string
   checkOutAt: string | null

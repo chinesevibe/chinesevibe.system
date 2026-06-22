@@ -1,5 +1,6 @@
 import type { messagingApi } from "@line/bot-sdk"
 
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 import { t } from "@/lib/i18n/translate"
 import type { AppLocale } from "@/lib/i18n/types"
 
@@ -17,10 +18,6 @@ const DEFAULT_KEYWORDS = [
   "ช่วยด้วย",
   "ติดต่อ",
 ] as const
-
-function publicBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
-}
 
 function configuredKeywords(): string[] {
   const raw = process.env.LINE_AUTO_REPLY_KEYWORDS

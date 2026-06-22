@@ -1,5 +1,6 @@
 import type { messagingApi } from "@line/bot-sdk"
 
+import { publicBaseUrl } from "@/lib/i18n/liff-url"
 import { t } from "@/lib/i18n/translate"
 import type { AppLocale } from "@/lib/i18n/types"
 
@@ -8,10 +9,6 @@ const REGISTER_GUIDE_PATHS = [
   "/line/register-guides/guide-zh.jpg",
   "/line/register-guides/guide-my.jpg",
 ] as const
-
-function publicBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, "") ?? ""
-}
 
 function registerUrl(): string {
   const base = publicBaseUrl()

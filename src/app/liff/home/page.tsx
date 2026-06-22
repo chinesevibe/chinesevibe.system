@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { LiffBottomNav } from "@/components/liff/LiffBottomNav"
+import { LiffLanguageSwitcher } from "@/components/liff/LiffLanguageSwitcher"
 import {
   autoCloseOpenAttendanceSessions,
   isCheckoutStillInActiveCycle,
@@ -125,6 +126,10 @@ export default async function LiffHomePage({
     <div className="flex min-h-screen flex-col bg-[#F5F5F5]">
       {/* Red header */}
       <div className="bg-[#E80012] px-4 pb-5 pt-10 text-white">
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <div />
+          <LiffLanguageSwitcher />
+        </div>
         <p className="text-sm text-white/80">{greeting}</p>
         <h1 className="mt-1 text-xl font-medium">{employee.name}</h1>
         {branch && (
@@ -172,13 +177,13 @@ export default async function LiffHomePage({
 
             {/* Clock-in / out button */}
             <Link href={liff("/liff/clock")}>
-              <button className="mt-3 w-full rounded-xl bg-[#E80012] py-3 text-sm font-medium text-white active:opacity-90">
+              <span className="mt-3 block w-full rounded-2xl bg-[#E80012] py-4 text-center text-sm font-semibold text-white active:opacity-90">
                 {!checkInTime
                   ? tx("liff.home.clockInBtn")
                   : !checkOutTime
                     ? tx("liff.home.clockOutBtn")
                     : tx("liff.home.allDoneBtn")}
-              </button>
+              </span>
             </Link>
           </div>
         )}
@@ -189,8 +194,12 @@ export default async function LiffHomePage({
         </p>
         <div className="grid grid-cols-2 gap-3">
           {MENU.map(({ href, icon, label, sub, bg }) => (
-            <Link key={href} href={href}>
-              <div className="flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4 shadow-sm active:bg-gray-50">
+            <Link
+              key={href}
+              href={href}
+              className="block rounded-xl border border-gray-100 bg-white p-4 shadow-sm active:bg-gray-50"
+            >
+              <div className="flex flex-col gap-2">
                 <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-xl ${bg}`}>
                   {icon}
                 </span>
@@ -204,8 +213,11 @@ export default async function LiffHomePage({
         </div>
 
         {/* History link */}
-        <Link href={liff("/liff/approvals")}>
-          <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm active:bg-gray-50">
+        <Link
+          href={liff("/liff/approvals")}
+          className="block rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm active:bg-gray-50"
+        >
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-xl">
                 📑
