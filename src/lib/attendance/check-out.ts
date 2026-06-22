@@ -30,6 +30,7 @@ export type CheckOutResult =
       overtimeMinutes: number
       showWorkDuration: boolean
       monthSummary: AttendanceMonthSummary
+      lineNotified: boolean
     }
   | { status: "not_checked_in" }
   | { status: "already_checked_out"; checkOutAt: Date }
@@ -212,18 +213,24 @@ export async function checkOut({
     }
   }
 
-  const { notifyCheckout } = await import("@/lib/line/notify-clock")
   const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
-  await notifyCheckout({
-    lineUserId,
-    name: employee.name,
-    checkInAt,
-    checkOutAt: now,
-    workMinutes,
-    showWorkDuration,
-    monthSummary,
-    locale: employee.preferred_locale as string | null,
-  }).catch((err) => console.error("notify checkout failed:", err))
+  let lineNotified = false
+  try {
+    const { notifyCheckout } = await import("@/lib/line/notify-clock")
+    await notifyCheckout({
+      lineUserId,
+      name: employee.name,
+      checkInAt,
+      checkOutAt: now,
+      workMinutes,
+      showWorkDuration,
+      monthSummary,
+      locale: employee.preferred_locale as string | null,
+    })
+    lineNotified = true
+  } catch (err) {
+    console.error("notify checkout failed:", err)
+  }
 
   return {
     status: "success",
@@ -234,5 +241,6 @@ export async function checkOut({
     overtimeMinutes: 0,
     showWorkDuration,
     monthSummary,
+    lineNotified,
   }
 }

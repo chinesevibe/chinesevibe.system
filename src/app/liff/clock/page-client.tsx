@@ -8,7 +8,10 @@ import { LiffLanguageSwitcher } from "@/components/liff/LiffLanguageSwitcher"
 import { GeofenceMap, haversineM } from "@/components/liff/GeofenceMap"
 import { LiffLoginPrompt } from "@/features/liff/LiffLoginPrompt"
 import { useLocale } from "@/features/portal/LocaleProvider"
+import type { AttendanceMonthSummary } from "@/lib/attendance/month-summary"
 import { isAppLocale, type AppLocale } from "@/lib/i18n/types"
+import { checkinConfirmFlex } from "@/lib/line/flex/checkin"
+import { checkoutSummaryFlex } from "@/lib/line/flex/checkout"
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -36,6 +39,64 @@ type ResultState =
   | { ok: true; title: string; detail: string }
   | { ok: false; title: string; detail: string }
   | null
+
+async function sendLineFallbackMessage({
+  action,
+  locale,
+  employeeName,
+  timeText,
+  lateMinutes,
+  checkInAt,
+  checkOutAt,
+  workMinutes,
+  monthSummary,
+}: {
+  action: "checkin" | "checkout"
+  locale: AppLocale
+  employeeName: string
+  timeText: string
+  lateMinutes?: number
+  checkInAt?: string
+  checkOutAt?: string
+  workMinutes?: number
+  monthSummary: AttendanceMonthSummary
+}) {
+  const liff = (await import("@line/liff")).default
+  if (!liff.isInClient() || !liff.isApiAvailable("sendMessages")) return
+
+  const message =
+    action === "checkin"
+      ? checkinConfirmFlex({
+          name: employeeName,
+          timeText,
+          lateMinutes: lateMinutes ?? 0,
+          monthSummary,
+          locale,
+        })
+      : checkoutSummaryFlex({
+          name: employeeName,
+          inText: checkInAt
+            ? new Date(checkInAt).toLocaleTimeString("th-TH", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Bangkok",
+              })
+            : "",
+          outText: checkOutAt
+            ? new Date(checkOutAt).toLocaleTimeString("th-TH", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Bangkok",
+              })
+            : timeText,
+          workMinutes: workMinutes ?? 0,
+          showWorkDuration: true,
+          monthSummary,
+          locale,
+        })
+
+  await liff.sendMessages([message as Parameters<typeof liff.sendMessages>[0][number]])
+}
 
 const CLOCK_COPY: Record<
   AppLocale,
@@ -452,6 +513,27 @@ export default function ClockPage() {
           detail = copy.checkOutSuccessAt(timeText, h, m)
         }
 
+        if (
+          data.status === "success" &&
+          data.lineNotified !== true &&
+          typeof data.employeeName === "string" &&
+          data.monthSummary
+        ) {
+          void sendLineFallbackMessage({
+            action,
+            locale,
+            employeeName: data.employeeName,
+            timeText,
+            lateMinutes: lateMin,
+            checkInAt: typeof data.checkInAt === "string" ? data.checkInAt : undefined,
+            checkOutAt: typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
+            workMinutes: typeof data.workMinutes === "number" ? data.workMinutes : undefined,
+            monthSummary: data.monthSummary as AttendanceMonthSummary,
+          }).catch((error) => {
+            console.error("LIFF fallback send failed:", error)
+          })
+        }
+
         setResult({ ok: true, title: isCheckIn ? copy.checkInSuccess : copy.checkOutSuccess, detail })
         const newInfo = await fetch("/api/clock/info").then(r => r.json()).catch(() => null) as ClockInfo | null
         if (newInfo) setInfo(newInfo)
@@ -480,7 +562,7 @@ export default function ClockPage() {
     } finally {
       setPhase("idle")
     }
-  }, [copy, info])
+  }, [copy, info, locale])
 
   const handlePress = useCallback((action: "checkin" | "checkout") => {
     if (!navigator.geolocation) {

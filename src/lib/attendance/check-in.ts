@@ -28,6 +28,7 @@ export type CheckInResult =
       checkInAt: Date
       lateMinutes: number
       monthSummary: AttendanceMonthSummary
+      lineNotified: boolean
     }
   | { status: "already_checked_in"; checkInAt: Date }
   | { status: "requires_retro_checkout"; checkInAt: Date; cutoffAt: Date }
@@ -192,16 +193,22 @@ export async function checkIn({
     }
   }
 
-  const { notifyCheckin } = await import("@/lib/line/notify-clock")
   const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
-  await notifyCheckin({
-    lineUserId,
-    name: employee.name,
-    checkInAt: now,
-    lateMinutes: late,
-    monthSummary,
-    locale: employee.preferred_locale as string | null,
-  }).catch((err) => console.error("notify checkin failed:", err))
+  let lineNotified = false
+  try {
+    const { notifyCheckin } = await import("@/lib/line/notify-clock")
+    await notifyCheckin({
+      lineUserId,
+      name: employee.name,
+      checkInAt: now,
+      lateMinutes: late,
+      monthSummary,
+      locale: employee.preferred_locale as string | null,
+    })
+    lineNotified = true
+  } catch (err) {
+    console.error("notify checkin failed:", err)
+  }
 
   return {
     status: "success",
@@ -209,5 +216,6 @@ export async function checkIn({
     checkInAt: now,
     lateMinutes: late,
     monthSummary,
+    lineNotified,
   }
 }

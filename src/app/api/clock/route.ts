@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
           checkInAt: result.checkInAt.toISOString(),
           lateMinutes: result.lateMinutes,
           monthSummary: result.monthSummary,
+          lineNotified: result.lineNotified,
           timeText: result.checkInAt.toLocaleTimeString("th-TH", {
             hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
           }),
@@ -117,6 +118,7 @@ export async function POST(request: NextRequest) {
         checkOutAt: result.checkOutAt.toISOString(),
         workMinutes: result.workMinutes,
         monthSummary: result.monthSummary,
+        lineNotified: result.lineNotified,
         timeText: result.checkOutAt.toLocaleTimeString("th-TH", {
           hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
         }),
