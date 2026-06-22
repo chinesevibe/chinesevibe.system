@@ -22,6 +22,9 @@ export function InventoryReportTable({
         </div>
         <InventoryCsvButton filename={filename} headers={headers} rows={rows} />
       </div>
+      <div className="rounded-xl border border-border/70 bg-muted/15 px-3 py-2 text-sm text-muted-foreground">
+        ใช้ตัวกรองด้านบนเพื่อลด scope ก่อน export CSV จะอ่านง่ายกว่าและลดการเปิดรายงานผิดช่วง
+      </div>
       <div className="overflow-auto rounded-xl border border-border">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b bg-muted/40">

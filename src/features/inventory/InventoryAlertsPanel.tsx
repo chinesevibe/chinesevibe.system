@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import {
@@ -52,8 +53,9 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
                   <StatusPill label={row.severity} variant={severityVariant(row.severity)} />
                 </TableCell>
                 <TableCell>
-                  <Link href={row.href} className="text-brand-red hover:underline">
-                    เปิด
+                  <Link href={row.href} className="inline-flex items-center gap-1 text-brand-red hover:underline">
+                    เปิดดู
+                    <ArrowUpRight className="size-3.5" />
                   </Link>
                 </TableCell>
               </TableRow>
