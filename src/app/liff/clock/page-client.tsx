@@ -10,6 +10,8 @@ import { LiffLoginPrompt } from "@/features/liff/LiffLoginPrompt"
 import { useLocale } from "@/features/portal/LocaleProvider"
 import type { AttendanceMonthSummary } from "@/lib/attendance/month-summary"
 import { isAppLocale, type AppLocale } from "@/lib/i18n/types"
+import { checkinConfirmFlex } from "@/lib/line/flex/checkin"
+import { checkoutSummaryFlex } from "@/lib/line/flex/checkout"
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -49,6 +51,81 @@ type ResultState =
     }
   | { ok: false; title: string; detail: string }
   | null
+
+async function sendLineReceiptMessage({
+  action,
+  locale,
+  employeeName,
+  branchName,
+  timeText,
+  lateMinutes,
+  checkInAt,
+  checkOutAt,
+  workMinutes,
+  monthSummary,
+  latitude,
+  longitude,
+}: {
+  action: "checkin" | "checkout"
+  locale: AppLocale
+  employeeName: string
+  branchName?: string | null
+  timeText: string
+  lateMinutes?: number
+  checkInAt?: string
+  checkOutAt?: string
+  workMinutes?: number
+  monthSummary: AttendanceMonthSummary
+  latitude: number
+  longitude: number
+}) {
+  const liff = (await import("@line/liff")).default
+  if (!liff.isInClient() || !liff.isApiAvailable("sendMessages")) return
+
+  const locationMessage = {
+    type: "location" as const,
+    title: branchName?.trim() || employeeName,
+    address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
+    latitude,
+    longitude,
+  }
+
+  const summaryMessage =
+    action === "checkin"
+      ? checkinConfirmFlex({
+          name: employeeName,
+          timeText,
+          lateMinutes: lateMinutes ?? 0,
+          monthSummary,
+          locale,
+        })
+      : checkoutSummaryFlex({
+          name: employeeName,
+          inText: checkInAt
+            ? new Date(checkInAt).toLocaleTimeString("th-TH", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Bangkok",
+              })
+            : "",
+          outText: checkOutAt
+            ? new Date(checkOutAt).toLocaleTimeString("th-TH", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Bangkok",
+              })
+            : timeText,
+          workMinutes: workMinutes ?? 0,
+          showWorkDuration: true,
+          monthSummary,
+          locale,
+        })
+
+  await liff.sendMessages([
+    locationMessage,
+    summaryMessage as Parameters<typeof liff.sendMessages>[0][number],
+  ])
+}
 
 const CLOCK_COPY: Record<
   AppLocale,
@@ -473,6 +550,30 @@ export default function ClockPage() {
           detail = copy.checkOutSuccessAt(timeText, h, m)
         }
 
+        if (
+          data.status === "success" &&
+          data.lineNotified !== true &&
+          typeof data.employeeName === "string" &&
+          data.monthSummary
+        ) {
+          void sendLineReceiptMessage({
+            action,
+            locale,
+            employeeName: data.employeeName,
+            branchName: info.branchName,
+            timeText,
+            lateMinutes: lateMin,
+            checkInAt: typeof data.checkInAt === "string" ? data.checkInAt : undefined,
+            checkOutAt: typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
+            workMinutes: typeof data.workMinutes === "number" ? data.workMinutes : undefined,
+            monthSummary: data.monthSummary as AttendanceMonthSummary,
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          }).catch((error) => {
+            console.error("LIFF receipt send failed:", error)
+          })
+        }
+
         setResult({
           ok: true,
           action,
@@ -519,7 +620,7 @@ export default function ClockPage() {
     } finally {
       setPhase("idle")
     }
-  }, [copy, info])
+  }, [copy, info, locale])
 
   const handlePress = useCallback((action: "checkin" | "checkout") => {
     if (!navigator.geolocation) {
