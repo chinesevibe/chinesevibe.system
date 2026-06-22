@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ClipboardList, PackagePlus, ScanLine, ShieldCheck } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { DataTableShell } from "@/components/brand/DataTableShell"
@@ -29,6 +30,33 @@ function statusVariant(status: InvInboundStatus) {
   return "neutral" as const
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof PackagePlus
+  label: string
+  value: number
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{value.toLocaleString("th-TH")}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export default async function InventoryInboundPage() {
   const employee = await requireInventoryPortal()
   const readOnly = isCeo(employee.role) && !isDev(employee.role)
@@ -42,6 +70,11 @@ export default async function InventoryInboundPage() {
   } catch (error) {
     loadError = error instanceof Error ? error.message : "โหลดใบรับเข้าไม่สำเร็จ"
   }
+
+  const draftCount = orders.filter((order) => order.status === "draft").length
+  const pendingCount = orders.filter((order) => order.status === "pending").length
+  const approvedCount = orders.filter((order) => order.status === "approved").length
+  const totalItems = orders.reduce((sum, order) => sum + order.item_count, 0)
 
   return (
     <AdminPageShell
@@ -68,7 +101,46 @@ export default async function InventoryInboundPage() {
         </p>
       ) : null}
 
-      <DataTableShell>
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={PackagePlus}
+          label="ใบรับทั้งหมด"
+          value={orders.length}
+          hint="รายการรับเข้าทั้งหมดใน workspace นี้"
+        />
+        <SummaryCard
+          icon={ClipboardList}
+          label="แบบร่าง"
+          value={draftCount}
+          hint="ใบรับที่ยังต้องเติมรายการหรือเตรียมเปิดรับสแกน"
+        />
+        <SummaryCard
+          icon={ScanLine}
+          label="เปิดรับสแกน"
+          value={pendingCount}
+          hint="ใบรับที่คลังสามารถเปิด LIFF เพื่อสแกนของจริงได้แล้ว"
+        />
+        <SummaryCard
+          icon={ShieldCheck}
+          label="อนุมัติแล้ว"
+          value={approvedCount}
+          hint={`รวม ${totalItems.toLocaleString("th-TH")} รายการสินค้าในทุกใบรับ`}
+        />
+      </div>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">Receiving queue</h2>
+            <p className="text-xs text-muted-foreground">
+              เรียงจากใบรับล่าสุด ใช้ดูว่าใบไหนยังรอเตรียมรายการ รอสแกน หรือรออนุมัติ
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            แบบร่าง {draftCount.toLocaleString("th-TH")} · เปิดรับสแกน {pendingCount.toLocaleString("th-TH")}
+          </div>
+        </div>
+        <DataTableShell>
         <Table>
           <TableHeader>
             <TableRow>
@@ -113,7 +185,8 @@ export default async function InventoryInboundPage() {
             )}
           </TableBody>
         </Table>
-      </DataTableShell>
+        </DataTableShell>
+      </section>
     </AdminPageShell>
   )
 }

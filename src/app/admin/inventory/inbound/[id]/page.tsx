@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { ClipboardList, PackagePlus, ScanLine, ShieldCheck } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { DataTableShell } from "@/components/brand/DataTableShell"
@@ -48,6 +49,33 @@ function unitLabel(unit?: { name: string; abbreviation: string | null } | null) 
   return unit.abbreviation || unit.name
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof PackagePlus
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -63,6 +91,7 @@ export default async function InboundOrderDetailPage({ params }: PageProps) {
 
   const { order, supplier_name, warehouse_name, items } = detail
   const editable = canManage && (order.status === "draft" || order.status === "pending")
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0)
 
   const [allSkus, units] = await Promise.all([getInvSkus(), getInvUnits()])
   const skus = editable ? allSkus.filter((s) => s.is_active) : []
@@ -127,29 +156,87 @@ export default async function InboundOrderDetailPage({ params }: PageProps) {
         </Link>
       }
     >
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <StatusPill
-          label={INBOUND_STATUS_LABELS[order.status]}
-          variant={statusVariant(order.status)}
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="สถานะใบรับ"
+          value={INBOUND_STATUS_LABELS[order.status]}
+          hint="เปลี่ยนจากแบบร่าง → เปิดรับสแกน → อนุมัติแล้ว"
         />
-        <span className="text-sm text-muted-foreground">
-          สร้าง {formatThaiDate(order.created_at)}
-          {order.received_date
-            ? ` · รับเข้า ${formatThaiDate(order.received_date)}`
-            : ""}
-        </span>
-        <InboundOrderActions
-          orderId={order.id}
-          status={order.status}
-          canManage={canManage && !readOnly}
+        <SummaryCard
+          icon={PackagePlus}
+          label="รายการสินค้า"
+          value={`${items.length.toLocaleString("th-TH")} รายการ`}
+          hint={`ปริมาณรวม ${formatQuantity(totalQuantity)} หน่วยฐาน`}
+        />
+        <SummaryCard
+          icon={ScanLine}
+          label="Supplier / Warehouse"
+          value={`${supplier_name} → ${warehouse_name}`}
+          hint="ใช้ตรวจปลายทางของใบรับก่อนเปิด LIFF หรืออนุมัติ"
+        />
+        <SummaryCard
+          icon={ShieldCheck}
+          label="วันที่สำคัญ"
+          value={
+            order.received_date
+              ? `รับเข้า ${formatThaiDate(order.received_date)}`
+              : `สร้าง ${formatThaiDate(order.created_at)}`
+          }
+          hint="ใช้ดูจังหวะของเอกสารและวันรับเข้าจริง"
         />
       </div>
 
-      {order.notes ? (
-        <p className="mb-4 text-sm text-muted-foreground">{order.notes}</p>
-      ) : null}
+      <div className="mb-4 rounded-xl border border-border/70 bg-muted/20 p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusPill
+            label={INBOUND_STATUS_LABELS[order.status]}
+            variant={statusVariant(order.status)}
+          />
+          <span className="text-sm text-muted-foreground">
+            สร้าง {formatThaiDate(order.created_at)}
+            {order.received_date
+              ? ` · รับเข้า ${formatThaiDate(order.received_date)}`
+              : ""}
+          </span>
+          <InboundOrderActions
+            orderId={order.id}
+            status={order.status}
+            canManage={canManage && !readOnly}
+          />
+        </div>
+        {order.notes ? (
+          <p className="mt-3 text-sm text-muted-foreground">{order.notes}</p>
+        ) : null}
+        {order.status === "pending" ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            เปิดรับสแกน — คลังสแกน barcode ได้ที่{" "}
+            <a
+              href={inboundScanHref(order.id)}
+              className="font-medium text-brand-red underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LIFF รับเข้า
+            </a>
+            {" "}หรือ Portal → คลังสินค้า · Inventory อนุมัติหลังตรวจรายการครบ
+          </p>
+        ) : null}
+      </div>
 
-      <DataTableShell>
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">รายการในใบรับ</h2>
+            <p className="text-xs text-muted-foreground">
+              ตรวจรายการ หน่วยฐาน lot และวันหมดอายุก่อนสั่งอนุมัติ
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {items.length.toLocaleString("th-TH")} รายการ
+          </div>
+        </div>
+        <DataTableShell>
         <Table>
           <TableHeader>
             <TableRow>
@@ -199,31 +286,23 @@ export default async function InboundOrderDetailPage({ params }: PageProps) {
             )}
           </TableBody>
         </Table>
-      </DataTableShell>
+        </DataTableShell>
+      </section>
 
       {editable ? (
-        <div className="mt-4">
+        <section className="mt-4 space-y-3">
+          <div className="border-b border-border/60 pb-2">
+            <h2 className="text-base font-semibold">เพิ่มรายการรับเข้า</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้เพิ่มรายการด้วยมือเมื่อยังไม่ได้สแกน หรือใช้เติมข้อมูลก่อนเปิดรับสแกน
+            </p>
+          </div>
           <InboundAddItemForm
             orderId={order.id}
             skus={skus}
             unitConfigs={unitConfigs}
           />
-        </div>
-      ) : null}
-
-      {order.status === "pending" ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          เปิดรับสแกน — คลังสแกน barcode ได้ที่{" "}
-          <a
-            href={inboundScanHref(order.id)}
-            className="font-medium text-brand-red underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LIFF รับเข้า
-          </a>
-          {" "}หรือ Portal → คลังสินค้า · Inventory อนุมัติหลังตรวจรายการครบ
-        </p>
+        </section>
       ) : null}
     </AdminPageShell>
   )
