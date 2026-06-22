@@ -1,5 +1,8 @@
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
-import { getInventoryAlertCount } from "@/features/inventory/expansion-data"
+import {
+  getInventoryAlertCount,
+  getInventoryAlerts,
+} from "@/features/inventory/expansion-data"
 import { InventoryHub } from "@/features/inventory/InventoryHub"
 import { isInventoryPortalUser } from "@/lib/auth/roles"
 import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
@@ -7,14 +10,21 @@ import { requireInventoryPortal } from "@/lib/auth/require-inventory-portal"
 export default async function AdminInventoryPage() {
   const employee = await requireInventoryPortal()
   const staffMode = isInventoryPortalUser(employee)
-  const alertCount = await getInventoryAlertCount().catch(() => 0)
+  const [alertCount, alerts] = await Promise.all([
+    getInventoryAlertCount().catch(() => 0),
+    getInventoryAlerts({}).then((rows) => rows.slice(0, 5)).catch(() => []),
+  ])
 
   return (
     <AdminPageShell
-      title="คลังสินค้า"
-      description="ภาพรวมงานคลังและทางลัดไปหน้าที่ใช้บ่อย"
+      title="Inventory Workspace"
+      description="พื้นที่ทำงานหลักของคลังสินค้า ดูงานด่วนวันนี้ เปิดงานประจำ และเข้าถึงข้อมูลหลักจากจุดเดียว"
     >
-      <InventoryHub staffMode={staffMode} alertCount={alertCount} />
+      <InventoryHub
+        staffMode={staffMode}
+        alertCount={alertCount}
+        alerts={alerts}
+      />
     </AdminPageShell>
   )
 }

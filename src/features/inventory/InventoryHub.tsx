@@ -2,21 +2,28 @@ import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
   ArrowRight,
+  ArrowUpRight,
   BarChart3,
   Bell,
   Building2,
   ClipboardList,
+  Clock3,
   ExternalLink,
+  FileClock,
   LayoutDashboard,
+  ListChecks,
   Package,
   PackagePlus,
   PackageX,
+  ShieldAlert,
   ScanSearch,
   Tags,
   Truck,
   Warehouse,
 } from "lucide-react"
 
+import { StatusPill } from "@/components/brand/StatusPill"
+import type { InventoryAlertRow } from "@/features/inventory/expansion-data"
 import { cn } from "@/lib/utils"
 
 type HubItem = {
@@ -145,6 +152,26 @@ const MASTER_DATA_ITEMS: HubItem[] = [
     tone: "violet",
   },
 ]
+
+const QUICK_ACTION_ITEMS: HubItem[] = [
+  OPERATIONAL_ITEMS[0],
+  OPERATIONAL_ITEMS[2],
+  OPERATIONAL_ITEMS[3],
+  OPERATIONAL_ITEMS[4],
+  OPERATIONAL_ITEMS[6],
+]
+
+function alertVariant(severity: InventoryAlertRow["severity"]) {
+  if (severity === "high") return "rejected" as const
+  if (severity === "medium") return "pending" as const
+  return "neutral" as const
+}
+
+function alertTypeLabel(type: InventoryAlertRow["type"]) {
+  if (type === "expiry") return "ใกล้หมดอายุ"
+  if (type === "low_stock") return "สต็อกต่ำ"
+  return "ผิดปกติ"
+}
 
 function HubTile({ href, icon: Icon, title, description, tone }: HubItem) {
   const styles = TONE_STYLES[tone]
@@ -276,12 +303,111 @@ function QuickLink({
   )
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: LucideIcon
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+            {value}
+          </p>
+        </div>
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
+function AlertInbox({
+  rows,
+  alertCount,
+}: {
+  rows: InventoryAlertRow[]
+  alertCount: number
+}) {
+  return (
+    <section className="space-y-3" data-inventory-guide="hub-alert-inbox">
+      <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Alert / Action inbox</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            เรียงงานที่ควรตรวจต่อก่อน แล้วค่อยเปิดหน้าเฉพาะงาน
+          </p>
+        </div>
+        <QuickLink
+          href="/admin/inventory/alerts"
+          icon={Bell}
+          label="เปิด alerts ทั้งหมด"
+          badge={alertCount}
+        />
+      </div>
+
+      {rows.length > 0 ? (
+        <div className="grid gap-3 xl:grid-cols-2">
+          {rows.map((row) => (
+            <Link
+              key={row.id}
+              href={row.href}
+              className="group rounded-xl border border-border/70 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusPill
+                      label={alertTypeLabel(row.type)}
+                      variant={alertVariant(row.severity)}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      {row.branchName}
+                      {row.warehouseName ? ` • ${row.warehouseName}` : ""}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-foreground">
+                    {row.title}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {row.detail}
+                  </p>
+                </div>
+                <ArrowUpRight
+                  className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-red"
+                  aria-hidden
+                />
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-sm text-muted-foreground">
+          ยังไม่มี alert ค้างในตอนนี้ เปิดหน้าสต็อกหรือรับเข้าเพื่อเริ่มงานประจำวันได้เลย
+        </div>
+      )}
+    </section>
+  )
+}
+
 export function InventoryHub({
   staffMode = false,
   alertCount = 0,
+  alerts = [],
 }: {
   staffMode?: boolean
   alertCount?: number
+  alerts?: InventoryAlertRow[]
 }) {
   return (
     <div className="space-y-8">
@@ -292,7 +418,7 @@ export function InventoryHub({
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">ศูนย์ควบคุมคลังสินค้า</p>
           <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
-            เลือกงานประจำวันหรือตั้งค่าข้อมูลหลัก — เมนูด้านบนใช้สลับหน้างานได้ตลอด
+            เริ่มจากงานด่วนของวันนี้ แล้วค่อยเข้า workspace รายประเภทเมื่อพร้อมตรวจรับ เบิก โอน หรือตรวจนับ
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -316,9 +442,60 @@ export function InventoryHub({
         </div>
       </div>
 
+      <section className="space-y-3" data-inventory-guide="hub-summary">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">ภาพรวมงานวันนี้</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              โฟกัสงานที่ต้องลงมือก่อน แล้วค่อยเปิดหน้าวิเคราะห์เชิงลึก
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <SummaryCard
+            icon={ShieldAlert}
+            label="Alerts ค้างตรวจ"
+            value={alertCount.toLocaleString("th-TH")}
+            hint="รวม low stock, expiry และ anomaly ที่ควรเปิดดูต่อ"
+          />
+          <SummaryCard
+            icon={ListChecks}
+            label="Workflow หลัก"
+            value={String(OPERATIONAL_ITEMS.length)}
+            hint="รับเข้า เบิก โอน ตรวจนับ ใช้จริง และเสียหาย อยู่ใน workspace เดียวกัน"
+          />
+          <SummaryCard
+            icon={Clock3}
+            label="Quick actions"
+            value={String(QUICK_ACTION_ITEMS.length)}
+            hint="เปิดงานประจำที่ใช้บ่อยโดยไม่ต้องไล่จากเมนูย่อย"
+          />
+          <SummaryCard
+            icon={FileClock}
+            label="โหมดการดูแล"
+            value={staffMode ? "Staff" : "Admin"}
+            hint={
+              staffMode
+                ? "โฟกัสงานปฏิบัติการประจำวันเป็นหลัก"
+                : "เข้าถึงทั้ง workspace และข้อมูลหลักของคลัง"
+            }
+          />
+        </div>
+      </section>
+
       <HubSection
-        label="งานคลัง"
-        hint="รับเข้า · สต็อก · เบิก · โอน · ตรวจนับ · ใช้จริง · เสียหาย"
+        label="Quick actions"
+        hint="ทางลัดสำหรับงานที่มักต้องเปิดก่อนในแต่ละวัน"
+        items={QUICK_ACTION_ITEMS}
+        columnsClass="grid-cols-1 sm:grid-cols-2 xl:grid-cols-5"
+        sectionGuideId="hub-quick-actions"
+      />
+
+      <AlertInbox rows={alerts} alertCount={alertCount} />
+
+      <HubSection
+        label="All workspaces"
+        hint="workspace หลักของคลังสำหรับเปิดดูงานตามหมวด เมื่อพ้นขั้นคัดกรองเบื้องต้นแล้ว"
         items={OPERATIONAL_ITEMS}
         columnsClass="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         sectionGuideId="hub-operations"
