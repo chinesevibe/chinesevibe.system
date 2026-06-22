@@ -26,12 +26,25 @@ export function StockFilters({
     : warehouses
 
   const hasFilters = Boolean(search || branchId || warehouseId || belowMinOnly)
+  const activeFilterCount = [search, branchId, warehouseId, belowMinOnly ? "1" : ""].filter(Boolean).length
 
   return (
     <form
       className="mb-4 flex flex-col gap-3 rounded-xl border border-border/80 bg-muted/20 p-3"
       action="/admin/inventory/stock"
     >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold text-foreground">ตัวกรองสต็อก</p>
+          <p className="text-xs text-muted-foreground">
+            ค้นหา SKU และจำกัดขอบเขตตามสาขา/คลัง ก่อนดู on-hand และ FEFO ด้านล่าง
+          </p>
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {hasFilters ? `ใช้งานอยู่ ${activeFilterCount} ตัวกรอง` : "ยังไม่ได้กรอง"}
+        </div>
+      </div>
+
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <label className="block text-sm">
           <span className="text-muted-foreground">ค้นหา SKU / คลัง</span>
@@ -83,7 +96,7 @@ export function StockFilters({
           <span>เฉพาะต่ำกว่า Min</span>
         </label>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button type="submit" variant="secondary" size="sm">
           กรอง
         </Button>
@@ -95,6 +108,12 @@ export function StockFilters({
             ล้างตัวกรอง
           </Link>
         ) : null}
+        <Link
+          href={belowMinOnly ? "/admin/inventory/stock" : "/admin/inventory/stock?below_min=1"}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+        >
+          {belowMinOnly ? "กลับไปดูทั้งหมด" : "ดูเฉพาะต่ำกว่า Min"}
+        </Link>
       </div>
     </form>
   )

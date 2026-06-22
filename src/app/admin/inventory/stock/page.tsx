@@ -1,6 +1,7 @@
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { DataTableShell } from "@/components/brand/DataTableShell"
 import { StatusPill } from "@/components/brand/StatusPill"
+import { AlertTriangle, Boxes, PackageSearch, ScanSearch } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -25,6 +26,33 @@ type PageProps = {
     warehouse_id?: string
     below_min?: string
   }>
+}
+
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof AlertTriangle
+  label: string
+  value: number
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{value.toLocaleString("th-TH")}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
 }
 
 export default async function InventoryStockPage({ searchParams }: PageProps) {
@@ -63,16 +91,59 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
     loadError = error instanceof Error ? error.message : "โหลดข้อมูลสต็อกไม่สำเร็จ"
   }
 
+  const zeroStockCount = rows.filter((row) => row.quantity === 0).length
+  const belowMinCount = rows.filter((row) => row.belowMin).length
+  const activeLotCount = lotRows.length
+  const expiringSoonCount = lotRows.filter((row) => {
+    if (!row.expiryDate) return false
+    const diffMs =
+      Date.parse(`${row.expiryDate}T00:00:00Z`) - Date.parse(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`)
+    return diffMs >= 0 && diffMs <= 7 * 86_400_000
+  }).length
+
+  function lotStatusPill(status: string) {
+    if (status === "expired") return <StatusPill label="หมดอายุ" variant="rejected" />
+    if (status === "reserved") return <StatusPill label="จองแล้ว" variant="pending" />
+    return <StatusPill label={status} variant="approved" />
+  }
+
   return (
     <AdminPageShell
       title="สต็อกคงเหลือ"
       description={
         readOnly
           ? "ดูยอดสต็อกตาม SKU และคลัง (read-only)"
-          : "ยอดคงเหลือจาก inv_stock_balances — กรองต่ำกว่า Min ได้"
+          : "แยกดู on-hand และ lot/FEFO ให้ชัดขึ้น เพื่อตัดสินใจเติมสต็อกและไล่ lot ได้เร็วขึ้น"
       }
     >
       {loadError ? <InventoryLoadError message={loadError} /> : null}
+
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={Boxes}
+          label="SKU ในขอบเขต"
+          value={rows.length}
+          hint="จำนวนแถวคงเหลือที่ตรงกับตัวกรองปัจจุบัน"
+        />
+        <SummaryCard
+          icon={AlertTriangle}
+          label="ต่ำกว่า Min"
+          value={belowMinCount}
+          hint="SKU ที่ควรเติมสต็อกหรือตรวจ branch/warehouse ต่อ"
+        />
+        <SummaryCard
+          icon={PackageSearch}
+          label="คงเหลือเป็น lot"
+          value={activeLotCount}
+          hint="lot ที่ยังมีของเหลือให้ไล่ต่อใน FEFO section"
+        />
+        <SummaryCard
+          icon={ScanSearch}
+          label="ใกล้หมดอายุ 7 วัน"
+          value={expiringSoonCount}
+          hint="lot ที่ควรเร่งใช้ก่อนหรือดันออกก่อนหมดอายุ"
+        />
+      </div>
 
       <StockFilters
         branches={branches}
@@ -83,60 +154,83 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
         belowMinOnly={belowMinOnly}
       />
 
-      <DataTableShell>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>SKU</TableHead>
-              <TableHead>ชื่อ</TableHead>
-              <TableHead>สาขา</TableHead>
-              <TableHead>คลัง</TableHead>
-              <TableHead className="text-right">คงเหลือ</TableHead>
-              <TableHead className="text-right">Min</TableHead>
-              <TableHead>สถานะ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length > 0 ? (
-              rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium">{row.skuCode}</TableCell>
-                  <TableCell>{row.skuName}</TableCell>
-                  <TableCell>{row.branchName}</TableCell>
-                  <TableCell>
-                    {row.warehouseName}
-                    <span className="ml-1 text-xs text-muted-foreground">
-                      ({row.warehouseCode})
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">{row.quantity}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.minStock}</TableCell>
-                  <TableCell>
-                    {row.quantity === 0 ? (
-                      <StatusPill label="หมด" variant="rejected" />
-                    ) : row.belowMin ? (
-                      <StatusPill label="ต่ำกว่า Min" variant="pending" />
-                    ) : (
-                      <StatusPill label="ปกติ" variant="approved" />
-                    )}
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">On-hand by SKU</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ section นี้ดูยอดคงเหลือรวมตาม SKU ก่อน แล้วค่อยไล่ lot และ expiry ด้านล่าง
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            หมด {zeroStockCount.toLocaleString("th-TH")} · ต่ำกว่า Min {belowMinCount.toLocaleString("th-TH")}
+          </div>
+        </div>
+        <DataTableShell>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>SKU</TableHead>
+                <TableHead>ชื่อ</TableHead>
+                <TableHead>สาขา</TableHead>
+                <TableHead>คลัง</TableHead>
+                <TableHead className="text-right">คงเหลือ</TableHead>
+                <TableHead className="text-right">Min</TableHead>
+                <TableHead>สถานะ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.length > 0 ? (
+                rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="font-medium">{row.skuCode}</TableCell>
+                    <TableCell>{row.skuName}</TableCell>
+                    <TableCell>{row.branchName}</TableCell>
+                    <TableCell>
+                      {row.warehouseName}
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        ({row.warehouseCode})
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">{row.quantity}</TableCell>
+                    <TableCell className="text-right tabular-nums">{row.minStock}</TableCell>
+                    <TableCell>
+                      {row.quantity === 0 ? (
+                        <StatusPill label="หมด" variant="rejected" />
+                      ) : row.belowMin ? (
+                        <StatusPill label="ต่ำกว่า Min" variant="pending" />
+                      ) : (
+                        <StatusPill label="ปกติ" variant="approved" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                    {belowMinOnly
+                      ? "ไม่พบ SKU ที่ต่ำกว่า Min"
+                      : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                  {belowMinOnly
-                    ? "ไม่พบ SKU ที่ต่ำกว่า Min"
-                    : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </DataTableShell>
+              )}
+            </TableBody>
+          </Table>
+        </DataTableShell>
+      </section>
 
-      <div className="mt-8 space-y-3">
-        <h2 className="text-base font-semibold">สต็อกแยกตาม Lot (FEFO)</h2>
+      <section className="mt-8 space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">Lot / FEFO workspace</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ section นี้ตรวจ lot ที่ยังเหลืออยู่และไล่ expiry ก่อนตัดสินใจโอน ใช้ หรือระบายของ
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            lot คงเหลือ {activeLotCount.toLocaleString("th-TH")} · ใกล้หมดอายุ 7 วัน {expiringSoonCount.toLocaleString("th-TH")}
+          </div>
+        </div>
         <DataTableShell>
           <Table>
             <TableHeader>
@@ -157,10 +251,15 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
                     <TableCell className="font-medium">{row.skuCode}</TableCell>
                     <TableCell>{row.lotNumber}</TableCell>
                     <TableCell>{row.branchName}</TableCell>
-                    <TableCell>{row.warehouseName}</TableCell>
+                    <TableCell>
+                      {row.warehouseName}
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        ({row.warehouseCode})
+                      </span>
+                    </TableCell>
                     <TableCell>{row.expiryDate ?? "—"}</TableCell>
                     <TableCell className="text-right tabular-nums">{row.remainingQty}</TableCell>
-                    <TableCell>{row.status}</TableCell>
+                    <TableCell>{lotStatusPill(row.status)}</TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -173,7 +272,7 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
             </TableBody>
           </Table>
         </DataTableShell>
-      </div>
+      </section>
     </AdminPageShell>
   )
 }
