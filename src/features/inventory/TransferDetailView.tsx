@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useMemo, useState, useTransition } from "react"
+import { ClipboardList, PackageCheck, Send, Truck } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import { Button } from "@/components/ui/button"
@@ -44,6 +45,33 @@ const STATUS_LABELS: Record<InvTransferDetail["transfer"]["status"], string> = {
   cancelled: "ยกเลิก",
 }
 
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof Truck
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
 export function TransferDetailView({
   detail,
   canManage,
@@ -82,6 +110,33 @@ export function TransferDetailView({
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="สถานะใบโอน"
+          value={STATUS_LABELS[detail.transfer.status]}
+          hint="ไหลจาก draft → in transit → received"
+        />
+        <SummaryCard
+          icon={Truck}
+          label="เส้นทางโอน"
+          value={`${detail.transfer.from_branch_name} → ${detail.transfer.to_branch_name}`}
+          hint="ใช้ยืนยันต้นทางและปลายทางของการเคลื่อนย้าย"
+        />
+        <SummaryCard
+          icon={Send}
+          label="รวมส่ง"
+          value={formatQuantity(totalSent)}
+          hint={`จาก ${detail.transfer.from_warehouse_name} ไป ${detail.transfer.to_warehouse_name}`}
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="รวมรับ"
+          value={formatQuantity(totalReceived)}
+          hint="ช่วยดูเร็วว่าปลายทางรับครบแล้วหรือยัง"
+        />
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
         <StatusPill label={STATUS_LABELS[detail.transfer.status]} variant={statusVariant(detail.transfer.status)} />
         <span className="text-sm text-muted-foreground">
@@ -105,7 +160,19 @@ export function TransferDetailView({
 
       {error ? <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p> : null}
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">รายการโอนและส่วนต่าง</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ตรวจจำนวนที่ส่ง จำนวนที่รับ lot และ variance ก่อนกดยืนยันขั้นถัดไป
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {detail.items.length.toLocaleString("th-TH")} รายการ
+          </div>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -133,7 +200,8 @@ export function TransferDetailView({
             })}
           </TableBody>
         </Table>
-      </div>
+        </div>
+      </section>
 
       {detail.transfer.status === "draft" && canManage ? (
         <section className="rounded-xl border border-border p-4">

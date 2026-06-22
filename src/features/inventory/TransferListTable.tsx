@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import {
@@ -59,7 +60,15 @@ export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
                   <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
                 </TableCell>
                 <TableCell>{formatThaiDate(row.created_at)}</TableCell>
-                <TableCell className="text-right tabular-nums">{row.item_count}</TableCell>
+                <TableCell className="text-right">
+                  <Link
+                    href={`/admin/inventory/transfer/${row.id}`}
+                    className="inline-flex items-center gap-1 font-medium text-brand-red hover:underline"
+                  >
+                    {row.item_count} รายการ
+                    <ArrowUpRight className="size-3.5" aria-hidden />
+                  </Link>
+                </TableCell>
               </TableRow>
             ))
           ) : (
