@@ -48,6 +48,8 @@ type ResultState =
       checkOutAt?: string
       workMinutes?: number
       monthSummary?: AttendanceMonthSummary
+      receiptSent?: boolean
+      receiptNote?: string
     }
   | { ok: false; title: string; detail: string }
   | null
@@ -80,7 +82,12 @@ async function sendLineReceiptMessage({
   longitude: number
 }) {
   const liff = (await import("@line/liff")).default
-  if (!liff.isInClient() || !liff.isApiAvailable("sendMessages")) return
+  if (!liff.isInClient()) {
+    throw new Error("LINE receipt works only when opened inside the LINE app chat")
+  }
+  if (!liff.isApiAvailable("sendMessages")) {
+    throw new Error("LINE chat_message.write is not available for this LIFF session")
+  }
 
   const locationMessage = {
     type: "location" as const,
@@ -550,27 +557,38 @@ export default function ClockPage() {
           detail = copy.checkOutSuccessAt(timeText, h, m)
         }
 
+        let receiptSent = false
+        let receiptNote: string | undefined
+
         if (
           data.status === "success" &&
           typeof data.employeeName === "string" &&
           data.monthSummary
         ) {
-          void sendLineReceiptMessage({
-            action,
-            locale,
-            employeeName: data.employeeName,
-            branchName: info.branchName,
-            timeText,
-            lateMinutes: lateMin,
-            checkInAt: typeof data.checkInAt === "string" ? data.checkInAt : undefined,
-            checkOutAt: typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
-            workMinutes: typeof data.workMinutes === "number" ? data.workMinutes : undefined,
-            monthSummary: data.monthSummary as AttendanceMonthSummary,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          }).catch((error) => {
+          try {
+            await sendLineReceiptMessage({
+              action,
+              locale,
+              employeeName: data.employeeName,
+              branchName: info.branchName,
+              timeText,
+              lateMinutes: lateMin,
+              checkInAt: typeof data.checkInAt === "string" ? data.checkInAt : undefined,
+              checkOutAt: typeof data.checkOutAt === "string" ? data.checkOutAt : undefined,
+              workMinutes: typeof data.workMinutes === "number" ? data.workMinutes : undefined,
+              monthSummary: data.monthSummary as AttendanceMonthSummary,
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+            })
+            receiptSent = true
+            receiptNote = "ส่งสรุปกลับเข้า LINE แชตแล้ว"
+          } catch (error) {
             console.error("LIFF receipt send failed:", error)
-          })
+            receiptNote =
+              error instanceof Error
+                ? `ยังส่งสรุปเข้า LINE ไม่ได้: ${error.message}`
+                : "ยังส่งสรุปเข้า LINE ไม่ได้"
+          }
         }
 
         setResult({
@@ -591,6 +609,8 @@ export default function ClockPage() {
           workMinutes:
             typeof data.workMinutes === "number" ? data.workMinutes : undefined,
           monthSummary: data.monthSummary as AttendanceMonthSummary | undefined,
+          receiptSent,
+          receiptNote,
         })
         const newInfo = await fetch("/api/clock/info").then(r => r.json()).catch(() => null) as ClockInfo | null
         if (newInfo) setInfo(newInfo)
@@ -789,8 +809,17 @@ export default function ClockPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-gray-100 bg-[#fafafa] px-4 py-3 text-sm text-gray-600">
+                  <div className={`rounded-2xl border px-4 py-3 text-sm ${
+                    successResult.receiptSent
+                      ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+                      : "border-gray-100 bg-[#fafafa] text-gray-600"
+                  }`}>
+                    {successResult.receiptNote ? (
+                      <p className="font-medium">{successResult.receiptNote}</p>
+                    ) : null}
+                    <p className={successResult.receiptNote ? "mt-1" : ""}>
                     ข้อมูลวันนี้ถูกบันทึกเข้าระบบแล้ว สามารถตรวจสอบประวัติและสรุปเวลาได้ด้านล่าง
+                    </p>
                   </div>
                 </div>
               </div>
