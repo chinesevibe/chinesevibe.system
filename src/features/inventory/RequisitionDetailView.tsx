@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useMemo, useState, useTransition } from "react"
+import { ClipboardList, PackageCheck, Send, Store } from "lucide-react"
 
 import { StatusPill } from "@/components/brand/StatusPill"
 import { Button } from "@/components/ui/button"
@@ -44,6 +45,33 @@ function statusVariant(status: InvRequisitionDetail["requisition"]["status"]) {
     return "pending" as const
   }
   return "neutral" as const
+}
+
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof ClipboardList
+  label: string
+  value: string
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
 }
 
 export function RequisitionDetailView({
@@ -116,6 +144,14 @@ export function RequisitionDetailView({
     () => detail.items.filter((item) => item.qty_issued > 0),
     [detail.items]
   )
+  const totalRequested = useMemo(
+    () => detail.items.reduce((sum, item) => sum + item.qty_requested, 0),
+    [detail.items]
+  )
+  const totalIssued = useMemo(
+    () => detail.items.reduce((sum, item) => sum + item.qty_issued, 0),
+    [detail.items]
+  )
 
   function runAction(action: () => Promise<{ success: boolean; error?: string }>) {
     setError(null)
@@ -131,6 +167,33 @@ export function RequisitionDetailView({
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ClipboardList}
+          label="สถานะใบเบิก"
+          value={REQUISITION_STATUS_LABELS[detail.requisition.status]}
+          hint="ไหลจากแบบร่าง → รออนุมัติ → อนุมัติ → จ่าย → รับครบ"
+        />
+        <SummaryCard
+          icon={Send}
+          label="ผู้ขอ / สาขา"
+          value={`${detail.requester_name} · ${detail.branch_name}`}
+          hint="ใช้ยืนยันต้นทางของคำขอจากครัวหรือสาขา"
+        />
+        <SummaryCard
+          icon={Store}
+          label="คลัง / ปริมาณขอ"
+          value={`${detail.warehouse_name} · ${formatQuantity(totalRequested)}`}
+          hint="ปริมาณรวมที่ร้องขอในใบเบิกนี้"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="จ่ายแล้ว"
+          value={formatQuantity(totalIssued)}
+          hint="ช่วยดูเร็วว่าคลังเริ่มจ่ายของไปแล้วมากน้อยแค่ไหน"
+        />
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
         <StatusPill
           label={REQUISITION_STATUS_LABELS[detail.requisition.status]}
@@ -180,7 +243,19 @@ export function RequisitionDetailView({
         </p>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">รายการเบิกและสถานะต่อรายการ</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้ตรวจจำนวนที่ขอ อนุมัติ จ่าย รับ และส่วนต่าง ก่อนทำ action ขั้นถัดไป
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {detail.items.length.toLocaleString("th-TH")} รายการ
+          </div>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -216,7 +291,8 @@ export function RequisitionDetailView({
             })}
           </TableBody>
         </Table>
-      </div>
+        </div>
+      </section>
 
       {detail.requisition.status === "draft" && canSubmit ? (
         <section className="rounded-xl border border-border p-4">
