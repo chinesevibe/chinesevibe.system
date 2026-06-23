@@ -228,7 +228,7 @@ export function InventoryExecutiveDashboard({
               hint="รายการเสียหายที่ยังต้องตรวจสอบและอนุมัติ"
             />
             <ActionCard
-              href="/admin/inventory/stock-count"
+              href="/admin/inventory/stock"
               icon={<ScanSearch className="size-5" aria-hidden />}
               label="มูลค่าสต๊อกคงเหลือ"
               value={kpis.totalStockValue}
@@ -250,15 +250,15 @@ export function InventoryExecutiveDashboard({
               href="/admin/inventory/requisition"
               icon={<ClipboardList className="size-5" aria-hidden />}
               label="Issue to kitchen"
-              value={kpis.consumptionValueMtd}
-              hint="ติดตามการเบิกและการใช้จริงของเดือนนี้จากหน้า issue/requisition"
+              value={kpis.pendingRequisitions}
+              hint="เปิดใบเบิกรออนุมัติและงานจ่ายของให้ครัวต่อจากจุดเดียว"
             />
             <ActionCard
               href="/admin/inventory/transfer"
               icon={<Truck className="size-5" aria-hidden />}
               label="Transfer branch"
-              value={kpis.damageValueMtd}
-              hint="สลับไปหน้าโอนสินค้าเพื่อดูงานเคลื่อนย้ายระหว่างสาขา"
+              value={kpis.inTransitTransfers}
+              hint="เปิดงานโอนที่กำลังส่งและตามการรับเข้าปลายทาง"
             />
           </div>
         </WidgetCard>

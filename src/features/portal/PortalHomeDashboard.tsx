@@ -8,7 +8,6 @@ import {
   ExternalLink,
   Megaphone,
   MessageSquareWarning,
-  Package,
   QrCode,
   Timer,
 } from "lucide-react"
@@ -179,13 +178,9 @@ export function PortalHomeDashboard({
             <MessageSquareWarning className="size-4 text-brand-red" />
             {tx("portal.home.shortcutComplaint")}
           </LiffLink>
-          <LiffLink href="/portal/inbound">
+          <LiffLink href="/portal/inventory">
             <Barcode className="size-4 text-brand-red" />
-            {tx("portal.home.shortcutInbound")}
-          </LiffLink>
-          <LiffLink href="/portal/stock">
-            <Package className="size-4 text-brand-red" />
-            {tx("portal.home.shortcutStock")}
+            คลังสินค้า
           </LiffLink>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">

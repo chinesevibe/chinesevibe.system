@@ -13,8 +13,7 @@ export const PORTAL_NAV_ITEMS: AdminNavItem[] = [
     icon: "megaphone",
   },
   { labelKey: "portal.nav.payslips", href: "/portal/payslips", icon: "file-text" },
-  { labelKey: "portal.nav.inbound", href: "/portal/inbound", icon: "inventory" },
-  { labelKey: "portal.nav.stock", href: "/portal/stock", icon: "list-checks" },
+  { label: "คลังสินค้า", href: "/portal/inventory", icon: "inventory" },
 ]
 
 /** Thai labels for admin sidebar (no LocaleProvider) */
@@ -27,8 +26,7 @@ export const PORTAL_WORKER_NAV_ITEMS: AdminNavItem[] = [
   { label: "เอกสาร", href: "/portal/documents", icon: "file-text" },
   { label: "ประกาศ", href: "/portal/announcements", icon: "megaphone" },
   { label: "สลิปเงินเดือน", href: "/portal/payslips", icon: "file-text" },
-  { label: "รับเข้า", href: "/portal/inbound", icon: "inventory" },
-  { label: "เช็คสต็อก", href: "/portal/stock", icon: "list-checks" },
+  { label: "คลังสินค้า", href: "/portal/inventory", icon: "inventory" },
 ]
 
 export const INVENTORY_ADMIN_NAV_ITEM: AdminNavItem = {
