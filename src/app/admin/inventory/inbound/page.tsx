@@ -140,52 +140,96 @@ export default async function InventoryInboundPage() {
             แบบร่าง {draftCount.toLocaleString("th-TH")} · เปิดรับสแกน {pendingCount.toLocaleString("th-TH")}
           </div>
         </div>
-        <DataTableShell>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>วันที่</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>คลัง</TableHead>
-              <TableHead>รายการ</TableHead>
-              <TableHead>สถานะ</TableHead>
-              <TableHead className="text-right">ดู</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.length > 0 ? (
-              orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell>{formatThaiDate(order.created_at)}</TableCell>
-                  <TableCell>{order.supplier_name}</TableCell>
-                  <TableCell>{order.warehouse_name}</TableCell>
-                  <TableCell>{order.item_count}</TableCell>
-                  <TableCell>
-                    <StatusPill
-                      label={INBOUND_STATUS_LABELS[order.status]}
-                      variant={statusVariant(order.status)}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href={`/admin/inventory/inbound/${order.id}`}
-                      className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
-                    >
-                      รายละเอียด
-                    </Link>
-                  </TableCell>
+        <div className="grid gap-3 md:hidden">
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <div key={order.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">
+                      {order.supplier_name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{order.warehouse_name}</p>
+                  </div>
+                  <StatusPill
+                    label={INBOUND_STATUS_LABELS[order.status]}
+                    variant={statusVariant(order.status)}
+                  />
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">วันที่สร้าง</p>
+                    <p className="text-sm font-semibold">{formatThaiDate(order.created_at)}</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">จำนวนรายการ</p>
+                    <p className="text-lg font-semibold tabular-nums">{order.item_count}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-end">
+                  <Link
+                    href={`/admin/inventory/inbound/${order.id}`}
+                    className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                  >
+                    รายละเอียด
+                  </Link>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+              ยังไม่มีใบรับเข้า
+            </div>
+          )}
+        </div>
+        <div className="hidden md:block">
+          <DataTableShell>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>วันที่</TableHead>
+                  <TableHead>Supplier</TableHead>
+                  <TableHead>คลัง</TableHead>
+                  <TableHead>รายการ</TableHead>
+                  <TableHead>สถานะ</TableHead>
+                  <TableHead className="text-right">ดู</TableHead>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
-                  ยังไม่มีใบรับเข้า
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        </DataTableShell>
+              </TableHeader>
+              <TableBody>
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell>{formatThaiDate(order.created_at)}</TableCell>
+                      <TableCell>{order.supplier_name}</TableCell>
+                      <TableCell>{order.warehouse_name}</TableCell>
+                      <TableCell>{order.item_count}</TableCell>
+                      <TableCell>
+                        <StatusPill
+                          label={INBOUND_STATUS_LABELS[order.status]}
+                          variant={statusVariant(order.status)}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          href={`/admin/inventory/inbound/${order.id}`}
+                          className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                        >
+                          รายละเอียด
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                      ยังไม่มีใบรับเข้า
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DataTableShell>
+        </div>
       </section>
     </AdminPageShell>
   )

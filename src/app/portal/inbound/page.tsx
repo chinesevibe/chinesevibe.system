@@ -34,6 +34,23 @@ export default async function PortalInboundPage() {
         </p>
       ) : null}
 
+      {!loadError ? (
+        <div className="mb-4 rounded-2xl border border-border/80 bg-card p-4 shadow-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold">งานรับเข้าที่พร้อมสแกน</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                เลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที
+              </p>
+            </div>
+            <div className="rounded-xl bg-muted/30 px-3 py-2 text-right">
+              <p className="text-[11px] text-muted-foreground">พร้อมสแกน</p>
+              <p className="text-lg font-semibold tabular-nums">{orders.length}</p>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {orders.length === 0 && !loadError ? (
         <div className="rounded-xl border border-border/80 bg-muted/20 px-4 py-10 text-center">
           <Barcode className="mx-auto size-10 text-muted-foreground" />
@@ -69,16 +86,22 @@ export default async function PortalInboundPage() {
                   <p className="text-xs text-muted-foreground">{order.notes}</p>
                 ) : null}
               </div>
-              <a
-                href={inboundScanHref(order.id, locale)}
-                className={cn(
-                  buttonVariants({ size: "sm" }),
-                  "inline-flex shrink-0 items-center gap-1.5"
-                )}
-              >
-                {t("liff.inbound.scanTab", locale)}
-                <ExternalLink className="size-3.5" />
-              </a>
+              <div className="flex shrink-0 flex-col items-stretch gap-2">
+                <div className="rounded-lg bg-muted/30 px-3 py-2 text-right">
+                  <p className="text-[11px] text-muted-foreground">จำนวนรายการ</p>
+                  <p className="text-sm font-semibold tabular-nums">{order.item_count}</p>
+                </div>
+                <a
+                  href={inboundScanHref(order.id, locale)}
+                  className={cn(
+                    buttonVariants({ size: "sm" }),
+                    "inline-flex items-center justify-center gap-1.5"
+                  )}
+                >
+                  {t("liff.inbound.scanTab", locale)}
+                  <ExternalLink className="size-3.5" />
+                </a>
+              </div>
             </li>
           ))}
         </ul>
