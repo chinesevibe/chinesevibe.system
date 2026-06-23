@@ -19,6 +19,7 @@ import {
   getAttendanceMonthSummary,
   type AttendanceMonthSummary,
 } from "@/lib/attendance/month-summary"
+import { resolveRegularWorkHours, shouldTrackRegularWorkHours } from "@/lib/payroll/hour-policy"
 
 export type CheckOutResult =
   | {
@@ -158,8 +159,10 @@ export async function checkOut({
   })
 
   const workMinutes = paidResult.paidMinutes
-  const workHours = paidResult.paidHours
-  const showWorkDuration = (employee.pay_type as string | null) !== "monthly"
+  const payType = (employee.pay_type as string | null) ?? null
+  const workHours = resolveRegularWorkHours(payType, paidResult.paidHours)
+  const payrollWorkHours = workHours ?? 0
+  const showWorkDuration = shouldTrackRegularWorkHours(payType)
 
   const { data: updated, error: updateError } = await admin
     .from("hr_attendance")
@@ -193,7 +196,8 @@ export async function checkOut({
     employeeId: employee.id as string,
     branchId: (employee.branch_id as string | null) ?? null,
     workDate,
-    workHours,
+    workHours: payrollWorkHours,
+    payType,
     now,
   })
 

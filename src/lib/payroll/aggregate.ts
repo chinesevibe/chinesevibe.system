@@ -1,4 +1,5 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 import { computePaymentDate, resolvePayDay, type PayDay } from "@/lib/payroll/pay-day"
 import type { PayType } from "@/lib/payroll/pay-type"
 import type { PayrollSummary } from "@/lib/payroll/types"
@@ -6,7 +7,7 @@ import type { PayrollSummary } from "@/lib/payroll/types"
 function otHours(startTime: string, endTime: string): number {
   const [sh, sm] = startTime.split(":").map(Number)
   const [eh, em] = endTime.split(":").map(Number)
-  return Math.max(0, eh + em / 60 - (sh + sm / 60))
+  return roundPayrollHours(Math.max(0, eh + em / 60 - (sh + sm / 60)))
 }
 
 type EmployeeRow = {
@@ -116,7 +117,7 @@ export async function aggregatePayrollPeriod(
   for (const line of hourLines ?? []) {
     const data = summaries.get(line.employee_id as string)
     if (!data) continue
-    const h = Number(line.hours)
+    const h = roundPayrollHours(Number(line.hours))
     if (line.line_type === "regular") data.worked_hours += h
     if (line.line_type === "overtime") data.overtime_hours += h
     if (line.line_type === "sick_hourly") data.sick_leave_hours += h
@@ -135,9 +136,9 @@ export async function aggregatePayrollPeriod(
     leaves?.forEach((leave) => {
       if (leave.employee_id !== emp.id) return
       if (leave.type === "sick" && leave.leave_hours) {
-        data.sick_leave_hours += Number(leave.leave_hours)
+        data.sick_leave_hours += roundPayrollHours(Number(leave.leave_hours))
       } else if (leave.type === "annual" && leave.leave_hours) {
-        data.annual_leave_hours += Number(leave.leave_hours)
+        data.annual_leave_hours += roundPayrollHours(Number(leave.leave_hours))
       }
     })
   }

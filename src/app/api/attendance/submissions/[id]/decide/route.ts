@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 
 import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { canApproveHrRequests, getCurrentEmployeeWithBranch } from "@/lib/auth/branch"
+import { shouldTrackRegularWorkHours } from "@/lib/payroll/hour-policy"
 import { createClient } from "@/lib/supabase/server"
 
 export async function POST(
@@ -26,7 +27,7 @@ export async function POST(
   const supabase = await createClient()
   const { data: row, error: fetchErr } = await supabase
     .from("hr_attendance_submissions")
-    .select("*, hr_attendance(work_hours), hr_employees!employee_id(name, branch_id)")
+    .select("*, hr_attendance(work_hours), hr_employees!employee_id(name, branch_id, pay_type)")
     .eq("id", id)
     .maybeSingle()
 
@@ -39,6 +40,7 @@ export async function POST(
 
   const emp = Array.isArray(row.hr_employees) ? row.hr_employees[0] : row.hr_employees
   const branchId = (emp as { branch_id?: string })?.branch_id ?? null
+  const payType = (emp as { pay_type?: string | null })?.pay_type ?? null
 
   if (
     row.approval_status === "pending_hr" ||
@@ -80,7 +82,7 @@ export async function POST(
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
 
-    if (hours > 0) {
+    if (hours > 0 && shouldTrackRegularWorkHours(payType)) {
       await recordPayrollHours({
         employeeId: row.employee_id as string,
         branchId,

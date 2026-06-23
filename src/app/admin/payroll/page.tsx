@@ -3,6 +3,7 @@ import Link from "next/link"
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { getPayrollHourReport } from "@/features/payroll/data"
 import { payTypeDisplayLabel, salaryFieldLabel } from "@/lib/payroll/pay-type"
+import { formatPayrollHours } from "@/lib/payroll/format-hours"
 import type { PayType } from "@/lib/payroll/pay-type"
 import { requireRole } from "@/lib/auth/require-role"
 import { createClient } from "@/lib/supabase/server"
@@ -82,11 +83,11 @@ export default async function AdminPayrollPage() {
                   <tr key={`${r.name}-${r.department}`} className="border-b last:border-0">
                     <td className="px-3 py-2">{r.name}</td>
                     <td className="px-3 py-2">{r.department}</td>
-                    <td className="px-3 py-2">{r.regular.toFixed(2)}</td>
-                    <td className="px-3 py-2">{r.overtime.toFixed(2)}</td>
-                    <td className="px-3 py-2">{r.sick.toFixed(2)}</td>
+                    <td className="px-3 py-2">{formatPayrollHours(r.regular)}</td>
+                    <td className="px-3 py-2">{formatPayrollHours(r.overtime)}</td>
+                    <td className="px-3 py-2">{formatPayrollHours(r.sick)}</td>
                     <td className="px-3 py-2 font-medium">
-                      {(r.regular + r.overtime + r.sick).toFixed(2)}
+                      {formatPayrollHours(r.regular + r.overtime + r.sick)}
                     </td>
                   </tr>
                 ))}

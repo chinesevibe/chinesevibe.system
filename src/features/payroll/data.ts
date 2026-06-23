@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 
 export async function getPayrollHourReport(year: number, month: number) {
   const supabase = await createClient()
@@ -31,7 +32,7 @@ export async function getPayrollHourReport(year: number, month: number) {
     const department = (emp as { department?: string })?.department ?? "—"
     const key = `${name}|${department}`
     const cur = byEmployee.get(key) ?? { name, department, regular: 0, overtime: 0, sick: 0 }
-    const h = Number(line.hours)
+    const h = roundPayrollHours(Number(line.hours))
     if (line.line_type === "regular") cur.regular += h
     if (line.line_type === "overtime") cur.overtime += h
     if (line.line_type === "sick_hourly") cur.sick += h

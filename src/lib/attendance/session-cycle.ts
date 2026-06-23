@@ -2,6 +2,7 @@ import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
+import { resolveRegularWorkHours } from "@/lib/payroll/hour-policy"
 
 // Stale-session window: auto-close any open record more than 24h old.
 const STALE_SESSION_MS = 24 * 60 * 60 * 1000
@@ -48,6 +49,7 @@ type OpenAttendanceRow = {
 type EmployeeBranchRow = {
   id: string
   branch_id: string | null
+  pay_type: string | null
 }
 
 export function sessionCutoffUtcForCheckIn(checkInAt: Date): Date {
@@ -90,14 +92,12 @@ export async function autoCloseOpenAttendanceSessions({
   const employeeIds = [...new Set(rows.map((row) => row.employee_id))]
   const { data: employees, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, branch_id")
+    .select("id, branch_id, pay_type")
     .in("id", employeeIds)
 
   if (employeeError) throw employeeError
 
-  const employeeById = new Map(
-    ((employees ?? []) as EmployeeBranchRow[]).map((row) => [row.id, row.branch_id])
-  )
+  const employeeById = new Map(((employees ?? []) as EmployeeBranchRow[]).map((row) => [row.id, row]))
 
   let closedCount = 0
 
@@ -110,12 +110,16 @@ export async function autoCloseOpenAttendanceSessions({
       checkOutAt,
       shift: null,
     })
+    const workHours = resolveRegularWorkHours(
+      employeeById.get(row.employee_id)?.pay_type ?? null,
+      paid.paidHours
+    )
 
     const { data: updatedRows, error: updateError } = await admin
       .from("hr_attendance")
       .update({
         check_out_at: checkOutAt.toISOString(),
-        work_hours: paid.paidHours,
+        work_hours: workHours,
       })
       .eq("id", row.id)
       .is("check_out_at", null)
@@ -128,9 +132,10 @@ export async function autoCloseOpenAttendanceSessions({
     await finalizeAttendanceRecord({
       attendanceId: row.id,
       employeeId: row.employee_id,
-      branchId: employeeById.get(row.employee_id) ?? null,
+      branchId: employeeById.get(row.employee_id)?.branch_id ?? null,
       workDate,
-      workHours: paid.paidHours,
+      workHours: workHours ?? 0,
+      payType: employeeById.get(row.employee_id)?.pay_type ?? null,
       now: checkOutAt,
     })
   }

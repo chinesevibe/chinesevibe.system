@@ -4,6 +4,7 @@ import {
 } from "@/lib/attendance/ict-datetime"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
+import { resolveRegularWorkHours } from "@/lib/payroll/hour-policy"
 import { getWorkStart } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
 
@@ -178,12 +179,14 @@ export async function createAttendanceByHr(
 
   const { data: employee, error: empError } = await supabase
     .from("hr_employees")
-    .select("id, status, default_check_in_time")
+    .select("id, status, default_check_in_time, pay_type")
     .eq("id", employeeId)
     .maybeSingle()
 
   if (empError) throw empError
   if (!employee) throw new Error("ไม่พบพนักงาน")
+
+  const payType = (employee.pay_type as string | null) ?? null
 
   if (!checkOutAt && (await findOtherOpenAttendance(supabase, employeeId))) {
     throw new Error("พนักงานมีรอบเข้างานที่ยังไม่ปิดอยู่แล้ว")
@@ -194,6 +197,7 @@ export async function createAttendanceByHr(
     shift,
     (employee.default_check_in_time as string | null) ?? null
   )
+  const payrollWorkHours = workHours != null ? resolveRegularWorkHours(payType, workHours) : null
 
   const { data, error } = await supabase
     .from("hr_attendance")
@@ -203,7 +207,7 @@ export async function createAttendanceByHr(
       shift_date: input.date,
       check_in_at: checkInAt.toISOString(),
       check_out_at: checkOutAt?.toISOString() ?? null,
-      work_hours: workHours,
+      work_hours: payrollWorkHours,
       is_late: isLate,
       check_in_location: null,
     })
@@ -255,7 +259,7 @@ export async function updateAttendanceByHr(
 
   const { data: employee, error: empError } = await supabase
     .from("hr_employees")
-    .select("default_check_in_time")
+    .select("default_check_in_time, pay_type")
     .eq("id", existing.employee_id)
     .maybeSingle()
 
@@ -266,6 +270,8 @@ export async function updateAttendanceByHr(
     shift,
     (employee?.default_check_in_time as string | null) ?? null
   )
+  const payType = (employee?.pay_type as string | null) ?? null
+  const payrollWorkHours = workHours != null ? resolveRegularWorkHours(payType, workHours) : null
 
   const { data, error } = await supabase
     .from("hr_attendance")
@@ -274,7 +280,7 @@ export async function updateAttendanceByHr(
       shift_date: input.date,
       check_in_at: checkInAt.toISOString(),
       check_out_at: checkOutAt?.toISOString() ?? null,
-      work_hours: workHours,
+      work_hours: payrollWorkHours,
       is_late: isLate,
     })
     .eq("id", attendanceId)

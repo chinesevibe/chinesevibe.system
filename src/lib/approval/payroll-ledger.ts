@@ -1,4 +1,5 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 
 type LineType = "regular" | "overtime" | "sick_hourly"
 
@@ -46,7 +47,8 @@ export async function recordPayrollHours({
   sourceType: string
   sourceId: string
 }) {
-  if (hours <= 0) return
+  const roundedHours = roundPayrollHours(hours)
+  if (roundedHours <= 0) return
 
   const admin = getAdminClient()
   const periodId = await getOrCreatePeriod(workDate, branchId)
@@ -56,7 +58,7 @@ export async function recordPayrollHours({
       period_id: periodId,
       employee_id: employeeId,
       line_type: lineType,
-      hours,
+      hours: roundedHours,
       work_date: workDate,
       source_type: sourceType,
       source_id: sourceId,

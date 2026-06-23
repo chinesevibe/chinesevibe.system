@@ -2,6 +2,7 @@ import { expiresAtFrom } from "@/lib/approval/types"
 import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictToday } from "@/lib/datetime/thailand"
+import { shouldTrackRegularWorkHours } from "@/lib/payroll/hour-policy"
 
 export type FinalizeAttendanceResult =
   | { status: "finalized"; submissionId: string }
@@ -14,6 +15,7 @@ export async function finalizeAttendanceRecord({
   branchId,
   workDate,
   workHours,
+  payType,
   now = new Date(),
 }: {
   attendanceId: string
@@ -21,10 +23,12 @@ export async function finalizeAttendanceRecord({
   branchId: string | null
   workDate?: string
   workHours: number
+  payType?: string | null
   now?: Date
 }): Promise<FinalizeAttendanceResult> {
   const admin = getAdminClient()
   const date = workDate ?? ictToday()
+  let resolvedPayType = payType ?? null
 
   const { data: attendance, error: attendanceError } = await admin
     .from("hr_attendance")
@@ -83,7 +87,18 @@ export async function finalizeAttendanceRecord({
 
   const submissionId = upserted.id as string
 
-  if (workHours > 0) {
+  if (resolvedPayType == null) {
+    const { data: employee, error: employeeError } = await admin
+      .from("hr_employees")
+      .select("pay_type")
+      .eq("id", employeeId)
+      .maybeSingle()
+
+    if (employeeError) throw employeeError
+    resolvedPayType = (employee?.pay_type as string | null) ?? null
+  }
+
+  if (workHours > 0 && shouldTrackRegularWorkHours(resolvedPayType)) {
     await recordPayrollHours({
       employeeId,
       branchId,

@@ -32,13 +32,15 @@ describe("calculatePayslip", () => {
       pay_day: 4,
       salary: 100,
       housing_allowance: 0,
-      worked_hours: 160,
-      overtime_hours: 10,
+      worked_hours: 160.4,
+      overtime_hours: 10.4,
       sick_leave_hours: 0,
       annual_leave_hours: 0,
     }
     const result = calculatePayslip(summary, baseConfig)!
     assert.equal(result.gross_amount, 17500)
+    assert.equal(result.regular_hours, 160)
+    assert.equal(result.ot_hours, 10)
     assert.equal(result.sso_deduction, 0)
     assert.equal(result.tax_deduction, 0)
     assert.equal(result.net_amount, 17500)

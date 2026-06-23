@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { Button } from "@/components/ui/button"
+import { formatPayrollHours } from "@/lib/payroll/format-hours"
 import { payDayLabel } from "@/lib/payroll/pay-day"
 import { resolvePeriodRange } from "@/lib/payroll/period-range"
 import { payTypeDisplayLabel } from "@/lib/payroll/pay-type"
@@ -145,9 +146,7 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
                 <tr key={p.id} className="border-b last:border-0">
                   <td className="px-3 py-2">{p.employee_name ?? "—"}</td>
                   <td className="px-3 py-2">{payTypeDisplayLabel(p.pay_type)}</td>
-                  <td className="px-3 py-2">
-                    {(p.regular_hours + p.ot_hours).toFixed(1)}
-                  </td>
+                  <td className="px-3 py-2">{formatPayrollHours(p.regular_hours + p.ot_hours)}</td>
                   <td className="px-3 py-2">{formatMoney(p.gross_amount)}</td>
                   <td className="px-3 py-2">
                     {formatMoney(p.sso_deduction + p.tax_deduction + p.other_deductions)}

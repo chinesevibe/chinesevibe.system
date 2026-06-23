@@ -1,3 +1,4 @@
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 import type { PayrollConfig } from "@/lib/payroll/config"
 import type { PayrollSummary, PayslipCalculation } from "@/lib/payroll/types"
 
@@ -22,6 +23,10 @@ export function calculatePayslip(
   if (!salary || salary <= 0) return null
 
   const lines: PayslipCalculation["lines"] = []
+  const regularHours = roundPayrollHours(summary.worked_hours)
+  const overtimeHours = roundPayrollHours(summary.overtime_hours)
+  const sickHours = roundPayrollHours(summary.sick_leave_hours)
+  const annualHours = roundPayrollHours(summary.annual_leave_hours)
 
   let gross = 0
   let baseRate: number | null = null
@@ -29,8 +34,8 @@ export function calculatePayslip(
 
   if (summary.pay_type === "hourly") {
     baseRate = salary
-    const regularPay = round2(summary.worked_hours * salary)
-    const otPay = round2(summary.overtime_hours * salary * config.ot_multiplier)
+    const regularPay = round2(regularHours * salary)
+    const otPay = round2(overtimeHours * salary * config.ot_multiplier)
     gross = round2(regularPay + otPay)
 
     if (regularPay > 0) {
@@ -43,7 +48,7 @@ export function calculatePayslip(
     monthlySalary = salary
     const hourlyRate = salary / config.monthly_std_hours
     baseRate = round2(hourlyRate)
-    const otPay = round2(hourlyRate * config.ot_multiplier * summary.overtime_hours)
+    const otPay = round2(hourlyRate * config.ot_multiplier * overtimeHours)
     gross = round2(salary + housingAllowance + otPay)
 
     lines.push({ code: "BASIC", label: "เงินเดือน", amount: salary, sort_order: 10 })
@@ -82,10 +87,10 @@ export function calculatePayslip(
     other_deductions: otherDeductions,
     net_amount: netAmount,
     lines,
-    regular_hours: summary.worked_hours,
-    ot_hours: summary.overtime_hours,
-    sick_hours: summary.sick_leave_hours,
-    annual_hours: summary.annual_leave_hours,
+    regular_hours: regularHours,
+    ot_hours: overtimeHours,
+    sick_hours: sickHours,
+    annual_hours: annualHours,
     base_rate: baseRate,
     monthly_salary: monthlySalary,
   }
@@ -104,10 +109,10 @@ export function shouldSkipEmployee(summary: PayrollSummary): string | null {
   }
 
   const totalHours =
-    summary.worked_hours +
-    summary.overtime_hours +
-    summary.sick_leave_hours +
-    summary.annual_leave_hours
+    roundPayrollHours(summary.worked_hours) +
+    roundPayrollHours(summary.overtime_hours) +
+    roundPayrollHours(summary.sick_leave_hours) +
+    roundPayrollHours(summary.annual_leave_hours)
   if (totalHours === 0) {
     return "ไม่มีชม.ที่อนุมัติใน ledger"
   }

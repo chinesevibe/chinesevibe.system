@@ -13,12 +13,13 @@ import {
 } from "@/lib/line/flex/overtime-request"
 import { coerceLocale, type AppLocale } from "@/lib/i18n/types"
 import { notifyHr, pushToLineUser, type NotifyHrResult } from "@/lib/line/notify-hr"
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 import { createClient } from "@/lib/supabase/server"
 
 function otHours(startTime: string, endTime: string): number {
   const [sh, sm] = startTime.split(":").map(Number)
   const [eh, em] = endTime.split(":").map(Number)
-  return Math.max(0, eh + em / 60 - (sh + sm / 60))
+  return roundPayrollHours(Math.max(0, eh + em / 60 - (sh + sm / 60)))
 }
 
 export async function POST(request: NextRequest) {

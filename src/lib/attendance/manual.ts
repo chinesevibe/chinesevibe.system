@@ -14,6 +14,7 @@ import {
   type ShiftSchedule,
 } from "@/lib/attendance/retro-limit"
 import { getWorkStart } from "@/lib/runtime-config"
+import { resolveRegularWorkHours } from "@/lib/payroll/hour-policy"
 import { createClient } from "@/lib/supabase/server"
 
 type EmployeeManualMode = "checkin" | "checkout" | "full"
@@ -285,6 +286,7 @@ export async function saveManualAttendance(
     (employeeRow?.default_check_in_time as string | null) ?? null
   const defaultCheckOutTime =
     (employeeRow?.default_check_out_time as string | null) ?? null
+  const payType = (employeeRow?.pay_type as string | null) ?? null
   const profileShift = profileScheduleFromTimes(defaultCheckInTime, defaultCheckOutTime)
   const shift = requestedShift ?? profileShift
 
@@ -346,7 +348,7 @@ export async function saveManualAttendance(
 
   assertSequence(finalCheckInAt, finalCheckOutAt)
 
-  const finalWorkHours = finalCheckOutAt
+  const computedWorkHours = finalCheckOutAt
     ? computePaidWorkMinutes({
         workDate,
         shiftDate: workDate,
@@ -370,6 +372,8 @@ export async function saveManualAttendance(
         ? Number(existing.work_hours)
         : null
       : null
+  const finalWorkHours =
+    computedWorkHours != null ? resolveRegularWorkHours(payType, computedWorkHours) : null
 
   const isLateNow = await isLate(finalCheckInAt, shift, defaultCheckInTime)
 
@@ -400,6 +404,7 @@ export async function saveManualAttendance(
         branchId,
         workDate,
         workHours: finalWorkHours,
+        payType,
       })
     }
 
@@ -456,6 +461,7 @@ export async function saveManualAttendance(
       branchId,
       workDate,
       workHours: finalWorkHours,
+      payType,
     })
   }
 

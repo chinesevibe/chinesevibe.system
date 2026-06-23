@@ -1,9 +1,7 @@
-/** Round payroll hours to 2 decimals (avoids IEEE float display noise). */
-export function roundPayrollHours(hours: number): number {
-  return Math.round(hours * 100) / 100
-}
+export { roundPayrollHours } from "@/lib/payroll/hour-policy"
+import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 
-/** Format payroll hours for display — always 2 decimal places. */
+/** Format payroll hours for display as whole hours. */
 export function formatPayrollHours(hours: number): string {
-  return roundPayrollHours(hours).toFixed(2)
+  return String(roundPayrollHours(hours))
 }
