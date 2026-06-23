@@ -78,6 +78,14 @@ export default async function InventoryConsumptionPage() {
           hint="ข้อมูลจะไปต่อที่ stock movement และรายงานการใช้จริง"
         />
       </div>
+      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-950">
+        ใช้หน้านี้สำหรับ <span className="font-semibold">การใช้จริง</span> เช่น production, sampling, testing
+        เท่านั้น ถ้าเป็นของเสีย ของหาย ของหมดอายุ หรือรายการที่ต้องรออนุมัติก่อนตัดสต็อก ให้ไปที่
+        {" "}
+        <Link href="/admin/inventory/damage" className="font-semibold underline underline-offset-2">
+          รายงานความเสียหาย
+        </Link>
+      </div>
       <ConsumptionRecordForm options={options} />
     </AdminPageShell>
   )
