@@ -3,6 +3,7 @@ import { getInventoryAlertCount } from "@/features/inventory/expansion-data"
 import {
   isCeo,
   isDev,
+  isInventoryManagerStaff,
   isInventoryPortalUser,
   isInventoryRole,
   hasHrInventoryAccess,
@@ -20,7 +21,8 @@ export default async function InventoryLayout({
     isDev(employee.role) ||
     hasHrInventoryAccess(employee) ||
     isCeo(employee.role) ||
-    isInventoryRole(employee.role)
+    isInventoryRole(employee.role) ||
+    isInventoryManagerStaff(employee.department, employee.position)
   const alertCount = await getInventoryAlertCount().catch(() => 0)
 
   return (

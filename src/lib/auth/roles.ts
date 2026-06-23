@@ -91,7 +91,8 @@ export function canManageInventory(employee: Employee): boolean {
   return (
     isDev(employee.role) ||
     hasHrInventoryAccess(employee) ||
-    isInventoryRole(employee.role)
+    isInventoryRole(employee.role) ||
+    isInventoryManagerStaff(employee.department, employee.position)
   )
 }
 
