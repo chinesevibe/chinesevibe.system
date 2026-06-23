@@ -225,7 +225,12 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
     )
 
     const rowErrors: NonNullable<InventorySkuImportState["rowErrors"]> = []
-    const validRows: Array<ReturnType<typeof invSkuSchema.parse>> = []
+    const validRows: Array<{
+      rowNumber: number
+      code: string
+      normalizedCode: string
+      payload: ReturnType<typeof invSkuSchema.parse>
+    }> = []
     let skippedCount = 0
     const seenCodes = new Map<string, number>()
 
@@ -258,26 +263,39 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
         continue
       }
 
-      validRows.push(prepared.payload)
+      validRows.push({
+        rowNumber: row.rowNumber,
+        code: prepared.payload.code,
+        normalizedCode,
+        payload: prepared.payload,
+      })
     }
 
-    if (validRows.length > 0) {
+    let createdCount = 0
+    let updatedCount = 0
+
+    for (const row of validRows) {
       const query = insertOnly
-        ? supabase.from("inv_skus").insert(validRows)
-        : supabase.from("inv_skus").upsert(validRows, {
+        ? supabase.from("inv_skus").insert(row.payload)
+        : supabase.from("inv_skus").upsert(row.payload, {
             onConflict: "code",
           })
       const { error } = await query
       if (error) {
-        return { success: false, error: mapSupabaseInventoryError(error) }
+        rowErrors.push({
+          rowNumber: row.rowNumber,
+          code: row.code,
+          message: mapSupabaseInventoryError(error),
+        })
+        continue
+      }
+
+      if (insertOnly || !existingByCode.has(row.normalizedCode)) {
+        createdCount += 1
+      } else {
+        updatedCount += 1
       }
     }
-
-    const createdCount = insertOnly
-      ? validRows.length
-      : validRows.filter((payload) => !existingByCode.has(normalizeLookup(payload.code)))
-          .length
-    const updatedCount = insertOnly ? 0 : validRows.length - createdCount
 
     revalidatePath(LIST_PATH)
     return {
