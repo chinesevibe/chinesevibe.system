@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FormEvent, useState, useTransition } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState, useTransition } from "react"
 
 import { createInvSku, updateInvSku } from "@/features/inventory/actions/sku"
 import {
@@ -29,6 +29,15 @@ export function SkuForm({
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [isActive, setIsActive] = useState(initial?.is_active ?? true)
+  const [imagePreview, setImagePreview] = useState(initial?.image_url ?? "")
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview)
+      }
+    }
+  }, [imagePreview])
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -51,6 +60,18 @@ export function SkuForm({
 
       router.push("/admin/inventory/sku")
       router.refresh()
+    })
+  }
+
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    setError(null)
+
+    setImagePreview((current) => {
+      if (current.startsWith("blob:")) {
+        URL.revokeObjectURL(current)
+      }
+      return file ? URL.createObjectURL(file) : initial?.image_url ?? ""
     })
   }
 
@@ -140,14 +161,30 @@ export function SkuForm({
         </InventoryFormField>
       </div>
 
-      <InventoryFormField label="URL รูปภาพ" htmlFor="image_url">
-        <InventoryTextInput
-          id="image_url"
-          name="image_url"
-          type="url"
-          defaultValue={initial?.image_url ?? ""}
+      <InventoryFormField label="รูปภาพสินค้า" htmlFor="image_file">
+        <input type="hidden" name="image_url" defaultValue={initial?.image_url ?? ""} />
+        <input
+          id="image_file"
+          name="image_file"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
           disabled={readOnly}
+          onChange={handleImageChange}
+          className="block h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-muted file:px-3 file:py-2 file:text-sm file:font-medium"
         />
+        <p className="text-xs text-muted-foreground">
+          แนบ JPG, PNG หรือ WEBP ขนาดไม่เกิน 5MB
+        </p>
+        {imagePreview ? (
+          <div className="overflow-hidden rounded-xl border border-border bg-muted/30">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imagePreview}
+              alt={initial?.name ?? "SKU image preview"}
+              className="h-48 w-full object-contain bg-white"
+            />
+          </div>
+        ) : null}
       </InventoryFormField>
 
       <label className="flex items-center gap-2 text-sm">

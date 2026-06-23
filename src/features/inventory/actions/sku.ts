@@ -19,9 +19,49 @@ import {
   parseSkuCsv,
   type ParsedSkuCsvRow,
 } from "@/lib/inventory/sku-csv"
+import {
+  INVENTORY_SKU_IMAGE_BUCKET,
+  INVENTORY_SKU_IMAGE_MAX_BYTES,
+  INVENTORY_SKU_IMAGE_TYPES,
+  sanitizeInventorySkuImageFilename,
+} from "@/lib/inventory/sku-image"
 import { createClient } from "@/lib/supabase/server"
 
 const LIST_PATH = "/admin/inventory/sku"
+
+async function uploadSkuImage(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  file: File
+): Promise<string> {
+  if (
+    !INVENTORY_SKU_IMAGE_TYPES.includes(
+      file.type as (typeof INVENTORY_SKU_IMAGE_TYPES)[number]
+    )
+  ) {
+    throw new Error("รองรับเฉพาะ JPG, PNG, WEBP")
+  }
+  if (file.size <= 0 || file.size > INVENTORY_SKU_IMAGE_MAX_BYTES) {
+    throw new Error("รูปภาพต้องไม่เกิน 5MB")
+  }
+
+  const path = `sku-images/${crypto.randomUUID()}-${sanitizeInventorySkuImageFilename(
+    file.name
+  )}`
+  const { error } = await supabase.storage
+    .from(INVENTORY_SKU_IMAGE_BUCKET)
+    .upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    })
+
+  if (error) throw error
+
+  const { data } = supabase.storage
+    .from(INVENTORY_SKU_IMAGE_BUCKET)
+    .getPublicUrl(path)
+
+  return data.publicUrl
+}
 
 function formDataToObject(formData: FormData) {
   return {
@@ -42,11 +82,22 @@ function formDataToObject(formData: FormData) {
   }
 }
 
+async function resolveSkuPayload(formData: FormData) {
+  const payload = invSkuSchema.parse(formDataToObject(formData))
+  const supabase = await createClient()
+  const imageFile = formData.get("image_file")
+
+  if (imageFile instanceof File && imageFile.size > 0) {
+    payload.image_url = await uploadSkuImage(supabase, imageFile)
+  }
+
+  return { payload, supabase }
+}
+
 export async function createInvSku(formData: FormData): Promise<InventoryActionState> {
   try {
     await assertInventoryManage()
-    const payload = invSkuSchema.parse(formDataToObject(formData))
-    const supabase = await createClient()
+    const { payload, supabase } = await resolveSkuPayload(formData)
     const { error } = await supabase.from("inv_skus").insert(payload)
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidatePath(LIST_PATH)
@@ -62,8 +113,7 @@ export async function updateInvSku(
 ): Promise<InventoryActionState> {
   try {
     await assertInventoryManage()
-    const payload = invSkuSchema.parse(formDataToObject(formData))
-    const supabase = await createClient()
+    const { payload, supabase } = await resolveSkuPayload(formData)
     const { error } = await supabase.from("inv_skus").update(payload).eq("id", id)
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidatePath(LIST_PATH)
