@@ -1,7 +1,6 @@
 /** Public LIFF app for inbound scan (Login channel) */
 export const INBOUND_SCAN_LIFF_ID =
-  process.env.NEXT_PUBLIC_LINE_LIFF_INBOUND_SCAN_ID?.trim() ||
-  "2010360838-4ZXkTwyE"
+  process.env.NEXT_PUBLIC_LINE_LIFF_INBOUND_SCAN_ID?.trim() || ""
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

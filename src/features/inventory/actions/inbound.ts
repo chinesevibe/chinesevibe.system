@@ -20,6 +20,7 @@ import {
   inactiveSkuBarcodeMessage,
   lookupSkuByBarcode,
 } from "@/features/inventory/inbound-data"
+import { normalizeInventoryBarcode } from "@/lib/inventory/barcode"
 import type { SkuUnitOption } from "@/lib/inventory/unit-conversion"
 import { convertQuantity } from "@/lib/inventory/unit-conversion"
 import { getSkuUnitOptions } from "@/lib/inventory/unit-conversion"
@@ -307,18 +308,10 @@ export async function getInvSkuUnitOptionsByBarcode(input: {
 }> {
   try {
     await assertActiveInventoryScanner()
-    const barcode = input.barcode.trim()
+    const barcode = normalizeInventoryBarcode(input.barcode)
     if (!barcode) return { success: false, error: "กรุณาระบุ barcode" }
 
-    const supabase = await createClient()
-    const { data: sku, error: skuError } = await supabase
-      .from("inv_skus")
-      .select("id, code, name")
-      .eq("barcode", barcode)
-      .eq("is_active", true)
-      .maybeSingle()
-
-    if (skuError) return { success: false, error: skuError.message }
+    const sku = await lookupSkuByBarcode(barcode)
     if (!sku) {
       const inactive = await inactiveSkuBarcodeMessage(barcode)
       return {
@@ -446,7 +439,7 @@ export async function scanInvInboundItem(input: {
 
     const payload = {
       order_id: input.order_id,
-      barcode: input.barcode.trim(),
+      barcode: normalizeInventoryBarcode(input.barcode) ?? "",
       quantity: input.quantity,
       unit_id: input.unit_id ?? null,
       lot_number: input.lot_number ?? null,
@@ -470,14 +463,7 @@ export async function scanInvInboundItem(input: {
       }
     }
 
-    const { data: sku, error: skuError } = await supabase
-      .from("inv_skus")
-      .select("id, unit_id")
-      .eq("barcode", payload.barcode)
-      .eq("is_active", true)
-      .maybeSingle()
-
-    if (skuError) return { success: false, error: skuError.message }
+    const sku = await lookupSkuByBarcode(payload.barcode)
     if (!sku) {
       const inactive = await inactiveSkuBarcodeMessage(payload.barcode)
       return {

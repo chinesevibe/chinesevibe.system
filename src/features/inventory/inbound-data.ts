@@ -4,6 +4,10 @@ import type {
   InvInboundOrderRow,
   InvInboundStatus,
 } from "@/features/inventory/types"
+import {
+  formatInventoryBarcodeConflict,
+  normalizeInventoryBarcode,
+} from "@/lib/inventory/barcode"
 import { createClient } from "@/lib/supabase/server"
 
 const NO_SUPPLIER_LABEL = "ไม่ระบุผู้จำหน่าย"
@@ -154,25 +158,35 @@ export async function getInvInboundOrderDetail(id: string): Promise<{
 
 export async function lookupSkuByBarcode(
   barcode: string
-): Promise<{ id: string; code: string; name: string } | null> {
-  const trimmed = barcode.trim()
+): Promise<{ id: string; code: string; name: string; unit_id: string | null } | null> {
+  const trimmed = normalizeInventoryBarcode(barcode)
   if (!trimmed) return null
 
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("inv_skus")
-    .select("id, code, name")
+    .select("id, code, name, unit_id")
     .eq("barcode", trimmed)
     .eq("is_active", true)
-    .maybeSingle()
+    .order("code", { ascending: true })
+    .limit(2)
 
   if (error) throw new Error(error.message)
-  if (!data) return null
+  if (!data || data.length === 0) return null
+  if (data.length > 1) {
+    throw new Error(
+      formatInventoryBarcodeConflict(
+        trimmed,
+        data.map((row) => row.code as string)
+      )
+    )
+  }
 
   return {
-    id: data.id as string,
-    code: data.code as string,
-    name: data.name as string,
+    id: data[0].id as string,
+    code: data[0].code as string,
+    name: data[0].name as string,
+    unit_id: (data[0].unit_id as string | null) ?? null,
   }
 }
 
@@ -180,7 +194,7 @@ export async function lookupSkuByBarcode(
 export async function inactiveSkuBarcodeMessage(
   barcode: string
 ): Promise<string | null> {
-  const trimmed = barcode.trim()
+  const trimmed = normalizeInventoryBarcode(barcode)
   if (!trimmed) return null
 
   const supabase = await createClient()
@@ -189,9 +203,10 @@ export async function inactiveSkuBarcodeMessage(
     .select("code, name")
     .eq("barcode", trimmed)
     .eq("is_active", false)
-    .maybeSingle()
+    .order("code", { ascending: true })
+    .limit(1)
 
-  if (error || !data) return null
-  const code = data.code as string
+  if (error || !data || data.length === 0) return null
+  const code = data[0].code as string
   return `พบ SKU ${code} แต่ถูกปิดใช้งาน — เปิด「ใช้งาน」ที่เมนู SKU ก่อนสแกน`
 }

@@ -107,7 +107,7 @@ export function canAccessInventoryPortal(employee: Employee): boolean {
 
 /** Mobile worker inventory workspace under /portal and LINE entry redirects. */
 export function canAccessPortalInventoryWorkspace(employee: Employee): boolean {
-  return isDev(employee.role) || isInventoryPortalUser(employee)
+  return isDev(employee.role) || isRestrictedInventoryPortalUser(employee)
 }
 
 /** Dashboard access — role-based; Head Office departments (active) เข้าได้ */

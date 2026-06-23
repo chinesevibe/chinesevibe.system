@@ -37,6 +37,29 @@ test("canAccessPortalInventoryWorkspace allows inventory workers and blocks unre
   )
 })
 
+test("canAccessPortalInventoryWorkspace keeps inventory managers on admin inventory", () => {
+  assert.equal(
+    canAccessPortalInventoryWorkspace(
+      employee({
+        department: "Inventory",
+        position: "Inventory Manager",
+        role: "employee",
+      })
+    ),
+    false
+  )
+  assert.equal(
+    canAccessPortalInventoryWorkspace(
+      employee({
+        department: "Inventory",
+        position: "Inventory Manager",
+        role: "inventory",
+      })
+    ),
+    false
+  )
+})
+
 test("canAccessPortalInventoryWorkspace keeps dev access for QA", () => {
   assert.equal(canAccessPortalInventoryWorkspace(employee({ role: "dev" })), true)
 })

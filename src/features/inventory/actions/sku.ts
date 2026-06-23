@@ -25,6 +25,10 @@ import {
   INVENTORY_SKU_IMAGE_TYPES,
   sanitizeInventorySkuImageFilename,
 } from "@/lib/inventory/sku-image"
+import {
+  formatInventoryBarcodeConflict,
+  normalizeInventoryBarcode,
+} from "@/lib/inventory/barcode"
 import { createClient } from "@/lib/supabase/server"
 
 const LIST_PATH = "/admin/inventory/sku"
@@ -94,10 +98,40 @@ async function resolveSkuPayload(formData: FormData) {
   return { payload, supabase }
 }
 
+async function findBarcodeConflict(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  barcode: string | null | undefined,
+  excludeId?: string
+): Promise<string | null> {
+  const normalizedBarcode = normalizeInventoryBarcode(barcode)
+  if (!normalizedBarcode) return null
+
+  let query = supabase
+    .from("inv_skus")
+    .select("id, code")
+    .eq("barcode", normalizedBarcode)
+    .limit(2)
+
+  if (excludeId) {
+    query = query.neq("id", excludeId)
+  }
+
+  const { data, error } = await query
+  if (error) throw error
+  if (!data || data.length === 0) return null
+
+  return formatInventoryBarcodeConflict(
+    normalizedBarcode,
+    data.map((row) => row.code as string)
+  )
+}
+
 export async function createInvSku(formData: FormData): Promise<InventoryActionState> {
   try {
     await assertInventoryManage()
     const { payload, supabase } = await resolveSkuPayload(formData)
+    const barcodeConflict = await findBarcodeConflict(supabase, payload.barcode)
+    if (barcodeConflict) return { success: false, error: barcodeConflict }
     const { error } = await supabase.from("inv_skus").insert(payload)
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidatePath(LIST_PATH)
@@ -114,6 +148,8 @@ export async function updateInvSku(
   try {
     await assertInventoryManage()
     const { payload, supabase } = await resolveSkuPayload(formData)
+    const barcodeConflict = await findBarcodeConflict(supabase, payload.barcode, id)
+    if (barcodeConflict) return { success: false, error: barcodeConflict }
     const { error } = await supabase.from("inv_skus").update(payload).eq("id", id)
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidatePath(LIST_PATH)
@@ -209,7 +245,7 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
     const [{ data: unitRows, error: unitError }, { data: skuRows, error: skuError }] =
       await Promise.all([
         supabase.from("inv_units").select("id,name,abbreviation"),
-        supabase.from("inv_skus").select("id,code"),
+        supabase.from("inv_skus").select("id,code,barcode"),
       ])
 
     if (unitError) throw new Error(unitError.message)
@@ -223,6 +259,14 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
         row.id,
       ])
     )
+    const existingByBarcode = new Map(
+      ((skuRows ?? []) as Array<{ id: string; code: string; barcode: string | null }>)
+        .filter((row) => normalizeInventoryBarcode(row.barcode))
+        .map((row) => [
+          normalizeInventoryBarcode(row.barcode) as string,
+          { id: row.id, code: row.code },
+        ])
+    )
 
     const rowErrors: NonNullable<InventorySkuImportState["rowErrors"]> = []
     const validRows: Array<{
@@ -233,6 +277,7 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
     }> = []
     let skippedCount = 0
     const seenCodes = new Map<string, number>()
+    const seenBarcodes = new Map<string, { rowNumber: number; code: string }>()
 
     for (const row of parsed.rows) {
       const prepared = toImportPayload(row, unitLookup)
@@ -258,6 +303,37 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
       }
       seenCodes.set(normalizedCode, row.rowNumber)
 
+      const normalizedBarcode = normalizeInventoryBarcode(prepared.payload.barcode)
+      if (normalizedBarcode) {
+        const firstSeenBarcode = seenBarcodes.get(normalizedBarcode)
+        if (firstSeenBarcode && firstSeenBarcode.code !== prepared.payload.code) {
+          rowErrors.push({
+            rowNumber: row.rowNumber,
+            code: prepared.payload.code,
+            message: `barcode ซ้ำในไฟล์เดียวกัน (ซ้ำกับแถว ${firstSeenBarcode.rowNumber})`,
+          })
+          continue
+        }
+
+        const existingBarcode = existingByBarcode.get(normalizedBarcode)
+        const existingId = existingByCode.get(normalizedCode)
+        if (existingBarcode && existingBarcode.id !== existingId) {
+          rowErrors.push({
+            rowNumber: row.rowNumber,
+            code: prepared.payload.code,
+            message: formatInventoryBarcodeConflict(normalizedBarcode, [
+              existingBarcode.code,
+            ]),
+          })
+          continue
+        }
+
+        seenBarcodes.set(normalizedBarcode, {
+          rowNumber: row.rowNumber,
+          code: prepared.payload.code,
+        })
+      }
+
       if (insertOnly && existingByCode.has(normalizedCode)) {
         skippedCount += 1
         continue
@@ -275,6 +351,7 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
     let updatedCount = 0
 
     for (const row of validRows) {
+      const wasExisting = existingByCode.has(row.normalizedCode)
       const query = insertOnly
         ? supabase.from("inv_skus").insert(row.payload)
         : supabase.from("inv_skus").upsert(row.payload, {
@@ -290,7 +367,19 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
         continue
       }
 
-      if (insertOnly || !existingByCode.has(row.normalizedCode)) {
+      const normalizedBarcode = normalizeInventoryBarcode(row.payload.barcode)
+      if (normalizedBarcode) {
+        existingByBarcode.set(normalizedBarcode, {
+          id: existingByCode.get(row.normalizedCode) ?? `import:${row.normalizedCode}`,
+          code: row.payload.code,
+        })
+      }
+      existingByCode.set(
+        row.normalizedCode,
+        existingByCode.get(row.normalizedCode) ?? `import:${row.normalizedCode}`
+      )
+
+      if (insertOnly || !wasExisting) {
         createdCount += 1
       } else {
         updatedCount += 1
