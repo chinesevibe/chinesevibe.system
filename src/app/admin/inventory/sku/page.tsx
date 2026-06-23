@@ -18,6 +18,7 @@ import {
   InventoryLoadError,
   InventorySearchBar,
 } from "@/features/inventory/InventorySearchBar"
+import { InventorySkuImportForm } from "@/features/inventory/InventorySkuImportForm"
 import { canManageInventory, isCeo, isDev } from "@/lib/auth/roles"
 import { requireInventoryMasterData } from "@/lib/auth/require-inventory-portal"
 import { cn } from "@/lib/utils"
@@ -56,16 +57,20 @@ export default async function InventorySkuPage({ searchParams }: PageProps) {
       }
       action={
         canManage ? (
-          <Link
-            href="/admin/inventory/sku/new"
-            className={cn(buttonVariants({ size: "sm" }))}
-          >
-            + สร้าง SKU
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/inventory/sku/new"
+              className={cn(buttonVariants({ size: "sm" }))}
+            >
+              + สร้าง SKU
+            </Link>
+          </div>
         ) : undefined
       }
     >
       {loadError ? <InventoryLoadError message={loadError} /> : null}
+
+      {canManage ? <InventorySkuImportForm /> : null}
 
       <InventorySearchBar
         basePath="/admin/inventory/sku"

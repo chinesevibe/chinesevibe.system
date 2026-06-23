@@ -7,8 +7,18 @@ import {
   formatInventoryError,
   mapSupabaseInventoryError,
 } from "@/features/inventory/actions/auth"
-import type { InventoryActionState, InvSku, InvUnit } from "@/features/inventory/types"
+import type {
+  InventoryActionState,
+  InventorySkuImportState,
+  InvSku,
+  InvUnit,
+} from "@/features/inventory/types"
 import { invSkuSchema } from "@/features/inventory/validators/sku"
+import {
+  parseCsvBoolean,
+  parseSkuCsv,
+  type ParsedSkuCsvRow,
+} from "@/lib/inventory/sku-csv"
 import { createClient } from "@/lib/supabase/server"
 
 const LIST_PATH = "/admin/inventory/sku"
@@ -71,6 +81,137 @@ export async function deleteInvSku(id: string): Promise<InventoryActionState> {
     if (error) return { success: false, error: mapSupabaseInventoryError(error) }
     revalidatePath(LIST_PATH)
     return { success: true }
+  } catch (error) {
+    return { success: false, error: formatInventoryError(error) }
+  }
+}
+
+function normalizeLookup(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+function buildUnitLookup(units: InvUnit[]): Map<string, string> {
+  const lookup = new Map<string, string>()
+  for (const unit of units) {
+    lookup.set(normalizeLookup(unit.name), unit.id)
+    if (unit.abbreviation) {
+      lookup.set(normalizeLookup(unit.abbreviation), unit.id)
+    }
+  }
+  return lookup
+}
+
+function toImportPayload(row: ParsedSkuCsvRow, unitLookup: Map<string, string>) {
+  if (!row.code || !row.name) {
+    return { ok: false as const, message: "ต้องมี code และ name" }
+  }
+
+  let unitId: string | null = null
+  if (row.unit) {
+    unitId = unitLookup.get(normalizeLookup(row.unit)) ?? null
+    if (!unitId) {
+      return { ok: false as const, message: `ไม่พบหน่วย "${row.unit}"` }
+    }
+  }
+
+  try {
+    const payload = invSkuSchema.parse({
+      code: row.code,
+      name: row.name,
+      category: row.category,
+      unit_id: unitId,
+      barcode: row.barcode,
+      min_stock: row.min_stock ?? "0",
+      max_stock: row.max_stock ?? "0",
+      image_url: row.image_url,
+      is_active: parseCsvBoolean(row.is_active, true),
+      expiry_required: parseCsvBoolean(row.expiry_required, false),
+      lot_tracking_required: parseCsvBoolean(row.lot_tracking_required, true),
+      default_issue_method: row.default_issue_method ?? "fefo",
+      shelf_life_days: row.shelf_life_days ?? "",
+      storage_type: row.storage_type ?? "",
+    })
+
+    return { ok: true as const, payload }
+  } catch {
+    return { ok: false as const, message: "ข้อมูลไม่ครบหรือรูปแบบไม่ถูกต้อง" }
+  }
+}
+
+export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuImportState> {
+  try {
+    await assertInventoryManage()
+
+    const file = formData.get("file")
+    if (!(file instanceof File)) {
+      return { success: false, error: "กรุณาเลือกไฟล์ CSV" }
+    }
+
+    const csvText = await file.text()
+    const parsed = parseSkuCsv(csvText)
+    if (!parsed.ok) {
+      return { success: false, error: parsed.error }
+    }
+
+    const supabase = await createClient()
+    const [{ data: unitRows, error: unitError }, { data: skuRows, error: skuError }] =
+      await Promise.all([
+        supabase.from("inv_units").select("id,name,abbreviation"),
+        supabase.from("inv_skus").select("id,code"),
+      ])
+
+    if (unitError) throw new Error(unitError.message)
+    if (skuError) throw new Error(skuError.message)
+
+    const units = (unitRows ?? []) as InvUnit[]
+    const unitLookup = buildUnitLookup(units)
+    const existingByCode = new Map(
+      ((skuRows ?? []) as Array<{ id: string; code: string }>).map((row) => [
+        normalizeLookup(row.code),
+        row.id,
+      ])
+    )
+
+    const rowErrors: NonNullable<InventorySkuImportState["rowErrors"]> = []
+    const validRows: Array<ReturnType<typeof invSkuSchema.parse>> = []
+
+    for (const row of parsed.rows) {
+      const prepared = toImportPayload(row, unitLookup)
+
+      if (!prepared.ok) {
+        rowErrors.push({
+          rowNumber: row.rowNumber,
+          code: row.code || undefined,
+          message: prepared.message,
+        })
+        continue
+      }
+
+      validRows.push(prepared.payload)
+    }
+
+    if (validRows.length > 0) {
+      const { error } = await supabase.from("inv_skus").upsert(validRows, {
+        onConflict: "code",
+      })
+      if (error) {
+        return { success: false, error: mapSupabaseInventoryError(error) }
+      }
+    }
+
+    const createdCount = validRows.filter(
+      (payload) => !existingByCode.has(normalizeLookup(payload.code))
+    ).length
+    const updatedCount = validRows.length - createdCount
+
+    revalidatePath(LIST_PATH)
+    return {
+      success: true,
+      createdCount,
+      updatedCount,
+      errorCount: rowErrors.length,
+      rowErrors,
+    }
   } catch (error) {
     return { success: false, error: formatInventoryError(error) }
   }

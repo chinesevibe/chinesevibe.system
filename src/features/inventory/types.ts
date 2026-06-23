@@ -104,6 +104,19 @@ export type InventoryActionState = {
   id?: string
 }
 
+export type InventoryCsvRowError = {
+  rowNumber: number
+  code?: string
+  message: string
+}
+
+export type InventorySkuImportState = InventoryActionState & {
+  createdCount?: number
+  updatedCount?: number
+  errorCount?: number
+  rowErrors?: InventoryCsvRowError[]
+}
+
 export type InventoryMultiActionState = InventoryActionState & {
   ids?: string[]
   statuses?: InvDamageStatus[]
