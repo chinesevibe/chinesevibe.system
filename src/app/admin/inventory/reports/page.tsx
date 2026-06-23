@@ -8,6 +8,7 @@ const REPORT_GROUPS = [
   {
     title: "Stock decisions",
     description: "ดูของคงเหลือ ความต่างการนับ และ FEFO exception ก่อนตัดสินใจเติมหรือเคลียร์สต็อก",
+    recommended: "เริ่มจาก Stock On Hand ถ้าต้องตัดสินใจเติมของวันนี้",
     links: [
       { href: "/admin/inventory/reports/stock", label: "Stock On Hand" },
       { href: "/admin/inventory/reports/variance", label: "Stock Count Variance" },
@@ -17,6 +18,7 @@ const REPORT_GROUPS = [
   {
     title: "Movement flow",
     description: "ไล่ของเข้า เบิก โอน และใช้จริง ตามเส้นทางการเคลื่อนไหวของสต็อก",
+    recommended: "เริ่มจาก Inbound หรือ Requisition ถ้ากำลังตามงานประจำวัน",
     links: [
       { href: "/admin/inventory/reports/inbound", label: "Inbound" },
       { href: "/admin/inventory/reports/requisition", label: "Requisition" },
@@ -27,6 +29,7 @@ const REPORT_GROUPS = [
   {
     title: "Loss and control",
     description: "ดูความเสียหายและเส้นทางตรวจสอบย้อนหลังเพื่อหาจุดรั่วและตัดสินใจแก้ไข",
+    recommended: "เริ่มจาก Damage ถ้าต้องหาสาเหตุของการสูญเสีย",
     links: [
       { href: "/admin/inventory/reports/damage", label: "Damage" },
       { href: "/admin/inventory/reports/audit", label: "Audit Trail" },
@@ -49,6 +52,17 @@ export default async function InventoryReportsHubPage() {
       description="รวมรายงานหลัก การเคลื่อนไหว ความต่างการนับ และ audit trail"
     >
       <div className="space-y-5">
+        <div className="rounded-2xl border border-border/80 bg-muted/15 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Start here
+          </p>
+          <p className="mt-2 text-sm text-foreground">
+            ถ้ากำลังตัดสินใจเติมของ ให้เริ่มจาก <span className="font-semibold">Stock On Hand</span>.
+            ถ้ากำลังไล่งานประจำวัน ให้เริ่มจาก <span className="font-semibold">Inbound</span> หรือ
+            <span className="font-semibold"> Requisition</span>. ถ้ากำลังหาจุดสูญเสีย ให้เปิด
+            <span className="font-semibold"> Damage</span> ก่อน.
+          </p>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {SUMMARY_CARDS.map((card) => {
             const Icon = card.icon
@@ -70,6 +84,7 @@ export default async function InventoryReportsHubPage() {
               <div className="space-y-1">
                 <h2 className="text-base font-semibold">{group.title}</h2>
                 <p className="text-sm text-muted-foreground">{group.description}</p>
+                <p className="text-xs text-brand-red">{group.recommended}</p>
               </div>
               <div className="mt-4 space-y-2">
                 {group.links.map((link) => (
