@@ -107,6 +107,14 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
     return <StatusPill label={status} variant="approved" />
   }
 
+  function stockStatusPill(quantity: number, minStock: number) {
+    if (quantity === 0) return <StatusPill label="หมด" variant="rejected" />
+    if (minStock > 0 && quantity < minStock) {
+      return <StatusPill label="ต่ำกว่า Min" variant="pending" />
+    }
+    return <StatusPill label="ปกติ" variant="approved" />
+  }
+
   return (
     <AdminPageShell
       title="สต็อกคงเหลือ"
@@ -166,57 +174,95 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
             หมด {zeroStockCount.toLocaleString("th-TH")} · ต่ำกว่า Min {belowMinCount.toLocaleString("th-TH")}
           </div>
         </div>
-        <DataTableShell>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>ชื่อ</TableHead>
-                <TableHead>สาขา</TableHead>
-                <TableHead>คลัง</TableHead>
-                <TableHead className="text-right">คงเหลือ</TableHead>
-                <TableHead className="text-right">Min</TableHead>
-                <TableHead>สถานะ</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.length > 0 ? (
-                rows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="font-medium">{row.skuCode}</TableCell>
-                    <TableCell>{row.skuName}</TableCell>
-                    <TableCell>{row.branchName}</TableCell>
-                    <TableCell>
-                      {row.warehouseName}
-                      <span className="ml-1 text-xs text-muted-foreground">
-                        ({row.warehouseCode})
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">{row.quantity}</TableCell>
-                    <TableCell className="text-right tabular-nums">{row.minStock}</TableCell>
-                    <TableCell>
-                      {row.quantity === 0 ? (
-                        <StatusPill label="หมด" variant="rejected" />
-                      ) : row.belowMin ? (
-                        <StatusPill label="ต่ำกว่า Min" variant="pending" />
-                      ) : (
-                        <StatusPill label="ปกติ" variant="approved" />
-                      )}
+        <div className="grid gap-3 md:hidden">
+          {rows.length > 0 ? (
+            rows.map((row) => (
+              <div key={row.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{row.skuCode}</p>
+                    <p className="text-sm text-muted-foreground">{row.skuName}</p>
+                  </div>
+                  {stockStatusPill(row.quantity, row.minStock)}
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">คงเหลือ</p>
+                    <p className="text-lg font-semibold tabular-nums">{row.quantity}</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">Min</p>
+                    <p className="text-lg font-semibold tabular-nums">{row.minStock}</p>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 text-sm">
+                  <p>
+                    <span className="text-muted-foreground">สาขา:</span> {row.branchName}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">คลัง:</span> {row.warehouseName} ({row.warehouseCode})
+                  </p>
+                  {row.barcode ? (
+                    <p className="truncate">
+                      <span className="text-muted-foreground">Barcode:</span> {row.barcode}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+              {belowMinOnly
+                ? "ไม่พบ SKU ที่ต่ำกว่า Min"
+                : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
+            </div>
+          )}
+        </div>
+        <div className="hidden md:block">
+          <DataTableShell>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>ชื่อ</TableHead>
+                  <TableHead>สาขา</TableHead>
+                  <TableHead>คลัง</TableHead>
+                  <TableHead className="text-right">คงเหลือ</TableHead>
+                  <TableHead className="text-right">Min</TableHead>
+                  <TableHead>สถานะ</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.length > 0 ? (
+                  rows.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell className="font-medium">{row.skuCode}</TableCell>
+                      <TableCell>{row.skuName}</TableCell>
+                      <TableCell>{row.branchName}</TableCell>
+                      <TableCell>
+                        {row.warehouseName}
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          ({row.warehouseCode})
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{row.quantity}</TableCell>
+                      <TableCell className="text-right tabular-nums">{row.minStock}</TableCell>
+                      <TableCell>{stockStatusPill(row.quantity, row.minStock)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                      {belowMinOnly
+                        ? "ไม่พบ SKU ที่ต่ำกว่า Min"
+                        : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    {belowMinOnly
-                      ? "ไม่พบ SKU ที่ต่ำกว่า Min"
-                      : "ยังไม่มีข้อมูลสต็อก — รับเข้าสินค้าเพื่อเริ่มใช้งาน"}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </DataTableShell>
+                )}
+              </TableBody>
+            </Table>
+          </DataTableShell>
+        </div>
       </section>
 
       <section className="mt-8 space-y-3">
@@ -231,47 +277,86 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
             lot คงเหลือ {activeLotCount.toLocaleString("th-TH")} · ใกล้หมดอายุ 7 วัน {expiringSoonCount.toLocaleString("th-TH")}
           </div>
         </div>
-        <DataTableShell>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Lot</TableHead>
-                <TableHead>สาขา</TableHead>
-                <TableHead>คลัง</TableHead>
-                <TableHead>หมดอายุ</TableHead>
-                <TableHead className="text-right">คงเหลือ</TableHead>
-                <TableHead>สถานะ</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {lotRows.length > 0 ? (
-                lotRows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="font-medium">{row.skuCode}</TableCell>
-                    <TableCell>{row.lotNumber}</TableCell>
-                    <TableCell>{row.branchName}</TableCell>
-                    <TableCell>
-                      {row.warehouseName}
-                      <span className="ml-1 text-xs text-muted-foreground">
-                        ({row.warehouseCode})
-                      </span>
-                    </TableCell>
-                    <TableCell>{row.expiryDate ?? "—"}</TableCell>
-                    <TableCell className="text-right tabular-nums">{row.remainingQty}</TableCell>
-                    <TableCell>{lotStatusPill(row.status)}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
+        <div className="grid gap-3 md:hidden">
+          {lotRows.length > 0 ? (
+            lotRows.map((row) => (
+              <div key={row.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{row.skuCode}</p>
+                    <p className="text-sm text-muted-foreground">Lot {row.lotNumber}</p>
+                  </div>
+                  {lotStatusPill(row.status)}
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">คงเหลือ</p>
+                    <p className="text-lg font-semibold tabular-nums">{row.remainingQty}</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">หมดอายุ</p>
+                    <p className="text-sm font-semibold">{row.expiryDate ?? "—"}</p>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 text-sm">
+                  <p>
+                    <span className="text-muted-foreground">สาขา:</span> {row.branchName}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">คลัง:</span> {row.warehouseName} ({row.warehouseCode})
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+              ยังไม่มี lot คงเหลือ
+            </div>
+          )}
+        </div>
+        <div className="hidden md:block">
+          <DataTableShell>
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    ยังไม่มี lot คงเหลือ
-                  </TableCell>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Lot</TableHead>
+                  <TableHead>สาขา</TableHead>
+                  <TableHead>คลัง</TableHead>
+                  <TableHead>หมดอายุ</TableHead>
+                  <TableHead className="text-right">คงเหลือ</TableHead>
+                  <TableHead>สถานะ</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </DataTableShell>
+              </TableHeader>
+              <TableBody>
+                {lotRows.length > 0 ? (
+                  lotRows.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell className="font-medium">{row.skuCode}</TableCell>
+                      <TableCell>{row.lotNumber}</TableCell>
+                      <TableCell>{row.branchName}</TableCell>
+                      <TableCell>
+                        {row.warehouseName}
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          ({row.warehouseCode})
+                        </span>
+                      </TableCell>
+                      <TableCell>{row.expiryDate ?? "—"}</TableCell>
+                      <TableCell className="text-right tabular-nums">{row.remainingQty}</TableCell>
+                      <TableCell>{lotStatusPill(row.status)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                      ยังไม่มี lot คงเหลือ
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DataTableShell>
+        </div>
       </section>
     </AdminPageShell>
   )
