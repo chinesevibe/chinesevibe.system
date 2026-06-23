@@ -15,8 +15,6 @@ const baseConfig: PayrollConfig = {
   work_entry_ot: "OT",
   work_entry_sick: "LEAVE110",
   work_entry_annual: "LEAVE120",
-  odoo_monthly_struct_name: "Monthly Salary - Thailand",
-  odoo_hourly_struct_name: "Hourly Wage - Thailand",
   payroll_cutoff_day: 31,
   tax_enabled: false,
   tax_rate: 0,

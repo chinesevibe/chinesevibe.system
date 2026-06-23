@@ -12,8 +12,6 @@ export type PayrollConfig = {
   work_entry_ot: string
   work_entry_sick: string
   work_entry_annual: string
-  odoo_monthly_struct_name: string
-  odoo_hourly_struct_name: string
   payroll_cutoff_day: number
   tax_enabled: boolean
   tax_rate: number
@@ -30,8 +28,6 @@ export const PAYROLL_CONFIG_KEYS = [
   "work_entry_ot",
   "work_entry_sick",
   "work_entry_annual",
-  "odoo_monthly_struct_name",
-  "odoo_hourly_struct_name",
   "payroll_cutoff_day",
   "tax_enabled",
   "tax_rate",
@@ -50,8 +46,6 @@ const DEFAULTS: Record<PayrollConfigKey, string> = {
   work_entry_ot: "OT",
   work_entry_sick: "LEAVE110",
   work_entry_annual: "LEAVE120",
-  odoo_monthly_struct_name: "Monthly Salary - Thailand",
-  odoo_hourly_struct_name: "Hourly Wage - Thailand",
   payroll_cutoff_day: "31",
   tax_enabled: "false",
   tax_rate: "0",
@@ -102,8 +96,6 @@ function parseConfig(map: Map<string, string>): PayrollConfig {
     work_entry_ot: str("work_entry_ot"),
     work_entry_sick: str("work_entry_sick"),
     work_entry_annual: str("work_entry_annual"),
-    odoo_monthly_struct_name: str("odoo_monthly_struct_name"),
-    odoo_hourly_struct_name: str("odoo_hourly_struct_name"),
     payroll_cutoff_day: num("payroll_cutoff_day", 31),
     tax_enabled: bool("tax_enabled", false),
     tax_rate: num("tax_rate", 0),

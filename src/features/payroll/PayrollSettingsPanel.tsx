@@ -19,8 +19,6 @@ type FormState = {
   work_entry_ot: string
   work_entry_sick: string
   work_entry_annual: string
-  odoo_monthly_struct_name: string
-  odoo_hourly_struct_name: string
   payroll_cutoff_day: string
   tax_enabled: string
   tax_rate: string
@@ -38,8 +36,6 @@ function toFormState(config: PayrollConfig): FormState {
     work_entry_ot: config.work_entry_ot,
     work_entry_sick: config.work_entry_sick,
     work_entry_annual: config.work_entry_annual,
-    odoo_monthly_struct_name: config.odoo_monthly_struct_name,
-    odoo_hourly_struct_name: config.odoo_hourly_struct_name,
     payroll_cutoff_day: String(config.payroll_cutoff_day),
     tax_enabled: config.tax_enabled ? "true" : "false",
     tax_rate: String(config.tax_rate),

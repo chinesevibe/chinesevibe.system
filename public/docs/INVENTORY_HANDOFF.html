@@ -229,8 +229,8 @@
       </div>
       <div class="meta">
         <span>อัปเดต: 17 มิ.ย. 2026</span>
-        <a href="https://hr-app-two-iota.vercel.app/admin/inventory" target="_blank" rel="noopener">ศูนย์ควบคุมคลัง ↗</a>
-        <a href="https://hr-app-two-iota.vercel.app/admin/payroll" target="_blank" rel="noopener">Payroll Hub ↗</a>
+        <a href="https://hr-app-rho-blush.vercel.app/admin/inventory" target="_blank" rel="noopener">ศูนย์ควบคุมคลัง ↗</a>
+        <a href="https://hr-app-rho-blush.vercel.app/admin/payroll" target="_blank" rel="noopener">Payroll Hub ↗</a>
         <a href="/docs/HR_SYSTEM_WORKFLOW.html">Workflow HR ทั้งระบบ</a>
         <a href="/line-oa-manual.html">คู่มือ LINE OA</a>
       </div>
@@ -257,7 +257,7 @@
       <p>
         เอกสารนี้รวม <strong>โมดูลคลังสินค้า</strong>, <strong>ความพร้อม Payroll (บาท)</strong>
         และ <strong>สรุป Audit ระบบ</strong> สำหรับตรวจรับก่อนใช้งานจริงบน
-        <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">production</a>
+        <a href="https://hr-app-rho-blush.vercel.app" target="_blank" rel="noopener">production</a>
       </p>
       <div class="callout ok">
         <strong>Verdict รวม:</strong> 🟡 <em>พร้อม Demo / UAT</em> — Core HR + LINE + Portal + Inventory + Payroll engine deploy แล้ว
@@ -459,7 +459,7 @@ flowchart LR
           <tr><td>สลิป PDF (Storage bucket)</td><td>API <code>/api/payroll/runs/[id]/generate-pdf</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
           <tr><td>พนักงานดูสลิป</td><td><code>/portal/payslips</code></td><td><span class="badge badge-done">Deploy แล้ว</span></td></tr>
           <tr><td>ตาราง DB</td><td><code>hr_payroll_runs</code>, <code>hr_payslips</code>, <code>hr_payslip_lines</code></td><td><span class="badge badge-done">Migration แล้ว</span></td></tr>
-          <tr><td>Odoo sync UI</td><td>redirect → native runs</td><td><span class="badge badge-done">ใช้ engine ในระบบ</span></td></tr>
+          <tr><td>Payroll runs UI</td><td><code>/admin/payroll/runs</code></td><td><span class="badge badge-done">ใช้ engine ในระบบ</span></td></tr>
           <tr><td>กฎภาษีแบบละเอียด</td><td>config <code>taxEnabled</code> (ปิด default)</td><td><span class="badge badge-pending">รอ Accounting ยืนยัน</span></td></tr>
           <tr><td>ทดสอบรอบจริง + ลงนาม</td><td>HR + Accounting onsite</td><td><span class="badge badge-pending">รอ UAT</span></td></tr>
         </tbody>
@@ -502,7 +502,7 @@ flowchart LR
 
       <h3>Gates ที่ผ่านแล้ว</h3>
       <ul>
-        <li>Production deploy: <code>hr-app-two-iota.vercel.app</code></li>
+        <li>Production deploy: <code>hr-app-rho-blush.vercel.app</code></li>
         <li>Supabase project: <code>oouswalwqhojpzqwwdvs</code> — migrations sync</li>
         <li>Self-register + HR onboarding queue</li>
         <li>Approval policy: Leave/OT → HR (หรือ BM→HR ตาม config)</li>
@@ -608,7 +608,7 @@ flowchart LR
         </tbody>
       </table>
       <div class="callout">
-        Production: <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">https://hr-app-two-iota.vercel.app</a>
+        Production: <a href="https://hr-app-rho-blush.vercel.app" target="_blank" rel="noopener">https://hr-app-rho-blush.vercel.app</a>
         · Commit ล่าสุด: <code>8ca4473</code> (handoff doc + inventory go-live)
       </div>
     </section>

@@ -195,7 +195,6 @@
 
     .badge-hr { background: var(--brand-soft); color: var(--brand); }
     .badge-emp { background: var(--blue-soft); color: var(--blue); }
-    .badge-odoo { background: var(--amber-soft); color: var(--amber); }
 
     .callout {
       border-left: 4px solid var(--brand);
@@ -246,10 +245,9 @@
   <header>
     <div class="wrap">
       <h1>HR Payroll System — Workflow Guide</h1>
-      <p>Chinese Vibe · HR App + LINE + Supabase + Odoo 19</p>
+      <p>Chinese Vibe · HR App + LINE + Supabase</p>
       <div class="meta">
-        <a href="https://hr-app-two-iota.vercel.app" target="_blank" rel="noopener">Production HR App</a>
-        <a href="https://chinese-vibe2.odoo.com" target="_blank" rel="noopener">Odoo</a>
+        <a href="https://hr-app-rho-blush.vercel.app" target="_blank" rel="noopener">Production HR App</a>
         <span>อัปเดต: มิ.ย. 2026</span>
       </div>
     </div>
@@ -262,7 +260,6 @@
       <a href="#daily">งานประจำวัน</a>
       <a href="#hr">งาน HR</a>
       <a href="#payroll">Payroll</a>
-      <a href="#odoo">Odoo Sync</a>
       <a href="#roles">สิทธิ์</a>
       <a href="#month">Flow รายเดือน</a>
       <a href="#ops">Ops</a>
@@ -274,11 +271,10 @@
       <h2>1. ภาพรวมสถาปัตยกรรม</h2>
       <p>
         ระบบนี้ใช้ <strong>HR App (Next.js + Supabase)</strong> เป็นศูนย์กลางข้อมูลพนักงาน
-        พนักงานใช้งานผ่าน <strong>LINE</strong> ส่วน <strong>Odoo 19</strong> เป็นเครื่องมือคำนวณเงินเดือน
+        พนักงานใช้งานผ่าน <strong>LINE</strong> และทีม HR จัดการ attendance, approvals, payroll และ inventory ผ่านระบบเดียวกัน
       </p>
       <div class="callout info">
-        <strong>ทิศทางข้อมูล Payroll:</strong> HR App <strong>push</strong> ไป Odoo ผ่าน XML-RPC
-        — Odoo ไม่ดึงข้อมูลจากเว็บเอง
+        <strong>ทิศทางข้อมูล Payroll:</strong> คำนวณและสรุปผลภายใน HR App โดยใช้ข้อมูลจาก Supabase เป็น source of truth
       </div>
       <div class="diagram mermaid">
 flowchart TB
@@ -298,16 +294,12 @@ flowchart TB
   subgraph data [ข้อมูล]
     SB[(Supabase)]
   end
-  subgraph external [ภายนอก]
-    ODOO[Odoo 19 Payroll]
-  end
   EMP --> LINE
   HR --> WEB
   BM --> WEB
   LINE --> API
   WEB --> API
   API --> SB
-  API -->|push| ODOO
       </div>
     </section>
 
@@ -385,7 +377,7 @@ flowchart TB
 
       <table>
         <thead>
-          <tr><th>สัญชาติ</th><th>วันจ่าย (เดือนถัดไป)</th><th>Odoo Tag</th></tr>
+          <tr><th>สัญชาติ</th><th>วันจ่าย (เดือนถัดไป)</th><th>รอบจ่าย</th></tr>
         </thead>
         <tbody>
           <tr><td>ไทย, พม่า</td><td>วันที่ <strong>4</strong></td><td><code>Pay-04</code></td></tr>
@@ -442,71 +434,13 @@ flowchart TB
       <ol>
         <li>ปิด OT / ลา / attendance — อนุมัติให้ครบ</li>
         <li><code>/admin/payroll</code> — ดูสรุปชม.เดือนนั้น</li>
-        <li><code>/admin/payroll/odoo</code>:
-          <ul>
-            <li><strong>Sync รายชื่อพนักงาน → Odoo</strong> (โปรไฟล์ + wage + structure)</li>
-            <li><strong>Sync Payroll</strong> เลือกเดือน (payslip + batch)</li>
-          </ul>
-        </li>
-        <li><code>/admin/payroll/settings</code> — SSO, OT multiplier, ชื่อ Odoo structure</li>
+        <li><code>/admin/payroll/runs</code> — สร้างหรือ refresh รอบจ่าย, ตรวจรายการ, lock รอบ และสร้างสลิป</li>
+        <li><code>/admin/payroll/settings</code> — ตั้งค่า cutoff, SSO, OT multiplier และ policy การคำนวณ</li>
       </ol>
     </section>
 
-    <section id="odoo">
-      <h2>6. Odoo Sync (Push)</h2>
-      <div class="diagram mermaid">
-sequenceDiagram
-  participant HR as HR กด Sync
-  participant API as sync-payroll API
-  participant SB as Supabase
-  participant O as Odoo 19
-  HR->>API: POST period YYYY-MM
-  API->>SB: พนักงาน + OT/ลา/ledger
-  loop แต่ละคน
-    API->>O: hr.employee + tag Pay-04/05
-    API->>O: hr.version wage + structure
-    API->>O: hr.payslip + compute
-  end
-  API->>O: Payslip Batch แยก วันที่ 4 vs 5
-  API->>HR: สรุปผล
-      </div>
-
-      <h3>ข้อมูลที่ sync จาก HR App → Odoo</h3>
-      <table>
-        <thead>
-          <tr><th>HR App</th><th>Odoo</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>ชื่อ</td><td><code>hr.employee.name</code></td></tr>
-          <tr><td>UUID</td><td><code>identification_id</code> (จับคู่รอบถัดไป)</td></tr>
-          <tr><td>รหัสพนักงาน</td><td><code>barcode</code></td></tr>
-          <tr><td>อีเมล / ตำแหน่ง</td><td><code>work_email</code> / <code>job_title</code></td></tr>
-          <tr><td>เงินเดือน / อัตราชม.</td><td><code>hr.version.wage</code> / <code>hourly_wage</code></td></tr>
-          <tr><td>วันจ่าย 4/5</td><td>tag <code>Pay-04</code> / <code>Pay-05</code></td></tr>
-          <tr><td>ชม.ทำงาน / OT / ลา</td><td>payslip worked days lines</td></tr>
-        </tbody>
-      </table>
-
-      <div class="callout">
-        <strong>Odoo 19:</strong> ใช้ <code>hr.version</code> แทน <code>hr.contract</code> เก่า
-      </div>
-
-      <h3>Salary Structures ใน Odoo</h3>
-      <ul>
-        <li><code>Monthly Salary - Thailand</code> — Office</li>
-        <li><code>Hourly Wage - Thailand</code> — หน้าร้าน</li>
-        <li>Rules: BASIC, OT, SSO (+ default Odoo rules)</li>
-      </ul>
-
-      <h3>หลัง Sync — ใน Odoo</h3>
-      <div class="flow">Payroll → Payslips / Batches
-  → Review ยอด
-  → Confirm
-  → โอนเงิน วันที่ 4 (ไทย/พม่า) หรือ 5 (จีน)</div>
-    </section>
-
     <section id="roles">
-      <h2>7. บทบาทและสิทธิ์</h2>
+      <h2>6. บทบาทและสิทธิ์</h2>
       <table>
         <thead>
           <tr><th>งาน</th><th>พนักงาน</th><th>Branch Mgr</th><th>HR</th></tr>
@@ -515,22 +449,22 @@ sequenceDiagram
           <tr><td>เช็คอิน / OT / ลา</td><td>✓</td><td>proxy OT ได้</td><td>✓</td></tr>
           <tr><td>อนุมัติ OT / ลา / attendance</td><td>✗</td><td>✗</td><td>✓</td></tr>
           <tr><td>จัดการพนักงาน</td><td>✗</td><td>จำกัด</td><td>✓</td></tr>
-          <tr><td>Payroll / Odoo sync</td><td>✗</td><td>✗</td><td>✓</td></tr>
+          <tr><td>Payroll runs / lock รอบจ่าย</td><td>✗</td><td>✗</td><td>✓</td></tr>
           <tr><td>ตั้งค่า geofence / สาขา</td><td>✗</td><td>บางส่วน</td><td>✓</td></tr>
         </tbody>
       </table>
     </section>
 
     <section id="month">
-      <h2>8. Flow ครบวงจร (หนึ่งเดือน)</h2>
+      <h2>7. Flow ครบวงจร (หนึ่งเดือน)</h2>
       <div class="diagram mermaid">
 flowchart LR
   A[HR สร้าง/อนุมัติพนักงาน] --> B[พนักงานเช็คอินทุกวัน]
   B --> C[ยื่น OT/ลา]
   C --> D[HR อนุมัติทุกคำขอ]
-  D --> E[Sync Employees → Odoo]
-  E --> F[Sync Payroll]
-  F --> G[Odoo Review Payslip]
+  D --> E[สร้าง Payroll Run]
+  E --> F[HR Review Payslip]
+  F --> G[Lock รอบและสร้าง PDF]
   G --> H[โอนเงิน วันที่ 4 หรือ 5]
       </div>
 
@@ -538,15 +472,15 @@ flowchart LR
         <strong>จำไว้:</strong>
         <ul style="margin:.5rem 0 0;padding-left:1.2rem">
           <li>Supabase = source of truth (พนักงาน, เช็คอิน, OT, ลา)</li>
-          <li>Odoo = payroll engine (รับ push จาก HR App)</li>
-          <li>Hourly ต้องมีชม.ใน ledger อนุมัติแล้ว ถึง sync payroll ได้</li>
+          <li>Payroll engine ทำงานใน HR App โดยตรง</li>
+          <li>Hourly ต้องมีชม.ใน ledger อนุมัติแล้ว ถึงคำนวณ payroll ได้</li>
           <li>Monthly ต้องมีเงินเดือนในโปรไฟล์</li>
         </ul>
       </div>
     </section>
 
     <section id="inventory">
-      <h2>9. Inventory (โมดูลแยก)</h2>
+      <h2>8. Inventory (โมดูลแยก)</h2>
       <p class="muted">ไม่เกี่ยว payroll โดยตรง — สำหรับทีมคลัง/สาขา</p>
       <ul>
         <li><code>/admin/inventory/*</code> — SKU, สต็อก, inbound, requisition, damage</li>
@@ -555,12 +489,13 @@ flowchart LR
     </section>
 
     <section id="ops">
-      <h2>10. Ops / Dev Commands</h2>
+      <h2>9. Ops / Dev Commands</h2>
       <div class="flow">cd hr-app
 npm run dev:http              # dev ที่ :3001
-npm run odoo:setup-sync       # setup Odoo + sync พนักงานทั้งหมด
-npm run odoo:ensure-rules     # อัปเดต salary rules ใน Odoo</div>
-      <p class="muted">API endpoints: <code>GET/POST /api/odoo/sync-payroll</code> · <code>POST /api/odoo/sync-employees</code></p>
+npm run build                 # production build
+npm run lint                  # static checks
+npm run typecheck             # TypeScript validation</div>
+      <p class="muted">Payroll APIs: <code>/api/payroll/config</code> · <code>/api/payroll/runs</code> · <code>/api/payroll/runs/[id]/lock</code></p>
     </section>
   </main>
 

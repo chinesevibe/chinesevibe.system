@@ -43,10 +43,6 @@ export function payDayLabel(payDay: PayDay): string {
   return payDay === 5 ? "วันที่ 5 (จีน)" : "วันที่ 4 (ไทย / พม่า)"
 }
 
-export function odooPayTag(payDay: PayDay): string {
-  return payDay === 5 ? "Pay-05" : "Pay-04"
-}
-
 /**
  * Payment date for a payroll period (YYYY-MM).
  * Salary for month M is paid on day D of month M+1.
