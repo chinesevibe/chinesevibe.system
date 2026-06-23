@@ -131,49 +131,92 @@ export default async function InventoryStockCountPage() {
             Draft {draftCount.toLocaleString("th-TH")} · Counting {countingCount.toLocaleString("th-TH")}
           </div>
         </div>
-        <div className="overflow-hidden rounded-xl border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>รหัส</TableHead>
-              <TableHead>สาขา</TableHead>
-              <TableHead>คลัง</TableHead>
-              <TableHead>สถานะ</TableHead>
-              <TableHead>วันที่วางแผน</TableHead>
-              <TableHead>ความคืบหน้า</TableHead>
-              <TableHead>สร้างเมื่อ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
-                  ยังไม่มีรอบตรวจนับ
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium">
-                    <Link href={`/admin/inventory/stock-count/${row.id}`} className="text-brand-red hover:underline">
+        <div className="grid gap-3 md:hidden">
+          {rows.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+              ยังไม่มีรอบตรวจนับ
+            </div>
+          ) : (
+            rows.map((row) => (
+              <div key={row.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/admin/inventory/stock-count/${row.id}`}
+                      className="text-sm font-semibold text-brand-red hover:underline"
+                    >
                       {row.id.slice(0, 8)}
                     </Link>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {row.branch_name} · {row.warehouse_name}
+                    </p>
+                  </div>
+                  <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">วันที่วางแผน</p>
+                    <p className="text-sm font-semibold">
+                      {row.planned_at ? formatThaiDate(row.planned_at) : "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">ความคืบหน้า</p>
+                    <p className="text-lg font-semibold tabular-nums">
+                      {row.counted_count} / {row.item_count}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  สร้างเมื่อ {formatThaiDateTime(row.created_at)}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="hidden overflow-hidden rounded-xl border border-border md:block">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>รหัส</TableHead>
+                <TableHead>สาขา</TableHead>
+                <TableHead>คลัง</TableHead>
+                <TableHead>สถานะ</TableHead>
+                <TableHead>วันที่วางแผน</TableHead>
+                <TableHead>ความคืบหน้า</TableHead>
+                <TableHead>สร้างเมื่อ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                    ยังไม่มีรอบตรวจนับ
                   </TableCell>
-                  <TableCell>{row.branch_name}</TableCell>
-                  <TableCell>{row.warehouse_name}</TableCell>
-                  <TableCell>
-                    <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
-                  </TableCell>
-                  <TableCell>{row.planned_at ? formatThaiDate(row.planned_at) : "—"}</TableCell>
-                  <TableCell>
-                    {row.counted_count} / {row.item_count}
-                  </TableCell>
-                  <TableCell>{formatThaiDateTime(row.created_at)}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="font-medium">
+                      <Link href={`/admin/inventory/stock-count/${row.id}`} className="text-brand-red hover:underline">
+                        {row.id.slice(0, 8)}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{row.branch_name}</TableCell>
+                    <TableCell>{row.warehouse_name}</TableCell>
+                    <TableCell>
+                      <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
+                    </TableCell>
+                    <TableCell>{row.planned_at ? formatThaiDate(row.planned_at) : "—"}</TableCell>
+                    <TableCell>
+                      {row.counted_count} / {row.item_count}
+                    </TableCell>
+                    <TableCell>{formatThaiDateTime(row.created_at)}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
       </section>
     </AdminPageShell>
