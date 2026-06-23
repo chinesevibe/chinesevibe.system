@@ -19,6 +19,7 @@ export type StockListFilters = {
   branchId?: string
   warehouseId?: string
   belowMinOnly?: boolean
+  expiringOnly?: boolean
 }
 
 function relationName(value: unknown): string {

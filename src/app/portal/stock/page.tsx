@@ -1,13 +1,17 @@
+import { redirect } from "next/navigation"
 import { AlertTriangle, Barcode, Package, Warehouse } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { StatusPill } from "@/components/brand/StatusPill"
 import { listInvStockRows } from "@/features/inventory/stock-data"
+import { canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
 export default async function PortalStockPage() {
   const employee = await getCurrentEmployee()
-  if (!employee) return null
+  if (!employee || !canAccessPortalInventoryWorkspace(employee)) {
+    redirect("/portal")
+  }
 
   let loadError: string | null = null
   let rows: Awaited<ReturnType<typeof listInvStockRows>> = []

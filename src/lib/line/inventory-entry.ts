@@ -1,8 +1,8 @@
 import type { Employee } from "@/lib/auth/session"
 import {
   adminLoginPath,
-  canAccessEmployeePortal,
   canAccessInventoryPortal,
+  canAccessPortalInventoryWorkspace,
 } from "@/lib/auth/roles"
 
 export type InventoryEntryTarget = "stock" | "inbound"
@@ -27,12 +27,12 @@ export function resolveInventoryEntryPath(
 ): string {
   const paths = INVENTORY_ENTRY_PATHS[target]
 
-  if (canAccessInventoryPortal(employee)) {
-    return paths.admin
+  if (canAccessPortalInventoryWorkspace(employee)) {
+    return paths.portal
   }
 
-  if (canAccessEmployeePortal(employee)) {
-    return paths.portal
+  if (canAccessInventoryPortal(employee)) {
+    return paths.admin
   }
 
   return adminLoginPath(

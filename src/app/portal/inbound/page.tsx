@@ -1,8 +1,10 @@
+import { redirect } from "next/navigation"
 import { Barcode, ExternalLink } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { buttonVariants } from "@/components/ui/button"
 import { listInvInboundOrders } from "@/features/inventory/inbound-data"
+import { canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { formatThaiDate } from "@/lib/datetime/thailand"
 import { t } from "@/lib/i18n/translate"
@@ -11,7 +13,9 @@ import { cn } from "@/lib/utils"
 
 export default async function PortalInboundPage() {
   const employee = await getCurrentEmployee()
-  if (!employee) return null
+  if (!employee || !canAccessPortalInventoryWorkspace(employee)) {
+    redirect("/portal")
+  }
   const locale = employee.preferred_locale
 
   let loadError: string | null = null

@@ -87,6 +87,13 @@ function addDays(date: Date, days: number) {
   return next
 }
 
+function stockExpiryHref(branchId?: string, warehouseId?: string) {
+  const params = new URLSearchParams({ expiring: "1" })
+  if (branchId) params.set("branch_id", branchId)
+  if (warehouseId) params.set("warehouse_id", warehouseId)
+  return `/admin/inventory/stock?${params.toString()}#lot-workspace`
+}
+
 async function latestCostBySkuIds(skuIds: string[]): Promise<CostMap> {
   const supabase = await createClient()
   const entries = await Promise.all(
@@ -237,7 +244,7 @@ export async function getInventoryAlerts(filters: InventoryReportFilters & { typ
       detail: `${(sku as { name?: string })?.name ?? ""} Lot ${row.lot_number as string} เหลือ ${row.remaining_qty as number} หมดอายุ ${expiryDate}`,
       branchName: warehouse ? branchNames.get(warehouse.branch_id) ?? "—" : "—",
       warehouseName: warehouse?.name ?? "—",
-      href: "/admin/inventory/stock",
+      href: stockExpiryHref(warehouse?.branch_id, warehouseId),
       daysLeft,
       qty: row.remaining_qty as number,
     })

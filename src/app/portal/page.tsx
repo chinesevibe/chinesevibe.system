@@ -4,6 +4,7 @@ import {
   getTodayAttendanceStatus,
 } from "@/features/portal/data"
 import { PortalHomeDashboard } from "@/features/portal/PortalHomeDashboard"
+import { canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
 export default async function PortalHomePage() {
@@ -22,6 +23,7 @@ export default async function PortalHomePage() {
       attendance={attendance}
       balances={balances}
       announcements={announcements}
+      showInventoryShortcut={canAccessPortalInventoryWorkspace(employee)}
     />
   )
 }

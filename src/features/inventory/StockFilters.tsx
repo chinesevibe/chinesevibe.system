@@ -13,6 +13,7 @@ export function StockFilters({
   branchId,
   warehouseId,
   belowMinOnly,
+  expiringOnly,
 }: {
   branches: InvBranch[]
   warehouses: InvWarehouseWithBranch[]
@@ -20,13 +21,20 @@ export function StockFilters({
   branchId: string
   warehouseId: string
   belowMinOnly: boolean
+  expiringOnly: boolean
 }) {
   const filteredWarehouses = branchId
     ? warehouses.filter((w) => w.branch_id === branchId)
     : warehouses
 
-  const hasFilters = Boolean(search || branchId || warehouseId || belowMinOnly)
-  const activeFilterCount = [search, branchId, warehouseId, belowMinOnly ? "1" : ""].filter(Boolean).length
+  const hasFilters = Boolean(search || branchId || warehouseId || belowMinOnly || expiringOnly)
+  const activeFilterCount = [
+    search,
+    branchId,
+    warehouseId,
+    belowMinOnly ? "1" : "",
+    expiringOnly ? "1" : "",
+  ].filter(Boolean).length
 
   return (
     <form
@@ -95,6 +103,16 @@ export function StockFilters({
           />
           <span>เฉพาะต่ำกว่า Min</span>
         </label>
+        <label className="flex items-end gap-2 pb-1 text-sm">
+          <input
+            type="checkbox"
+            name="expiring"
+            value="1"
+            defaultChecked={expiringOnly}
+            className="size-4 rounded border-input"
+          />
+          <span>เฉพาะใกล้หมดอายุ</span>
+        </label>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button type="submit" variant="secondary" size="sm">
@@ -113,6 +131,12 @@ export function StockFilters({
           className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
         >
           {belowMinOnly ? "กลับไปดูทั้งหมด" : "ดูเฉพาะต่ำกว่า Min"}
+        </Link>
+        <Link
+          href={expiringOnly ? "/admin/inventory/stock" : "/admin/inventory/stock?expiring=1#lot-workspace"}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+        >
+          {expiringOnly ? "ปิดตัวกรองใกล้หมดอายุ" : "ดูเฉพาะใกล้หมดอายุ"}
         </Link>
       </div>
     </form>

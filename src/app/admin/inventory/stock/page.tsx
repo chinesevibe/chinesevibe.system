@@ -25,6 +25,7 @@ type PageProps = {
     branch_id?: string
     warehouse_id?: string
     below_min?: string
+    expiring?: string
   }>
 }
 
@@ -64,6 +65,7 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
   const branchId = params?.branch_id ?? ""
   const warehouseId = params?.warehouse_id ?? ""
   const belowMinOnly = params?.below_min === "1"
+  const expiringOnly = params?.expiring === "1"
 
   let loadError: string | null = null
   let rows: Awaited<ReturnType<typeof listInvStockRows>> = []
@@ -83,6 +85,7 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
         search,
         branchId: branchId || undefined,
         warehouseId: warehouseId || undefined,
+        expiringOnly,
       }),
       getInvBranches(),
       getInvWarehousesWithBranch(),
@@ -160,6 +163,7 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
         branchId={branchId}
         warehouseId={warehouseId}
         belowMinOnly={belowMinOnly}
+        expiringOnly={expiringOnly}
       />
 
       <section className="space-y-3">
@@ -265,7 +269,7 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <section className="mt-8 space-y-3">
+      <section id="lot-workspace" className="mt-8 space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
           <div>
             <h2 className="text-base font-semibold">Lot / FEFO workspace</h2>
@@ -277,6 +281,11 @@ export default async function InventoryStockPage({ searchParams }: PageProps) {
             lot คงเหลือ {activeLotCount.toLocaleString("th-TH")} · ใกล้หมดอายุ 7 วัน {expiringSoonCount.toLocaleString("th-TH")}
           </div>
         </div>
+        {expiringOnly ? (
+          <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-sm text-amber-900">
+            กำลังกรองเฉพาะ lot ที่ใกล้หมดอายุภายใน 30 วันจากรายการ alerts
+          </div>
+        ) : null}
         <div className="grid gap-3 md:hidden">
           {lotRows.length > 0 ? (
             lotRows.map((row) => (

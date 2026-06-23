@@ -10,7 +10,11 @@ import {
 } from "@/lib/auth/employee-access"
 import { isInventoryManagerStaff } from "@/lib/auth/department-access"
 import { getCurrentEmployee } from "@/lib/auth/session"
-import { adminLoginPath, canAccessEmployeePortal } from "@/lib/auth/roles"
+import {
+  adminLoginPath,
+  canAccessEmployeePortal,
+  canAccessPortalInventoryWorkspace,
+} from "@/lib/auth/roles"
 import { coerceLocale, LOCALE_COOKIE } from "@/lib/i18n/types"
 
 export default async function PortalLayout({
@@ -44,9 +48,12 @@ export default async function PortalLayout({
     employee.department,
     employee.position
   )
+  const portalNavItems = canAccessPortalInventoryWorkspace(employee)
+    ? PORTAL_NAV_ITEMS
+    : PORTAL_NAV_ITEMS.filter((item) => item.href !== "/portal/inventory")
   const navItems = inventoryManager
-    ? [INVENTORY_ADMIN_NAV_ITEM, ...PORTAL_NAV_ITEMS]
-    : PORTAL_NAV_ITEMS
+    ? [INVENTORY_ADMIN_NAV_ITEM, ...portalNavItems]
+    : portalNavItems
 
   const cookieStore = await cookies()
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value

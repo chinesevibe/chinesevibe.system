@@ -43,11 +43,13 @@ export function PortalHomeDashboard({
   attendance,
   balances,
   announcements,
+  showInventoryShortcut,
 }: {
   employeeName: string
   attendance: TodayAttendanceStatus
   balances: LeaveBalance[]
   announcements: AnnouncementRow[]
+  showInventoryShortcut: boolean
 }) {
   const { tx, locale } = useLocale()
   const byType = new Map(balances.map((b) => [b.leave_type, b]))
@@ -178,10 +180,12 @@ export function PortalHomeDashboard({
             <MessageSquareWarning className="size-4 text-brand-red" />
             {tx("portal.home.shortcutComplaint")}
           </LiffLink>
-          <LiffLink href="/portal/inventory">
-            <Barcode className="size-4 text-brand-red" />
-            คลังสินค้า
-          </LiffLink>
+          {showInventoryShortcut ? (
+            <LiffLink href="/portal/inventory">
+              <Barcode className="size-4 text-brand-red" />
+              คลังสินค้า
+            </LiffLink>
+          ) : null}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
           {tx("portal.home.footerHint")}

@@ -11,6 +11,12 @@ function relationName(value: unknown): string {
   return (value as { name?: string }).name ?? "—"
 }
 
+function daysUntilIsoDate(date: string, todayIso: string) {
+  return Math.ceil(
+    (Date.parse(`${date}T00:00:00Z`) - Date.parse(`${todayIso}T00:00:00Z`)) / 86_400_000
+  )
+}
+
 export type InvStockLotRow = {
   id: string
   lotNumber: string
@@ -61,6 +67,7 @@ export async function listInvStockLotRows(
 
   const search = filters.search?.trim().toLowerCase()
   const branchId = filters.branchId
+  const todayIso = new Date().toISOString().slice(0, 10)
   const rows: InvStockLotRow[] = []
 
   for (const row of data ?? []) {
@@ -79,6 +86,13 @@ export async function listInvStockLotRows(
 
     if (branchId && warehouse.branch_id !== branchId) continue
 
+    const expiryDate = (row.expiry_date as string | null) ?? null
+    if (filters.expiringOnly) {
+      if (!expiryDate) continue
+      const daysLeft = daysUntilIsoDate(expiryDate, todayIso)
+      if (daysLeft < 0 || daysLeft > 30) continue
+    }
+
     if (search) {
       const haystack = [
         sku.code,
@@ -96,7 +110,7 @@ export async function listInvStockLotRows(
     rows.push({
       id: row.id as string,
       lotNumber: row.lot_number as string,
-      expiryDate: (row.expiry_date as string | null) ?? null,
+      expiryDate,
       receivedDate: (row.received_date as string | null) ?? null,
       remainingQty: Number(row.remaining_qty),
       status: row.status as string,

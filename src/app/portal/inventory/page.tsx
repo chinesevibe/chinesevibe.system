@@ -1,11 +1,14 @@
+import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Barcode, ClipboardList, Package, RefreshCw } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { buttonVariants } from "@/components/ui/button"
+import { canManageInventory, canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
+import { getCurrentEmployee } from "@/lib/auth/session"
 import { cn } from "@/lib/utils"
 
-const actions = [
+const workerActions = [
   {
     href: "/portal/inbound",
     title: "รับเข้า",
@@ -20,6 +23,9 @@ const actions = [
     icon: Package,
     tone: "border-emerald-200 bg-emerald-50/70 text-emerald-900",
   },
+] as const
+
+const managerActions = [
   {
     href: "/admin/inventory/requisition",
     title: "ใบเบิก",
@@ -36,11 +42,20 @@ const actions = [
   },
 ] as const
 
-export default function PortalInventoryHubPage() {
+export default async function PortalInventoryHubPage() {
+  const employee = await getCurrentEmployee()
+  if (!employee || !canAccessPortalInventoryWorkspace(employee)) {
+    redirect("/portal")
+  }
+
+  const actions = canManageInventory(employee)
+    ? [...workerActions, ...managerActions]
+    : workerActions
+
   return (
     <AdminPageShell
       title="คลังสินค้า"
-      description="รวมงานคลังสำหรับมือถือ เลือกงานแล้วเข้าไปต่อได้ทันที"
+      description="รวมงานคลังสำหรับมือถือ เริ่มจากรับเข้าและเช็คสต็อก แล้วค่อยเปิดงาน admin เมื่อจำเป็น"
     >
       <div className="grid gap-3">
         {actions.map((action) => {
@@ -72,18 +87,20 @@ export default function PortalInventoryHubPage() {
         <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
           <li>1. เปิดรับเข้าแล้วสแกนของจริงตามใบ</li>
           <li>2. เช็คของต่ำกว่า Min และของหมดก่อนเปิดครัว</li>
-          <li>3. ติดตามใบเบิกและงานโอนที่ยังค้าง</li>
+          <li>3. ผู้จัดการค่อยเปิดใบเบิกและงานโอนที่ยังค้าง</li>
         </ul>
       </div>
 
-      <div className="mt-4">
-        <Link
-          href="/admin/inventory"
-          className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-        >
-          เปิดหน้า Inventory Admin
-        </Link>
-      </div>
+      {canManageInventory(employee) ? (
+        <div className="mt-4">
+          <Link
+            href="/admin/inventory"
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+          >
+            เปิดหน้า Inventory Admin
+          </Link>
+        </div>
+      ) : null}
     </AdminPageShell>
   )
 }
