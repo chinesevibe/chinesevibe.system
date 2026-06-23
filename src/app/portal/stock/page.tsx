@@ -1,4 +1,4 @@
-import { Package } from "lucide-react"
+import { AlertTriangle, Barcode, Package, Warehouse } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { StatusPill } from "@/components/brand/StatusPill"
@@ -19,6 +19,33 @@ export default async function PortalStockPage() {
   }
 
   const belowMinCount = rows.filter((row) => row.belowMin).length
+  const zeroCount = rows.filter((row) => row.quantity === 0).length
+  const normalCount = rows.length - belowMinCount - zeroCount
+
+  function statusMeta(row: (typeof rows)[number]) {
+    if (row.quantity === 0) {
+      return {
+        label: "หมด",
+        variant: "rejected" as const,
+        tone: "text-red-700",
+        cardTone: "border-red-200 bg-red-50/50",
+      }
+    }
+    if (row.belowMin) {
+      return {
+        label: "ต่ำกว่า Min",
+        variant: "pending" as const,
+        tone: "text-amber-700",
+        cardTone: "border-amber-200 bg-amber-50/50",
+      }
+    }
+    return {
+      label: "ปกติ",
+      variant: "approved" as const,
+      tone: "text-emerald-700",
+      cardTone: "border-emerald-200 bg-emerald-50/40",
+    }
+  }
 
   return (
     <AdminPageShell
@@ -35,6 +62,38 @@ export default async function PortalStockPage() {
         </p>
       ) : null}
 
+      {rows.length > 0 ? (
+        <section className="grid grid-cols-3 gap-2">
+          <div className="rounded-xl border border-border/80 bg-card px-3 py-3 shadow-sm">
+            <p className="text-[11px] text-muted-foreground">ทั้งหมด</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums">{rows.length}</p>
+          </div>
+          <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-3 py-3 shadow-sm">
+            <p className="text-[11px] text-amber-700">ต่ำกว่า Min</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-amber-800">
+              {belowMinCount}
+            </p>
+          </div>
+          <div className="rounded-xl border border-red-200 bg-red-50/70 px-3 py-3 shadow-sm">
+            <p className="text-[11px] text-red-700">หมด</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-red-800">
+              {zeroCount}
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      {belowMinCount > 0 ? (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-sm text-amber-900">
+          <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+          <p>
+            มี {belowMinCount} รายการที่ต่ำกว่า Min
+            {zeroCount > 0 ? ` และ ${zeroCount} รายการหมดสต็อก` : ""}
+            {normalCount > 0 ? ` · ปกติ ${normalCount} รายการ` : ""}
+          </p>
+        </div>
+      ) : null}
+
       {rows.length === 0 && !loadError ? (
         <div className="rounded-xl border border-border/80 bg-muted/20 px-4 py-10 text-center">
           <Package className="mx-auto size-10 text-muted-foreground" />
@@ -48,39 +107,52 @@ export default async function PortalStockPage() {
       {rows.length > 0 ? (
         <ul className="flex flex-col gap-3">
           {rows.map((row) => (
-            <li
-              key={row.id}
-              className="rounded-xl border border-border/80 bg-card p-4 shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="min-w-0 space-y-1">
-                  <p className="font-medium">
+            <li key={row.id} className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                     {row.skuCode}
-                    <span className="ml-2 font-normal text-muted-foreground">
-                      {row.skuName}
-                    </span>
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    {row.branchName} · {row.warehouseName}
+                  <p className="mt-1 text-base font-semibold leading-tight">{row.skuName}</p>
+                </div>
+                <StatusPill
+                  label={statusMeta(row).label}
+                  variant={statusMeta(row).variant}
+                />
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <div className={`rounded-xl border px-3 py-3 ${statusMeta(row).cardTone}`}>
+                  <p className="text-[11px] text-muted-foreground">คงเหลือ</p>
+                  <p className={`mt-1 text-2xl font-bold tabular-nums ${statusMeta(row).tone}`}>
+                    {row.quantity}
                   </p>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <p className="text-lg font-semibold tabular-nums">{row.quantity}</p>
-                  {row.minStock > 0 ? (
-                    <p className="text-xs text-muted-foreground tabular-nums">
-                      Min {row.minStock}
-                    </p>
-                  ) : null}
+                <div className="rounded-xl border border-border/80 bg-muted/20 px-3 py-3">
+                  <p className="text-[11px] text-muted-foreground">Min</p>
+                  <p className="mt-1 text-2xl font-semibold tabular-nums">
+                    {row.minStock > 0 ? row.minStock : "—"}
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                {row.quantity === 0 ? (
-                  <StatusPill label="หมด" variant="rejected" />
-                ) : row.belowMin ? (
-                  <StatusPill label="ต่ำกว่า Min" variant="pending" />
-                ) : (
-                  <StatusPill label="ปกติ" variant="approved" />
-                )}
+
+              <div className="mt-3 space-y-2 rounded-xl border border-border/70 bg-muted/15 p-3">
+                <div className="flex items-start gap-2 text-sm">
+                  <Warehouse className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <div className="min-w-0">
+                    <p className="font-medium">{row.branchName}</p>
+                    <p className="text-muted-foreground">
+                      {row.warehouseCode} · {row.warehouseName}
+                    </p>
+                  </div>
+                </div>
+
+                {row.barcode ? (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Barcode className="size-3.5 shrink-0" />
+                    <span className="truncate">{row.barcode}</span>
+                  </div>
+                ) : null}
               </div>
             </li>
           ))}
