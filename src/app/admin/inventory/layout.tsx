@@ -1,9 +1,9 @@
 import { InventoryGuideShell } from "@/features/inventory/guide/InventoryGuideShell"
 import { getInventoryAlertCount } from "@/features/inventory/expansion-data"
+import { isInventoryManagerStaff } from "@/lib/auth/department-access"
 import {
   isCeo,
   isDev,
-  isInventoryManagerStaff,
   isInventoryPortalUser,
   isInventoryRole,
   hasHrInventoryAccess,
