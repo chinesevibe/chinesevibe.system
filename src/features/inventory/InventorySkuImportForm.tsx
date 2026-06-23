@@ -47,8 +47,18 @@ export function InventorySkuImportForm() {
           {isPending ? "กำลัง import..." : "Import CSV"}
         </button>
       </div>
+      <label className="mt-3 flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          name="import_mode"
+          value="insert_only"
+          disabled={isPending}
+          className="size-4 rounded border-input"
+        />
+        เพิ่มเฉพาะรายการใหม่ ข้ามรหัสที่มีอยู่แล้ว
+      </label>
       <p className="mt-2 text-xs text-muted-foreground">
-        ใช้ code เป็น key หลักสำหรับ create/update อัตโนมัติ รองรับหัวตารางเช่น code, name, unit, barcode, min_stock, max_stock
+        ปกติระบบใช้ code เป็น key หลักสำหรับ create/update อัตโนมัติ ถ้าติ๊กตัวเลือกด้านบนจะ import เฉพาะ code ที่ยังไม่มี
       </p>
 
       {result?.error ? <div className="mt-3"><InventoryFormError message={result.error} /></div> : null}
@@ -56,7 +66,7 @@ export function InventorySkuImportForm() {
       {result?.success ? (
         <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           import สำเร็จ: create {result.createdCount ?? 0} · update {result.updatedCount ?? 0} · error{" "}
-          {result.errorCount ?? 0}
+          {result.errorCount ?? 0} · skipped {result.skippedCount ?? 0}
         </div>
       ) : null}
 

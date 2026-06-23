@@ -202,6 +202,8 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
     if (!parsed.ok) {
       return { success: false, error: parsed.error }
     }
+    const insertOnly =
+      formData.get("import_mode")?.toString().trim() === "insert_only"
 
     const supabase = await createClient()
     const [{ data: unitRows, error: unitError }, { data: skuRows, error: skuError }] =
@@ -224,6 +226,8 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
 
     const rowErrors: NonNullable<InventorySkuImportState["rowErrors"]> = []
     const validRows: Array<ReturnType<typeof invSkuSchema.parse>> = []
+    let skippedCount = 0
+    const seenCodes = new Map<string, number>()
 
     for (const row of parsed.rows) {
       const prepared = toImportPayload(row, unitLookup)
@@ -237,28 +241,50 @@ export async function importInvSkuCsv(formData: FormData): Promise<InventorySkuI
         continue
       }
 
+      const normalizedCode = normalizeLookup(prepared.payload.code)
+      const firstSeenRow = seenCodes.get(normalizedCode)
+      if (firstSeenRow) {
+        rowErrors.push({
+          rowNumber: row.rowNumber,
+          code: prepared.payload.code,
+          message: `code ซ้ำในไฟล์เดียวกัน (ซ้ำกับแถว ${firstSeenRow})`,
+        })
+        continue
+      }
+      seenCodes.set(normalizedCode, row.rowNumber)
+
+      if (insertOnly && existingByCode.has(normalizedCode)) {
+        skippedCount += 1
+        continue
+      }
+
       validRows.push(prepared.payload)
     }
 
     if (validRows.length > 0) {
-      const { error } = await supabase.from("inv_skus").upsert(validRows, {
-        onConflict: "code",
-      })
+      const query = insertOnly
+        ? supabase.from("inv_skus").insert(validRows)
+        : supabase.from("inv_skus").upsert(validRows, {
+            onConflict: "code",
+          })
+      const { error } = await query
       if (error) {
         return { success: false, error: mapSupabaseInventoryError(error) }
       }
     }
 
-    const createdCount = validRows.filter(
-      (payload) => !existingByCode.has(normalizeLookup(payload.code))
-    ).length
-    const updatedCount = validRows.length - createdCount
+    const createdCount = insertOnly
+      ? validRows.length
+      : validRows.filter((payload) => !existingByCode.has(normalizeLookup(payload.code)))
+          .length
+    const updatedCount = insertOnly ? 0 : validRows.length - createdCount
 
     revalidatePath(LIST_PATH)
     return {
       success: true,
       createdCount,
       updatedCount,
+      skippedCount,
       errorCount: rowErrors.length,
       rowErrors,
     }

@@ -113,6 +113,7 @@ export type InventoryCsvRowError = {
 export type InventorySkuImportState = InventoryActionState & {
   createdCount?: number
   updatedCount?: number
+  skippedCount?: number
   errorCount?: number
   rowErrors?: InventoryCsvRowError[]
 }
