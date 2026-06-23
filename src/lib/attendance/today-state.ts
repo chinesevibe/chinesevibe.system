@@ -1,6 +1,7 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
 import {
   autoCloseOpenAttendanceSessions,
+  isRecheckinBlockedAfterCheckout,
   isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
@@ -65,6 +66,9 @@ export async function getLineTodayAttendanceState(
   if (!record) return { kind: "none" }
   if (record.check_out_at) {
     const checkOutAt = new Date(record.check_out_at)
+    if (isRecheckinBlockedAfterCheckout(checkOutAt, now)) {
+      return { kind: "checked_out", checkOutAt }
+    }
     if (!isCheckoutStillInActiveCycle(checkOutAt, now)) {
       return { kind: "none" }
     }

@@ -1,7 +1,7 @@
 // Registers the HR rich menu and sets it as default for all users.
 //
 // Usage:
-//   LINE_CHANNEL_ACCESS_TOKEN=<token> NEXT_PUBLIC_BASE_URL=<url> npx tsx scripts/register-rich-menu.ts [imagePath]
+//   LINE_CHANNEL_ACCESS_TOKEN=<token> npx tsx scripts/register-rich-menu.ts [imagePath]
 //   (ต้องใช้ tsx — โค้ดใช้ "@/" path alias ซึ่ง node รันตรงๆ resolve ไม่ได้)
 //
 // imagePath defaults to public/rich-menu.png — 1200x810 PNG/JPEG, max 1MB.
@@ -15,14 +15,6 @@ async function main() {
     process.exit(1)
   }
 
-  const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "")
-  const clockLiffUri = base ? `${base}/liff/clock` : undefined
-  if (clockLiffUri) {
-    console.log(`Clock LIFF URI: ${clockLiffUri}`)
-  } else {
-    console.warn("NEXT_PUBLIC_BASE_URL not set — เช็คอิน button will use postback fallback")
-  }
-
   const imagePath = process.argv[2] ?? "public/rich-menu.png"
   if (!existsSync(imagePath)) {
     console.error(
@@ -31,7 +23,7 @@ async function main() {
     process.exit(1)
   }
 
-  const richMenuId = await registerRichMenu(imagePath, clockLiffUri)
+  const richMenuId = await registerRichMenu(imagePath)
   console.log(`Rich menu registered and set as default: ${richMenuId}`)
 }
 

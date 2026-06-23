@@ -9,6 +9,7 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import { ictDayRangeUtc } from "@/lib/attendance/late"
+import { isRecheckinBlockedAfterCheckout } from "@/lib/attendance/session-cycle"
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -19,11 +20,6 @@ function ict(dateStr: string, h: number, m = 0): Date {
 }
 
 const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000
-
-/** Mirrors the gap-check added to today-state.ts */
-function shouldBlockReCheckin(checkOutAt: Date, now: Date): boolean {
-  return now.getTime() - checkOutAt.getTime() < EIGHT_HOURS_MS
-}
 
 // ─── tests ────────────────────────────────────────────────────────────────────
 
@@ -64,25 +60,25 @@ describe("8-hour gap check — shouldBlockReCheckin", () => {
     const now        = ict("2026-06-20", 14) // 14:00 ICT June 20
     const gap = now.getTime() - checkOutAt.getTime()
     assert.equal(gap, 12 * 60 * 60 * 1000, "gap should be exactly 12 hours")
-    assert.equal(shouldBlockReCheckin(checkOutAt, now), false, "must NOT block: 12h ≥ 8h")
+    assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), false, "must NOT block: 12h ≥ 8h")
   })
 
   it("13:00 checkout → 14:00 next attempt: gap 1 h → SHOULD block", () => {
     const checkOutAt = ict("2026-06-20", 13)
     const now        = ict("2026-06-20", 14)
-    assert.equal(shouldBlockReCheckin(checkOutAt, now), true, "must block: 1h < 8h")
+    assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), true, "must block: 1h < 8h")
   })
 
   it("07:59 checkout → 15:59 next attempt: gap exactly 7h59m → SHOULD block", () => {
     const checkOutAt = ict("2026-06-20", 8, 0)   // 08:00 ICT
     const now = new Date(checkOutAt.getTime() + (8 * 60 * 60 * 1000) - 60_000) // 7h59m later
-    assert.equal(shouldBlockReCheckin(checkOutAt, now), true, "1 min short of 8h → still blocks")
+    assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), true, "1 min short of 8h → still blocks")
   })
 
   it("exactly 8h gap → should NOT block (boundary inclusive)", () => {
     const checkOutAt = ict("2026-06-20", 6)
     const now = new Date(checkOutAt.getTime() + EIGHT_HOURS_MS)
-    assert.equal(shouldBlockReCheckin(checkOutAt, now), false, "exactly 8h → allows")
+    assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), false, "exactly 8h → allows")
   })
 })
 
@@ -101,7 +97,7 @@ describe("full overnight scenario: June 19 14:00 → June 20 02:00 → June 20 1
 
   it("gap between checkout and re-check-in attempt is 12 h → not blocked", () => {
     assert.equal(
-      shouldBlockReCheckin(checkOutJune20, reCheckIn),
+      isRecheckinBlockedAfterCheckout(checkOutJune20, reCheckIn),
       false,
       "12-hour gap: employee must be able to check in for next shift"
     )

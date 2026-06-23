@@ -2,6 +2,8 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import {
+  isRecheckinBlockedAfterCheckout,
+  recheckinAvailableAt,
   isCheckoutStillInActiveCycle,
   sessionCutoffUtcForCheckIn,
   sessionCycleStartUtc,
@@ -73,6 +75,28 @@ describe("session-cycle", () => {
       const checkOutAt = new Date("2026-06-21T19:00:00.000Z")
       const now = new Date("2026-06-21T23:00:00.000Z")        // 4h later
       assert.equal(isCheckoutStillInActiveCycle(checkOutAt, now), false)
+    })
+  })
+
+  describe("isRecheckinBlockedAfterCheckout", () => {
+    it("blocks a new check-in when checkout was less than 8h ago", () => {
+      const checkOutAt = new Date("2026-06-22T19:01:00.000Z") // 02:01 ICT Jun 23
+      const now = new Date("2026-06-22T23:00:00.000Z") // 06:00 ICT same day
+      assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), true)
+    })
+
+    it("allows a new check-in once the 8h cooldown has passed", () => {
+      const checkOutAt = new Date("2026-06-22T19:00:00.000Z") // 02:00 ICT Jun 23
+      const now = new Date("2026-06-23T07:00:00.000Z") // 14:00 ICT Jun 23
+      assert.equal(isRecheckinBlockedAfterCheckout(checkOutAt, now), false)
+    })
+
+    it("returns the exact unlock time 8h after checkout", () => {
+      const checkOutAt = new Date("2026-06-22T19:00:00.000Z")
+      assert.equal(
+        recheckinAvailableAt(checkOutAt).toISOString(),
+        "2026-06-23T03:00:00.000Z" // 10:00 ICT Jun 23
+      )
     })
   })
 })

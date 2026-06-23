@@ -2,7 +2,7 @@
 // Runs in the webhook context, so writes go through the service-role client
 // (no user session); RLS is bypassed by design (T02).
 import { getAdminClient } from "@/lib/auth/admin-client"
-import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
+import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import {
   evaluateAttendanceLocation,
@@ -11,6 +11,8 @@ import {
 } from "@/lib/attendance/location-security"
 import {
   autoCloseOpenAttendanceSessions,
+  isRecheckinBlockedAfterCheckout,
+  recheckinAvailableAt,
   sessionCutoffUtcForCheckIn,
 } from "@/lib/attendance/session-cycle"
 import { getWorkStart } from "@/lib/runtime-config"
@@ -45,18 +47,6 @@ export type CheckInResult =
     }
   | { status: "pending_approval" }
   | { status: "not_registered" }
-
-export function nextIctDayStartUtc(now: Date): Date {
-  const ictDate = ictDateFromUtc(now)
-  const [year, month, day] = ictDate.split("-").map(Number)
-  const nextDay = new Date(Date.UTC(year, month - 1, day + 1))
-  const nextIctDate = [
-    nextDay.getUTCFullYear(),
-    String(nextDay.getUTCMonth() + 1).padStart(2, "0"),
-    String(nextDay.getUTCDate()).padStart(2, "0"),
-  ].join("-")
-  return ictLocalToUtc(nextIctDate, "00:00")
-}
 
 export async function checkIn({
   lineUserId,
@@ -106,40 +96,23 @@ export async function checkIn({
     }
   }
 
-  const { data: completedToday, error: completedTodayError } = await admin
+  const { data: recentCheckout, error: recentCheckoutError } = await admin
     .from("hr_attendance")
     .select("check_out_at")
     .eq("employee_id", employee.id)
-    .eq("shift_date", ictDateFromUtc(now))
     .not("check_out_at", "is", null)
     .order("check_out_at", { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  if (completedTodayError) throw completedTodayError
-  if (completedToday) {
-    return {
-      status: "too_soon_after_checkout",
-      nextCheckInAt: nextIctDayStartUtc(now),
-    }
-  }
-
-  // Block re-check-in before 06:00 ICT — prevents accidental re-entry after overnight shift ends
-  const ictDate = ictDateFromUtc(now)
-  const sixAmTodayUtc = ictLocalToUtc(ictDate, "06:00")
-  if (now < sixAmTodayUtc) {
-    const midnightTodayUtc = ictLocalToUtc(ictDate, "00:00")
-    const { data: recentCheckout, error: recentError } = await admin
-      .from("hr_attendance")
-      .select("check_out_at")
-      .eq("employee_id", employee.id)
-      .not("check_out_at", "is", null)
-      .gte("check_out_at", midnightTodayUtc.toISOString())
-      .limit(1)
-      .maybeSingle()
-    if (recentError) throw recentError
-    if (recentCheckout) {
-      return { status: "too_soon_after_checkout", nextCheckInAt: sixAmTodayUtc }
+  if (recentCheckoutError) throw recentCheckoutError
+  if (recentCheckout?.check_out_at) {
+    const checkOutAt = new Date(recentCheckout.check_out_at)
+    if (isRecheckinBlockedAfterCheckout(checkOutAt, now)) {
+      return {
+        status: "too_soon_after_checkout",
+        nextCheckInAt: recheckinAvailableAt(checkOutAt),
+      }
     }
   }
 

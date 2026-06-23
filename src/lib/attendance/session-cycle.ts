@@ -9,6 +9,9 @@ const STALE_SESSION_MS = 24 * 60 * 60 * 1000
 // Display window: show a completed session on UI for 2h after checkout.
 const SESSION_DISPLAY_MS = 2 * 60 * 60 * 1000
 
+// Cooldown window: prevent a new check-in too soon after a completed checkout.
+const RECHECKIN_GAP_MS = 8 * 60 * 60 * 1000
+
 /**
  * Start of the "current session query window" = now - 24h rolling.
  * Pure session model: no ICT-day boundary, second param ignored.
@@ -23,6 +26,14 @@ export function sessionCycleStartUtc(now: Date, _defaultCheckInTime?: string | n
  */
 export function isCheckoutStillInActiveCycle(checkOutAt: Date, now: Date): boolean {
   return now.getTime() - checkOutAt.getTime() < SESSION_DISPLAY_MS
+}
+
+export function isRecheckinBlockedAfterCheckout(checkOutAt: Date, now: Date): boolean {
+  return now.getTime() - checkOutAt.getTime() < RECHECKIN_GAP_MS
+}
+
+export function recheckinAvailableAt(checkOutAt: Date): Date {
+  return new Date(checkOutAt.getTime() + RECHECKIN_GAP_MS)
 }
 
 type AdminClient = ReturnType<typeof getAdminClient>
