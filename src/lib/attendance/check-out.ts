@@ -3,6 +3,7 @@
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import type { CheckInLocation } from "@/lib/attendance/check-in"
+import { shouldPushClockReceipt } from "@/lib/attendance/clock-notify-policy"
 import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 import {
   evaluateAttendanceLocation,
@@ -218,22 +219,25 @@ export async function checkOut({
   }
 
   const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
-  let lineNotified = false
-  try {
-    const { notifyCheckout } = await import("@/lib/line/notify-clock")
-    await notifyCheckout({
-      lineUserId,
-      name: employee.name,
-      checkInAt,
-      checkOutAt: now,
-      workMinutes,
-      showWorkDuration,
-      monthSummary,
-      locale: employee.preferred_locale as string | null,
-    })
-    lineNotified = true
-  } catch (err) {
-    console.error("notify checkout failed:", err)
+  const shouldPushReceipt = shouldPushClockReceipt(location?.source)
+  let lineNotified = !shouldPushReceipt
+  if (shouldPushReceipt) {
+    try {
+      const { notifyCheckout } = await import("@/lib/line/notify-clock")
+      await notifyCheckout({
+        lineUserId,
+        name: employee.name,
+        checkInAt,
+        checkOutAt: now,
+        workMinutes,
+        showWorkDuration,
+        monthSummary,
+        locale: employee.preferred_locale as string | null,
+      })
+      lineNotified = true
+    } catch (err) {
+      console.error("notify checkout failed:", err)
+    }
   }
 
   return {

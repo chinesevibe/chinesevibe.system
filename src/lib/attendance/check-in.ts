@@ -4,6 +4,7 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { ictDateFromUtc } from "@/lib/attendance/ict-datetime"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
+import { shouldPushClockReceipt } from "@/lib/attendance/clock-notify-policy"
 import {
   evaluateAttendanceLocation,
   suspiciousLocationMessage,
@@ -197,20 +198,23 @@ export async function checkIn({
   }
 
   const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
-  let lineNotified = false
-  try {
-    const { notifyCheckin } = await import("@/lib/line/notify-clock")
-    await notifyCheckin({
-      lineUserId,
-      name: employee.name,
-      checkInAt: now,
-      lateMinutes: late,
-      monthSummary,
-      locale: employee.preferred_locale as string | null,
-    })
-    lineNotified = true
-  } catch (err) {
-    console.error("notify checkin failed:", err)
+  const shouldPushReceipt = shouldPushClockReceipt(location.source)
+  let lineNotified = !shouldPushReceipt
+  if (shouldPushReceipt) {
+    try {
+      const { notifyCheckin } = await import("@/lib/line/notify-clock")
+      await notifyCheckin({
+        lineUserId,
+        name: employee.name,
+        checkInAt: now,
+        lateMinutes: late,
+        monthSummary,
+        locale: employee.preferred_locale as string | null,
+      })
+      lineNotified = true
+    } catch (err) {
+      console.error("notify checkin failed:", err)
+    }
   }
 
   return {
