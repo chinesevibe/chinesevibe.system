@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import type { NextRequest, NextResponse } from "next/server"
 
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env"
 
 /** Mint Supabase session cookies on `response` for a LINE-linked user. */
 export async function mintLineUserSession(
@@ -13,8 +14,8 @@ export async function mintLineUserSession(
   const email = `line_${lineUserId.toLowerCase()}@line.local`
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    getSupabaseUrl(),
+    getSupabasePublishableKey(),
     {
       cookies: {
         getAll() {

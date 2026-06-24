@@ -6,6 +6,7 @@ import { getAdminClient } from "@/lib/auth/admin-client"
 import { isDev } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { getWorkStart } from "@/lib/runtime-config"
+import { hasSupabasePublishableKey } from "@/lib/supabase/env"
 
 export default async function AdminSettingsPage() {
   const admin = getAdminClient()
@@ -33,6 +34,7 @@ export default async function AdminSettingsPage() {
 
   const checks = [
     { label: "Supabase URL", ok: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) },
+    { label: "Supabase Public Key", ok: hasSupabasePublishableKey() },
     { label: "LINE Channel", ok: Boolean(process.env.LINE_CHANNEL_ACCESS_TOKEN) },
     { label: "Public Base URL", ok: Boolean(process.env.NEXT_PUBLIC_BASE_URL) },
     { label: "HR LINE Group", ok: Boolean(groupId && groupId !== "—") },
