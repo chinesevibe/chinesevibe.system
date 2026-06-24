@@ -14,6 +14,7 @@ type PatchBody = {
   checkOutTime?: string | null
   workHours?: number | null
   workShiftId?: string | null
+  reason?: string | null
 }
 
 type ReviewBody = {
@@ -55,6 +56,9 @@ export async function PATCH(
         typeof body.workShiftId === "string" && body.workShiftId.trim() !== ""
           ? body.workShiftId.trim()
           : null,
+    }, {
+      actorEmployeeId: caller.id,
+      reason: typeof body.reason === "string" ? body.reason : null,
     })
     return NextResponse.json({ id: row.id })
   } catch (e) {
@@ -75,7 +79,10 @@ export async function DELETE(
   const { id } = await context.params
 
   try {
-    await deleteAttendanceByHr(id)
+    await deleteAttendanceByHr(id, {
+      actorEmployeeId: caller.id,
+      reason: "Deleted from HR attendance admin",
+    })
     return NextResponse.json({ ok: true })
   } catch (e) {
     const message = e instanceof Error ? e.message : "ลบไม่สำเร็จ"

@@ -11,6 +11,7 @@ type CreateBody = {
   checkOutTime?: string | null
   workHours?: number | null
   workShiftId?: string | null
+  reason?: string | null
 }
 
 export async function POST(request: NextRequest) {
@@ -43,6 +44,9 @@ export async function POST(request: NextRequest) {
         typeof body.workShiftId === "string" && body.workShiftId.trim() !== ""
           ? body.workShiftId.trim()
           : null,
+    }, {
+      actorEmployeeId: caller.id,
+      reason: typeof body.reason === "string" ? body.reason : null,
     })
     return NextResponse.json({ id: row.id })
   } catch (e) {

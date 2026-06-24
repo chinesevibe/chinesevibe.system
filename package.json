@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test src/lib/payroll/*.test.ts src/lib/attendance/*.test.ts src/lib/employees/*.test.ts src/lib/inventory/*.test.ts",
+    "test": "node --import tsx --test src/lib/payroll/*.test.ts src/lib/attendance/*.test.ts src/lib/approval/*.test.ts src/lib/employees/*.test.ts src/lib/inventory/*.test.ts",
     "seed:admin": "node scripts/seed-admin.mjs",
     "test:e2e": "node scripts/e2e/run-all.mjs",
     "test:e2e:remote": "E2E_REMOTE=1 node scripts/e2e/run-all.mjs",

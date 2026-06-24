@@ -2,6 +2,10 @@ import {
   hasAttendanceOnIctDay,
   ictLocalToUtc,
 } from "@/lib/attendance/ict-datetime"
+import {
+  recordAttendanceAdjustment,
+  toAttendanceAuditSnapshot,
+} from "@/lib/attendance/adjustment-log"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import { resolveRegularWorkHours } from "@/lib/payroll/hour-policy"
@@ -18,6 +22,8 @@ type HrWorkShift = {
   grace_minutes: number
 }
 const DAY_MS = 24 * 60 * 60 * 1000
+const ATTENDANCE_SELECT =
+  "id, employee_id, work_shift_id, shift_date, check_in_at, check_out_at, work_hours, is_late, check_in_location, check_out_location, location_review_status"
 
 export type HrAttendanceInput = {
   date: string
@@ -166,7 +172,11 @@ function parseInput(
 
 export async function createAttendanceByHr(
   employeeId: string,
-  input: HrAttendanceInput
+  input: HrAttendanceInput,
+  options?: {
+    actorEmployeeId?: string | null
+    reason?: string | null
+  }
 ) {
   const supabase = await createClient()
   const shift = await resolveShift(supabase, employeeId, input.workShiftId)
@@ -211,22 +221,36 @@ export async function createAttendanceByHr(
       is_late: isLate,
       check_in_location: null,
     })
-    .select("id")
+    .select(ATTENDANCE_SELECT)
     .single()
 
   if (error) throw error
+  await recordAttendanceAdjustment({
+    attendanceId: data.id as string,
+    actorEmployeeId: options?.actorEmployeeId ?? null,
+    action: "hr_create",
+    source: "hr_manual",
+    reason: options?.reason ?? "HR created attendance manually",
+    before: null,
+    after: toAttendanceAuditSnapshot(data as Record<string, unknown>),
+    metadata: { input },
+  })
   return data
 }
 
 export async function updateAttendanceByHr(
   attendanceId: string,
-  input: HrAttendanceInput
+  input: HrAttendanceInput,
+  options?: {
+    actorEmployeeId?: string | null
+    reason?: string | null
+  }
 ) {
   const supabase = await createClient()
 
   const { data: existing, error: loadError } = await supabase
     .from("hr_attendance")
-    .select("id, employee_id, work_shift_id")
+    .select(ATTENDANCE_SELECT)
     .eq("id", attendanceId)
     .maybeSingle()
 
@@ -284,19 +308,54 @@ export async function updateAttendanceByHr(
       is_late: isLate,
     })
     .eq("id", attendanceId)
-    .select("id")
+    .select(ATTENDANCE_SELECT)
     .single()
 
   if (error) throw error
+  await recordAttendanceAdjustment({
+    attendanceId: data.id as string,
+    actorEmployeeId: options?.actorEmployeeId ?? null,
+    action: "hr_update",
+    source: "hr_manual",
+    reason: options?.reason ?? "HR updated attendance manually",
+    before: toAttendanceAuditSnapshot(existing as Record<string, unknown>),
+    after: toAttendanceAuditSnapshot(data as Record<string, unknown>),
+    metadata: { input },
+  })
   return data
 }
 
-export async function deleteAttendanceByHr(attendanceId: string) {
+export async function deleteAttendanceByHr(
+  attendanceId: string,
+  options?: {
+    actorEmployeeId?: string | null
+    reason?: string | null
+  }
+) {
   const supabase = await createClient()
+  const { data: existing, error: loadError } = await supabase
+    .from("hr_attendance")
+    .select(ATTENDANCE_SELECT)
+    .eq("id", attendanceId)
+    .maybeSingle()
+
+  if (loadError) throw loadError
+  if (!existing) throw new Error("ไม่พบรายการเข้างาน")
+
   const { error } = await supabase
     .from("hr_attendance")
     .delete()
     .eq("id", attendanceId)
 
   if (error) throw error
+  await recordAttendanceAdjustment({
+    attendanceId,
+    actorEmployeeId: options?.actorEmployeeId ?? null,
+    action: "hr_delete",
+    source: "hr_manual",
+    reason: options?.reason ?? "HR deleted attendance manually",
+    before: toAttendanceAuditSnapshot(existing as Record<string, unknown>),
+    after: null,
+    metadata: {},
+  })
 }

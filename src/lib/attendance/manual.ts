@@ -1,5 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
+import {
+  recordAttendanceAdjustment,
+  toAttendanceAuditSnapshot,
+} from "@/lib/attendance/adjustment-log"
 import { finalizeAttendanceRecord } from "@/lib/attendance/finalize-attendance-record"
 import { ictDateFromUtc, ictLocalToUtc } from "@/lib/attendance/ict-datetime"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
@@ -48,10 +52,26 @@ export type ActiveShift = ShiftSchedule & {
 
 type ExistingAttendanceRow = {
   id: string
+  employee_id?: string | null
+  work_shift_id?: string | null
   check_in_at: string
   check_out_at: string | null
   work_hours: number | null
   shift_date: string | null
+  is_late?: boolean | null
+  check_in_location?: Record<string, unknown> | null
+  check_out_location?: Record<string, unknown> | null
+  location_review_status?: string | null
+}
+
+export function shouldBlockEmployeeCheckInOverwrite(params: {
+  source: "employee" | "hr"
+  mode: EmployeeManualMode
+  existing: ExistingAttendanceRow | null
+}): boolean {
+  const { source, mode, existing } = params
+  if (source !== "employee" || !existing) return false
+  return mode === "checkin" || mode === "full"
 }
 
 function pickRelevantAttendanceRow(
@@ -122,7 +142,9 @@ async function findExistingAttendance(
     const window36hStart = new Date(now.getTime() - 36 * 60 * 60 * 1000)
     const { data: openRecord, error: openError } = await supabase
       .from("hr_attendance")
-      .select("id, check_in_at, check_out_at, work_hours, shift_date")
+      .select(
+        "id, employee_id, work_shift_id, check_in_at, check_out_at, work_hours, shift_date, is_late, check_in_location, check_out_location, location_review_status"
+      )
       .eq("employee_id", employeeId)
       .is("check_out_at", null)
       .gte("check_in_at", window36hStart.toISOString())
@@ -138,7 +160,9 @@ async function findExistingAttendance(
 
   const { data: datedRows, error: datedError } = await supabase
     .from("hr_attendance")
-    .select("id, check_in_at, check_out_at, work_hours, shift_date")
+    .select(
+      "id, employee_id, work_shift_id, check_in_at, check_out_at, work_hours, shift_date, is_late, check_in_location, check_out_location, location_review_status"
+    )
     .eq("employee_id", employeeId)
     .eq("shift_date", workDate)
     .order("check_in_at", { ascending: false })
@@ -152,7 +176,9 @@ async function findExistingAttendance(
   const { start, end } = ictDayWindow(workDate)
   const { data: rows, error } = await supabase
     .from("hr_attendance")
-    .select("id, check_in_at, check_out_at, work_hours, shift_date")
+    .select(
+      "id, employee_id, work_shift_id, check_in_at, check_out_at, work_hours, shift_date, is_late, check_in_location, check_out_location, location_review_status"
+    )
     .eq("employee_id", employeeId)
     .gte("check_in_at", start.toISOString())
     .lt("check_in_at", end.toISOString())
@@ -303,6 +329,10 @@ export async function saveManualAttendance(
   const checkInAt = checkInTime ? parseCheckTime(workDate, checkInTime) : null
   const checkOutAt = checkOutTime ? parseCheckTime(workDate, checkOutTime) : null
 
+  if (shouldBlockEmployeeCheckInOverwrite({ source, mode, existing })) {
+    throw new Error("วันนี้มีบันทึกเวลาเข้าอยู่แล้ว หากต้องการแก้ไขเวลาเข้า กรุณาติดต่อ HR")
+  }
+
   if (!existing && mode === "checkout") {
     throw new Error(
       "ยังไม่มีข้อมูลเช็คอินวันนี้ — กรุณาลงเวลาเข้าย้อนหลังก่อน (ภายใน 48 ชม.)"
@@ -392,7 +422,9 @@ export async function saveManualAttendance(
         is_late: isLateNow,
         check_in_location: null,
       })
-      .select("id")
+      .select(
+        "id, employee_id, work_shift_id, check_in_at, check_out_at, work_hours, shift_date, is_late, check_in_location, check_out_location, location_review_status"
+      )
       .single()
 
     if (insertError) throw insertError
@@ -421,6 +453,20 @@ export async function saveManualAttendance(
       })
     }
 
+    await recordAttendanceAdjustment({
+      attendanceId: inserted.id as string,
+      actorEmployeeId: payload.actorEmployeeId ?? payload.employeeId,
+      action: source === "hr" ? "hr_create" : "employee_manual_create",
+      source: source === "hr" ? "hr_manual" : "employee_manual",
+      reason:
+        source === "hr"
+          ? "HR created attendance manually"
+          : "Employee submitted manual attendance",
+      before: null,
+      after: toAttendanceAuditSnapshot(inserted as Record<string, unknown>),
+      metadata: { mode, requestedDate },
+    })
+
     return {
       id: inserted.id,
       status: mode === "full" ? "both_saved" : "checkin_saved",
@@ -428,11 +474,11 @@ export async function saveManualAttendance(
   }
 
   const updates: Record<string, unknown> = {
-    work_shift_id: requestedShift?.id ?? null,
+    work_shift_id: requestedShift?.id ?? existing.work_shift_id ?? null,
     shift_date: workDate,
     is_late: isLateNow,
     work_hours: finalWorkHours,
-    check_in_location: null,
+    check_in_location: existing.check_in_location ?? null,
   }
 
   if (mode === "checkin" || mode === "full") {
@@ -447,7 +493,9 @@ export async function saveManualAttendance(
     .from("hr_attendance")
     .update(updates)
     .eq("id", existing.id)
-    .select("id")
+    .select(
+      "id, employee_id, work_shift_id, check_in_at, check_out_at, work_hours, shift_date, is_late, check_in_location, check_out_location, location_review_status"
+    )
     .single()
 
   if (updateError) {
@@ -478,6 +526,20 @@ export async function saveManualAttendance(
       createdBy: payload.actorEmployeeId ?? payload.employeeId,
     })
   }
+
+  await recordAttendanceAdjustment({
+    attendanceId: updated.id as string,
+    actorEmployeeId: payload.actorEmployeeId ?? payload.employeeId,
+    action: source === "hr" ? "hr_update" : "employee_manual_update",
+    source: source === "hr" ? "hr_manual" : "employee_manual",
+    reason:
+      source === "hr"
+        ? "HR updated attendance manually"
+        : "Employee updated manual attendance",
+    before: toAttendanceAuditSnapshot(existing as unknown as Record<string, unknown>),
+    after: toAttendanceAuditSnapshot(updated as Record<string, unknown>),
+    metadata: { mode, requestedDate },
+  })
 
   return {
     id: updated.id,

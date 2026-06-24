@@ -1,7 +1,10 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import { isOvernightOpenShiftCheckout } from "@/lib/attendance/manual"
+import {
+  isOvernightOpenShiftCheckout,
+  shouldBlockEmployeeCheckInOverwrite,
+} from "@/lib/attendance/manual"
 
 describe("isOvernightOpenShiftCheckout", () => {
   const branchNight = {
@@ -62,6 +65,49 @@ describe("isOvernightOpenShiftCheckout", () => {
         },
         shift: branchNight,
         now: new Date("2026-06-19T14:00:00.000Z"),
+      }),
+      false
+    )
+  })
+})
+
+describe("shouldBlockEmployeeCheckInOverwrite", () => {
+  const existing = {
+    id: "att-1",
+    check_in_at: "2026-06-24T02:57:31.190Z",
+    check_out_at: "2026-06-24T15:03:56.138Z",
+    work_hours: 12,
+    shift_date: "2026-06-24",
+  }
+
+  it("blocks employee checkin overwrite when a record already exists", () => {
+    assert.equal(
+      shouldBlockEmployeeCheckInOverwrite({
+        source: "employee",
+        mode: "checkin",
+        existing,
+      }),
+      true
+    )
+  })
+
+  it("allows employee checkout completion on an existing record", () => {
+    assert.equal(
+      shouldBlockEmployeeCheckInOverwrite({
+        source: "employee",
+        mode: "checkout",
+        existing,
+      }),
+      false
+    )
+  })
+
+  it("allows HR edits on an existing record", () => {
+    assert.equal(
+      shouldBlockEmployeeCheckInOverwrite({
+        source: "hr",
+        mode: "checkin",
+        existing,
       }),
       false
     )

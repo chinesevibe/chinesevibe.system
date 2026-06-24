@@ -3,6 +3,7 @@ import {
   LEAVE_TYPE_LABELS,
   type LeaveType,
 } from "@/features/leave/types"
+import { applyApprovedLeaveAutoCheckout } from "@/lib/approval/leave-attendance"
 import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { getAdminClient } from "@/lib/auth/admin-client"
 import {
@@ -71,6 +72,7 @@ export async function decideLeave(
   }
 
   const stage = leave.approval_status === "pending_manager" ? "manager" : "hr"
+  const decisionAt = new Date()
 
   const employeeJoin = Array.isArray(leave.hr_employees)
     ? leave.hr_employees[0]
@@ -142,7 +144,7 @@ export async function decideLeave(
       approval_status: "approved",
       approved_by: input.approverId,
       hr_decided_by: input.approverId,
-      hr_decided_at: new Date().toISOString(),
+      hr_decided_at: decisionAt.toISOString(),
       decision_note: note || null,
     })
     .eq("id", id)
@@ -150,6 +152,17 @@ export async function decideLeave(
   if (updateError) {
     return { ok: false, error: updateError.message, status: 400 }
   }
+
+  const autoCheckout = await applyApprovedLeaveAutoCheckout({
+    leaveId: id,
+    employeeId: leave.employee_id as string,
+    approverId: input.approverId,
+    startDate: leave.start_date as string,
+    endDate: leave.end_date as string,
+    leaveUnit: (leave.leave_unit as string | null | undefined) ?? null,
+    note: note || null,
+    approvalTime: decisionAt,
+  })
 
   if (leave.leave_unit === "days" && days > 0) {
     const { data: balance } = await admin
@@ -197,6 +210,9 @@ export async function decideLeave(
 
   const approverName = await getApproverDisplayName(input.approverId)
   const leaveLabel = LEAVE_TYPE_LABELS[leaveType] ?? leaveType
+  const employeeNote = [note, autoCheckout.status !== "not_applicable" ? autoCheckout.note : null]
+    .filter(Boolean)
+    .join("\n")
   await notifyDecisionParties({
     employeeLineUserId: lineUserId,
     employeeMessages: [
@@ -205,7 +221,7 @@ export async function decideLeave(
         startDate: leave.start_date,
         endDate: leave.end_date,
         remainingDays,
-        note: note || null,
+        note: employeeNote || null,
         locale,
       }),
     ],
@@ -215,6 +231,9 @@ export async function decideLeave(
       `ประเภท: ${leaveLabel}`,
       `วันที่: ${leave.start_date} – ${leave.end_date}`,
       note ? `หมายเหตุ: ${note}` : null,
+      autoCheckout.status !== "not_applicable"
+        ? `Attendance: ${autoCheckout.note}`
+        : null,
       `โดย: ${approverName}`,
     ]
       .filter(Boolean)
