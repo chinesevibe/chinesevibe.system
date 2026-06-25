@@ -18,5 +18,16 @@ export default async function MobileInventoryLayout({
     redirect("/portal")
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <head>
+        <link rel="manifest" href="/m/inventory/manifest.json" />
+        <meta name="theme-color" content="#E11D2A" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
+      {children}
+    </>
+  )
 }
+
