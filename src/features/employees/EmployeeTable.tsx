@@ -324,11 +324,8 @@ export function EmployeeTable({
         scrollable && "overflow-auto"
       )}
     >
-      <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
-        <div>
-          <p className="text-sm font-semibold text-foreground">รายการพนักงาน</p>
-          <p className="text-xs text-muted-foreground">เปิดโปรไฟล์ ดูสถานะ และจัดการเอกสารได้จากแต่ละแถว</p>
-        </div>
+      <div className="flex items-center border-b border-border/60 px-3 py-2">
+        <p className="text-xs font-semibold text-foreground">รายการพนักงาน</p>
       </div>
 
       <div className="grid gap-3 p-3 xl:hidden">
