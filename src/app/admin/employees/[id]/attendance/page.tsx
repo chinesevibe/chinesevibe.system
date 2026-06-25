@@ -219,7 +219,7 @@ export default async function EmployeeAttendancePage({
           />
 
           {/* ── 2-col Main ── */}
-          <div className="grid h-full min-h-0 gap-3 overflow-hidden lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1.3fr)_380px]">
+          <div className="grid h-full min-h-0 gap-3 overflow-hidden lg:grid-cols-[minmax(0,1fr)_420px] xl:grid-cols-[minmax(0,1fr)_460px]">
             {/* Left: filter + table */}
             <div className="order-1 flex min-h-0 flex-col gap-2.5 overflow-hidden lg:gap-3">
               <Suspense fallback={null}>
