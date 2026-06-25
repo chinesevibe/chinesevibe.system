@@ -131,6 +131,7 @@ export function LifecyclePanel({
           onChange={(e) => setProbationOutcome(e.target.value)}
         >
           <option value="">— เลือกผล —</option>
+          <option value="in_progress">อยู่ระหว่างทดลองงาน</option>
           <option value="passed">ผ่าน</option>
           <option value="failed">ไม่ผ่าน</option>
           <option value="extended">ขยายเวลา</option>

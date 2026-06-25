@@ -99,7 +99,7 @@ export function EmployeeProfilePageClient({
               onClick={() => setEditing(true)}
             >
               <Pencil className="size-3.5" />
-              Edit Profile
+              แก้ไขข้อมูล
             </Button>
           )
         }
@@ -111,7 +111,7 @@ export function EmployeeProfilePageClient({
         />
       ) : null}
       <section className="shrink-0 rounded-xl border border-border/80 bg-card p-4">
-        <h2 className="mb-3 text-sm font-semibold">วงจรพนักงาน</h2>
+        <h2 className="mb-3 text-sm font-semibold">การดำเนินการ & เอกสาร</h2>
         <LifecyclePanel profile={profile} notes={notes} />
       </section>
       {!readOnly ? <EmployeeDangerZone profile={profile} /> : null}

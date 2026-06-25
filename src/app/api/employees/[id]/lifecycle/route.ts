@@ -53,7 +53,7 @@ export async function POST(
 
   if (body.action === "probation") {
     const outcome = body.outcome
-    if (!outcome || !["passed", "failed", "extended"].includes(outcome)) {
+    if (!outcome || !["passed", "failed", "extended", "in_progress"].includes(outcome)) {
       return NextResponse.json({ error: "invalid outcome" }, { status: 400 })
     }
 

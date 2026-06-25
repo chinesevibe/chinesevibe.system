@@ -1,7 +1,6 @@
 import {
   Building2,
   FileText,
-  Heart,
   Mail,
   User,
 } from "lucide-react"
@@ -28,9 +27,17 @@ const profileActionLinkClass = cn(
 )
 
 const CONTRACT_LABEL: Record<string, string> = {
-  full_time: "Full-time",
-  part_time: "Part-time",
-  contract: "Contract",
+  full_time: "พนักงานประจำ",
+  part_time: "พนักงานพาร์ทไทม์",
+  contract: "พนักงานสัญญาจ้าง",
+}
+
+const ROLE_LABEL: Record<string, string> = {
+  hr_admin: "HR Admin",
+  manager: "ผู้จัดการ",
+  employee: "พนักงาน",
+  ceo: "CEO",
+  dev: "Dev",
 }
 
 function formatDate(value: string | null): string {
@@ -85,10 +92,10 @@ export function EmployeeProfileView({
                 </p>
                 <p className="text-xs text-white/75">
                   {profile.contract_start
-                    ? `Joined on ${formatDate(profile.contract_start)}`
-                    : "Joined on —"}
+                    ? `เริ่มงาน ${formatDate(profile.contract_start)}`
+                    : "เริ่มงาน —"}
                   {profile.probation_end
-                    ? ` · Probation until ${formatDate(profile.probation_end)}`
+                    ? ` · ทดลองงานถึง ${formatDate(profile.probation_end)}`
                     : ""}
                 </p>
               </div>
@@ -99,7 +106,7 @@ export function EmployeeProfileView({
                 href={attendanceHref}
                 className={profileActionLinkClass}
               >
-                Attendance
+                ประวัติเข้างาน
               </Link>
             </div>
           </div>
@@ -107,45 +114,36 @@ export function EmployeeProfileView({
       </div>
 
       <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-        <ProfileSectionCard title="Contact Information" icon={Mail}>
-          <ProfileField label="Work Email" value={profile.email} />
-          <ProfileField label="Work Phone" value={profile.phone} />
-          <ProfileField label="Personal Email" value="—" />
-          <ProfileField label="Address" value="—" className="sm:col-span-2" />
-        </ProfileSectionCard>
-
-        <ProfileSectionCard title="Emergency Contact" icon={Heart}>
-          <ProfileField label="Contact Name" value="—" />
-          <ProfileField label="Relationship" value="—" />
-          <ProfileField label="Phone Number" value="—" />
-          <ProfileField label="Address" value="—" />
-        </ProfileSectionCard>
-
-        <ProfileSectionCard title="Personal Information" icon={User}>
-          <ProfileField label="Full Name" value={profile.name} />
-          <ProfileField label="Date of Birth" value={formatDate(profile.date_of_birth)} />
-          <ProfileField label="Gender" value="—" />
-          <ProfileField
-            label="Nationality"
-            value={nationalityLabel(profile.nationality)}
-          />
-          <ProfileField label="รหัสพนักงาน" value={profile.employee_code} />
+        <ProfileSectionCard title="ข้อมูลการติดต่อ" icon={Mail}>
+          <ProfileField label="อีเมลงาน" value={profile.email} />
+          <ProfileField label="เบอร์โทรงาน" value={profile.phone} />
           <ProfileField label="LINE User ID" value={profile.line_user_id} />
         </ProfileSectionCard>
 
-        <ProfileSectionCard title="Work Information" icon={Building2}>
-          <ProfileField label="Department" value={profile.department} />
-          <ProfileField label="Position" value={profile.position} />
+        <ProfileSectionCard title="ข้อมูลส่วนตัว" icon={User}>
+          <ProfileField label="วันเกิด" value={formatDate(profile.date_of_birth)} />
           <ProfileField
-            label="Employment Type"
+            label="สัญชาติ"
+            value={nationalityLabel(profile.nationality)}
+          />
+          <ProfileField label="รหัสพนักงาน" value={profile.employee_code} />
+        </ProfileSectionCard>
+
+        <ProfileSectionCard title="ข้อมูลการทำงาน" icon={Building2}>
+          <ProfileField label="แผนก" value={profile.department} />
+          <ProfileField label="ตำแหน่ง" value={profile.position} />
+          <ProfileField
+            label="ประเภทสัญญา"
             value={
               profile.contract_type
                 ? CONTRACT_LABEL[profile.contract_type] ?? profile.contract_type
                 : "—"
             }
           />
-          <ProfileField label="Role" value={profile.role} />
-          <ProfileField label="Status" value={profile.status} />
+          <ProfileField
+            label="สิทธิ์ระบบ"
+            value={ROLE_LABEL[profile.role] ?? profile.role}
+          />
           <ProfileField
             label="สัญญาจ้าง (ไฟล์)"
             value={
@@ -176,11 +174,11 @@ export function EmployeeProfileView({
               }
             />
             <ProfileField
-              label="Salary (THB)"
+              label="เงินเดือน (บาท)"
               value={profile.salary?.toLocaleString() ?? "—"}
             />
             <ProfileField
-              label="Add-on ค่าที่พัก"
+              label="เบี้ยเลี้ยงที่พัก"
               value={profile.housing_allowance?.toLocaleString() ?? "—"}
             />
             <ProfileField
@@ -188,7 +186,7 @@ export function EmployeeProfileView({
               value={profile.pay_day ? payDayLabel(profile.pay_day) : "—"}
             />
             <ProfileField
-              label="Payment Method"
+              label="วิธีรับเงินเดือน"
               value={
                 profile.salary_payment_method
                   ? paymentMethodLabel(profile.salary_payment_method)
@@ -198,32 +196,32 @@ export function EmployeeProfileView({
               }
             />
             {profile.salary_payment_method === "cash" ? (
-              <ProfileField label="Note" value="รับเงินเดือนเป็นเงินสด" />
+              <ProfileField label="หมายเหตุ" value="รับเงินเดือนเป็นเงินสด" />
             ) : profile.salary_payment_method === "bank" ||
               profile.bank_account_number ? (
               <>
-                <ProfileField label="Bank Name" value={profile.bank_name} />
-                <ProfileField label="Account Name" value={profile.bank_account_name} />
-                <ProfileField label="Account Number" value={profile.bank_account_number} />
-                <ProfileField label="Branch" value={profile.bank_branch} />
+                <ProfileField label="ธนาคาร" value={profile.bank_name} />
+                <ProfileField label="ชื่อบัญชี" value={profile.bank_account_name} />
+                <ProfileField label="เลขบัญชี" value={profile.bank_account_number} />
+                <ProfileField label="สาขาธนาคาร" value={profile.bank_branch} />
               </>
             ) : null}
           </div>
         </SalarySensitiveView>
 
-        <ProfileSectionCard title="Tax & Social Security" icon={FileText}>
-          <ProfileField label="Visa Expiry" value={formatDate(profile.visa_expiry)} />
+        <ProfileSectionCard title="วีซ่า & ใบอนุญาต" icon={FileText}>
+          <ProfileField label="วีซ่าหมดอายุ" value={formatDate(profile.visa_expiry)} />
           <ProfileField
-            label="Work Permit Expiry"
+            label="ใบอนุญาตทำงานหมด"
             value={formatDate(profile.work_permit_expiry)}
           />
-          <ProfileField label="Contract End" value={formatDate(profile.contract_end)} />
+          <ProfileField label="สิ้นสุดสัญญา" value={formatDate(profile.contract_end)} />
           <ProfileField
-            label="Probation Outcome"
+            label="ผลทดลองงาน"
             value={profile.probation_outcome ?? profile.probationStatus}
           />
-          <ProfileField label="Visa Status" value={profile.visaStatus.label} />
-          <ProfileField label="Work Permit Status" value={profile.workPermitStatus.label} />
+          <ProfileField label="สถานะวีซ่า" value={profile.visaStatus.label} />
+          <ProfileField label="สถานะใบอนุญาต" value={profile.workPermitStatus.label} />
         </ProfileSectionCard>
       </div>
     </div>

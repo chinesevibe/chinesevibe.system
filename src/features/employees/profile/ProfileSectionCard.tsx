@@ -20,7 +20,7 @@ export function ProfileSectionCard({
         </div>
         {action}
       </div>
-      <div className="grid content-start gap-x-2 gap-y-1.5 p-2 sm:grid-cols-2">
+      <div className="grid content-start gap-x-3 gap-y-2 p-3 sm:grid-cols-2">
         {children}
       </div>
     </section>
