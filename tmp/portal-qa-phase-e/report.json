@@ -1,0 +1,434 @@
+[
+  {
+    "route": "/portal/inventory",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าค้าง 9 ใบ แต่ยังไม่มีรายการพร้อมสแกน\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n0\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้งาน\n\nทุกสาขาตามสิทธิที่ได้รับ\n\nยังไม่พบข้อมูลคลังในขอบเขตนี้\n\nDevelopers · IT\n\nงานที่ควรทำตอนนี้\n\nเริ่มจากงานที่กระทบการเคลื่อนไหวสต็อกก่อน แล้วค่อยเปิดงานจัดการขั้นถัดไป\n\nรับเข้า\n\nดูใบรับเข้าและเข้าสแกนต่อ\n\nเริ่มจากงานรับเข้าที่พร้อมสแกน\n\nเช็คสต็อก\n\nดูของคงเหลือ, ต่ำกว่า Min, และหมดสต็อก\n\nเช็คของต่ำกว่า Min ก่อนเปิดใช้งานหน้างาน\n\nแจ้งเสียหาย\n\nบันทึกของเสียหาย, หมดอายุ, หรือสูญหายจากมือถือ\n\nใช้ตอนต้องถ่ายรูปและแจ้งเหตุหน้างานทันที\n\nใบเบิก\n\nตรวจสถานะใบเบิกของครัว\n\nเปิดงานค้างของครัวเมื่อมีเวลาอนุมัติหรือจ่ายของ\n\nโอนสินค้า\n\nติดตามงานโอนระหว่างสาขา\n\nตามของที่กำลังย้ายระหว่างสาขา\n\nรายการเตือน\n\nดูสต็อกต่ำ ใกล้หมดอายุ และความผิดปกติ\n\nเปิดรายการเตือนแล้วตัดสินใจจากจุดเดียว\n\nนับสต็อก\n\nสร้างรอบตรวจนับตามสาขาและคลัง\n\nใช้ก่อนเริ่มรอบตรวจนับของจริงในคลัง\n\nลำดับใช้งานแนะนำ\n\n1. เปิดรับเข้าแล้วสแกนของจริงตามใบที่พร้อมก่อน\n2. เช็คของต่ำกว่า Min และของหมดก่อนเปิดครัวหรือส่งของ\n3. ถ้า"
+  },
+  {
+    "route": "/portal/stock",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทุกสาขา\nBang Na\nทุกคลัง\nBang Na\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nรับเข้าสินค้า\nเลือกใบรับที่พร้อมสแกน เปิดใน LINE แล้วรับเข้าตามของจริงจากมือถือ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n\nขั้นตอนรับเข้าหน้างาน\n\n1. เลือกใบรับที่มีรายการสินค้าแล้ว\n2. เช็คผู้จำหน่ายและคลังปลายทางให้ตรงของจริง\n3. เปิดสแกนใน LINE แล้วรับเข้าทีละชิ้นหรือทีละ lot\n\nใบรับที่ยังสแกนไม่ได้\n\nใบเหล่านี้ยังไม่มีรายการสินค้า ต้องเติมรายการก่อนเปิดสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำห"
+  },
+  {
+    "route": "/portal/alerts",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้างคลัง\n3. ถ้าสต็อกต่ำ ให้เปิดหน้าสต็อกหรืองานเติมของต่อทันที\nสาขา\nทั้งหมด\nBang Na\nคลัง\nทั้งหมด\nBang Na\nประเภทแจ้งเตือน\nทั้งหมด\nใกล้หมดอายุ\nสต็อกต่ำ\nผิดปกติ\nล้างตัวกรอง\nกล่องแจ้งเตือนงานคลัง\n\nเปิดจากรายการนี้เพื่อไล่ตัดสินใจเรื่อง expiry, reorder และรายการผิดปกติ\n\nยังไม่มี alerts"
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nใบเบิกครัว\nคิวใบเบิกบนมือถือ ดูรออนุมัติ รอจ่าย และรอยืนยันรับจากจุดเดียว\n+ สร้างใบเบิก\n\nใบเบิกทั้งหมด\n\n0\n\nรวมคำขอเบิกใน workspace นี้\n\nรออนุมัติ\n\n0\n\nคำขอจากครัวที่รอ inventory ตรวจอนุมัติ\n\nจ่ายของแล้ว\n\n0\n\nคำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ\n\nรับครบแล้ว\n\n0\n\nแบบร่าง 0 ใบยังรอส่งเข้ากระบวนการ\n\nสถานะ\nทั้งหมด\nแบบร่าง\nรออนุมัติ\nอนุมัติแล้ว\nจ่ายของแล้ว\nรับครบแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวใบเบิกครัว\n\nใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง\n\nรออนุมัติ 0 · จ่ายแล้ว 0\nยังไม่มีใบเบิก"
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nโอนสินค้า\nคิวใบโอนบนมือถือ ติดตามแบบร่าง กำลังโอน และปลายทางรับครบจากจุดเดียว\n+ สร้างใบโอน\n\nใบโอนทั้งหมด\n\n0\n\nรวมรายการโอนระหว่างสาขาและคลัง\n\nแบบร่าง\n\n0\n\nใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง\n\nกำลังโอน\n\n0\n\nใบโอนที่หักสต็อกจากต้นทางแล้วและรอปลายทางยืนยันรับ\n\nรับแล้ว\n\n0\n\nรวม 0 รายการสินค้าในทุกใบโอน\n\nคิวใบโอนระหว่างสาขา\n\nใช้ดูว่ารายการไหนยังเป็นแบบร่าง รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว\n\nร่าง 0 · กำลังโอน 0\nยังไม่มีใบโอนสินค้า"
+  },
+  {
+    "route": "/portal/damage",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nรายงานความเสียหาย\nคิวของเสีย สูญหาย และหมดอายุบนมือถือ พร้อมสถานะอนุมัติจากจุดเดียว\n+ แจ้งความเสียหาย\n\nรายงานทั้งหมด\n\n0\n\nรวมรายการเสียหาย สูญหาย หมดอายุ และ adjustment\n\nรออนุมัติ\n\n0\n\nรายการที่ยังต้องมีคนตัดสินก่อนตัดสต็อกจริง\n\nอนุมัติแล้ว\n\n0\n\nรายการที่ระบบตัดสต็อกและบันทึกการเคลื่อนไหวแล้ว\n\nถูกปฏิเสธ\n\n0\n\nรายการที่ยังควรย้อนดูเหตุผลหรือแก้ข้อมูลก่อนส่งใหม่\n\nสถานะ\nทั้งหมด\nรออนุมัติ\nอนุมัติแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวรายการเสียหายและสูญหาย\n\nใช้ดูรายการที่รออนุมัติ พร้อมแยกสาขา คลัง ประเภท และมูลค่าความเสียหาย\n\nรออนุมัติ 0 · อนุมัติแล้ว 0\nยังไม่มีรายงานความเสียหาย"
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nตรวจนับสต๊อก\nคิวรอบตรวจนับบนมือถือ ใช้เริ่มรอบใหม่ เปิดรอบค้าง และตามส่วนต่างต่อได้จากจุดเดียว\n+ สร้างรอบตรวจนับ\n\nรอบตรวจนับทั้งหมด\n\n0\n\nรวมทุกรอบที่สร้างในงานตรวจนับนี้\n\nแบบร่าง\n\n0\n\nรอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง\n\nกำลังนับ\n\n0\n\nรอบที่ทีมยังกรอกจำนวนจริงไม่ครบ\n\nเสร็จสิ้น\n\n0\n\nยังเหลือ 0 รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่\n\nคิวรอบตรวจนับ\n\nใช้เปิดรอบแบบร่าง กลับเข้ารอบที่กำลังนับ และดูรอบที่ปิดแล้วจากมือถือ\n\nแบบร่าง 0 · กำลังนับ 0\nยังไม่มีรอบตรวจนับ"
+  },
+  {
+    "route": "/portal/requisition/create",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างใบเบิกครัว\nเลือกคลังและ SKU ที่ต้องการเบิกจากมือถือ แล้วติดตามสถานะต่อในหน้ามือถือ\n← กลับ\nสาขาครัว\nเลือกสาขา\n001 — Bang Na\nคลังที่ขอเบิก\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุ\nรายการขอเบิก\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourPlum-BOTTLE — 酸梅汤SOUR PLUM\nBEV-SPRITE-CAN — 雪碧SPRITE\nBEV-THAIMINERAL-WATER — 泰国矿泉水Thai Mineral "
+  },
+  {
+    "route": "/portal/transfer/create",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างใบโอนสินค้า\nสาขาต้นทางส่งก่อน แล้วปลายทางรับเข้าภายหลัง ผ่านขั้นตอนงานบนมือถือ\n← รายการใบโอน\nสาขาต้นทาง\nเลือกสาขา\n001 — Bang Na\nสาขาปลายทาง\nเลือกสาขา\n001 — Bang Na\nคลังต้นทาง\nเลือกคลัง\n001 — Bang Na\nคลังปลายทาง\nเลือกคลัง\n001 — Bang Na\nผู้ขนส่ง\nหมายเหตุ\nรายการสินค้า\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourPlum-BOTTLE — 酸梅汤SOUR "
+  },
+  {
+    "route": "/portal/damage/create",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nแจ้งความเสียหาย\nบันทึกของเสีย สูญหาย หมดอายุ หรือรายการปรับปรุงผ่านหน้ามือถือ\n← รายการ\nเลือกสาขาและคลังให้ตรงก่อน แล้วเพิ่มรายการเสียหายทีละรายการพร้อมเหตุผลและรูปถ่ายถ้ามี\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุรวม\nรายการความเสียหาย\nเพิ่มรายการ\n\nรายการ #1\n\nลบ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourP"
+  },
+  {
+    "route": "/portal/stock-count/create",
+    "width": 375,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างรอบตรวจนับสต๊อก\nเริ่มรอบตรวจนับจากมือถือ แล้วค่อยเปิดรายละเอียดรอบตรวจนับต่อ\n← กลับหน้าคลัง\nใช้หน้านี้ตอนเริ่มรอบตรวจนับ: เลือกสาขา เลือกคลัง กำหนดวัน แล้วค่อยสร้างรอบเพื่อให้ทีมเริ่มนับจากข้อมูลตั้งต้นเดียวกัน\n\nขอบเขต\n\nทุกรายการสต็อก\n\nดึงทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือกมาเป็นข้อมูลตั้งต้น\n\nสาขา / คลัง\n\nรอเลือก\n\nเลือกให้ครบก่อนสร้างรอบเพื่อล็อกขอบเขตของการนับ\n\nวันที่วางแผน\n\nยังไม่ระบุ\n\nใช้เป็นวันนัดหมายหรือรอบที่ต้องการให้ทีมเริ่มนับ\n\nผลลัพธ์หลังปิดรอบ\n\nรายการปรับสต็อก\n\nส่วนต่างจะถูกสร้างเป็นรายการปรับสต็อกหลังปิดรอบ\n\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na\nขอบเขต\nวันที่วางแผน\nหมายเหตุ\n\nสาขาที่เลือก: ยังไม่ได้เลือก\n\nคลังที่เลือก: ยังไม่ได้เลือก\n\nรอบนี้จะใช้เฉพาะ SKU ที่มีข้อมูลคงเหลืออยู่แล้วในคลังที่เลือก และจะสร้างรายการปรับสต็อกตอนปิดรอบเท่านั้น\nสร้างแผนตรวจนับ"
+  },
+  {
+    "route": "/portal/inventory",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าค้าง 9 ใบ แต่ยังไม่มีรายการพร้อมสแกน\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n0\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้งาน\n\nทุกสาขาตามสิทธิที่ได้รับ\n\nยังไม่พบข้อมูลคลังในขอบเขตนี้\n\nDevelopers · IT\n\nงานที่ควรทำตอนนี้\n\nเริ่มจากงานที่กระทบการเคลื่อนไหวสต็อกก่อน แล้วค่อยเปิดงานจัดการขั้นถัดไป\n\nรับเข้า\n\nดูใบรับเข้าและเข้าสแกนต่อ\n\nเริ่มจากงานรับเข้าที่พร้อมสแกน\n\nเช็คสต็อก\n\nดูของคงเหลือ, ต่ำกว่า Min, และหมดสต็อก\n\nเช็คของต่ำกว่า Min ก่อนเปิดใช้งานหน้างาน\n\nแจ้งเสียหาย\n\nบันทึกของเสียหาย, หมดอายุ, หรือสูญหายจากมือถือ\n\nใช้ตอนต้องถ่ายรูปและแจ้งเหตุหน้างานทันที\n\nใบเบิก\n\nตรวจสถานะใบเบิกของครัว\n\nเปิดงานค้างของครัวเมื่อมีเวลาอนุมัติหรือจ่ายของ\n\nโอนสินค้า\n\nติดตามงานโอนระหว่างสาขา\n\nตามของที่กำลังย้ายระหว่างสาขา\n\nรายการเตือน\n\nดูสต็อกต่ำ ใกล้หมดอายุ และความผิดปกติ\n\nเปิดรายการเตือนแล้วตัดสินใจจากจุดเดียว\n\nนับสต็อก\n\nสร้างรอบตรวจนับตามสาขาและคลัง\n\nใช้ก่อนเริ่มรอบตรวจนับของจริงในคลัง\n\nลำดับใช้งานแนะนำ\n\n1. เปิดรับเข้าแล้วสแกนของจริงตามใบที่พร้อมก่อน\n2. เช็คของต่ำกว่า Min และของหมดก่อนเปิดครัวหรือส่งของ\n3. ถ้า"
+  },
+  {
+    "route": "/portal/stock",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทุกสาขา\nBang Na\nทุกคลัง\nBang Na\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nรับเข้าสินค้า\nเลือกใบรับที่พร้อมสแกน เปิดใน LINE แล้วรับเข้าตามของจริงจากมือถือ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n\nขั้นตอนรับเข้าหน้างาน\n\n1. เลือกใบรับที่มีรายการสินค้าแล้ว\n2. เช็คผู้จำหน่ายและคลังปลายทางให้ตรงของจริง\n3. เปิดสแกนใน LINE แล้วรับเข้าทีละชิ้นหรือทีละ lot\n\nใบรับที่ยังสแกนไม่ได้\n\nใบเหล่านี้ยังไม่มีรายการสินค้า ต้องเติมรายการก่อนเปิดสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำห"
+  },
+  {
+    "route": "/portal/alerts",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้างคลัง\n3. ถ้าสต็อกต่ำ ให้เปิดหน้าสต็อกหรืองานเติมของต่อทันที\nสาขา\nทั้งหมด\nBang Na\nคลัง\nทั้งหมด\nBang Na\nประเภทแจ้งเตือน\nทั้งหมด\nใกล้หมดอายุ\nสต็อกต่ำ\nผิดปกติ\nล้างตัวกรอง\nกล่องแจ้งเตือนงานคลัง\n\nเปิดจากรายการนี้เพื่อไล่ตัดสินใจเรื่อง expiry, reorder และรายการผิดปกติ\n\nยังไม่มี alerts"
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nใบเบิกครัว\nคิวใบเบิกบนมือถือ ดูรออนุมัติ รอจ่าย และรอยืนยันรับจากจุดเดียว\n+ สร้างใบเบิก\n\nใบเบิกทั้งหมด\n\n0\n\nรวมคำขอเบิกใน workspace นี้\n\nรออนุมัติ\n\n0\n\nคำขอจากครัวที่รอ inventory ตรวจอนุมัติ\n\nจ่ายของแล้ว\n\n0\n\nคำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ\n\nรับครบแล้ว\n\n0\n\nแบบร่าง 0 ใบยังรอส่งเข้ากระบวนการ\n\nสถานะ\nทั้งหมด\nแบบร่าง\nรออนุมัติ\nอนุมัติแล้ว\nจ่ายของแล้ว\nรับครบแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวใบเบิกครัว\n\nใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง\n\nรออนุมัติ 0 · จ่ายแล้ว 0\nยังไม่มีใบเบิก"
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nโอนสินค้า\nคิวใบโอนบนมือถือ ติดตามแบบร่าง กำลังโอน และปลายทางรับครบจากจุดเดียว\n+ สร้างใบโอน\n\nใบโอนทั้งหมด\n\n0\n\nรวมรายการโอนระหว่างสาขาและคลัง\n\nแบบร่าง\n\n0\n\nใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง\n\nกำลังโอน\n\n0\n\nใบโอนที่หักสต็อกจากต้นทางแล้วและรอปลายทางยืนยันรับ\n\nรับแล้ว\n\n0\n\nรวม 0 รายการสินค้าในทุกใบโอน\n\nคิวใบโอนระหว่างสาขา\n\nใช้ดูว่ารายการไหนยังเป็นแบบร่าง รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว\n\nร่าง 0 · กำลังโอน 0\nยังไม่มีใบโอนสินค้า"
+  },
+  {
+    "route": "/portal/damage",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nรายงานความเสียหาย\nคิวของเสีย สูญหาย และหมดอายุบนมือถือ พร้อมสถานะอนุมัติจากจุดเดียว\n+ แจ้งความเสียหาย\n\nรายงานทั้งหมด\n\n0\n\nรวมรายการเสียหาย สูญหาย หมดอายุ และ adjustment\n\nรออนุมัติ\n\n0\n\nรายการที่ยังต้องมีคนตัดสินก่อนตัดสต็อกจริง\n\nอนุมัติแล้ว\n\n0\n\nรายการที่ระบบตัดสต็อกและบันทึกการเคลื่อนไหวแล้ว\n\nถูกปฏิเสธ\n\n0\n\nรายการที่ยังควรย้อนดูเหตุผลหรือแก้ข้อมูลก่อนส่งใหม่\n\nสถานะ\nทั้งหมด\nรออนุมัติ\nอนุมัติแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวรายการเสียหายและสูญหาย\n\nใช้ดูรายการที่รออนุมัติ พร้อมแยกสาขา คลัง ประเภท และมูลค่าความเสียหาย\n\nรออนุมัติ 0 · อนุมัติแล้ว 0\nยังไม่มีรายงานความเสียหาย"
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nตรวจนับสต๊อก\nคิวรอบตรวจนับบนมือถือ ใช้เริ่มรอบใหม่ เปิดรอบค้าง และตามส่วนต่างต่อได้จากจุดเดียว\n+ สร้างรอบตรวจนับ\n\nรอบตรวจนับทั้งหมด\n\n0\n\nรวมทุกรอบที่สร้างในงานตรวจนับนี้\n\nแบบร่าง\n\n0\n\nรอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง\n\nกำลังนับ\n\n0\n\nรอบที่ทีมยังกรอกจำนวนจริงไม่ครบ\n\nเสร็จสิ้น\n\n0\n\nยังเหลือ 0 รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่\n\nคิวรอบตรวจนับ\n\nใช้เปิดรอบแบบร่าง กลับเข้ารอบที่กำลังนับ และดูรอบที่ปิดแล้วจากมือถือ\n\nแบบร่าง 0 · กำลังนับ 0\nยังไม่มีรอบตรวจนับ"
+  },
+  {
+    "route": "/portal/requisition/create",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างใบเบิกครัว\nเลือกคลังและ SKU ที่ต้องการเบิกจากมือถือ แล้วติดตามสถานะต่อในหน้ามือถือ\n← กลับ\nสาขาครัว\nเลือกสาขา\n001 — Bang Na\nคลังที่ขอเบิก\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุ\nรายการขอเบิก\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourPlum-BOTTLE — 酸梅汤SOUR PLUM\nBEV-SPRITE-CAN — 雪碧SPRITE\nBEV-THAIMINERAL-WATER — 泰国矿泉水Thai Mineral "
+  },
+  {
+    "route": "/portal/transfer/create",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างใบโอนสินค้า\nสาขาต้นทางส่งก่อน แล้วปลายทางรับเข้าภายหลัง ผ่านขั้นตอนงานบนมือถือ\n← รายการใบโอน\nสาขาต้นทาง\nเลือกสาขา\n001 — Bang Na\nสาขาปลายทาง\nเลือกสาขา\n001 — Bang Na\nคลังต้นทาง\nเลือกคลัง\n001 — Bang Na\nคลังปลายทาง\nเลือกคลัง\n001 — Bang Na\nผู้ขนส่ง\nหมายเหตุ\nรายการสินค้า\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourPlum-BOTTLE — 酸梅汤SOUR "
+  },
+  {
+    "route": "/portal/damage/create",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nแจ้งความเสียหาย\nบันทึกของเสีย สูญหาย หมดอายุ หรือรายการปรับปรุงผ่านหน้ามือถือ\n← รายการ\nเลือกสาขาและคลังให้ตรงก่อน แล้วเพิ่มรายการเสียหายทีละรายการพร้อมเหตุผลและรูปถ่ายถ้ามี\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุรวม\nรายการความเสียหาย\nเพิ่มรายการ\n\nรายการ #1\n\nลบ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIULANSHAN — 牛栏山NIULANSHAN\nBEV-REGENCY-350 — REGENCY\nBEV-SINGHA-SODA — 苏打水 SINGHA SODA\nBEV-SourP"
+  },
+  {
+    "route": "/portal/stock-count/create",
+    "width": 430,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nสร้างรอบตรวจนับสต๊อก\nเริ่มรอบตรวจนับจากมือถือ แล้วค่อยเปิดรายละเอียดรอบตรวจนับต่อ\n← กลับหน้าคลัง\nใช้หน้านี้ตอนเริ่มรอบตรวจนับ: เลือกสาขา เลือกคลัง กำหนดวัน แล้วค่อยสร้างรอบเพื่อให้ทีมเริ่มนับจากข้อมูลตั้งต้นเดียวกัน\n\nขอบเขต\n\nทุกรายการสต็อก\n\nดึงทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือกมาเป็นข้อมูลตั้งต้น\n\nสาขา / คลัง\n\nรอเลือก\n\nเลือกให้ครบก่อนสร้างรอบเพื่อล็อกขอบเขตของการนับ\n\nวันที่วางแผน\n\nยังไม่ระบุ\n\nใช้เป็นวันนัดหมายหรือรอบที่ต้องการให้ทีมเริ่มนับ\n\nผลลัพธ์หลังปิดรอบ\n\nรายการปรับสต็อก\n\nส่วนต่างจะถูกสร้างเป็นรายการปรับสต็อกหลังปิดรอบ\n\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na\nขอบเขต\nวันที่วางแผน\nหมายเหตุ\n\nสาขาที่เลือก: ยังไม่ได้เลือก\n\nคลังที่เลือก: ยังไม่ได้เลือก\n\nรอบนี้จะใช้เฉพาะ SKU ที่มีข้อมูลคงเหลืออยู่แล้วในคลังที่เลือก และจะสร้างรายการปรับสต็อกตอนปิดรอบเท่านั้น\nสร้างแผนตรวจนับ"
+  },
+  {
+    "route": "/portal/inventory",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าค้าง 9 ใบ แต่ยังไม่มีรายการพร้อมสแกน\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n0\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้งาน\n\nทุกสาขาตามสิทธิที่ได้รับ\n\nยังไม่พบข้อมูลคลังในขอบเขตนี้\n\nDevelopers · IT\n\nงานที่ควรทำตอนนี้\n\nเริ่มจากงานที่กระทบการเคลื่อนไหวสต็อกก่อน แล้วค่อยเปิดงานจัดการขั้นถัดไป\n\nรับเข้า\n\nดูใบรับเข้าและเข้าสแกนต่อ\n\nเริ่มจากงานรับเข้าที่พร้อมสแกน\n\nเช็คสต็อก\n\nดูของคงเหลือ, ต่ำกว่า Min, และหมดสต็อก\n\nเช็คของต่ำกว่า Min ก่อนเปิดใช้งานหน้างาน\n\nแจ้งเสียหาย\n\nบันทึกของเสียหาย, หมดอายุ, หรือสูญหายจากมือถือ\n\nใช้ตอนต้องถ่ายรูปและแจ้งเหตุหน้างานทันที\n\nใบเบิก\n\nตรวจสถานะใบเบิกของครัว\n\nเปิดงานค้างของครัวเมื่อมีเวลาอนุมัติหรือจ่ายของ\n\nโอนสินค้า\n\nติดตามงานโอนระหว่างสาขา\n\nตามของที่กำลังย้ายระหว่างสาขา\n\nรายการเตือน\n\nดูสต็อกต่ำ ใกล้หมดอายุ และความผิดปกติ\n\nเปิดรายการเตือนแล้วตัดสินใจจากจุดเดียว\n\nนับสต็อก\n\nสร้างร"
+  },
+  {
+    "route": "/portal/stock",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทุกสาขา\nBang Na\nทุกคลัง\nBang Na\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nรับเข้าสินค้า\nเลือกใบรับที่พร้อมสแกน เปิดใน LINE แล้วรับเข้าตามของจริงจากมือถือ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n\nขั้นตอนรับเข้าหน้างาน\n\n1. เลือกใบรับที่มีรายการสินค้าแล้ว\n2. เช็คผู้จำหน่ายและคลังปลายทางให้ตรงของจริง\n3. เปิดสแกนใน LINE แล้วรับเข้าทีละชิ้นหรือทีละ lot\n\nใบรับที่ยังสแกนไม่ได้\n\nใบเหล่านี้ยังไม่มีรายการสินค้า ต้องเติมรายการก่อนเปิดสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังห"
+  },
+  {
+    "route": "/portal/alerts",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้างคลัง\n3. ถ้าสต็อกต่ำ ให้เปิดหน้าสต็อกหรืองานเติมของต่อทันที\nสาขา\nทั้งหมด\nBang Na\nคลัง\nทั้งหมด\nBang Na\nประเภทแจ้งเตือน\nทั้งหมด\nใกล้หมดอายุ\nสต็อกต่ำ\nผิดปกติ\nล้างตัวกรอง\nกล่องแจ้งเตือนงานคลัง\n\nเปิดจากรายการนี้เพื่อไล่ตัดสินใจเรื่อง expiry, reorder และรายการผิดปกติ\n\nประเภท\tรายละเอียด\tสาขา\tคลัง\tระดับ\tไปยังหน้า\nยังไม่มี alerts"
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nใบเบิกครัว\nคิวใบเบิกบนมือถือ ดูรออนุมัติ รอจ่าย และรอยืนยันรับจากจุดเดียว\n+ สร้างใบเบิก\n\nใบเบิกทั้งหมด\n\n0\n\nรวมคำขอเบิกใน workspace นี้\n\nรออนุมัติ\n\n0\n\nคำขอจากครัวที่รอ inventory ตรวจอนุมัติ\n\nจ่ายของแล้ว\n\n0\n\nคำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ\n\nรับครบแล้ว\n\n0\n\nแบบร่าง 0 ใบยังรอส่งเข้ากระบวนการ\n\nสถานะ\nทั้งหมด\nแบบร่าง\nรออนุมัติ\nอนุมัติแล้ว\nจ่ายของแล้ว\nรับครบแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวใบเบิกครัว\n\nใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง\n\nรออนุมัติ 0 · จ่ายแล้ว 0\nวันที่\tผู้ขอ\tสาขา\tคลัง\tรายการ\tสถานะ\tดู\nยังไม่มีใบเบิก"
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nโอนสินค้า\nคิวใบโอนบนมือถือ ติดตามแบบร่าง กำลังโอน และปลายทางรับครบจากจุดเดียว\n+ สร้างใบโอน\n\nใบโอนทั้งหมด\n\n0\n\nรวมรายการโอนระหว่างสาขาและคลัง\n\nแบบร่าง\n\n0\n\nใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง\n\nกำลังโอน\n\n0\n\nใบโอนที่หักสต็อกจากต้นทางแล้วและรอปลายทางยืนยันรับ\n\nรับแล้ว\n\n0\n\nรวม 0 รายการสินค้าในทุกใบโอน\n\nคิวใบโอนระหว่างสาขา\n\nใช้ดูว่ารายการไหนยังเป็นแบบร่าง รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว\n\nร่าง 0 · กำลังโอน 0\nเลขที่\tต้นทาง\tปลายทาง\tผู้สร้าง\tสถานะ\tสร้างเมื่อ\tรายการ\nยังไม่มีใบโอนสินค้า"
+  },
+  {
+    "route": "/portal/damage",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nรายงานความเสียหาย\nคิวของเสีย สูญหาย และหมดอายุบนมือถือ พร้อมสถานะอนุมัติจากจุดเดียว\n+ แจ้งความเสียหาย\n\nรายงานทั้งหมด\n\n0\n\nรวมรายการเสียหาย สูญหาย หมดอายุ และ adjustment\n\nรออนุมัติ\n\n0\n\nรายการที่ยังต้องมีคนตัดสินก่อนตัดสต็อกจริง\n\nอนุมัติแล้ว\n\n0\n\nรายการที่ระบบตัดสต็อกและบันทึกการเคลื่อนไหวแล้ว\n\nถูกปฏิเสธ\n\n0\n\nรายการที่ยังควรย้อนดูเหตุผลหรือแก้ข้อมูลก่อนส่งใหม่\n\nสถานะ\nทั้งหมด\nรออนุมัติ\nอนุมัติแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวรายการเสียหายและสูญหาย\n\nใช้ดูรายการที่รออนุมัติ พร้อมแยกสาขา คลัง ประเภท และมูลค่าความเสียหาย\n\nรออนุมัติ 0 · อนุมัติแล้ว 0\nวันที่\tSKU\tสาขา\tคลัง\tประเภท\tจำนวน\tมูลค่า\tสถานะ\tดู\nยังไม่มีรายงานความเสียหาย"
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nตรวจนับสต๊อก\nคิวรอบตรวจนับบนมือถือ ใช้เริ่มรอบใหม่ เปิดรอบค้าง และตามส่วนต่างต่อได้จากจุดเดียว\n+ สร้างรอบตรวจนับ\n\nรอบตรวจนับทั้งหมด\n\n0\n\nรวมทุกรอบที่สร้างในงานตรวจนับนี้\n\nแบบร่าง\n\n0\n\nรอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง\n\nกำลังนับ\n\n0\n\nรอบที่ทีมยังกรอกจำนวนจริงไม่ครบ\n\nเสร็จสิ้น\n\n0\n\nยังเหลือ 0 รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่\n\nคิวรอบตรวจนับ\n\nใช้เปิดรอบแบบร่าง กลับเข้ารอบที่กำลังนับ และดูรอบที่ปิดแล้วจากมือถือ\n\nแบบร่าง 0 · กำลังนับ 0\nรหัส\tสาขา\tคลัง\tสถานะ\tวันที่วางแผน\tความคืบหน้า\tสร้างเมื่อ\nยังไม่มีรอบตรวจนับ"
+  },
+  {
+    "route": "/portal/requisition/create",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nสร้างใบเบิกครัว\nเลือกคลังและ SKU ที่ต้องการเบิกจากมือถือ แล้วติดตามสถานะต่อในหน้ามือถือ\n← กลับ\nสาขาครัว\nเลือกสาขา\n001 — Bang Na\nคลังที่ขอเบิก\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุ\nรายการขอเบิก\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-2024 — MAOTAI茅台 2024\nBEV-NIU"
+  },
+  {
+    "route": "/portal/transfer/create",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nสร้างใบโอนสินค้า\nสาขาต้นทางส่งก่อน แล้วปลายทางรับเข้าภายหลัง ผ่านขั้นตอนงานบนมือถือ\n← รายการใบโอน\nสาขาต้นทาง\nเลือกสาขา\n001 — Bang Na\nสาขาปลายทาง\nเลือกสาขา\n001 — Bang Na\nคลังต้นทาง\nเลือกคลัง\n001 — Bang Na\nคลังปลายทาง\nเลือกคลัง\n001 — Bang Na\nผู้ขนส่ง\nหมายเหตุ\nรายการสินค้า\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPL"
+  },
+  {
+    "route": "/portal/damage/create",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nแจ้งความเสียหาย\nบันทึกของเสีย สูญหาย หมดอายุ หรือรายการปรับปรุงผ่านหน้ามือถือ\n← รายการ\nเลือกสาขาและคลังให้ตรงก่อน แล้วเพิ่มรายการเสียหายทีละรายการพร้อมเหตุผลและรูปถ่ายถ้ามี\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุรวม\nรายการความเสียหาย\nเพิ่มรายการ\n\nรายการ #1\n\nลบ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PU"
+  },
+  {
+    "route": "/portal/stock-count/create",
+    "width": 768,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\nออกจากระบบ\nสร้างรอบตรวจนับสต๊อก\nเริ่มรอบตรวจนับจากมือถือ แล้วค่อยเปิดรายละเอียดรอบตรวจนับต่อ\n← กลับหน้าคลัง\nใช้หน้านี้ตอนเริ่มรอบตรวจนับ: เลือกสาขา เลือกคลัง กำหนดวัน แล้วค่อยสร้างรอบเพื่อให้ทีมเริ่มนับจากข้อมูลตั้งต้นเดียวกัน\n\nขอบเขต\n\nทุกรายการสต็อก\n\nดึงทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือกมาเป็นข้อมูลตั้งต้น\n\nสาขา / คลัง\n\nรอเลือก\n\nเลือกให้ครบก่อนสร้างรอบเพื่อล็อกขอบเขตของการนับ\n\nวันที่วางแผน\n\nยังไม่ระบุ\n\nใช้เป็นวันนัดหมายหรือรอบที่ต้องการให้ทีมเริ่มนับ\n\nผลลัพธ์หลังปิดรอบ\n\nรายการปรับสต็อก\n\nส่วนต่างจะถูกสร้างเป็นรายการปรับสต็อกหลังปิดรอบ\n\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na\nขอบเขต\nวันที่วางแผน\nหมายเหตุ\n\nสาขาที่เลือก: ยังไม่ได้เลือก\n\nคลังที่เลือก: ยังไม่ได้เลือก\n\nรอบนี้จะใช้เฉพาะ SKU ที่มีข้อมูลคงเหลืออยู่แล้วในคลังที่เลือก และจะสร้างรายการปรับสต็อกตอนปิดรอบเท่านั้น\nสร้างแผนตรวจนับ"
+  },
+  {
+    "route": "/portal/inventory",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าค้าง 9 ใบ แต่ยังไม่มีรายการพร้อมสแกน\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n0\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้งาน\n\nทุกสาขาตามสิทธิที่ได้รับ\n\nยังไม่พบข้อมูลคลังในขอบเขตนี้\n\nDevelopers · IT\n\nงานที่ควรทำตอนนี้\n\nเริ่มจากงานที่กระทบการเคลื่อนไหวสต็อกก่อน แล้วค่อยเปิดงานจัดการขั้นถัดไป\n\nรับเข้า\n\nดูใบรับเข้าและเข้าสแกนต่อ\n\nเริ่มจากงานรับเข้าที่พร้อมสแกน\n\nเช็คสต็อก\n\nดูของคงเหลือ, ต่ำกว่า Min, และหมดสต็อก\n\nเช็คของต่ำกว่า Min ก่อนเปิดใช้งานหน้างาน\n\nแจ้งเสียหาย\n\nบันทึกของเสียหาย, หมดอายุ, หรือสูญหายจากมือถือ\n\nใช้ตอนต้องถ่ายรูปและแจ้งเหตุหน้างานทันที\n\nใบเบิก\n\nตรวจสถานะใบเบิกของครัว\n\nเปิดงานค้างของครัวเมื่อมีเวลาอนุมัติหรือจ่ายของ\n\nโอนสินค้า\n\nติดตามงานโอนระหว่างสาขา\n\nตามของที่กำลังย้ายระหว่างสาขา\n\nรายการเตือน\n\nดูสต็อกต่ำ ใกล้หมดอายุ และความผิดปกติ\n\nเปิดรายการเตือนแล้วตัดสินใจจากจ"
+  },
+  {
+    "route": "/portal/stock",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทุกสาขา\nBang Na\nทุกคลัง\nBang Na\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nรับเข้าสินค้า\nเลือกใบรับที่พร้อมสแกน เปิดใน LINE แล้วรับเข้าตามของจริงจากมือถือ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n\nขั้นตอนรับเข้าหน้างาน\n\n1. เลือกใบรับที่มีรายการสินค้าแล้ว\n2. เช็คผู้จำหน่ายและคลังปลายทางให้ตรงของจริง\n3. เปิดสแกนใน LINE แล้วรับเข้าทีละชิ้นหรือทีละ lot\n\nใบรับที่ยังสแกนไม่ได้\n\nใบเหล่านี้ยังไม่มีรายการสินค้า ต้องเติมรายการก่อนเปิดสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม่มีรายการ\n\nติดต่อทีมคลังหรือผู้สร้างใบรับให้เพิ่มรายการสินค้าก่อนเริ่มสแกน\n\nผู้จำหน่ายทั่วไป → Bang Na\n\nสร้าง 24 มิ.ย. 2569\n\nยังไม"
+  },
+  {
+    "route": "/portal/alerts",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้างคลัง\n3. ถ้าสต็อกต่ำ ให้เปิดหน้าสต็อกหรืองานเติมของต่อทันที\nสาขา\nทั้งหมด\nBang Na\nคลัง\nทั้งหมด\nBang Na\nประเภทแจ้งเตือน\nทั้งหมด\nใกล้หมดอายุ\nสต็อกต่ำ\nผิดปกติ\nล้างตัวกรอง\nกล่องแจ้งเตือนงานคลัง\n\nเปิดจากรายการนี้เพื่อไล่ตัดสินใจเรื่อง expiry, reorder และรายการผิดปกติ\n\nประเภท\tรายละเอียด\tสาขา\tคลัง\tระดับ\tไปยังหน้า\nยังไม่มี alerts"
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nใบเบิกครัว\nคิวใบเบิกบนมือถือ ดูรออนุมัติ รอจ่าย และรอยืนยันรับจากจุดเดียว\n+ สร้างใบเบิก\n\nใบเบิกทั้งหมด\n\n0\n\nรวมคำขอเบิกใน workspace นี้\n\nรออนุมัติ\n\n0\n\nคำขอจากครัวที่รอ inventory ตรวจอนุมัติ\n\nจ่ายของแล้ว\n\n0\n\nคำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ\n\nรับครบแล้ว\n\n0\n\nแบบร่าง 0 ใบยังรอส่งเข้ากระบวนการ\n\nสถานะ\nทั้งหมด\nแบบร่าง\nรออนุมัติ\nอนุมัติแล้ว\nจ่ายของแล้ว\nรับครบแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวใบเบิกครัว\n\nใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง\n\nรออนุมัติ 0 · จ่ายแล้ว 0\nวันที่\tผู้ขอ\tสาขา\tคลัง\tรายการ\tสถานะ\tดู\nยังไม่มีใบเบิก"
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nโอนสินค้า\nคิวใบโอนบนมือถือ ติดตามแบบร่าง กำลังโอน และปลายทางรับครบจากจุดเดียว\n+ สร้างใบโอน\n\nใบโอนทั้งหมด\n\n0\n\nรวมรายการโอนระหว่างสาขาและคลัง\n\nแบบร่าง\n\n0\n\nใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง\n\nกำลังโอน\n\n0\n\nใบโอนที่หักสต็อกจากต้นทางแล้วและรอปลายทางยืนยันรับ\n\nรับแล้ว\n\n0\n\nรวม 0 รายการสินค้าในทุกใบโอน\n\nคิวใบโอนระหว่างสาขา\n\nใช้ดูว่ารายการไหนยังเป็นแบบร่าง รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว\n\nร่าง 0 · กำลังโอน 0\nเลขที่\tต้นทาง\tปลายทาง\tผู้สร้าง\tสถานะ\tสร้างเมื่อ\tรายการ\nยังไม่มีใบโอนสินค้า"
+  },
+  {
+    "route": "/portal/damage",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nรายงานความเสียหาย\nคิวของเสีย สูญหาย และหมดอายุบนมือถือ พร้อมสถานะอนุมัติจากจุดเดียว\n+ แจ้งความเสียหาย\n\nรายงานทั้งหมด\n\n0\n\nรวมรายการเสียหาย สูญหาย หมดอายุ และ adjustment\n\nรออนุมัติ\n\n0\n\nรายการที่ยังต้องมีคนตัดสินก่อนตัดสต็อกจริง\n\nอนุมัติแล้ว\n\n0\n\nรายการที่ระบบตัดสต็อกและบันทึกการเคลื่อนไหวแล้ว\n\nถูกปฏิเสธ\n\n0\n\nรายการที่ยังควรย้อนดูเหตุผลหรือแก้ข้อมูลก่อนส่งใหม่\n\nสถานะ\nทั้งหมด\nรออนุมัติ\nอนุมัติแล้ว\nปฏิเสธ\nสาขา\nทุกสาขา\n001 — Bang Na\nกรอง\nล้าง\nคิวรายการเสียหายและสูญหาย\n\nใช้ดูรายการที่รออนุมัติ พร้อมแยกสาขา คลัง ประเภท และมูลค่าความเสียหาย\n\nรออนุมัติ 0 · อนุมัติแล้ว 0\nวันที่\tSKU\tสาขา\tคลัง\tประเภท\tจำนวน\tมูลค่า\tสถานะ\tดู\nยังไม่มีรายงานความเสียหาย"
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nตรวจนับสต๊อก\nคิวรอบตรวจนับบนมือถือ ใช้เริ่มรอบใหม่ เปิดรอบค้าง และตามส่วนต่างต่อได้จากจุดเดียว\n+ สร้างรอบตรวจนับ\n\nรอบตรวจนับทั้งหมด\n\n0\n\nรวมทุกรอบที่สร้างในงานตรวจนับนี้\n\nแบบร่าง\n\n0\n\nรอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง\n\nกำลังนับ\n\n0\n\nรอบที่ทีมยังกรอกจำนวนจริงไม่ครบ\n\nเสร็จสิ้น\n\n0\n\nยังเหลือ 0 รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่\n\nคิวรอบตรวจนับ\n\nใช้เปิดรอบแบบร่าง กลับเข้ารอบที่กำลังนับ และดูรอบที่ปิดแล้วจากมือถือ\n\nแบบร่าง 0 · กำลังนับ 0\nรหัส\tสาขา\tคลัง\tสถานะ\tวันที่วางแผน\tความคืบหน้า\tสร้างเมื่อ\nยังไม่มีรอบตรวจนับ"
+  },
+  {
+    "route": "/portal/requisition/create",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nสร้างใบเบิกครัว\nเลือกคลังและ SKU ที่ต้องการเบิกจากมือถือ แล้วติดตามสถานะต่อในหน้ามือถือ\n← กลับ\nสาขาครัว\nเลือกสาขา\n001 — Bang Na\nคลังที่ขอเบิก\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุ\nรายการขอเบิก\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOPU-PURPLE — 紫毛铺MAOPU-PURPLE\nBEV-MAOTAI-2020 — MAOTAI茅台 2020\nBEV-MAOTAI-202"
+  },
+  {
+    "route": "/portal/transfer/create",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nสร้างใบโอนสินค้า\nสาขาต้นทางส่งก่อน แล้วปลายทางรับเข้าภายหลัง ผ่านขั้นตอนงานบนมือถือ\n← รายการใบโอน\nสาขาต้นทาง\nเลือกสาขา\n001 — Bang Na\nสาขาปลายทาง\nเลือกสาขา\n001 — Bang Na\nคลังต้นทาง\nเลือกคลัง\n001 — Bang Na\nคลังปลายทาง\nเลือกคลัง\n001 — Bang Na\nผู้ขนส่ง\nหมายเหตุ\nรายการสินค้า\nเพิ่มรายการ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金毛铺MAOPU-GOLD\nBEV-MAOP"
+  },
+  {
+    "route": "/portal/damage/create",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nแจ้งความเสียหาย\nบันทึกของเสีย สูญหาย หมดอายุ หรือรายการปรับปรุงผ่านหน้ามือถือ\n← รายการ\nเลือกสาขาและคลังให้ตรงก่อน แล้วเพิ่มรายการเสียหายทีละรายการพร้อมเหตุผลและรูปถ่ายถ้ามี\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na (Bang Na)\nหมายเหตุรวม\nรายการความเสียหาย\nเพิ่มรายการ\n\nรายการ #1\n\nลบ\nสินค้า #1\nเลือก SKU\nBEV-APPLEVINEGAR-CAN — 苹果醋饮料APPLEVINEGAR\nBEV-BEERCHANG-620 — 大象啤酒BEER CHANG\nBEV-BEERCHANG-620-1 — BEER CHANG\nBEV-BEERLAO — BEER LAO\nBEV-BEERSINGHA-620 — 狮子啤酒BEER SINGHA\nBEV-BEERTSINGTAO-620 — 青岛啤酒BEER TSINGTAO\nBEV-CAOBENJIU MAOPU — 草本酒 CAOBENJIU MAOPU\nBEV-COKE-CAN — 可乐COCA COLA\nBEV-COKEZERO-CAN — 无糖可乐COCA COLA-ZERO\nBEV-ERGUOTOU56% — Erguotou Baijiu 56%\nBEV-FENJIU-30Y — FENJIU 30年汾酒\nBEV-HENNESSY-XO — HENNESSY XO\nBEV-ICEDTEA-BOTTLE — 冰红茶 ICE BLACK TEA\nBEV-JACOBS-CREEK — JACOBS-CREEK\nBEV-JDB-BOTTLE — 加多宝JIADUOBAOHERBAL TEA\nBEV-JINJIU — 劲酒JINGJIU\nBEV-MAOPU-BLUE — 蓝毛铺MAOPU-BLUE\nBEV-MAOPU-GOLD — 金"
+  },
+  {
+    "route": "/portal/stock-count/create",
+    "width": 1024,
+    "status": 200,
+    "overflow": 0,
+    "pageErrors": [],
+    "consoleErrors": [],
+    "text": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nสร้างรอบตรวจนับสต๊อก\nเริ่มรอบตรวจนับจากมือถือ แล้วค่อยเปิดรายละเอียดรอบตรวจนับต่อ\n← กลับหน้าคลัง\nใช้หน้านี้ตอนเริ่มรอบตรวจนับ: เลือกสาขา เลือกคลัง กำหนดวัน แล้วค่อยสร้างรอบเพื่อให้ทีมเริ่มนับจากข้อมูลตั้งต้นเดียวกัน\n\nขอบเขต\n\nทุกรายการสต็อก\n\nดึงทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือกมาเป็นข้อมูลตั้งต้น\n\nสาขา / คลัง\n\nรอเลือก\n\nเลือกให้ครบก่อนสร้างรอบเพื่อล็อกขอบเขตของการนับ\n\nวันที่วางแผน\n\nยังไม่ระบุ\n\nใช้เป็นวันนัดหมายหรือรอบที่ต้องการให้ทีมเริ่มนับ\n\nผลลัพธ์หลังปิดรอบ\n\nรายการปรับสต็อก\n\nส่วนต่างจะถูกสร้างเป็นรายการปรับสต็อกหลังปิดรอบ\n\nสาขา\nเลือกสาขา\n001 — Bang Na\nคลังสินค้า\nเลือกคลัง\n001 — Bang Na\nขอบเขต\nวันที่วางแผน\nหมายเหตุ\n\nสาขาที่เลือก: ยังไม่ได้เลือก\n\nคลังที่เลือก: ยังไม่ได้เลือก\n\nรอบนี้จะใช้เฉพาะ SKU ที่มีข้อมูลคงเหลืออยู่แล้วในคลังที่เลือก และจะสร้างรายการปรับสต็อกตอนปิดรอบเท่านั้น\nสร้างแผนตรวจนับ"
+  }
+]

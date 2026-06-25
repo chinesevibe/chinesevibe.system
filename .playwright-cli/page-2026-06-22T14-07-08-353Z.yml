@@ -1,0 +1,160 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [active] [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1475]:
+          - generic [ref=e1476]:
+            - generic [ref=e1477]:
+              - heading "ใบเบิกครัว" [level=1] [ref=e1479]
+              - generic [ref=e1480]: ครัวขอเบิก → คลังอนุมัติ → คลังจ่ายของ → ครัวยืนยันรับ
+            - link "+ สร้างใบเบิก" [ref=e1482] [cursor=pointer]:
+              - /url: /admin/inventory/requisition/create
+          - generic [ref=e1483]:
+            - generic [ref=e1484]:
+              - generic [ref=e1485]:
+                - generic [ref=e1486]:
+                  - generic [ref=e1487]:
+                    - paragraph [ref=e1488]: ใบเบิกทั้งหมด
+                    - paragraph [ref=e1489]: "0"
+                  - img [ref=e1491]
+                - paragraph [ref=e1494]: รวมคำขอเบิกใน workspace นี้
+              - generic [ref=e1495]:
+                - generic [ref=e1496]:
+                  - generic [ref=e1497]:
+                    - paragraph [ref=e1498]: รออนุมัติ
+                    - paragraph [ref=e1499]: "0"
+                  - img [ref=e1501]
+                - paragraph [ref=e1504]: คำขอจากครัวที่รอ inventory ตรวจอนุมัติ
+              - generic [ref=e1505]:
+                - generic [ref=e1506]:
+                  - generic [ref=e1507]:
+                    - paragraph [ref=e1508]: จ่ายของแล้ว
+                    - paragraph [ref=e1509]: "0"
+                  - img [ref=e1511]
+                - paragraph [ref=e1515]: คำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ
+              - generic [ref=e1516]:
+                - generic [ref=e1517]:
+                  - generic [ref=e1518]:
+                    - paragraph [ref=e1519]: รับครบแล้ว
+                    - paragraph [ref=e1520]: "0"
+                  - img [ref=e1522]
+                - paragraph [ref=e1527]: แบบร่าง 0 ใบยังรอส่งเข้ากระบวนการ
+            - generic [ref=e1528]:
+              - generic [ref=e1529]:
+                - generic [ref=e1530]: สถานะ
+                - combobox "สถานะ" [ref=e1531]:
+                  - option "ทั้งหมด" [selected]
+                  - option "แบบร่าง"
+                  - option "รออนุมัติ"
+                  - option "อนุมัติแล้ว"
+                  - option "จ่ายของแล้ว"
+                  - option "รับครบแล้ว"
+                  - option "ปฏิเสธ"
+              - generic [ref=e1532]:
+                - generic [ref=e1533]: สาขา
+                - combobox "สาขา" [ref=e1534]:
+                  - option "ทุกสาขา" [selected]
+                  - option "001 — Bang Na"
+              - button "กรอง" [ref=e1535]
+              - link "ล้าง" [ref=e1536] [cursor=pointer]:
+                - /url: /admin/inventory/requisition
+            - generic [ref=e1537]:
+              - generic [ref=e1538]:
+                - generic [ref=e1539]:
+                  - heading "Kitchen issue queue" [level=2] [ref=e1540]
+                  - paragraph [ref=e1541]: ใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง
+                - generic [ref=e1542]: รออนุมัติ 0 · จ่ายแล้ว 0
+              - table [ref=e1545]:
+                - rowgroup [ref=e1546]:
+                  - row "วันที่ ผู้ขอ สาขา คลัง รายการ สถานะ ดู" [ref=e1547]:
+                    - columnheader "วันที่" [ref=e1548]
+                    - columnheader "ผู้ขอ" [ref=e1549]
+                    - columnheader "สาขา" [ref=e1550]
+                    - columnheader "คลัง" [ref=e1551]
+                    - columnheader "รายการ" [ref=e1552]
+                    - columnheader "สถานะ" [ref=e1553]
+                    - columnheader "ดู" [ref=e1554]
+                - rowgroup [ref=e1555]:
+                  - row "ยังไม่มีใบเบิก" [ref=e1556]:
+                    - cell "ยังไม่มีใบเบิก" [ref=e1557]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

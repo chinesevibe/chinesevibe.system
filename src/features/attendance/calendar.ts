@@ -119,6 +119,25 @@ export function resolveCalendarWorkHours(input: {
   return Number.isFinite(computed.paidHours) ? computed.paidHours : input.workHours
 }
 
+async function loadDateOverrides(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  employeeId: string,
+  from: string,
+  to: string
+): Promise<Set<string>> {
+  const { data, error } = await supabase
+    .from("hr_employee_date_overrides")
+    .select("date")
+    .eq("employee_id", employeeId)
+    .gte("date", from)
+    .lte("date", to)
+  if (error) {
+    console.warn("loadDateOverrides error (non-fatal)", error.message)
+    return new Set()
+  }
+  return new Set((data ?? []).map((r) => r.date as string))
+}
+
 async function loadLeaveDates(
   supabase: Awaited<ReturnType<typeof createClient>>,
   employeeId: string,
@@ -179,9 +198,10 @@ export async function getEmployeeAttendanceCalendar(
   const rangeStart = ictLocalToUtc(start, "00:00")
   const rangeEnd = new Date(ictLocalToUtc(end, "00:00").getTime() + DAY_MS)
 
-  const [schedule, leaveDates, attendanceRes, goLiveDate] = await Promise.all([
+  const [schedule, leaveDates, dateOverrides, attendanceRes, goLiveDate] = await Promise.all([
     loadEmployeeSchedule(supabase, employeeId),
     loadLeaveDates(supabase, employeeId, start, end),
+    loadDateOverrides(supabase, employeeId, start, end),
     supabase
       .from("hr_attendance")
       .select("id, check_in_at, check_out_at, is_late, work_hours, shift_date")
@@ -198,8 +218,9 @@ export async function getEmployeeAttendanceCalendar(
   const cells: AttendanceDayCell[] = days.map((date) => {
     const record = byDate.get(date) ?? null
     const onLeave = leaveDates.has(date)
+    const isDateOverride = dateOverrides.has(date)
 
-    if (!onLeave && !record && isEmployeeOffOnDate(date, offDays)) {
+    if (!onLeave && !record && (isDateOverride || isEmployeeOffOnDate(date, offDays))) {
       return {
         date,
         status: "off",
@@ -210,6 +231,7 @@ export async function getEmployeeAttendanceCalendar(
         retroExpired: false,
         deadline: null,
         attendanceId: null,
+        isDateOverride,
       }
     }
 
@@ -270,6 +292,7 @@ export async function getEmployeeAttendanceCalendar(
           ? getRetroDeadline(date, shift, now).toISOString()
           : null,
       attendanceId: record?.id ?? null,
+      isDateOverride: false,
     }
   })
 

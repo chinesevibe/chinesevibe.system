@@ -1,0 +1,34 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - paragraph [ref=e5]: CNV WorkHub
+        - paragraph [ref=e6]: Welcome
+      - generic [ref=e7]:
+        - heading "เข้าสู่ระบบ" [level=1] [ref=e8]
+        - group "ภาษา" [ref=e9]:
+          - button "ไทย" [pressed] [ref=e10]
+          - button "EN" [ref=e11]
+          - button "中文" [ref=e12]
+          - button "MY" [ref=e13]
+        - paragraph [ref=e14]: เข้าสู่ระบบด้วยรหัสพนักงานและสาขาที่ HR แจ้งให้
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - text: รหัสพนักงาน *
+            - textbox "รหัสพนักงาน *" [ref=e17]:
+              - /placeholder: เช่น CHV001
+          - generic [ref=e18]:
+            - text: สาขา *
+            - combobox "สาขา *" [disabled] [ref=e19]:
+              - option "กำลังโหลดสาขา…" [selected]
+          - button "เข้าสู่ระบบ" [disabled]
+        - generic [ref=e22]: หรือ
+        - link "เข้าสู่ระบบด้วย LINE" [ref=e24] [cursor=pointer]:
+          - /url: /api/auth/line/start?lang=th
+          - img [ref=e25]
+          - text: เข้าสู่ระบบด้วย LINE
+        - paragraph [ref=e27]:
+          - link "พนักงานใหม่ — ลงทะเบียนด้วย LINE" [ref=e28] [cursor=pointer]:
+            - /url: /api/auth/line/start?lang=th
+  - button "Open Next.js Dev Tools" [ref=e34] [cursor=pointer]:
+    - img [ref=e35]

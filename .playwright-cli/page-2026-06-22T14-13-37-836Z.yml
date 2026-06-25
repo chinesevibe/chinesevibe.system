@@ -1,0 +1,212 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+          - generic [ref=e1722]:
+            - link "Alerts" [ref=e1723] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - button "ปิดแท็บ Alerts" [ref=e1724]:
+              - img [ref=e1725]
+          - generic [ref=e1795]:
+            - link "Reports" [ref=e1796] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - button "ปิดแท็บ Reports" [ref=e1797]:
+              - img [ref=e1798]
+          - generic [ref=e1904]:
+            - link "Stock" [ref=e1905] [cursor=pointer]:
+              - /url: /admin/inventory/reports/stock
+            - button "ปิดแท็บ Stock" [ref=e1906]:
+              - img [ref=e1907]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e2608]:
+          - generic [ref=e2610]:
+            - heading "สต็อกคงเหลือ" [level=1] [ref=e2612]
+            - generic [ref=e2613]: แยกดู on-hand และ lot/FEFO ให้ชัดขึ้น เพื่อตัดสินใจเติมสต็อกและไล่ lot ได้เร็วขึ้น
+          - generic [ref=e2614]:
+            - generic [ref=e2615]:
+              - generic [ref=e2616]:
+                - generic [ref=e2617]:
+                  - generic [ref=e2618]:
+                    - paragraph [ref=e2619]: SKU ในขอบเขต
+                    - paragraph [ref=e2620]: "0"
+                  - img [ref=e2622]
+                - paragraph [ref=e2632]: จำนวนแถวคงเหลือที่ตรงกับตัวกรองปัจจุบัน
+              - generic [ref=e2633]:
+                - generic [ref=e2634]:
+                  - generic [ref=e2635]:
+                    - paragraph [ref=e2636]: ต่ำกว่า Min
+                    - paragraph [ref=e2637]: "0"
+                  - img [ref=e2639]
+                - paragraph [ref=e2641]: SKU ที่ควรเติมสต็อกหรือตรวจ branch/warehouse ต่อ
+              - generic [ref=e2642]:
+                - generic [ref=e2643]:
+                  - generic [ref=e2644]:
+                    - paragraph [ref=e2645]: คงเหลือเป็น lot
+                    - paragraph [ref=e2646]: "0"
+                  - img [ref=e2648]
+                - paragraph [ref=e2654]: lot ที่ยังมีของเหลือให้ไล่ต่อใน FEFO section
+              - generic [ref=e2655]:
+                - generic [ref=e2656]:
+                  - generic [ref=e2657]:
+                    - paragraph [ref=e2658]: ใกล้หมดอายุ 7 วัน
+                    - paragraph [ref=e2659]: "0"
+                  - img [ref=e2661]
+                - paragraph [ref=e2668]: lot ที่ควรเร่งใช้ก่อนหรือดันออกก่อนหมดอายุ
+            - generic [ref=e2669]:
+              - generic [ref=e2670]:
+                - generic [ref=e2671]:
+                  - paragraph [ref=e2672]: ตัวกรองสต็อก
+                  - paragraph [ref=e2673]: ค้นหา SKU และจำกัดขอบเขตตามสาขา/คลัง ก่อนดู on-hand และ FEFO ด้านล่าง
+                - generic [ref=e2674]: ใช้งานอยู่ 1 ตัวกรอง
+              - generic [ref=e2675]:
+                - generic [ref=e2676]:
+                  - text: ค้นหา SKU / คลัง
+                  - textbox "ค้นหา SKU / คลัง" [ref=e2677]:
+                    - /placeholder: รหัส ชื่อ barcode
+                - generic [ref=e2678]:
+                  - text: สาขา (คลัง)
+                  - combobox "สาขา (คลัง)" [ref=e2679]:
+                    - option "— ทั้งหมด —" [selected]
+                    - option "Bang Na (001)"
+                - generic [ref=e2680]:
+                  - text: คลังสินค้า
+                  - combobox "คลังสินค้า" [ref=e2681]:
+                    - option "— ทั้งหมด —" [selected]
+                    - option "Bang Na (001)"
+                - generic [ref=e2682]:
+                  - checkbox "เฉพาะต่ำกว่า Min" [checked] [ref=e2683]
+                  - generic [ref=e2684]: เฉพาะต่ำกว่า Min
+              - generic [ref=e2685]:
+                - button "กรอง" [ref=e2686]
+                - link "ล้างตัวกรอง" [ref=e2687] [cursor=pointer]:
+                  - /url: /admin/inventory/stock
+                - link "กลับไปดูทั้งหมด" [ref=e2688] [cursor=pointer]:
+                  - /url: /admin/inventory/stock
+            - generic [ref=e2689]:
+              - generic [ref=e2690]:
+                - generic [ref=e2691]:
+                  - heading "On-hand by SKU" [level=2] [ref=e2692]
+                  - paragraph [ref=e2693]: ใช้ section นี้ดูยอดคงเหลือรวมตาม SKU ก่อน แล้วค่อยไล่ lot และ expiry ด้านล่าง
+                - generic [ref=e2694]: หมด 0 · ต่ำกว่า Min 0
+              - table [ref=e2697]:
+                - rowgroup [ref=e2698]:
+                  - row "SKU ชื่อ สาขา คลัง คงเหลือ Min สถานะ" [ref=e2699]:
+                    - columnheader "SKU" [ref=e2700]
+                    - columnheader "ชื่อ" [ref=e2701]
+                    - columnheader "สาขา" [ref=e2702]
+                    - columnheader "คลัง" [ref=e2703]
+                    - columnheader "คงเหลือ" [ref=e2704]
+                    - columnheader "Min" [ref=e2705]
+                    - columnheader "สถานะ" [ref=e2706]
+                - rowgroup [ref=e2707]:
+                  - row "ไม่พบ SKU ที่ต่ำกว่า Min" [ref=e2708]:
+                    - cell "ไม่พบ SKU ที่ต่ำกว่า Min" [ref=e2709]
+            - generic [ref=e2710]:
+              - generic [ref=e2711]:
+                - generic [ref=e2712]:
+                  - heading "Lot / FEFO workspace" [level=2] [ref=e2713]
+                  - paragraph [ref=e2714]: ใช้ section นี้ตรวจ lot ที่ยังเหลืออยู่และไล่ expiry ก่อนตัดสินใจโอน ใช้ หรือระบายของ
+                - generic [ref=e2715]: lot คงเหลือ 0 · ใกล้หมดอายุ 7 วัน 0
+              - table [ref=e2718]:
+                - rowgroup [ref=e2719]:
+                  - row "SKU Lot สาขา คลัง หมดอายุ คงเหลือ สถานะ" [ref=e2720]:
+                    - columnheader "SKU" [ref=e2721]
+                    - columnheader "Lot" [ref=e2722]
+                    - columnheader "สาขา" [ref=e2723]
+                    - columnheader "คลัง" [ref=e2724]
+                    - columnheader "หมดอายุ" [ref=e2725]
+                    - columnheader "คงเหลือ" [ref=e2726]
+                    - columnheader "สถานะ" [ref=e2727]
+                - rowgroup [ref=e2728]:
+                  - row "ยังไม่มี lot คงเหลือ" [ref=e2729]:
+                    - cell "ยังไม่มี lot คงเหลือ" [ref=e2730]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

@@ -1,0 +1,1495 @@
+[     186ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[     232ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[     494ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   51311ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   54928ms] [LOG] [Fast Refresh] done in 3718ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   55934ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(3), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   55936ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   56017ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   56055ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[   56167ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  151154ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  152988ms] [LOG] [Fast Refresh] done in 1935ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153613ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153613ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153614ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153614ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153614ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153614ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153615ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153615ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  153617ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(4), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  221989ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  222175ms] [LOG] [Fast Refresh] done in 140ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  257290ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  257296ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307376ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307519ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307522ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307522ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307523ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307523ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307524ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307524ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307524ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  307702ms] [LOG] [Fast Refresh] done in 200ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  387112ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  387166ms] [LOG] [Fast Refresh] done in 110ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  486060ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  486327ms] [LOG] [Fast Refresh] done in 171ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  486701ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  486814ms] [LOG] [Fast Refresh] done in 215ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  487586ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  487615ms] [LOG] [Fast Refresh] done in 130ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  500066ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  500125ms] [LOG] [Fast Refresh] done in 159ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  953106ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  954557ms] [LOG] [Fast Refresh] done in 1552ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  983256ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[  984351ms] [LOG] [Fast Refresh] done in 1196ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1007925ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1008983ms] [LOG] [Fast Refresh] done in 1159ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1025417ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1026139ms] [LOG] [Fast Refresh] done in 824ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1046462ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1047443ms] [LOG] [Fast Refresh] done in 1083ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1064964ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1065869ms] [LOG] [Fast Refresh] done in 1006ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1103905ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1104930ms] [LOG] [Fast Refresh] done in 1126ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1139408ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1140415ms] [LOG] [Fast Refresh] done in 1108ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1190187ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1190283ms] [LOG] [Fast Refresh] done in 198ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1321152ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1323077ms] [LOG] [Fast Refresh] done in 2026ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1323179ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1323593ms] [LOG] [Fast Refresh] done in 514ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1323696ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1327224ms] [LOG] [Fast Refresh] done in 3629ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1425057ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1425103ms] [LOG] [Fast Refresh] done in 148ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1579435ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1580683ms] [LOG] [Fast Refresh] done in 1315ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1582455ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1582496ms] [LOG] [Fast Refresh] done in 142ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1583722ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1583736ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1584314ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1584314ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1584969ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1585001ms] [LOG] [Fast Refresh] done in 134ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1585430ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1585437ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1585883ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1586015ms] [LOG] [Fast Refresh] done in 233ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1588292ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1588391ms] [LOG] [Fast Refresh] done in 200ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1589309ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1589330ms] [LOG] [Fast Refresh] done in 121ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1590030ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1590052ms] [LOG] [Fast Refresh] done in 123ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1591006ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1591078ms] [LOG] [Fast Refresh] done in 175ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1787379ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 1787391ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172181ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172356ms] [LOG] [Fast Refresh] done in 211ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172469ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172609ms] [LOG] [Fast Refresh] done in 242ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172859ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2172867ms] [LOG] [Fast Refresh] done in 108ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173100ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173243ms] [LOG] [Fast Refresh] done in 244ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173365ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173374ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173476ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173488ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173589ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2173616ms] [LOG] [Fast Refresh] done in 127ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2174037ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 2174062ms] [LOG] [Fast Refresh] done in 127ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3353525ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3354610ms] [LOG] [Fast Refresh] done in 1187ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3504634ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3505729ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3505975ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3505986ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3506304ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3506405ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3506551ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3506586ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3506586ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3510554ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3510621ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3511955ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3512018ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3512264ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3512329ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3515518ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3515582ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3520517ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3520582ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3521141ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3521141ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3521165ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3521231ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3525550ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3525616ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3526957ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3527018ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3527275ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3527338ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3530518ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3530582ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3535548ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3535599ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3536153ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3536153ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3536178ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3536244ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3540546ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3540612ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3541951ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3542018ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3542259ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3542326ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3545519ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3545583ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3550515ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3550577ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3551146ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3551146ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3551168ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3551233ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3555573ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3555616ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3556951ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3557016ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3557266ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3557330ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3560516ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3560583ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3565513ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3565576ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3566145ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3566146ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3566168ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3566232ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3570552ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3570619ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3571951ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3572017ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3572266ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3572328ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3575513ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3575580ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3580516ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3580579ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3581143ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3581143ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3581170ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3581237ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3585550ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3585614ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3586951ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3587016ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3587295ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3587359ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3590516ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3590581ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3595516ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3595581ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3596149ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3596150ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3596170ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3596234ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3600553ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3600614ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3601954ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3602019ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3602264ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3602326ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3605515ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:748:10
+Expected '</', got '}'
+  746 |             </p>
+  747 |           </div>
+> 748 |         )}
+      |          ^
+  749 |
+  750 |         {/* ── Coordinates card ── */}
+  751 |         {!successResult && hasLocation && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3605582ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3609707ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3609948ms] [LOG] [Fast Refresh] done in 266ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3610395ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3610570ms] [LOG] [Fast Refresh] done in 276ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3611926ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3611934ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3678203ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3678221ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3680515ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3680580ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3685515ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3685580ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3686147ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3686148ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3686168ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3686232ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3690549ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3690612ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3691953ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3692017ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3692260ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3692325ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3695516ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3695579ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3700510ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3700575ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3701146ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3701146ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3701168ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3701231ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3705547ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3705612ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3706954ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3707019ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3707288ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3707345ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3710515ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3710580ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3715512ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3715578ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3716144ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3716144ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3716165ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3716230ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3720549ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3720614ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3721955ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3722019ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3722264ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3722327ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3725518ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3725581ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3730510ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3730574ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3731147ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3731147ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3731169ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3731233ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3735552ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3735619ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3736958ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3737014ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3737257ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3737323ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3740513ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3740578ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3745508ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3745574ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3746144ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/api/notifications:0
+[ 3746144ms] [WARNING] notifications poll failed: 500 @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3746166ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3746231ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3750551ms] [ERROR] ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx:726:10
+Expected '</', got '}'
+  724 |             </button>
+  725 |           </div>
+> 726 |         )}
+      |          ^
+  727 |
+  728 |         {/* ── Map ── */}
+  729 |         {!successResult && hasLocation ? (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page-client.tsx
+    ./HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/src/app/liff/clock/page.tsx @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:3318
+[ 3750615ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3750805ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 3750845ms] [LOG] [Fast Refresh] done in 67ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4506475ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4506604ms] [LOG] [Fast Refresh] done in 223ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4507273ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4507341ms] [LOG] [Fast Refresh] done in 170ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4507986ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4508068ms] [LOG] [Fast Refresh] done in 183ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4508371ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4508421ms] [LOG] [Fast Refresh] done in 151ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4508793ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4508803ms] [LOG] [Fast Refresh] done in 112ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4509883ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4509896ms] [LOG] [Fast Refresh] done in 113ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4587573ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4587593ms] [LOG] [Fast Refresh] done in 121ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4804611ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4895640ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4895682ms] [LOG] [Fast Refresh] done in 143ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4914684ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 4914849ms] [LOG] [Fast Refresh] done in 267ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[ 5021509ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11489760ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11490311ms] [LOG] [Fast Refresh] done in 654ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11509123ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11509637ms] [LOG] [Fast Refresh] done in 616ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11628247ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11628748ms] [LOG] [Fast Refresh] done in 602ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11647914ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11649077ms] [LOG] [Fast Refresh] done in 1263ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11685071ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11685161ms] [LOG] [Fast Refresh] done in 191ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11765668ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11766270ms] [LOG] [Fast Refresh] done in 703ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11785950ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11786738ms] [LOG] [Fast Refresh] done in 889ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11786842ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[11787587ms] [LOG] [Fast Refresh] done in 846ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[12025990ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[12027362ms] [LOG] [Fast Refresh] done in 1473ms @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2477
+[12228857ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12229861ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12230867ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12231868ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12232870ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12237873ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12241874ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/api/notifications:0
+[12241886ms] TypeError: Failed to fetch
+    at AdminNotificationProvider.useCallback[refresh] (http://localhost:3001/_next/static/chunks/HEAD-OFFICE_PROJECTS_hr-payroll-client_hr-app_src_1k7_u2d._.js:1113:35)
+    at AdminNotificationProvider.useEffect.id (http://localhost:3001/_next/static/chunks/HEAD-OFFICE_PROJECTS_hr-payroll-client_hr-app_src_1k7_u2d._.js:1156:70)
+[12241887ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frames:0
+[12241904ms] [ERROR] WebSocket is already in CLOSING or CLOSED state. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2836
+[12242881ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12247897ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12252931ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12256872ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/api/notifications:0
+[12256873ms] TypeError: Failed to fetch
+    at AdminNotificationProvider.useCallback[refresh] (http://localhost:3001/_next/static/chunks/HEAD-OFFICE_PROJECTS_hr-payroll-client_hr-app_src_1k7_u2d._.js:1113:35)
+    at AdminNotificationProvider.useEffect.id (http://localhost:3001/_next/static/chunks/HEAD-OFFICE_PROJECTS_hr-payroll-client_hr-app_src_1k7_u2d._.js:1156:70)
+[12256873ms] [ERROR] WebSocket is already in CLOSING or CLOSED state. @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_00z70nv._.js:2836
+[12257974ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12263099ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[12268384ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=6yt1KOS7q0Sg_OEB4s4uH' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/1ngy_next_dist_client_0y0txqz._.js:13422
+[230548971ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/admin/inventory/dashboard:0

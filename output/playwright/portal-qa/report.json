@@ -1,0 +1,182 @@
+[
+  {
+    "route": "inventory",
+    "viewport": "375",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=OitFxnr6DVJLnOq0xsQ0k' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inventory-375.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าพร้อมสแกน 9 ใบ\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n9\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้ง"
+  },
+  {
+    "route": "stock",
+    "viewport": "375",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=AU3Hv872FR7FRIyhmjlAK' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/stock-375.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "inbound",
+    "viewport": "375",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=QClVivDipMGJMp_3QsQN-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inbound-375.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nเลือกใบรับเข้าที่ Inventory สร้างแล้ว สแกน barcode เพิ่มรายการ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n"
+  },
+  {
+    "route": "alerts",
+    "viewport": "375",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/alerts",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=kAiTcebt9qy4m3VHlnqKf' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/alerts-375.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้"
+  },
+  {
+    "route": "inventory",
+    "viewport": "430",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=_EEdqZAhT0V3JQUUO4lVI' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inventory-430.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nหน้าเริ่มงานคลังบนมือถือ เปิดงานหลักจากจุดเดียว แล้วค่อยลงรายละเอียดในแต่ละ flow\n\nสรุปงานตอนนี้\n\nมีใบรับเข้าพร้อมสแกน 9 ใบ\n\nงานที่ต้องเช็ค\n\n9\n\nพร้อมรับเข้า\n\n9\n\nต่ำกว่า Min\n\n0\n\nหมดสต็อก\n\n0\n\nใกล้หมดอายุ\n\n0\n\nขอบเขตที่กำลังใช้ง"
+  },
+  {
+    "route": "stock",
+    "viewport": "430",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=dRopOU8zmDyHMSUzeZpzd' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/stock-430.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nเช็คสต็อก\nค้นหาสต็อกตามสินค้า barcode สาขา และคลัง\n\nค้นหาสต็อก\n\nค้นด้วยรหัสสินค้า ชื่อสินค้า barcode หรือชื่อคลัง\n\nค้นหา\nทั้งหมด\nต่ำกว่า Min\nหมดสต็อก\n\nยังไม่มีข้อมูลสต็อก\n\nติดต่อทีมคลังเมื่อมีสินค้ารับเข้า"
+  },
+  {
+    "route": "inbound",
+    "viewport": "430",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=8p0aykG-P6aj60cJh_LEP' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inbound-430.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nคลังสินค้า\nเลือกใบรับเข้าที่ Inventory สร้างแล้ว สแกน barcode เพิ่มรายการ\n\nงานรับเข้าที่พร้อมสแกน\n\nเลือกใบรับ → เปิดสแกนใน LINE → ยิง barcode ของจริงเข้า order นั้นทันที\n\nพร้อมสแกน\n\n0\n\nพร้อมสแกน\n\n0\n\nยังไม่มีรายการ\n\n9\n\nใบรับทั้งหมด\n\n9\n"
+  },
+  {
+    "route": "alerts",
+    "viewport": "430",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/alerts",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=IljcWboC_NGhqP9xq3ZwH' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/alerts-430.png",
+    "bodyText": "เปิดเมนู\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nAlerts\nดูของใกล้หมดอายุ สต็อกต่ำ และรายการผิดปกติจากมือถือ แล้วเปิดงานที่ต้องแก้ต่อ\n\nแจ้งเตือนทั้งหมด\n\n0\n\nใกล้หมดอายุ\n\n0\n\nสต็อกต่ำ\n\n0\n\nระดับสูง\n\n0\n\nลำดับเช็คแนะนำ\n\n1. เปิดรายการระดับสูงหรือผิดปกติก่อน\n2. ไล่ของใกล้หมดอายุเพื่อกันของค้"
+  },
+  {
+    "route": "inventory",
+    "viewport": "1024",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=LEItiF0vj0WaGvDUg08_X' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inventory-1024.png",
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nคลังสินค้า\nหน้าเริ่มงา"
+  },
+  {
+    "route": "stock",
+    "viewport": "1024",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=SkvIEc_uBOu33dxc4qUpY' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/stock-1024.png",
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nเช็คสต็อก\nค้นหาสต็อกตา"
+  },
+  {
+    "route": "inbound",
+    "viewport": "1024",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=LHEKykCXwHvwLVVhErk0B' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/inbound-1024.png",
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nคลังสินค้า\nเลือกใบรับเ"
+  },
+  {
+    "route": "alerts",
+    "viewport": "1024",
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/alerts",
+    "title": "CNV WorkHub — HR Admin",
+    "horizontalScroll": false,
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "consoleErrors": [
+      "WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=h9GO1WMRqgwFPZASGP395' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/output/playwright/portal-qa/alerts-1024.png",
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\nDevelopers\n\nภาษา\nไทย\nEnglish\n中文\nမြန်မာ\nDP\n\nDev Portal\n\nDevelopers\n\nออกจากระบบ\nAlerts\nดูของใกล้หมดอาย"
+  }
+]

@@ -1,0 +1,183 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+          - generic [ref=e1722]:
+            - link "Alerts" [ref=e1723] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - button "ปิดแท็บ Alerts" [ref=e1724]:
+              - img [ref=e1725]
+          - generic [ref=e1795]:
+            - link "Reports" [ref=e1796] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - button "ปิดแท็บ Reports" [ref=e1797]:
+              - img [ref=e1798]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [active] [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1801]:
+          - generic [ref=e1803]:
+            - heading "Inventory Reports" [level=1] [ref=e1805]
+            - generic [ref=e1806]: รวมรายงานหลัก การเคลื่อนไหว ความต่างการนับ และ audit trail
+          - generic [ref=e1808]:
+            - generic [ref=e1809]:
+              - generic [ref=e1810]:
+                - generic [ref=e1811]:
+                  - paragraph [ref=e1812]: หมวดรายงาน
+                  - img [ref=e1813]
+                - paragraph [ref=e1816]: "3"
+              - generic [ref=e1817]:
+                - generic [ref=e1818]:
+                  - paragraph [ref=e1819]: รายงานการเคลื่อนไหว
+                  - img [ref=e1820]
+                - paragraph [ref=e1825]: "4"
+              - generic [ref=e1826]:
+                - generic [ref=e1827]:
+                  - paragraph [ref=e1828]: รายงานควบคุม
+                  - img [ref=e1829]
+                - paragraph [ref=e1832]: "3"
+              - generic [ref=e1833]:
+                - generic [ref=e1834]:
+                  - paragraph [ref=e1835]: พร้อม export
+                  - img [ref=e1836]
+                - paragraph [ref=e1842]: CSV
+            - generic [ref=e1843]:
+              - generic [ref=e1844]:
+                - generic [ref=e1845]:
+                  - heading "Stock decisions" [level=2] [ref=e1846]
+                  - paragraph [ref=e1847]: ดูของคงเหลือ ความต่างการนับ และ FEFO exception ก่อนตัดสินใจเติมหรือเคลียร์สต็อก
+                - generic [ref=e1848]:
+                  - link "Stock On Hand" [ref=e1849] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/stock
+                    - generic [ref=e1850]: Stock On Hand
+                    - img [ref=e1851]
+                  - link "Stock Count Variance" [ref=e1854] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/variance
+                    - generic [ref=e1855]: Stock Count Variance
+                    - img [ref=e1856]
+                  - link "FEFO Override" [ref=e1859] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/fefo-override
+                    - generic [ref=e1860]: FEFO Override
+                    - img [ref=e1861]
+              - generic [ref=e1864]:
+                - generic [ref=e1865]:
+                  - heading "Movement flow" [level=2] [ref=e1866]
+                  - paragraph [ref=e1867]: ไล่ของเข้า เบิก โอน และใช้จริง ตามเส้นทางการเคลื่อนไหวของสต็อก
+                - generic [ref=e1868]:
+                  - link "Inbound" [ref=e1869] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/inbound
+                    - generic [ref=e1870]: Inbound
+                    - img [ref=e1871]
+                  - link "Requisition" [ref=e1874] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/requisition
+                    - generic [ref=e1875]: Requisition
+                    - img [ref=e1876]
+                  - link "Transfer" [ref=e1879] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/transfer
+                    - generic [ref=e1880]: Transfer
+                    - img [ref=e1881]
+                  - link "Consumption" [ref=e1884] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/consumption
+                    - generic [ref=e1885]: Consumption
+                    - img [ref=e1886]
+              - generic [ref=e1889]:
+                - generic [ref=e1890]:
+                  - heading "Loss and control" [level=2] [ref=e1891]
+                  - paragraph [ref=e1892]: ดูความเสียหายและเส้นทางตรวจสอบย้อนหลังเพื่อหาจุดรั่วและตัดสินใจแก้ไข
+                - generic [ref=e1893]:
+                  - link "Damage" [ref=e1894] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/damage
+                    - generic [ref=e1895]: Damage
+                    - img [ref=e1896]
+                  - link "Audit Trail" [ref=e1899] [cursor=pointer]:
+                    - /url: /admin/inventory/reports/audit
+                    - generic [ref=e1900]: Audit Trail
+                    - img [ref=e1901]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

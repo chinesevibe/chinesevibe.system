@@ -1,0 +1,151 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [active] [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1645]:
+          - generic [ref=e1646]:
+            - generic [ref=e1647]:
+              - heading "ตรวจนับสต๊อก" [level=1] [ref=e1649]
+              - generic [ref=e1650]: สร้างแผนตรวจนับ บันทึกจำนวนจริง และ finalize เพื่อสร้าง stock adjustment อัตโนมัติ
+            - link "+ สร้างรอบตรวจนับ" [ref=e1652] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count/create
+          - generic [ref=e1653]:
+            - generic [ref=e1654]:
+              - generic [ref=e1655]:
+                - generic [ref=e1656]:
+                  - generic [ref=e1657]:
+                    - paragraph [ref=e1658]: รอบตรวจนับทั้งหมด
+                    - paragraph [ref=e1659]: "0"
+                  - img [ref=e1661]
+                - paragraph [ref=e1668]: รวมทุก cycle ที่สร้างใน stock count workspace
+              - generic [ref=e1669]:
+                - generic [ref=e1670]:
+                  - generic [ref=e1671]:
+                    - paragraph [ref=e1672]: แบบร่าง
+                    - paragraph [ref=e1673]: "0"
+                  - img [ref=e1675]
+                - paragraph [ref=e1678]: รอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง
+              - generic [ref=e1679]:
+                - generic [ref=e1680]:
+                  - generic [ref=e1681]:
+                    - paragraph [ref=e1682]: กำลังนับ
+                    - paragraph [ref=e1683]: "0"
+                  - img [ref=e1685]
+                - paragraph [ref=e1688]: รอบที่ทีมยังกรอก physical qty ไม่ครบ
+              - generic [ref=e1689]:
+                - generic [ref=e1690]:
+                  - generic [ref=e1691]:
+                    - paragraph [ref=e1692]: เสร็จสิ้น
+                    - paragraph [ref=e1693]: "0"
+                  - img [ref=e1695]
+                - paragraph [ref=e1700]: ยังเหลือ 0 รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่
+            - generic [ref=e1701]:
+              - generic [ref=e1702]:
+                - generic [ref=e1703]:
+                  - heading "Stock count queue" [level=2] [ref=e1704]
+                  - paragraph [ref=e1705]: ใช้ดูว่ารอบไหนยัง draft รอบไหนกำลังนับ และรอบไหน finalize แล้วพร้อมตรวจ variance
+                - generic [ref=e1706]: Draft 0 · Counting 0
+              - table [ref=e1709]:
+                - rowgroup [ref=e1710]:
+                  - row "รหัส สาขา คลัง สถานะ วันที่วางแผน ความคืบหน้า สร้างเมื่อ" [ref=e1711]:
+                    - columnheader "รหัส" [ref=e1712]
+                    - columnheader "สาขา" [ref=e1713]
+                    - columnheader "คลัง" [ref=e1714]
+                    - columnheader "สถานะ" [ref=e1715]
+                    - columnheader "วันที่วางแผน" [ref=e1716]
+                    - columnheader "ความคืบหน้า" [ref=e1717]
+                    - columnheader "สร้างเมื่อ" [ref=e1718]
+                - rowgroup [ref=e1719]:
+                  - row "ยังไม่มีรอบตรวจนับ" [ref=e1720]:
+                    - cell "ยังไม่มีรอบตรวจนับ" [ref=e1721]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

@@ -1,0 +1,278 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+          - generic [ref=e1722]:
+            - link "Alerts" [ref=e1723] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - button "ปิดแท็บ Alerts" [ref=e1724]:
+              - img [ref=e1725]
+          - generic [ref=e1795]:
+            - link "Reports" [ref=e1796] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - button "ปิดแท็บ Reports" [ref=e1797]:
+              - img [ref=e1798]
+          - generic [ref=e1904]:
+            - link "Stock" [ref=e1905] [cursor=pointer]:
+              - /url: /admin/inventory/reports/stock
+            - button "ปิดแท็บ Stock" [ref=e1906]:
+              - img [ref=e1907]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [active] [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e2266]:
+          - generic [ref=e2268]:
+            - heading "Inventory Dashboard" [level=1] [ref=e2270]
+            - generic [ref=e2271]: ติดตามงานด่วนวันนี้ แยกตามสาขาและคลัง ก่อนค่อยดู KPI และกราฟแนวโน้ม
+          - generic [ref=e2273]:
+            - generic [ref=e2274]:
+              - generic [ref=e2275]:
+                - generic [ref=e2276]: สาขา
+                - combobox "สาขา" [ref=e2277]:
+                  - option "ทั้งหมด" [selected]
+                  - option "Bang Na"
+              - generic [ref=e2278]:
+                - generic [ref=e2279]: คลัง
+                - combobox "คลัง" [ref=e2280]:
+                  - option "ทั้งหมด" [selected]
+                  - option "Bang Na"
+              - generic [ref=e2281]:
+                - generic [ref=e2282]: ตั้งแต่
+                - textbox "ตั้งแต่" [ref=e2283]
+              - generic [ref=e2284]:
+                - generic [ref=e2285]: ถึง
+                - textbox "ถึง" [ref=e2286]
+              - button "ล้างตัวกรอง" [ref=e2287]
+            - generic [ref=e2288]:
+              - generic [ref=e2289]:
+                - generic [ref=e2290]:
+                  - heading "Today operations summary" [level=3] [ref=e2292]
+                  - generic [ref=e2294]:
+                    - link "ต่ำกว่า Min 0 SKU ที่ควรเช็คเติมสต๊อกหรือเปิดดูสาขาที่ค้าง" [ref=e2295] [cursor=pointer]:
+                      - /url: /admin/inventory/stock?below_min=1
+                      - generic [ref=e2296]:
+                        - img [ref=e2298]
+                        - img [ref=e2300]
+                      - paragraph [ref=e2303]: ต่ำกว่า Min
+                      - paragraph [ref=e2304]: "0"
+                      - paragraph [ref=e2305]: SKU ที่ควรเช็คเติมสต๊อกหรือเปิดดูสาขาที่ค้าง
+                    - link "ใกล้หมดอายุ 7 วัน 0 lot ที่ควรผลักออกก่อนหรือเร่งใช้ก่อนหมดอายุ" [ref=e2306] [cursor=pointer]:
+                      - /url: /admin/inventory/alerts?type=expiry
+                      - generic [ref=e2307]:
+                        - img [ref=e2309]
+                        - img [ref=e2311]
+                      - paragraph [ref=e2314]: ใกล้หมดอายุ 7 วัน
+                      - paragraph [ref=e2315]: "0"
+                      - paragraph [ref=e2316]: lot ที่ควรผลักออกก่อนหรือเร่งใช้ก่อนหมดอายุ
+                    - link "ใบเบิกรออนุมัติ 0 ตรวจคำขอเบิกจากครัวและเปิดดูรายการที่รอจัดสินค้า" [ref=e2317] [cursor=pointer]:
+                      - /url: /admin/inventory/requisition
+                      - generic [ref=e2318]:
+                        - img [ref=e2320]
+                        - img [ref=e2323]
+                      - paragraph [ref=e2326]: ใบเบิกรออนุมัติ
+                      - paragraph [ref=e2327]: "0"
+                      - paragraph [ref=e2328]: ตรวจคำขอเบิกจากครัวและเปิดดูรายการที่รอจัดสินค้า
+                    - link "ใบโอนกำลังส่ง 0 ติดตามการโอนระหว่างสาขาและเช็คการรับเข้าปลายทาง" [ref=e2329] [cursor=pointer]:
+                      - /url: /admin/inventory/transfer
+                      - generic [ref=e2330]:
+                        - img [ref=e2332]
+                        - img [ref=e2337]
+                      - paragraph [ref=e2340]: ใบโอนกำลังส่ง
+                      - paragraph [ref=e2341]: "0"
+                      - paragraph [ref=e2342]: ติดตามการโอนระหว่างสาขาและเช็คการรับเข้าปลายทาง
+                    - link "Damage รอตัดสิน 0 รายการเสียหายที่ยังต้องตรวจสอบและอนุมัติ" [ref=e2343] [cursor=pointer]:
+                      - /url: /admin/inventory/damage
+                      - generic [ref=e2344]:
+                        - img [ref=e2346]
+                        - img [ref=e2348]
+                      - paragraph [ref=e2351]: Damage รอตัดสิน
+                      - paragraph [ref=e2352]: "0"
+                      - paragraph [ref=e2353]: รายการเสียหายที่ยังต้องตรวจสอบและอนุมัติ
+                    - link "มูลค่าสต๊อกคงเหลือ 0 ใช้เป็นภาพรวมของ scope ปัจจุบันก่อนเปิดดู stock workspace" [ref=e2354] [cursor=pointer]:
+                      - /url: /admin/inventory/stock-count
+                      - generic [ref=e2355]:
+                        - img [ref=e2357]
+                        - img [ref=e2364]
+                      - paragraph [ref=e2367]: มูลค่าสต๊อกคงเหลือ
+                      - paragraph [ref=e2368]: "0"
+                      - paragraph [ref=e2369]: ใช้เป็นภาพรวมของ scope ปัจจุบันก่อนเปิดดู stock workspace
+                - generic [ref=e2370]:
+                  - heading "Quick actions" [level=3] [ref=e2372]
+                  - generic [ref=e2374]:
+                    - link "รับเข้า 0 เปิดใบรับ สแกนสินค้า และตรวจรายการรับเข้าของเดือนนี้" [ref=e2375] [cursor=pointer]:
+                      - /url: /admin/inventory/inbound
+                      - generic [ref=e2376]:
+                        - img [ref=e2378]
+                        - img [ref=e2382]
+                      - paragraph [ref=e2385]: รับเข้า
+                      - paragraph [ref=e2386]: "0"
+                      - paragraph [ref=e2387]: เปิดใบรับ สแกนสินค้า และตรวจรายการรับเข้าของเดือนนี้
+                    - link "Issue to kitchen 0 ติดตามการเบิกและการใช้จริงของเดือนนี้จากหน้า issue/requisition" [ref=e2388] [cursor=pointer]:
+                      - /url: /admin/inventory/requisition
+                      - generic [ref=e2389]:
+                        - img [ref=e2391]
+                        - img [ref=e2394]
+                      - paragraph [ref=e2397]: Issue to kitchen
+                      - paragraph [ref=e2398]: "0"
+                      - paragraph [ref=e2399]: ติดตามการเบิกและการใช้จริงของเดือนนี้จากหน้า issue/requisition
+                    - link "Transfer branch 0 สลับไปหน้าโอนสินค้าเพื่อดูงานเคลื่อนย้ายระหว่างสาขา" [ref=e2400] [cursor=pointer]:
+                      - /url: /admin/inventory/transfer
+                      - generic [ref=e2401]:
+                        - img [ref=e2403]
+                        - img [ref=e2408]
+                      - paragraph [ref=e2411]: Transfer branch
+                      - paragraph [ref=e2412]: "0"
+                      - paragraph [ref=e2413]: สลับไปหน้าโอนสินค้าเพื่อดูงานเคลื่อนย้ายระหว่างสาขา
+              - generic [ref=e2414]:
+                - heading "Alert / Action inbox" [level=3] [ref=e2416]
+                - generic [ref=e2418]: ยังไม่มี alert ค้างใน scope ที่เลือก
+              - generic [ref=e2419]:
+                - generic [ref=e2420]:
+                  - paragraph [ref=e2421]: จำนวน SKU
+                  - paragraph [ref=e2422]: "0"
+                - generic [ref=e2423]:
+                  - paragraph [ref=e2424]: รับเข้าเดือนนี้
+                  - paragraph [ref=e2425]: "0"
+                - generic [ref=e2426]:
+                  - paragraph [ref=e2427]: ใช้จริงเดือนนี้
+                  - paragraph [ref=e2428]: "0"
+                - generic [ref=e2429]:
+                  - paragraph [ref=e2430]: เสียหายเดือนนี้
+                  - paragraph [ref=e2431]: "0"
+                - generic [ref=e2432]:
+                  - paragraph [ref=e2433]: มูลค่าสต๊อกคงเหลือ
+                  - paragraph [ref=e2434]: "0"
+              - generic [ref=e2435]:
+                - generic [ref=e2436]:
+                  - heading "มูลค่าสต๊อก 30 วัน" [level=3] [ref=e2438]
+                  - application [ref=e2442]:
+                    - generic [ref=e2454]:
+                      - generic [ref=e2455]:
+                        - generic [ref=e2457]: 05-30
+                        - generic [ref=e2459]: 06-06
+                        - generic [ref=e2461]: 06-13
+                        - generic [ref=e2463]: 06-22
+                      - generic [ref=e2464]:
+                        - generic [ref=e2466]: "0"
+                        - generic [ref=e2468]: "1"
+                        - generic [ref=e2470]: "2"
+                        - generic [ref=e2472]: "3"
+                        - generic [ref=e2474]: "4"
+                - generic [ref=e2475]:
+                  - heading "รับเข้า vs ใช้จริง 12 สัปดาห์" [level=3] [ref=e2477]
+                  - application [ref=e2481]:
+                    - generic [ref=e2493]:
+                      - generic [ref=e2494]:
+                        - generic [ref=e2496]: 05-04-05-10
+                        - generic [ref=e2498]: 06-22-06-28
+                      - generic [ref=e2499]:
+                        - generic [ref=e2501]: "0"
+                        - generic [ref=e2503]: "1"
+                        - generic [ref=e2505]: "2"
+                        - generic [ref=e2507]: "3"
+                        - generic [ref=e2509]: "4"
+                - generic [ref=e2510]:
+                  - heading "มูลค่าเสียหาย 6 เดือน" [level=3] [ref=e2512]
+                  - application [ref=e2516]:
+                    - generic [ref=e2528]:
+                      - generic [ref=e2529]:
+                        - generic [ref=e2531]: 2026-02
+                        - generic [ref=e2533]: 2026-04
+                        - generic [ref=e2535]: 2026-06
+                      - generic [ref=e2536]:
+                        - generic [ref=e2538]: "0"
+                        - generic [ref=e2540]: "1"
+                        - generic [ref=e2542]: "2"
+                        - generic [ref=e2544]: "3"
+                        - generic [ref=e2546]: "4"
+                - generic [ref=e2547]:
+                  - heading "สัดส่วนมูลค่าสต๊อกตามหมวดหมู่" [level=3] [ref=e2549]
+                  - application [ref=e2553]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

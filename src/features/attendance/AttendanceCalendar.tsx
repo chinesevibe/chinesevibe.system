@@ -297,6 +297,7 @@ export function AttendanceCalendar({
   monthLinkQuery,
   dayLinkQuery,
   linkDays = false,
+  hrMode = false,
 }: {
   month: string
   days: AttendanceDayCell[]
@@ -309,6 +310,8 @@ export function AttendanceCalendar({
   monthLinkQuery?: Record<string, string>
   dayLinkQuery?: Record<string, string>
   linkDays?: boolean
+  /** HR admin mode — makes all non-future days clickable for date override management */
+  hrMode?: boolean
 }) {
   const grid = buildCalendarGrid(month)
   const byDate = useMemo(() => new Map(days.map((d) => [d.date, d])), [days])
@@ -455,7 +458,9 @@ export function AttendanceCalendar({
           const status = day?.status ?? (cell.date ? "future" : "future")
           const style = STATUS[status]
           const isToday = cell.date === today
-          const clickable = Boolean(day && onDayClick && day.retroEligible)
+          const clickable = Boolean(
+            day && onDayClick && (day.retroEligible || (hrMode && status !== "future"))
+          )
           const linkable = Boolean(day && linkDays && status !== "future")
           const isSelected = selectedDate === cell.date
           const colIndex = i % 7

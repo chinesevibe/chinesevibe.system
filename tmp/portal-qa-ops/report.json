@@ -1,0 +1,194 @@
+[
+  {
+    "route": "/portal/requisition",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/requisition",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=Lg0cl-ZJqPUjR_HD2Zs6x' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_requisition-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/transfer",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=aOkVQFZc313NYD25AsCZ1' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_transfer-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/damage",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/damage",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=Io14ekjCbvcyigOA0vSfQ' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_damage-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock-count",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=FU0AeBdwwusQ0Yw5Rk8_3' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_stock-count-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 375,
+    "innerWidth": 375,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/requisition",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=4LZqQkkzRsM5A4pxx0gfS' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_requisition-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/transfer",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=Qwcyxbzg_UOgVQ2ZN7MLP' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_transfer-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/damage",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/damage",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=TOlnSSfbKNlD-gUnjtWU_' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_damage-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock-count",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=t_Jn6Ag-dq_-SwxhUjEO0' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_stock-count-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 430,
+    "innerWidth": 430,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/requisition",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/requisition",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=np-zyvn_dsJbhZ-w4-DFV' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_requisition-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/transfer",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/transfer",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=2HGAgNpeIDlazvxNsYIIm' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_transfer-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/damage",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/damage",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=aSDQ1qn7gUCfaiXCMhC8C' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_damage-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": 0,
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock-count",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock-count",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=uNmKkIBarU42yn8sVatze' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa-ops/portal_stock-count-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": 0,
+    "offenders": []
+  }
+]

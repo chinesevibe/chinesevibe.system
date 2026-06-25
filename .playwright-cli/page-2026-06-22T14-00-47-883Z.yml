@@ -1,0 +1,405 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e5]:
+        - img "CNV WorkHub mascot" [ref=e6]
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: CNV WorkHub
+          - paragraph [ref=e9]: HR & Payroll
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - paragraph [ref=e13]: บริหารบุคคล
+          - generic [ref=e14]:
+            - link "แดชบอร์ด 8" [ref=e15] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e17]
+              - generic [ref=e23]: แดชบอร์ด
+              - generic "8 รายการรอดำเนินการ" [ref=e24]: "8"
+            - link "พนักงาน 2" [ref=e25] [cursor=pointer]:
+              - /url: /admin/employees
+              - img [ref=e27]
+              - generic [ref=e33]: พนักงาน
+              - generic "2 รายการรอดำเนินการ" [ref=e34]: "2"
+            - link "การเข้างาน" [ref=e35] [cursor=pointer]:
+              - /url: /admin/attendance
+              - img [ref=e37]
+              - generic [ref=e40]: การเข้างาน
+              - img [ref=e41]
+            - link "จัดการลา" [ref=e43] [cursor=pointer]:
+              - /url: /admin/leaves
+              - img [ref=e45]
+              - generic [ref=e47]: จัดการลา
+              - img [ref=e48]
+            - link "OT 6" [ref=e50] [cursor=pointer]:
+              - /url: /admin/overtime
+              - img [ref=e52]
+              - generic [ref=e56]: OT
+              - generic "6 รายการรอดำเนินการ" [ref=e57]: "6"
+            - link "ประกาศ" [ref=e58] [cursor=pointer]:
+              - /url: /admin/announcements
+              - img [ref=e60]
+              - generic [ref=e63]: ประกาศ
+              - img [ref=e64]
+            - link "ข้อร้องเรียน" [ref=e66] [cursor=pointer]:
+              - /url: /admin/complaints
+              - img [ref=e68]
+              - generic [ref=e70]: ข้อร้องเรียน
+              - img [ref=e71]
+            - link "เอกสาร 2" [ref=e73] [cursor=pointer]:
+              - /url: /admin/documents
+              - img [ref=e75]
+              - generic [ref=e79]: เอกสาร
+              - generic "2 รายการรอดำเนินการ" [ref=e80]: "2"
+            - link "การแจ้งเตือน" [ref=e81] [cursor=pointer]:
+              - /url: /admin/alerts
+              - img [ref=e83]
+              - generic [ref=e86]: การแจ้งเตือน
+              - img [ref=e87]
+        - generic [ref=e89]:
+          - paragraph [ref=e90]: บัญชี
+          - link "Payroll" [ref=e92] [cursor=pointer]:
+            - /url: /admin/payroll
+            - img [ref=e94]
+            - generic [ref=e97]: Payroll
+            - img [ref=e98]
+        - generic [ref=e100]:
+          - paragraph [ref=e101]: การจัดการ
+          - generic [ref=e102]:
+            - link "โครงสร้างองค์กร" [ref=e103] [cursor=pointer]:
+              - /url: /admin/organization
+              - img [ref=e105]
+              - generic [ref=e110]: โครงสร้างองค์กร
+              - img [ref=e111]
+            - link "สาขา" [ref=e113] [cursor=pointer]:
+              - /url: /admin/branches
+              - img [ref=e115]
+              - generic [ref=e119]: สาขา
+              - img [ref=e120]
+            - link "รายงานและวิเคราะห์" [ref=e122] [cursor=pointer]:
+              - /url: /admin/report
+              - img [ref=e124]
+              - generic [ref=e126]: รายงานและวิเคราะห์
+              - img [ref=e127]
+            - link "คลังสินค้า" [ref=e129] [cursor=pointer]:
+              - /url: /admin/inventory
+              - img [ref=e131]
+              - generic [ref=e135]: คลังสินค้า
+            - link "ตั้งค่า" [ref=e136] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=e138]
+              - generic [ref=e141]: ตั้งค่า
+              - img [ref=e142]
+      - paragraph [ref=e147]:
+        - text: ร่วมกันสร้าง
+        - text: ทีมที่แข็งแกร่ง
+        - text: ไปด้วยกัน!
+      - paragraph [ref=e148]:
+        - text: © 2025 Zhongguomingtang
+        - text: All rights reserved.
+    - generic [ref=e149]:
+      - banner [ref=e150]:
+        - generic [ref=e151]:
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - img
+              - searchbox "ค้นหาพนักงาน" [ref=e154]
+            - generic [ref=e155]:
+              - button "สลับมุมมอง Dev" [ref=e157]:
+                - img
+                - generic [ref=e158]: HR Admin
+              - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+                - img [ref=e161]
+                - generic [ref=e164]: "8"
+              - generic [ref=e165]:
+                - generic [ref=e167]: DP
+                - generic [ref=e168]:
+                  - paragraph [ref=e169]: Dev Portal
+                  - paragraph [ref=e170]: Developers
+              - button "ออกจากระบบ" [ref=e172]:
+                - img
+                - generic [ref=e173]: ออกจากระบบ
+          - generic [ref=e519]:
+            - generic [ref=e520]:
+              - link "Dashboard" [ref=e521] [cursor=pointer]:
+                - /url: /admin/inventory/dashboard
+              - button "ปิดแท็บ Dashboard" [ref=e522]:
+                - img [ref=e523]
+            - generic [ref=e650]:
+              - link "Inventory" [ref=e651] [cursor=pointer]:
+                - /url: /admin/inventory
+              - button "ปิดแท็บ Inventory" [ref=e652]:
+                - img [ref=e653]
+      - main [ref=e174]:
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+              - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+                - img [ref=e180]
+                - text: "โหมดแนะนำ: เปิด"
+            - navigation [ref=e182]:
+              - link "ภาพรวม" [active] [ref=e183] [cursor=pointer]:
+                - /url: /admin/inventory
+              - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+                - /url: /admin/inventory/dashboard
+              - link "Alerts" [ref=e185] [cursor=pointer]:
+                - /url: /admin/inventory/alerts
+              - link "Reports" [ref=e186] [cursor=pointer]:
+                - /url: /admin/inventory/reports
+              - link "สต็อก" [ref=e187] [cursor=pointer]:
+                - /url: /admin/inventory/stock
+              - link "รับเข้า" [ref=e188] [cursor=pointer]:
+                - /url: /admin/inventory/inbound
+              - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+                - /url: /admin/inventory/requisition
+              - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+                - /url: /admin/inventory/transfer
+              - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+                - /url: /admin/inventory/consumption
+              - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+                - /url: /admin/inventory/damage
+              - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+                - /url: /admin/inventory/stock-count
+              - link "SKU" [ref=e194] [cursor=pointer]:
+                - /url: /admin/inventory/sku
+              - link "Supplier" [ref=e195] [cursor=pointer]:
+                - /url: /admin/inventory/suppliers
+              - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+                - /url: /admin/inventory/branches
+              - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+                - /url: /admin/inventory/warehouses
+              - link "BOM" [ref=e198] [cursor=pointer]:
+                - /url: /admin/inventory/bom
+          - generic [ref=e656]:
+            - generic [ref=e658]:
+              - heading "Inventory Workspace" [level=1] [ref=e660]
+              - generic [ref=e661]: พื้นที่ทำงานหลักของคลังสินค้า ดูงานด่วนวันนี้ เปิดงานประจำ และเข้าถึงข้อมูลหลักจากจุดเดียว
+            - generic [ref=e663]:
+              - generic [ref=e664]:
+                - generic [ref=e665]:
+                  - paragraph [ref=e666]: ศูนย์ควบคุมคลังสินค้า
+                  - paragraph [ref=e667]: เริ่มจากงานด่วนของวันนี้ แล้วค่อยเข้า workspace รายประเภทเมื่อพร้อมตรวจรับ เบิก โอน หรือตรวจนับ
+                - generic [ref=e668]:
+                  - link "คู่มือ & Checklist UAT" [ref=e669] [cursor=pointer]:
+                    - /url: /docs/INVENTORY_HANDOFF.html
+                    - generic [ref=e670]: คู่มือ & Checklist UAT
+                    - img [ref=e671]
+                  - link "แดชบอร์ด" [ref=e675] [cursor=pointer]:
+                    - /url: /admin/inventory/dashboard
+                    - img [ref=e676]
+                    - generic [ref=e681]: แดชบอร์ด
+                  - link "Alerts" [ref=e682] [cursor=pointer]:
+                    - /url: /admin/inventory/alerts
+                    - img [ref=e683]
+                    - generic [ref=e686]: Alerts
+              - generic [ref=e687]:
+                - generic [ref=e689]:
+                  - heading "ภาพรวมงานวันนี้" [level=2] [ref=e690]
+                  - paragraph [ref=e691]: โฟกัสงานที่ต้องลงมือก่อน แล้วค่อยเปิดหน้าวิเคราะห์เชิงลึก
+                - generic [ref=e692]:
+                  - generic [ref=e693]:
+                    - generic [ref=e694]:
+                      - generic [ref=e695]:
+                        - paragraph [ref=e696]: Alerts ค้างตรวจ
+                        - paragraph [ref=e697]: "0"
+                      - img [ref=e699]
+                    - paragraph [ref=e701]: รวม low stock, expiry และ anomaly ที่ควรเปิดดูต่อ
+                  - generic [ref=e702]:
+                    - generic [ref=e703]:
+                      - generic [ref=e704]:
+                        - paragraph [ref=e705]: Workflow หลัก
+                        - paragraph [ref=e706]: "7"
+                      - img [ref=e708]
+                    - paragraph [ref=e711]: รับเข้า เบิก โอน ตรวจนับ ใช้จริง และเสียหาย อยู่ใน workspace เดียวกัน
+                  - generic [ref=e712]:
+                    - generic [ref=e713]:
+                      - generic [ref=e714]:
+                        - paragraph [ref=e715]: Quick actions
+                        - paragraph [ref=e716]: "5"
+                      - img [ref=e718]
+                    - paragraph [ref=e721]: เปิดงานประจำที่ใช้บ่อยโดยไม่ต้องไล่จากเมนูย่อย
+                  - generic [ref=e722]:
+                    - generic [ref=e723]:
+                      - generic [ref=e724]:
+                        - paragraph [ref=e725]: โหมดการดูแล
+                        - paragraph [ref=e726]: Admin
+                      - img [ref=e728]
+                    - paragraph [ref=e733]: เข้าถึงทั้ง workspace และข้อมูลหลักของคลัง
+              - generic [ref=e734]:
+                - generic [ref=e735]:
+                  - generic [ref=e736]:
+                    - heading "Quick actions" [level=2] [ref=e737]
+                    - paragraph [ref=e738]: ทางลัดสำหรับงานที่มักต้องเปิดก่อนในแต่ละวัน
+                  - generic [ref=e739]: 5 รายการ
+                - generic [ref=e740]:
+                  - link "รับเข้า สร้างใบรับและสแกน LIFF" [ref=e741] [cursor=pointer]:
+                    - /url: /admin/inventory/inbound
+                    - generic [ref=e742]:
+                      - img [ref=e744]
+                      - img [ref=e748]
+                    - generic [ref=e750]:
+                      - paragraph [ref=e751]: รับเข้า
+                      - paragraph [ref=e752]: สร้างใบรับและสแกน LIFF
+                  - link "ใบเบิก เบิกวัตถุดิบออกจากคลัง" [ref=e753] [cursor=pointer]:
+                    - /url: /admin/inventory/requisition
+                    - generic [ref=e754]:
+                      - img [ref=e756]
+                      - img [ref=e759]
+                    - generic [ref=e761]:
+                      - paragraph [ref=e762]: ใบเบิก
+                      - paragraph [ref=e763]: เบิกวัตถุดิบออกจากคลัง
+                  - link "โอนสินค้า ย้ายสต็อกระหว่างคลัง" [ref=e764] [cursor=pointer]:
+                    - /url: /admin/inventory/transfer
+                    - generic [ref=e765]:
+                      - img [ref=e767]
+                      - img [ref=e772]
+                    - generic [ref=e774]:
+                      - paragraph [ref=e775]: โอนสินค้า
+                      - paragraph [ref=e776]: ย้ายสต็อกระหว่างคลัง
+                  - link "ตรวจนับสต็อก นับจริงเทียบยอดระบบ" [ref=e777] [cursor=pointer]:
+                    - /url: /admin/inventory/stock-count
+                    - generic [ref=e778]:
+                      - img [ref=e780]
+                      - img [ref=e787]
+                    - generic [ref=e789]:
+                      - paragraph [ref=e790]: ตรวจนับสต็อก
+                      - paragraph [ref=e791]: นับจริงเทียบยอดระบบ
+                  - link "เสียหาย แจ้งของเสียหายหรือสูญหาย" [ref=e792] [cursor=pointer]:
+                    - /url: /admin/inventory/damage
+                    - generic [ref=e793]:
+                      - img [ref=e795]
+                      - img [ref=e801]
+                    - generic [ref=e803]:
+                      - paragraph [ref=e804]: เสียหาย
+                      - paragraph [ref=e805]: แจ้งของเสียหายหรือสูญหาย
+              - generic [ref=e806]:
+                - generic [ref=e807]:
+                  - generic [ref=e808]:
+                    - heading "Alert / Action inbox" [level=2] [ref=e809]
+                    - paragraph [ref=e810]: เรียงงานที่ควรตรวจต่อก่อน แล้วค่อยเปิดหน้าเฉพาะงาน
+                  - link "เปิด alerts ทั้งหมด" [ref=e811] [cursor=pointer]:
+                    - /url: /admin/inventory/alerts
+                    - img [ref=e812]
+                    - generic [ref=e815]: เปิด alerts ทั้งหมด
+                - generic [ref=e816]: ยังไม่มี alert ค้างในตอนนี้ เปิดหน้าสต็อกหรือรับเข้าเพื่อเริ่มงานประจำวันได้เลย
+              - generic [ref=e817]:
+                - generic [ref=e818]:
+                  - generic [ref=e819]:
+                    - heading "All workspaces" [level=2] [ref=e820]
+                    - paragraph [ref=e821]: workspace หลักของคลังสำหรับเปิดดูงานตามหมวด เมื่อพ้นขั้นคัดกรองเบื้องต้นแล้ว
+                  - generic [ref=e822]: 7 รายการ
+                - generic [ref=e823]:
+                  - link "รับเข้า สร้างใบรับและสแกน LIFF" [ref=e824] [cursor=pointer]:
+                    - /url: /admin/inventory/inbound
+                    - generic [ref=e825]:
+                      - img [ref=e827]
+                      - img [ref=e831]
+                    - generic [ref=e833]:
+                      - paragraph [ref=e834]: รับเข้า
+                      - paragraph [ref=e835]: สร้างใบรับและสแกน LIFF
+                  - link "สต็อก คงเหลือตามคลังและสาขา" [ref=e836] [cursor=pointer]:
+                    - /url: /admin/inventory/stock
+                    - generic [ref=e837]:
+                      - img [ref=e839]
+                      - img [ref=e841]
+                    - generic [ref=e843]:
+                      - paragraph [ref=e844]: สต็อก
+                      - paragraph [ref=e845]: คงเหลือตามคลังและสาขา
+                  - link "ใบเบิก เบิกวัตถุดิบออกจากคลัง" [ref=e846] [cursor=pointer]:
+                    - /url: /admin/inventory/requisition
+                    - generic [ref=e847]:
+                      - img [ref=e849]
+                      - img [ref=e852]
+                    - generic [ref=e854]:
+                      - paragraph [ref=e855]: ใบเบิก
+                      - paragraph [ref=e856]: เบิกวัตถุดิบออกจากคลัง
+                  - link "โอนสินค้า ย้ายสต็อกระหว่างคลัง" [ref=e857] [cursor=pointer]:
+                    - /url: /admin/inventory/transfer
+                    - generic [ref=e858]:
+                      - img [ref=e860]
+                      - img [ref=e865]
+                    - generic [ref=e867]:
+                      - paragraph [ref=e868]: โอนสินค้า
+                      - paragraph [ref=e869]: ย้ายสต็อกระหว่างคลัง
+                  - link "ตรวจนับสต็อก นับจริงเทียบยอดระบบ" [ref=e870] [cursor=pointer]:
+                    - /url: /admin/inventory/stock-count
+                    - generic [ref=e871]:
+                      - img [ref=e873]
+                      - img [ref=e880]
+                    - generic [ref=e882]:
+                      - paragraph [ref=e883]: ตรวจนับสต็อก
+                      - paragraph [ref=e884]: นับจริงเทียบยอดระบบ
+                  - link "ใช้จริง บันทึกการใช้งานจริง" [ref=e885] [cursor=pointer]:
+                    - /url: /admin/inventory/consumption
+                    - generic [ref=e886]:
+                      - img [ref=e888]
+                      - img [ref=e892]
+                    - generic [ref=e894]:
+                      - paragraph [ref=e895]: ใช้จริง
+                      - paragraph [ref=e896]: บันทึกการใช้งานจริง
+                  - link "เสียหาย แจ้งของเสียหายหรือสูญหาย" [ref=e897] [cursor=pointer]:
+                    - /url: /admin/inventory/damage
+                    - generic [ref=e898]:
+                      - img [ref=e900]
+                      - img [ref=e906]
+                    - generic [ref=e908]:
+                      - paragraph [ref=e909]: เสียหาย
+                      - paragraph [ref=e910]: แจ้งของเสียหายหรือสูญหาย
+              - generic [ref=e911]:
+                - generic [ref=e912]:
+                  - generic [ref=e913]:
+                    - heading "ข้อมูลหลัก" [level=2] [ref=e914]
+                    - paragraph [ref=e915]: ตั้งค่าก่อนเริ่มใช้งานคลัง — แยกจากข้อมูลสาขา HR
+                  - generic [ref=e916]: 4 รายการ
+                - generic [ref=e917]:
+                  - link "SKU รหัสสินค้า หน่วย Min/Max" [ref=e918] [cursor=pointer]:
+                    - /url: /admin/inventory/sku
+                    - generic [ref=e919]:
+                      - img [ref=e921]
+                      - img [ref=e925]
+                    - generic [ref=e927]:
+                      - paragraph [ref=e928]: SKU
+                      - paragraph [ref=e929]: รหัสสินค้า หน่วย Min/Max
+                  - link "Supplier ผู้จำหน่ายและติดต่อ" [ref=e930] [cursor=pointer]:
+                    - /url: /admin/inventory/suppliers
+                    - generic [ref=e931]:
+                      - img [ref=e933]
+                      - img [ref=e938]
+                    - generic [ref=e940]:
+                      - paragraph [ref=e941]: Supplier
+                      - paragraph [ref=e942]: ผู้จำหน่ายและติดต่อ
+                  - link "สาขา (คลัง) สาขาระบบคลังแยกจาก HR" [ref=e943] [cursor=pointer]:
+                    - /url: /admin/inventory/branches
+                    - generic [ref=e944]:
+                      - img [ref=e946]
+                      - img [ref=e950]
+                    - generic [ref=e952]:
+                      - paragraph [ref=e953]: สาขา (คลัง)
+                      - paragraph [ref=e954]: สาขาระบบคลังแยกจาก HR
+                  - link "คลังสินค้า คลังย่อยในแต่ละสาขา" [ref=e955] [cursor=pointer]:
+                    - /url: /admin/inventory/warehouses
+                    - generic [ref=e956]:
+                      - img [ref=e958]
+                      - img [ref=e961]
+                    - generic [ref=e963]:
+                      - paragraph [ref=e964]: คลังสินค้า
+                      - paragraph [ref=e965]: คลังย่อยในแต่ละสาขา
+          - dialog "ยินดีต้อนรับสู่คลังสินค้า" [ref=e493]:
+            - generic [ref=e494]:
+              - generic [ref=e495]:
+                - paragraph [ref=e496]: โหมดแนะนำคลัง · 1/15
+                - heading "ยินดีต้อนรับสู่คลังสินค้า" [level=3] [ref=e497]
+              - button "ปิดชั่วคราว" [ref=e498]:
+                - img [ref=e499]
+            - paragraph [ref=e504]: โหมดแนะนำจะพาคุณทำความเข้าใจเมนูและลำดับงานคลังตั้งแต่ตั้งค่าข้อมูลหลักจนถึงรายงาน — กดถัดไปเพื่อเริ่ม
+            - generic [ref=e505]:
+              - button "ก่อนหน้า" [disabled]:
+                - img
+                - text: ก่อนหน้า
+              - button "ถัดไป" [ref=e506]:
+                - text: ถัดไป
+                - img
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: 06-08-06-14

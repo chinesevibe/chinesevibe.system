@@ -1,0 +1,143 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [active] [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1389]:
+          - generic [ref=e1390]:
+            - generic [ref=e1391]:
+              - heading "รับเข้าสินค้า (Inbound)" [level=1] [ref=e1393]
+              - generic [ref=e1394]: สร้างใบรับเข้า → คลังสแกน barcode → Inventory ตรวจอนุมัติ → เพิ่มสต็อก
+            - link "+ สร้างใบรับเข้า" [ref=e1396] [cursor=pointer]:
+              - /url: /admin/inventory/inbound/new
+          - generic [ref=e1397]:
+            - generic [ref=e1398]:
+              - generic [ref=e1399]:
+                - generic [ref=e1400]:
+                  - generic [ref=e1401]:
+                    - paragraph [ref=e1402]: ใบรับทั้งหมด
+                    - paragraph [ref=e1403]: "1"
+                  - img [ref=e1405]
+                - paragraph [ref=e1409]: รายการรับเข้าทั้งหมดใน workspace นี้
+              - generic [ref=e1410]:
+                - generic [ref=e1411]:
+                  - generic [ref=e1412]:
+                    - paragraph [ref=e1413]: แบบร่าง
+                    - paragraph [ref=e1414]: "0"
+                  - img [ref=e1416]
+                - paragraph [ref=e1419]: ใบรับที่ยังต้องเติมรายการหรือเตรียมเปิดรับสแกน
+              - generic [ref=e1420]:
+                - generic [ref=e1421]:
+                  - generic [ref=e1422]:
+                    - paragraph [ref=e1423]: เปิดรับสแกน
+                    - paragraph [ref=e1424]: "1"
+                  - img [ref=e1426]
+                - paragraph [ref=e1431]: ใบรับที่คลังสามารถเปิด LIFF เพื่อสแกนของจริงได้แล้ว
+              - generic [ref=e1432]:
+                - generic [ref=e1433]:
+                  - generic [ref=e1434]:
+                    - paragraph [ref=e1435]: อนุมัติแล้ว
+                    - paragraph [ref=e1436]: "0"
+                  - img [ref=e1438]
+                - paragraph [ref=e1441]: รวม 2 รายการสินค้าในทุกใบรับ
+            - generic [ref=e1442]:
+              - generic [ref=e1443]:
+                - generic [ref=e1444]:
+                  - heading "Receiving queue" [level=2] [ref=e1445]
+                  - paragraph [ref=e1446]: เรียงจากใบรับล่าสุด ใช้ดูว่าใบไหนยังรอเตรียมรายการ รอสแกน หรือรออนุมัติ
+                - generic [ref=e1447]: แบบร่าง 0 · เปิดรับสแกน 1
+              - table [ref=e1450]:
+                - rowgroup [ref=e1451]:
+                  - row "วันที่ Supplier คลัง รายการ สถานะ ดู" [ref=e1452]:
+                    - columnheader "วันที่" [ref=e1453]
+                    - columnheader "Supplier" [ref=e1454]
+                    - columnheader "คลัง" [ref=e1455]
+                    - columnheader "รายการ" [ref=e1456]
+                    - columnheader "สถานะ" [ref=e1457]
+                    - columnheader "ดู" [ref=e1458]
+                - rowgroup [ref=e1459]:
+                  - row "18 มิ.ย. 2569 ไม่ระบุผู้จำหน่าย Bang Na 2 เปิดรับสแกน รายละเอียด" [ref=e1460]:
+                    - cell "18 มิ.ย. 2569" [ref=e1461]
+                    - cell "ไม่ระบุผู้จำหน่าย" [ref=e1462]
+                    - cell "Bang Na" [ref=e1463]
+                    - cell "2" [ref=e1464]
+                    - cell "เปิดรับสแกน" [ref=e1465]:
+                      - generic [ref=e1466]: เปิดรับสแกน
+                    - cell "รายละเอียด" [ref=e1467]:
+                      - link "รายละเอียด" [ref=e1468] [cursor=pointer]:
+                        - /url: /admin/inventory/inbound/a4602a84-8c39-4374-bbbd-6b64ff63d027
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

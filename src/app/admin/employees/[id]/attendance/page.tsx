@@ -1,18 +1,16 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, MoonStar } from "lucide-react"
 
 import { AdminPageShell } from "@/components/brand/AdminPageShell"
 import { AttendanceAddButton } from "@/features/attendance/AttendanceHrActions"
-import { EmployeeAttendanceAnomalySummary } from "@/features/attendance/EmployeeAttendanceAnomalySummary"
 import { AttendanceCalendar } from "@/features/attendance/AttendanceCalendar"
-import { EmployeeAttendanceDateContext } from "@/features/attendance/EmployeeAttendanceDateContext"
-import { EmployeeAttendanceDiagnosisPanel } from "@/features/attendance/EmployeeAttendanceDiagnosisPanel"
+import { CalendarHrWrapper } from "@/features/attendance/CalendarHrWrapper"
 import { AttendanceFilters } from "@/features/attendance/AttendanceFilters"
-import { EmployeeAttendanceHeader } from "@/features/attendance/EmployeeAttendanceHeader"
 import { AttendancePagination } from "@/features/attendance/AttendancePagination"
 import { AttendanceTable } from "@/features/attendance/AttendanceTable"
+import { AttendanceSummaryCard } from "@/features/attendance/AttendanceSummary"
 import { ExportCsvButton } from "@/features/attendance/ExportCsvButton"
 import { getEmployeeAttendanceCalendar } from "@/features/attendance/calendar"
 import {
@@ -89,12 +87,6 @@ export default async function EmployeeAttendancePage({
   const canManage = caller ? canManageHr(caller.role) : false
   const now = new Date()
   const selectedDate = highlightDate ?? listParams.to
-  const selectedDateParams = {
-    ...listParams,
-    from: selectedDate,
-    to: selectedDate,
-    page: 1,
-  }
 
   const [
     { rows, total, summary },
@@ -102,7 +94,6 @@ export default async function EmployeeAttendancePage({
     employees,
     calendar,
     payrollConfig,
-    selectedDateData,
   ] =
     await Promise.all([
       getAttendanceRecords(listParams),
@@ -110,7 +101,6 @@ export default async function EmployeeAttendancePage({
       getAttendanceEmployees(),
       getEmployeeAttendanceCalendar(id, month, now),
       getPayrollConfig(),
-      getAttendanceRecords(selectedDateParams),
     ])
 
   const totalHours = summary.totalHours
@@ -143,37 +133,10 @@ export default async function EmployeeAttendancePage({
     profile.employee_code?.trim() || profile.id.slice(0, 8).toUpperCase()
   const basePath = `/admin/employees/${profile.id}/attendance`
   const backHref = returnTo ?? `/admin/employees/${profile.id}`
-  const backLabel =
-    returnTo && !returnTo.startsWith(`/admin/employees/${profile.id}`)
-      ? "← กลับหน้าก่อนหน้า"
-      : `← กลับโปรไฟล์ ${profile.name}`
   const shiftName = profile.workShift?.name ?? profile.workShift?.code ?? null
   const shiftTime = profile.workShift ? formatShiftTimeRange(profile.workShift) : null
   const shiftDetail = [shiftName, shiftTime].filter(Boolean).join(" • ")
   const isOvernightShift = Boolean(profile.workShift?.crosses_midnight)
-  const selectedRows = selectedDateData.rows
-  const selectedTotal = selectedDateData.total
-  const selectedDateSourceLimited = selectedTotal > selectedRows.length
-  const selectedSummary = selectedRows.reduce(
-    (acc, row) => {
-      acc.total += 1
-      if (row.status === "late") acc.late += 1
-      if (row.status === "in_progress") acc.open += 1
-      if (row.locationReviewStatus === "pending_hr") acc.pendingReview += 1
-      if (row.shiftCrossesMidnight) acc.overnight += 1
-      return acc
-    },
-    { total: 0, late: 0, open: 0, pendingReview: 0, overnight: 0 }
-  )
-  const selectedFlags = [
-    selectedSummary.late > 0 ? `มาสาย ${selectedSummary.late}` : null,
-    selectedSummary.open > 0 ? `ยังไม่เช็คออก ${selectedSummary.open}` : null,
-    selectedSummary.pendingReview > 0
-      ? `รอตรวจพิกัด ${selectedSummary.pendingReview}`
-      : null,
-    selectedSummary.overnight > 0 ? `กะข้ามวัน ${selectedSummary.overnight}` : null,
-    selectedRows.length === 0 ? "ไม่พบบันทึกเช็คอิน" : null,
-  ].filter(Boolean) as string[]
   const monthLinkQuery: Record<string, string> = {}
   if (returnTo) monthLinkQuery.returnTo = returnTo
   if (listParams.from) monthLinkQuery.from = listParams.from
@@ -187,75 +150,76 @@ export default async function EmployeeAttendancePage({
   if (listParams.branch_id) dayLinkQuery.branch_id = listParams.branch_id
   if (listParams.dept) dayLinkQuery.dept = listParams.dept
 
+  const pendingReviewCount = rows.filter((r) => r.locationReviewStatus === "pending_hr").length
+  const flaggedCount = rows.filter(
+    (r) =>
+      !r.checkOutAt ||
+      r.status === "late" ||
+      r.locationReviewStatus === "pending_hr" ||
+      r.locationReviewStatus === "rejected" ||
+      r.locationReviewFlags.length > 0
+  ).length
+
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      <AdminPageShell
-        fill
-        title="ประวัติการเข้างาน"
-        description={
-          <div className="flex flex-col gap-2">
-            <Link
-              href={backHref}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-red hover:underline"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>{backLabel.replace(/^←\s*/, "")}</span>
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              พื้นที่ตรวจสอบเวลาเข้าออก, ความผิดปกติ, และประวัติรายวันของ {profile.name}
-            </p>
-          </div>
-        }
-        action={
-          <div className="flex flex-wrap items-center gap-2">
-            {canManage ? (
-              <AttendanceAddButton
-                employees={employees}
-                defaultDate={highlightDate ?? listParams.to}
-              />
-            ) : null}
-            <ExportCsvButton rows={rows} />
-          </div>
-        }
-      >
+      <AdminPageShell fill title={profile.name}>
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
-            <EmployeeAttendanceHeader
-              employeeName={profile.name}
-              employeeCode={employeeCode}
-              department={profile.department}
-              position={profile.position}
-              shiftDetail={shiftDetail}
-              isOvernightShift={isOvernightShift}
-            />
 
-            <EmployeeAttendanceDateContext
-              monthLabel={formatMonthLabel(month)}
-              selectedDateLabel={formatDateLabel(selectedDate)}
-              from={listParams.from}
-              to={listParams.to}
-              page={listParams.page}
-              total={total}
-            />
+          {/* ── TopBar ── */}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 bg-muted/20 px-4 py-3">
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+              <Link
+                href={backHref}
+                className="shrink-0 inline-flex items-center gap-1 rounded-lg border border-border/80 bg-background px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-brand-red hover:border-brand-red/30"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                กลับ
+              </Link>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm font-bold text-foreground">{profile.name}</h2>
+                  <span className="text-xs text-muted-foreground tabular-nums">{employeeCode}</span>
+                  {profile.department ? (
+                    <span className="text-xs text-muted-foreground">• {profile.department}</span>
+                  ) : null}
+                  {isOvernightShift ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                      <MoonStar className="h-3 w-3" />
+                      กะข้ามวัน
+                    </span>
+                  ) : null}
+                </div>
+                <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  {profile.position ? <span>{profile.position}</span> : null}
+                  {shiftDetail ? <span>• {shiftDetail}</span> : null}
+                  <span>• {formatMonthLabel(month)}</span>
+                  {selectedDate ? (
+                    <span className="text-brand-red/80">• {formatDateLabel(selectedDate)}</span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              {canManage ? (
+                <AttendanceAddButton
+                  employees={employees}
+                  defaultDate={highlightDate ?? listParams.to}
+                />
+              ) : null}
+              <ExportCsvButton rows={rows} />
+            </div>
           </div>
 
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.12fr)_minmax(280px,0.88fr)]">
-            <EmployeeAttendanceDiagnosisPanel
-              selectedDateLabel={formatDateLabel(selectedDate)}
-              shiftDetail={shiftDetail}
-              selectedTotal={selectedTotal}
-              selectedSummary={selectedSummary}
-              selectedDateSourceLimited={selectedDateSourceLimited}
-              selectedFlags={selectedFlags}
-              selectedRows={selectedRows}
-              fallbackShiftName={shiftName}
-              fallbackShiftTime={shiftTime}
-            />
+          {/* ── KPI Row ── */}
+          <AttendanceSummaryCard
+            summary={attendanceSummary}
+            pendingReviewCount={pendingReviewCount}
+            flaggedCount={flaggedCount}
+          />
 
-            <EmployeeAttendanceAnomalySummary attendanceSummary={attendanceSummary} />
-          </div>
-
-          <div className="grid h-full min-h-0 gap-3 overflow-hidden xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
+          {/* ── 2-col Main ── */}
+          <div className="grid h-full min-h-0 gap-3 overflow-hidden xl:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)]">
+            {/* Left: filter + table */}
             <div className="order-1 flex min-h-0 flex-col gap-2.5 overflow-hidden lg:gap-3">
               <Suspense fallback={null}>
                 <AttendanceFilters
@@ -286,23 +250,30 @@ export default async function EmployeeAttendancePage({
               </Suspense>
             </div>
 
-            <div className="order-2 min-h-0 max-h-[320px] overflow-y-auto rounded-xl border border-border/60 bg-muted/10 p-3 sm:max-h-[360px] lg:max-h-none">
-              <div className="mb-3">
-                <h3 className="text-sm font-semibold text-foreground">ปฏิทินและประวัติรายวัน</h3>
-                <p className="text-xs text-muted-foreground">
-                  เลือกวันเพื่อสลับบริบทของการตรวจสอบ แล้วเทียบกับรายการเวลาทางขวา
-                </p>
-              </div>
-              <AttendanceCalendar
-                month={month}
-                days={calendar.days}
-                basePath={basePath}
-                selectedDate={highlightDate}
-                monthLinkQuery={monthLinkQuery}
-                dayLinkQuery={dayLinkQuery}
-                linkDays
-                compact
-              />
+            {/* Right: calendar */}
+            <div className="order-2 min-h-0 overflow-y-auto rounded-xl border border-border/60 bg-muted/10 p-3">
+              {canManage ? (
+                <CalendarHrWrapper
+                  month={month}
+                  days={calendar.days}
+                  basePath={basePath}
+                  selectedDate={highlightDate}
+                  monthLinkQuery={monthLinkQuery}
+                  dayLinkQuery={dayLinkQuery}
+                  employeeId={id}
+                />
+              ) : (
+                <AttendanceCalendar
+                  month={month}
+                  days={calendar.days}
+                  basePath={basePath}
+                  selectedDate={highlightDate}
+                  monthLinkQuery={monthLinkQuery}
+                  dayLinkQuery={dayLinkQuery}
+                  linkDays
+                  compact
+                />
+              )}
             </div>
           </div>
         </div>

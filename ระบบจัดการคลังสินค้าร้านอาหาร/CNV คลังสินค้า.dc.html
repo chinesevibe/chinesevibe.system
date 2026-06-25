@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; padding: 0; color: inherit; }
+  input { font-family: inherit; }
+  .scr::-webkit-scrollbar { width: 0; height: 0; }
+  @keyframes scanline { 0% { transform: translateY(-108px); } 50% { transform: translateY(108px); } 100% { transform: translateY(-108px); } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; font-family: 'IBM Plex Sans Thai', sans-serif; background: radial-gradient(120% 80% at 50% 0%, #f4f5f7 0%, #eceef1 55%, #e6e8eb 100%);">
+  <div style="width: 390px; height: 844px; background: #ffffff; border-radius: 42px; box-shadow: 0 2px 4px rgba(20,22,28,.04), 0 30px 70px -20px rgba(20,22,28,.45); position: relative; overflow: hidden; border: 1px solid #e3e5e9;">
+
+    <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; background: #0d0e11; display: flex; flex-direction: column; z-index: 40;">
+        <div style="height: 44px;"></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 18px 14px;">
+          <button onClick="{{ closeScan }}" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+          <div style="color: #fff; font-size: 15px; font-weight: 600;">{{ scanTitle }}</div>
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"></path></svg>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: radial-gradient(80% 50% at 50% 42%, #1a1c22 0%, #0d0e11 80%);">
+          <div style="position: relative; width: 248px; height: 248px;">
+            <div style="position: absolute; inset: 0; border-radius: 24px; box-shadow: 0 0 0 2000px rgba(13,14,17,.55); border: 1.5px solid rgba(255,255,255,.18);"></div>
+            <div style="position: absolute; top: -1px; left: -1px; width: 38px; height: 38px; border-top: 3px solid #E11D2A; border-left: 3px solid #E11D2A; border-top-left-radius: 24px;"></div>
+            <div style="position: absolute; top: -1px; right: -1px; width: 38px; height: 38px; border-top: 3px solid #E11D2A; border-right: 3px solid #E11D2A; border-top-right-radius: 24px;"></div>
+            <div style="position: absolute; bottom: -1px; left: -1px; width: 38px; height: 38px; border-bottom: 3px solid #E11D2A; border-left: 3px solid #E11D2A; border-bottom-left-radius: 24px;"></div>
+            <div style="position: absolute; bottom: -1px; right: -1px; width: 38px; height: 38px; border-bottom: 3px solid #E11D2A; border-right: 3px solid #E11D2A; border-bottom-right-radius: 24px;"></div>
+            <sc-if value="{{ scanning }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; left: 14px; right: 14px; top: 50%; height: 2px; background: linear-gradient(90deg, transparent, #E11D2A, transparent); box-shadow: 0 0 14px 2px rgba(225,29,42,.7); animation: scanline 1.6s ease-in-out infinite;"></div>
+            </sc-if>
+          </div>
+          <div style="margin-top: 26px; color: rgba(255,255,255,.66); font-size: 13.5px; min-height: 20px;">{{ scanHint }}</div>
+        </div>
+        <div style="padding: 0 18px 14px;">
+          <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
+            <div style="color: rgba(255,255,255,.5); font-size: 11.5px; font-weight: 600; letter-spacing: .04em; margin-bottom: 8px;">สแกนล่าสุด</div>
+            <div class="scr" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+              <sc-for list="{{ recent }}" as="r" hint-placeholder-count="3">
+                <div style="flex: 0 0 auto; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 8px 12px; min-width: 130px;">
+                  <div style="color: #fff; font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.name }}</div>
+                  <div style="color: rgba(255,255,255,.45); font-size: 10.5px; margin-top: 2px;">{{ r.code }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <div style="padding: 4px 18px 30px; display: flex; justify-content: center;">
+          <button onClick="{{ doScan }}" style="width: 74px; height: 74px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px rgba(255,255,255,.22);">
+            <div style="width: 58px; height: 58px; border-radius: 50%; background: #E11D2A; display: flex; align-items: center; justify-content: center;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+            </div>
+          </button>
+        </div>
+        <sc-if value="{{ hasResult }}" hint-placeholder-val="{{ false }}">
+          <div style="position: absolute; inset: 0; background: rgba(0,0,0,.45); animation: fadeIn .2s ease; z-index: 5;" onClick="{{ closeSheet }}"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 8px 18px 26px; animation: sheetUp .26s cubic-bezier(.2,.8,.2,1); z-index: 6;">
+            <div style="width: 38px; height: 4px; border-radius: 4px; background: #e3e5e9; margin: 6px auto 16px;"></div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+              <span style="font-size: 11px; font-weight: 600; color: #12805C; background: #e8f6ef; padding: 4px 9px; border-radius: 999px;">พบสินค้า</span>
+              <span style="font-size: 12px; color: #8a9099;">{{ resultCode }}</span>
+            </div>
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <div style="width: 56px; height: 56px; border-radius: 14px; background: #fdecec; display: flex; align-items: center; justify-content: center; font-size: 22px; flex: 0 0 auto;">📦</div>
+              <div style="flex: 1;">
+                <div style="font-size: 18px; font-weight: 700; color: #16181d;">{{ resultName }}</div>
+                <div style="font-size: 13px; color: #8a9099; margin-top: 2px;">{{ resultCat }} · {{ resultLoc }}</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin: 18px 0 20px;">
+              <div style="flex: 1; background: #f6f7f9; border-radius: 12px; padding: 12px 14px;">
+                <div style="font-size: 11.5px; color: #8a9099;">คงเหลือ</div>
+                <div style="font-size: 18px; font-weight: 700; color: #16181d; margin-top: 2px;">{{ resultStock }}</div>
+              </div>
+              <div style="flex: 1; background: #f6f7f9; border-radius: 12px; padding: 12px 14px;">
+                <div style="font-size: 11.5px; color: #8a9099;">ขั้นต่ำ</div>
+                <div style="font-size: 18px; font-weight: 700; color: #16181d; margin-top: 2px;">{{ resultMin }}</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button onClick="{{ closeSheet }}" style="flex: 0 0 auto; padding: 0 20px; height: 52px; border-radius: 14px; background: #f1f2f4; color: #16181d; font-size: 15px; font-weight: 600;">สแกนต่อ</button>
+              <button onClick="{{ sheetPrimary }}" style="flex: 1; height: 52px; border-radius: 14px; background: #E11D2A; color: #fff; font-size: 15px; font-weight: 600; box-shadow: 0 8px 20px -8px rgba(225,29,42,.7);">{{ sheetPrimaryLabel }}</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ notScan }}" hint-placeholder-val="{{ true }}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #f4f5f7;">
+
+        <div style="height: 44px; flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: #fff;">
+          <span style="font-size: 14px; font-weight: 600; color: #16181d;">9:41</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="#16181d"><rect x="0" y="6" width="3" height="5" rx="1"></rect><rect x="4.5" y="3.5" width="3" height="7.5" rx="1"></rect><rect x="9" y="1" width="3" height="10" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".35"></rect></svg>
+            <svg width="22" height="11" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="19" height="10" rx="3" stroke="#16181d" opacity=".4"></rect><rect x="2.5" y="2.5" width="14" height="7" rx="1.5" fill="#16181d"></rect><rect x="21" y="4" width="2" height="4" rx="1" fill="#16181d" opacity=".4"></rect></svg>
+          </div>
+        </div>
+
+        <div style="flex: 0 0 auto; background: #fff; border-bottom: 1px solid #eceef1;">
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+            <div style="padding: 6px 18px 16px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 11px;">
+                <div style="width: 40px; height: 40px; border-radius: 11px; background: #E11D2A; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 14px; box-shadow: 0 6px 14px -6px rgba(225,29,42,.8);">CNV</div>
+                <div>
+                  <div style="font-size: 15.5px; font-weight: 700; color: #16181d; line-height: 1.1;">WORK HUB</div>
+                  <div style="font-size: 11.5px; color: #8a9099; margin-top: 1px;">สาขาสยามสแควร์ · คลังสินค้า</div>
+                </div>
+              </div>
+              <button onClick="{{ ping }}" style="position: relative; width: 40px; height: 40px; border-radius: 11px; background: #f6f7f9; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16181d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+                <span style="position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: #E11D2A; border: 2px solid #f6f7f9;"></span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isSub }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 14px 14px; display: flex; align-items: center; gap: 6px;">
+              <button onClick="{{ back }}" style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <div style="flex: 1; font-size: 17px; font-weight: 700; color: #16181d;">{{ subTitle }}</div>
+              <sc-if value="{{ subActionScan }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ openScanCtx }}" style="width: 38px; height: 38px; border-radius: 10px; background: #fdecec; display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+                </button>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <div class="scr" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+            <div style="padding: 16px 18px 24px;">
+              <div style="background: linear-gradient(135deg, #E11D2A 0%, #b3141f 100%); border-radius: 20px; padding: 18px 20px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 16px 32px -18px rgba(225,29,42,.9);">
+                <div style="position: absolute; right: -30px; top: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.08);"></div>
+                <div style="font-size: 12.5px; opacity: .85;">มูลค่าคงคลังวันนี้</div>
+                <div style="font-size: 30px; font-weight: 700; margin: 4px 0 12px;">฿ 248,750</div>
+                <div style="display: flex; gap: 18px;">
+                  <div><div style="font-size: 18px; font-weight: 700;">142</div><div style="font-size: 11px; opacity: .8;">รายการ SKU</div></div>
+                  <div style="width: 1px; background: rgba(255,255,255,.22);"></div>
+                  <div><div style="font-size: 18px; font-weight: 700;">3</div><div style="font-size: 11px; opacity: .8;">ต้องสั่งเพิ่ม</div></div>
+                  <div style="width: 1px; background: rgba(255,255,255,.22);"></div>
+                  <div><div style="font-size: 18px; font-weight: 700;">2</div><div style="font-size: 11px; opacity: .8;">รออนุมัติ</div></div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px;">
+                <sc-for list="{{ quickActions }}" as="a" hint-placeholder-count="4">
+                  <button onClick="{{ a.onTap }}" style="background: #fff; border: 1px solid #eceef1; border-radius: 16px; padding: 14px 6px 11px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div dangerouslySetInnerHTML="{{ a.icon }}" style="width: 40px; height: 40px; border-radius: 12px; background: #fdecec; display: flex; align-items: center; justify-content: center;"></div>
+                    <span style="font-size: 11.5px; font-weight: 500; color: #2a2d34; text-align: center; line-height: 1.2;">{{ a.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; margin: 24px 0 12px;">
+                <div style="font-size: 15px; font-weight: 700; color: #16181d;">แจ้งเตือนสต็อกต่ำ</div>
+                <button onClick="{{ goStock }}" style="font-size: 12.5px; color: #E11D2A; font-weight: 600;">ดูทั้งหมด</button>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ alerts }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.onOpen }}" style="display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 12px 14px; text-align: left; width: 100%;">
+                    <div style="width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex: 0 0 auto; background: {{ p.statusBg }};">📦</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 14.5px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                      <div style="font-size: 12px; color: #8a9099; margin-top: 2px;">เหลือ {{ p.stockText }} · ขั้นต่ำ {{ p.minText }}</div>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; color: {{ p.statusColor }}; background: {{ p.statusBg }};">{{ p.statusLabel }}</span>
+                  </button>
+                </sc-for>
+              </div>
+
+              <div style="font-size: 15px; font-weight: 700; color: #16181d; margin: 24px 0 12px;">กิจกรรมล่าสุด</div>
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; overflow: hidden;">
+                <sc-for list="{{ activity }}" as="x" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid #f2f3f5;">
+                    <div dangerouslySetInnerHTML="{{ x.icon }}" style="width: 34px; height: 34px; border-radius: 9px; background: #f6f7f9; display: flex; align-items: center; justify-content: center;"></div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 13.5px; font-weight: 500; color: #2a2d34;">{{ x.text }}</div>
+                      <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 1px;">{{ x.time }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isStock }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 14px 18px 24px;">
+              <div style="display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #eceef1; border-radius: 13px; padding: 0 14px; height: 46px;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="ค้นหาชื่อหรือบาร์โค้ด" style="flex: 1; border: none; outline: none; font-size: 14.5px; color: #16181d; background: transparent;"/>
+                <button onClick="{{ openScanCtx }}">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+                </button>
+              </div>
+              <div class="scr" style="display: flex; gap: 8px; margin: 14px 0; overflow-x: auto; padding-bottom: 2px;">
+                <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+                  <button onClick="{{ f.onTap }}" style="flex: 0 0 auto; padding: 7px 15px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid; color: {{ f.color }}; background: {{ f.bg }}; border-color: {{ f.border }};">{{ f.label }}</button>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+                  <button onClick="{{ p.onOpen }}" style="display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 12px 14px; text-align: left; width: 100%;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: 0 0 auto; background: {{ p.statusBg }};">📦</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 14.5px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                      <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 2px;">{{ p.code }} · {{ p.loc }}</div>
+                    </div>
+                    <div style="text-align: right; flex: 0 0 auto;">
+                      <div style="font-size: 15px; font-weight: 700; color: #16181d;">{{ p.stockText }}</div>
+                      <span style="font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; display: inline-block; margin-top: 3px; color: {{ p.statusColor }}; background: {{ p.statusBg }};">{{ p.statusLabel }}</span>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isSku }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 18px 24px;">
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 18px; padding: 20px; display: flex; gap: 16px; align-items: center;">
+                <div style="width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; flex: 0 0 auto; background: {{ sku.statusBg }};">📦</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 19px; font-weight: 700; color: #16181d;">{{ sku.name }}</div>
+                  <div style="font-size: 12.5px; color: #8a9099; margin-top: 3px;">{{ sku.code }}</div>
+                  <span style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; display: inline-block; margin-top: 8px; color: {{ sku.statusColor }}; background: {{ sku.statusBg }};">{{ sku.statusLabel }}</span>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">
+                <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 14px 16px;">
+                  <div style="font-size: 11.5px; color: #8a9099;">คงเหลือปัจจุบัน</div>
+                  <div style="font-size: 22px; font-weight: 700; color: #16181d; margin-top: 3px;">{{ sku.stockText }}</div>
+                </div>
+                <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 14px 16px;">
+                  <div style="font-size: 11.5px; color: #8a9099;">จุดสั่งซื้อ (ขั้นต่ำ)</div>
+                  <div style="font-size: 22px; font-weight: 700; color: #16181d; margin-top: 3px;">{{ sku.minText }}</div>
+                </div>
+              </div>
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; margin-top: 14px; overflow: hidden;">
+                <sc-for list="{{ sku.meta }}" as="m" hint-placeholder-count="4">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #f2f3f5;">
+                    <span style="font-size: 13.5px; color: #8a9099;">{{ m.k }}</span>
+                    <span style="font-size: 13.5px; font-weight: 600; color: #16181d;">{{ m.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #16181d; margin: 22px 0 10px;">ความเคลื่อนไหวสต็อก</div>
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; overflow: hidden;">
+                <sc-for list="{{ sku.moves }}" as="mv" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #f2f3f5;">
+                    <div style="width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; background: {{ mv.bg }}; color: {{ mv.color }};">{{ mv.sign }}</div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 500; color: #2a2d34;">{{ mv.label }}</div>
+                      <div style="font-size: 11px; color: #9aa0a8; margin-top: 1px;">{{ mv.time }}</div>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: {{ mv.color }};">{{ mv.qty }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onClick="{{ openScanCtx }}" style="flex: 1; height: 50px; border-radius: 14px; background: #f1f2f4; color: #16181d; font-size: 14.5px; font-weight: 600;">ปรับสต็อก</button>
+                <button onClick="{{ goInbound }}" style="flex: 1; height: 50px; border-radius: 14px; background: #E11D2A; color: #fff; font-size: 14.5px; font-weight: 600; box-shadow: 0 8px 20px -10px rgba(225,29,42,.8);">รับเข้าสินค้า</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isInbound }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 18px 120px;">
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 11px; background: #f6f7f9; display: flex; align-items: center; justify-content: center; font-size: 18px;">🚚</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 14px; font-weight: 600; color: #16181d;">CP Fresh Mart</div>
+                  <div style="font-size: 12px; color: #8a9099; margin-top: 1px;">ใบรับ GR-0099 · วันนี้</div>
+                </div>
+              </div>
+              <button onClick="{{ openInboundScan }}" style="width: 100%; margin-top: 14px; border: 1.5px dashed #E11D2A; background: #fdecec; border-radius: 16px; padding: 18px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+                <span style="font-size: 15px; font-weight: 700; color: #E11D2A;">สแกนเพื่อเพิ่มสินค้า</span>
+              </button>
+              <div style="font-size: 13px; font-weight: 700; color: #16181d; margin: 22px 0 12px;">รายการรับเข้า ({{ cartCount }})</div>
+              <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+                <div style="text-align: center; padding: 40px 20px; color: #9aa0a8;">
+                  <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
+                  <div style="font-size: 13.5px;">ยังไม่มีสินค้า แตะปุ่มสแกนเพื่อเริ่ม</div>
+                </div>
+              </sc-if>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ inboundCart }}" as="c" hint-placeholder-count="0">
+                  <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; border-radius: 11px; background: #f6f7f9; display: flex; align-items: center; justify-content: center; font-size: 18px;">📦</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 14px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ c.name }}</div>
+                      <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 1px;">{{ c.code }}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 4px; background: #f6f7f9; border-radius: 11px; padding: 4px;">
+                      <button onClick="{{ c.onDec }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: #16181d;">−</button>
+                      <span style="min-width: 30px; text-align: center; font-size: 15px; font-weight: 700; color: #16181d;">{{ c.qty }}</span>
+                      <button onClick="{{ c.onInc }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; color: #16181d;">+</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ cartHas }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; left: 0; right: 0; bottom: 84px; padding: 12px 18px; background: linear-gradient(180deg, rgba(244,245,247,0), #f4f5f7 30%);">
+                <button onClick="{{ confirmInbound }}" style="width: 100%; height: 54px; border-radius: 15px; background: #E11D2A; color: #fff; font-size: 15.5px; font-weight: 700; box-shadow: 0 12px 26px -10px rgba(225,29,42,.85);">ยืนยันรับเข้า · {{ cartCount }} รายการ</button>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ isReq }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 14px 18px 24px;">
+              <button onClick="{{ goReqCreate }}" style="width: 100%; height: 50px; border-radius: 14px; background: #E11D2A; color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 24px -10px rgba(225,29,42,.8); margin-bottom: 16px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                สร้างใบเบิก / โอนสินค้า
+              </button>
+              <div style="display: flex; flex-direction: column; gap: 11px;">
+                <sc-for list="{{ requisitions }}" as="q" hint-placeholder-count="4">
+                  <button onClick="{{ q.onTap }}" style="background: #fff; border: 1px solid #eceef1; border-radius: 15px; padding: 14px 16px; text-align: left; width: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                      <span style="font-size: 14px; font-weight: 700; color: #16181d;">{{ q.id }}</span>
+                      <span style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; color: {{ q.color }}; background: {{ q.bg }};">{{ q.status }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #2a2d34;">
+                      <span style="font-weight: 500;">{{ q.from }}</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa0a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                      <span style="font-weight: 500;">{{ q.to }}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #9aa0a8; margin-top: 7px;">{{ q.items }} รายการ · {{ q.date }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isReqCreate }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 18px 120px;">
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 14px 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div><div style="font-size: 11.5px; color: #8a9099;">จาก</div><div style="font-size: 14.5px; font-weight: 600; color: #16181d; margin-top: 2px;">คลังกลาง</div></div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                  <div style="text-align: right;"><div style="font-size: 11.5px; color: #8a9099;">ไปยัง</div><div style="font-size: 14.5px; font-weight: 600; color: #16181d; margin-top: 2px;">สาขาสยามสแควร์</div></div>
+                </div>
+              </div>
+              <button onClick="{{ openScanCtx }}" style="width: 100%; margin-top: 12px; border: 1.5px dashed #cfd3d8; background: #fff; border-radius: 14px; padding: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: #6b7280;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+                สแกนเพิ่มรายการ
+              </button>
+              <div style="font-size: 13px; font-weight: 700; color: #16181d; margin: 20px 0 12px;">เลือกจำนวนที่ต้องการเบิก</div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ reqItems }}" as="p" hint-placeholder-count="6">
+                  <div style="background: #fff; border: 1px solid; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-color: {{ p.activeBorder }};">
+                    <div style="width: 42px; height: 42px; border-radius: 11px; background: #f6f7f9; display: flex; align-items: center; justify-content: center; font-size: 18px;">📦</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 14px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                      <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 1px;">คงเหลือ {{ p.stockText }}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 4px; background: #f6f7f9; border-radius: 11px; padding: 4px;">
+                      <button onClick="{{ p.onDec }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: #16181d;">−</button>
+                      <span style="min-width: 28px; text-align: center; font-size: 15px; font-weight: 700; color: #16181d;">{{ p.qty }}</span>
+                      <button onClick="{{ p.onInc }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; color: #16181d;">+</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position: absolute; left: 0; right: 0; bottom: 84px; padding: 12px 18px; background: linear-gradient(180deg, rgba(244,245,247,0), #f4f5f7 30%);">
+              <button onClick="{{ submitReq }}" style="width: 100%; height: 54px; border-radius: 15px; color: #fff; font-size: 15.5px; font-weight: 700; background: {{ reqSubmitBg }}; box-shadow: {{ reqSubmitShadow }};">ส่งใบเบิก · {{ reqTotal }} รายการ</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isCount }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 18px 120px;">
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 14px 16px; display: flex; gap: 14px;">
+                <div style="flex: 1;"><div style="font-size: 11.5px; color: #8a9099;">รอบนับ</div><div style="font-size: 14.5px; font-weight: 600; color: #16181d; margin-top: 2px;">SC-2406 · มิ.ย. 68</div></div>
+                <div style="text-align: right;"><div style="font-size: 11.5px; color: #8a9099;">นับแล้ว</div><div style="font-size: 14.5px; font-weight: 700; color: #E11D2A; margin-top: 2px;">{{ countDone }}/{{ countTotal }}</div></div>
+              </div>
+              <button onClick="{{ openScanCtx }}" style="width: 100%; margin-top: 12px; border: 1.5px dashed #E11D2A; background: #fdecec; border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 9px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+                <span style="font-size: 14.5px; font-weight: 700; color: #E11D2A;">สแกนเพื่อนับ</span>
+              </button>
+              <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 18px;">
+                <sc-for list="{{ countItems }}" as="p" hint-placeholder-count="6">
+                  <div style="background: #fff; border: 1px solid #eceef1; border-radius: 14px; padding: 12px 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 14px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                        <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 2px;">ระบบ {{ p.systemText }}</div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 4px; background: #f6f7f9; border-radius: 11px; padding: 4px;">
+                        <button onClick="{{ p.onDec }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: #16181d;">−</button>
+                        <span style="min-width: 30px; text-align: center; font-size: 15px; font-weight: 700; color: #16181d;">{{ p.countText }}</span>
+                        <button onClick="{{ p.onInc }}" style="width: 30px; height: 30px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; color: #16181d;">+</button>
+                      </div>
+                    </div>
+                    <sc-if value="{{ p.hasVar }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top: 8px; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 8px; display: inline-block; color: {{ p.varColor }}; background: {{ p.varBg }};">ผลต่าง {{ p.varText }}</div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position: absolute; left: 0; right: 0; bottom: 84px; padding: 12px 18px; background: linear-gradient(180deg, rgba(244,245,247,0), #f4f5f7 30%);">
+              <button onClick="{{ submitCount }}" style="width: 100%; height: 54px; border-radius: 15px; background: #E11D2A; color: #fff; font-size: 15.5px; font-weight: 700; box-shadow: 0 12px 26px -10px rgba(225,29,42,.85);">บันทึกผลการนับ</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDamage }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 8px 18px 120px;">
+              <div style="font-size: 13px; font-weight: 700; color: #16181d; margin-bottom: 10px;">เลือกสินค้าที่เสียหาย</div>
+              <div style="display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ damageItems }}" as="p" hint-placeholder-count="5">
+                  <button onClick="{{ p.onSelect }}" style="border: 1.5px solid; border-radius: 13px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; border-color: {{ p.border }}; background: {{ p.bg }};">
+                    <div style="width: 40px; height: 40px; border-radius: 11px; background: #f6f7f9; display: flex; align-items: center; justify-content: center; font-size: 18px;">📦</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 14px; font-weight: 600; color: #16181d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                      <div style="font-size: 11.5px; color: #9aa0a8; margin-top: 1px;">คงเหลือ {{ p.stockText }}</div>
+                    </div>
+                    <sc-if value="{{ p.selected }}" hint-placeholder-val="{{ false }}">
+                      <div style="width: 24px; height: 24px; border-radius: 50%; background: #E11D2A; display: flex; align-items: center; justify-content: center;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                      </div>
+                    </sc-if>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #16181d; margin: 22px 0 10px;">จำนวน</div>
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 13px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 14px; color: #2a2d34;">จำนวนที่เสียหาย</span>
+                <div style="display: flex; align-items: center; gap: 6px; background: #f6f7f9; border-radius: 11px; padding: 4px;">
+                  <button onClick="{{ damageDec }}" style="width: 32px; height: 32px; border-radius: 8px; background: #fff; font-size: 19px; font-weight: 600; color: #16181d;">−</button>
+                  <span style="min-width: 34px; text-align: center; font-size: 16px; font-weight: 700; color: #16181d;">{{ damageQty }}</span>
+                  <button onClick="{{ damageInc }}" style="width: 32px; height: 32px; border-radius: 8px; background: #fff; font-size: 18px; font-weight: 600; color: #16181d;">+</button>
+                </div>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #16181d; margin: 22px 0 10px;">สาเหตุ</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 9px;">
+                <sc-for list="{{ reasons }}" as="r" hint-placeholder-count="4">
+                  <button onClick="{{ r.onTap }}" style="padding: 9px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; border: 1.5px solid; color: {{ r.color }}; background: {{ r.bg }}; border-color: {{ r.border }};">{{ r.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position: absolute; left: 0; right: 0; bottom: 84px; padding: 12px 18px; background: linear-gradient(180deg, rgba(244,245,247,0), #f4f5f7 30%);">
+              <button onClick="{{ submitDamage }}" style="width: 100%; height: 54px; border-radius: 15px; color: #fff; font-size: 15.5px; font-weight: 700; background: {{ damageSubmitBg }}; box-shadow: {{ damageSubmitShadow }};">บันทึกของเสีย</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isMore }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 14px 18px 24px;">
+              <div style="background: #fff; border: 1px solid #eceef1; border-radius: 16px; overflow: hidden;">
+                <sc-for list="{{ moreItems }}" as="m" hint-placeholder-count="6">
+                  <button onClick="{{ m.onTap }}" style="display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-bottom: 1px solid #f2f3f5; width: 100%; text-align: left;">
+                    <div dangerouslySetInnerHTML="{{ m.icon }}" style="width: 38px; height: 38px; border-radius: 10px; background: #fdecec; display: flex; align-items: center; justify-content: center;"></div>
+                    <span style="flex: 1; font-size: 14.5px; font-weight: 500; color: #16181d;">{{ m.label }}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cfd3d8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <div style="flex: 0 0 auto; height: 84px; background: #fff; border-top: 1px solid #eceef1; display: flex; align-items: flex-start; padding: 8px 8px 0; position: relative;">
+          <button onClick="{{ goHome }}" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 4px; color: {{ navHome }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"></path></svg>
+            <span style="font-size: 10.5px; font-weight: 600;">หน้าหลัก</span>
+          </button>
+          <button onClick="{{ goStock }}" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 4px; color: {{ navStock }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path></svg>
+            <span style="font-size: 10.5px; font-weight: 600;">สต็อก</span>
+          </button>
+          <div style="flex: 1; display: flex; justify-content: center;">
+            <button onClick="{{ openScanCenter }}" style="width: 60px; height: 60px; border-radius: 50%; background: #E11D2A; display: flex; align-items: center; justify-content: center; margin-top: -22px; box-shadow: 0 10px 22px -6px rgba(225,29,42,.85); border: 4px solid #fff;">
+              <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M3 12h18"></path></svg>
+            </button>
+          </div>
+          <button onClick="{{ goReq }}" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 4px; color: {{ navReq }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M21 3 13 11"></path><path d="M8 21H3v-5"></path><path d="m3 21 8-8"></path></svg>
+            <span style="font-size: 10.5px; font-weight: 600;">เบิก/โอน</span>
+          </button>
+          <button onClick="{{ goMore }}" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 4px; color: {{ navMore }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+            <span style="font-size: 10.5px; font-weight: 600;">เพิ่มเติม</span>
+          </button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 18px; right: 18px; bottom: 104px; z-index: 60; display: flex; justify-content: center; pointer-events: none;">
+        <div style="background: #16181d; color: #fff; font-size: 13.5px; font-weight: 500; padding: 12px 20px; border-radius: 12px; box-shadow: 0 12px 28px -8px rgba(0,0,0,.5); animation: pop .25s ease; display: flex; align-items: center; gap: 9px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          {{ toast }}
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:440,&quot;height&quot;:900},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;scan&quot;,&quot;stock&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lowStockOnly&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  PRODUCTS = [
+    { id: 'p1', code: '8851234500017', name: 'เนื้อหมูสไลด์', cat: 'เนื้อสัตว์', unit: 'กก.', stock: 3.5, min: 8, loc: 'ตู้แช่ A1' },
+    { id: 'p2', code: '8851234500024', name: 'อกไก่ไม่มีหนัง', cat: 'เนื้อสัตว์', unit: 'กก.', stock: 12, min: 6, loc: 'ตู้แช่ A2' },
+    { id: 'p3', code: '8851234500031', name: 'กุ้งขาวแกะเปลือก', cat: 'อาหารทะเล', unit: 'กก.', stock: 0, min: 5, loc: 'ตู้แช่ B1' },
+    { id: 'p4', code: '8851234500048', name: 'ข้าวหอมมะลิ 5 กก.', cat: 'ของแห้ง', unit: 'ถุง', stock: 24, min: 10, loc: 'ชั้น C1' },
+    { id: 'p5', code: '8851234500055', name: 'น้ำมันพืชปาล์ม 1 ล.', cat: 'ของแห้ง', unit: 'ขวด', stock: 6, min: 12, loc: 'ชั้น C2' },
+    { id: 'p6', code: '8851234500062', name: 'ซอสหอยนางรม', cat: 'เครื่องปรุง', unit: 'ขวด', stock: 18, min: 8, loc: 'ชั้น D1' },
+    { id: 'p7', code: '8851234500079', name: 'ผักกาดขาว', cat: 'ผักสด', unit: 'กก.', stock: 9, min: 6, loc: 'ตู้เย็น E1' },
+    { id: 'p8', code: '8851234500086', name: 'นมข้นหวาน', cat: 'ของแห้ง', unit: 'กระป๋อง', stock: 30, min: 12, loc: 'ชั้น C3' },
+  ];
+
+  REQUISITIONS = [
+    { id: 'RQ-2412', from: 'คลังกลาง', to: 'สาขาสยาม', items: 6, status: 'รออนุมัติ', date: 'วันนี้ 09:24', key: 'pending' },
+    { id: 'RQ-2411', from: 'คลังกลาง', to: 'สาขาอโศก', items: 3, status: 'อนุมัติแล้ว', date: 'เมื่อวาน', key: 'approved' },
+    { id: 'RQ-2410', from: 'สาขาทองหล่อ', to: 'คลังใหญ่', items: 12, status: 'กำลังจัดส่ง', date: '23 มิ.ย.', key: 'shipping' },
+    { id: 'RQ-2409', from: 'คลังกลาง', to: 'สาขาเอกมัย', items: 8, status: 'เสร็จสิ้น', date: '22 มิ.ย.', key: 'done' },
+  ];
+
+  ICONS = {
+    scan: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg>',
+    inbound: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
+    req: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 13 11"/><path d="M8 21H3v-5"/><path d="m3 21 8-8"/></svg>',
+    count: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+    damage: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.29 3.86-8.18 14A1.5 1.5 0 0 0 3.41 20h17.18a1.5 1.5 0 0 0 1.3-2.14l-8.18-14a1.5 1.5 0 0 0-2.62 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    supplier: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+    branch: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>',
+    report: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>',
+    bom: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>',
+    settings: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 6 9.4a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 4.6V4.5a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.4 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 11h.1a2 2 0 1 1 0 4h-.1z"/></svg>',
+    moveIn: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12805C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>',
+  };
+
+  constructor(props) {
+    super(props);
+    const start = (props && props.startScreen) || 'home';
+    this.state = {
+      screen: start,
+      stack: [],
+      returnTo: 'home',
+      skuId: 'p1',
+      scanning: false,
+      scanResult: null,
+      scanMode: 'lookup',
+      scanIdx: 0,
+      recent: [
+        { code: '8851234500062', name: 'ซอสหอยนางรม' },
+        { code: '8851234500048', name: 'ข้าวหอมมะลิ 5 กก.' },
+      ],
+      inboundCart: {},
+      reqQty: {},
+      countQty: {},
+      damageSel: null,
+      damageQty: 1,
+      damageReason: null,
+      query: '',
+      stockFilter: (props && props.lowStockOnly) ? 'low' : 'all',
+      toast: null,
+    };
+  }
+
+  fmt(n) { return (Math.round(n * 10) / 10).toLocaleString('en-US'); }
+
+  statusOf(p) {
+    if (p.stock === 0) return { key: 'out', label: 'หมด', color: '#E11D2A', bg: '#fdecec' };
+    if (p.stock < p.min) return { key: 'low', label: 'ต่ำกว่าขั้นต่ำ', color: '#C77700', bg: '#fdf4e7' };
+    return { key: 'ok', label: 'พร้อมใช้', color: '#12805C', bg: '#e8f6ef' };
+  }
+
+  pvm(p) {
+    const s = this.statusOf(p);
+    return { ...p, statusLabel: s.label, statusColor: s.color, statusBg: s.bg,
+      stockText: this.fmt(p.stock) + ' ' + p.unit, minText: this.fmt(p.min) + ' ' + p.unit,
+      onOpen: () => this.openSku(p.id) };
+  }
+
+  scrollTop() { setTimeout(() => { const el = document.querySelector('.scr'); if (el) el.scrollTop = 0; }, 0); }
+  go = (s) => { this.setState({ screen: s }); this.scrollTop(); };
+  push = (s) => { this.setState(st => ({ screen: s, stack: [...st.stack, st.screen] })); this.scrollTop(); };
+  back = () => { this.setState(st => { const k = [...st.stack]; const prev = k.pop() || 'home'; return { screen: prev, stack: k }; }); this.scrollTop(); };
+
+  toastMsg(m) { this.setState({ toast: m }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 1900); }
+
+  openSku = (id) => { this.setState(st => ({ skuId: id, screen: 'sku', stack: [...st.stack, st.screen] })); this.scrollTop(); };
+
+  openScan = (mode) => { this.setState(st => ({ scanMode: mode, screen: 'scan', scanResult: null, scanning: false, returnTo: st.screen })); };
+  closeScan = () => { this.setState(st => ({ screen: st.returnTo || 'home', scanResult: null, scanning: false })); };
+
+  doScan = () => {
+    if (this.state.scanning) return;
+    this.setState({ scanning: true, scanResult: null });
+    clearTimeout(this._s);
+    this._s = setTimeout(() => {
+      const i = this.state.scanIdx % this.PRODUCTS.length;
+      const p = this.PRODUCTS[i];
+      const recent = [{ code: p.code, name: p.name }, ...this.state.recent.filter(r => r.code !== p.code)].slice(0, 6);
+      this.setState({ scanning: false, scanResult: p, scanIdx: i + 1, recent });
+    }, 1150);
+  };
+  closeSheet = () => this.setState({ scanResult: null });
+
+  sheetPrimary = () => {
+    const p = this.state.scanResult; if (!p) return;
+    const m = this.state.scanMode;
+    if (m === 'inbound') {
+      this.addInbound(p.id, 1);
+      this.setState({ scanResult: null });
+      this.toastMsg('เพิ่ม ' + p.name);
+    } else if (m === 'count') {
+      this.setState(st => ({ scanResult: null, countQty: { ...st.countQty, [p.id]: (st.countQty[p.id] ?? p.stock) } }));
+      this.toastMsg('บันทึกการนับ ' + p.name);
+    } else {
+      this.setState(st => ({ screen: 'sku', skuId: p.id, scanResult: null, stack: [...st.stack, st.returnTo || 'home'] }));
+    }
+  };
+
+  addInbound(id, d) { this.setState(st => { const c = { ...st.inboundCart }; c[id] = Math.max(0, (c[id] || 0) + d); if (c[id] === 0) delete c[id]; return { inboundCart: c }; }); }
+  confirmInbound = () => { this.setState({ inboundCart: {}, screen: 'home', stack: [] }); this.toastMsg('บันทึกการรับเข้าเรียบร้อย'); };
+
+  changeReq(id, d) { this.setState(st => { const q = { ...st.reqQty }; q[id] = Math.max(0, (q[id] || 0) + d); return { reqQty: q }; }); }
+  submitReq = () => { const t = Object.values(this.state.reqQty).reduce((a, b) => a + b, 0); if (!t) return; this.setState({ reqQty: {}, screen: 'req', stack: [] }); this.toastMsg('ส่งใบเบิกเรียบร้อย'); };
+
+  changeCount(id, sys, d) { this.setState(st => { const c = { ...st.countQty }; const cur = c[id] ?? sys; c[id] = Math.max(0, cur + d); return { countQty: c }; }); }
+  submitCount = () => { this.setState({ screen: 'home', stack: [] }); this.toastMsg('บันทึกผลการนับเรียบร้อย'); };
+
+  selectDamage = (id) => this.setState({ damageSel: id });
+  changeDamage(d) { this.setState(st => ({ damageQty: Math.max(1, st.damageQty + d) })); }
+  setReason = (r) => this.setState({ damageReason: r });
+  submitDamage = () => { if (!this.state.damageSel || !this.state.damageReason) return; this.setState({ damageSel: null, damageQty: 1, damageReason: null, screen: 'home', stack: [] }); this.toastMsg('บันทึกของเสียเรียบร้อย'); };
+
+  renderVals() {
+    const st = this.state;
+    const s = st.screen;
+    const RED = '#E11D2A', MUTE = '#9aa0a8';
+    const navActive = (set) => set.includes(s) ? RED : MUTE;
+
+    let list = this.PRODUCTS.slice();
+    if (st.query.trim()) { const q = st.query.trim().toLowerCase(); list = list.filter(p => p.name.toLowerCase().includes(q) || p.code.includes(q)); }
+    if (st.stockFilter === 'low') list = list.filter(p => p.stock < p.min);
+    else if (st.stockFilter === 'out') list = list.filter(p => p.stock === 0);
+    const products = list.map(p => this.pvm(p));
+
+    const filterDefs = [ { key: 'all', label: 'ทั้งหมด' }, { key: 'low', label: 'สต็อกต่ำ' }, { key: 'out', label: 'หมดสต็อก' } ];
+    const filters = filterDefs.map(f => {
+      const on = st.stockFilter === f.key;
+      return { label: f.label, onTap: () => this.setState({ stockFilter: f.key }),
+        color: on ? '#fff' : '#4a4f57', bg: on ? RED : '#fff', border: on ? RED : '#eceef1' };
+    });
+
+    const alerts = this.PRODUCTS.filter(p => p.stock < p.min).map(p => this.pvm(p));
+
+    const sp = this.PRODUCTS.find(p => p.id === st.skuId) || this.PRODUCTS[0];
+    const ss = this.statusOf(sp);
+    const sku = {
+      ...sp, statusLabel: ss.label, statusColor: ss.color, statusBg: ss.bg,
+      stockText: this.fmt(sp.stock) + ' ' + sp.unit, minText: this.fmt(sp.min) + ' ' + sp.unit,
+      meta: [
+        { k: 'หมวดหมู่', v: sp.cat }, { k: 'หน่วยนับ', v: sp.unit },
+        { k: 'ตำแหน่งจัดเก็บ', v: sp.loc }, { k: 'บาร์โค้ด', v: sp.code },
+        { k: 'ผู้จัดส่งหลัก', v: 'CP Fresh Mart' }, { k: 'อายุการเก็บ', v: 'FEFO · 7 วัน' },
+      ],
+      moves: [
+        { sign: '+', label: 'รับเข้า GR-0098', time: 'วันนี้ 08:12', qty: '+10 ' + sp.unit, color: '#12805C', bg: '#e8f6ef' },
+        { sign: '−', label: 'เบิกครัว RQ-2410', time: 'เมื่อวาน 19:40', qty: '−4 ' + sp.unit, color: '#E11D2A', bg: '#fdecec' },
+        { sign: '−', label: 'ของเสีย DM-014', time: '23 มิ.ย. 14:02', qty: '−1 ' + sp.unit, color: '#E11D2A', bg: '#fdecec' },
+      ],
+    };
+
+    const ic = (svg) => ({ __html: svg });
+    const quickActions = [
+      { label: 'สแกนสินค้า', icon: ic(this.ICONS.scan), onTap: () => this.openScan('lookup') },
+      { label: 'รับเข้า', icon: ic(this.ICONS.inbound), onTap: () => this.push('inbound') },
+      { label: 'เบิก/โอน', icon: ic(this.ICONS.req), onTap: () => this.go('req') },
+      { label: 'นับสต็อก', icon: ic(this.ICONS.count), onTap: () => this.push('count') },
+    ];
+
+    const activity = [
+      { icon: ic(this.ICONS.moveIn), text: 'รับเข้า ข้าวหอมมะลิ +24 ถุง', time: 'วันนี้ 08:12 · GR-0098' },
+      { icon: ic(this.ICONS.req), text: 'อนุมัติใบเบิก RQ-2411', time: 'เมื่อวาน 17:30' },
+      { icon: ic(this.ICONS.damage), text: 'แจ้งของเสีย กุ้งขาว 1 กก.', time: '23 มิ.ย. 14:02' },
+    ];
+
+    const inboundCart = Object.keys(st.inboundCart).map(id => {
+      const p = this.PRODUCTS.find(x => x.id === id);
+      return { name: p.name, code: p.code, qty: st.inboundCart[id],
+        onInc: () => this.addInbound(id, 1), onDec: () => this.addInbound(id, -1) };
+    });
+    const cartCount = inboundCart.length;
+
+    const reqColors = {
+      pending: { color: '#C77700', bg: '#fdf4e7' }, approved: { color: '#12805C', bg: '#e8f6ef' },
+      shipping: { color: '#1d4ed8', bg: '#e8eefc' }, done: { color: '#6b7280', bg: '#f1f2f4' },
+    };
+    const requisitions = this.REQUISITIONS.map(q => ({ ...q, ...reqColors[q.key], onTap: () => this.toastMsg('เปิดใบ ' + q.id) }));
+
+    const reqItems = this.PRODUCTS.slice(0, 6).map(p => {
+      const qty = st.reqQty[p.id] || 0;
+      return { name: p.name, stockText: this.fmt(p.stock) + ' ' + p.unit, qty,
+        activeBorder: qty > 0 ? RED : '#eceef1',
+        onInc: () => this.changeReq(p.id, 1), onDec: () => this.changeReq(p.id, -1) };
+    });
+    const reqTotal = Object.values(st.reqQty).reduce((a, b) => a + b, 0);
+
+    const countItems = this.PRODUCTS.map(p => {
+      const counted = st.countQty[p.id];
+      const has = counted !== undefined;
+      const v = has ? counted - p.stock : 0;
+      return { name: p.name, systemText: this.fmt(p.stock) + ' ' + p.unit,
+        countText: has ? this.fmt(counted) : '—',
+        hasVar: has && v !== 0, varText: (v > 0 ? '+' : '') + this.fmt(v) + ' ' + p.unit,
+        varColor: v > 0 ? '#12805C' : '#E11D2A', varBg: v > 0 ? '#e8f6ef' : '#fdecec',
+        onInc: () => this.changeCount(p.id, p.stock, 1), onDec: () => this.changeCount(p.id, p.stock, -1) };
+    });
+    const countDone = Object.keys(st.countQty).length;
+
+    const damageItems = this.PRODUCTS.slice(0, 5).map(p => {
+      const sel = st.damageSel === p.id;
+      return { name: p.name, stockText: this.fmt(p.stock) + ' ' + p.unit, selected: sel,
+        border: sel ? RED : '#eceef1', bg: sel ? '#fff7f7' : '#fff', onSelect: () => this.selectDamage(p.id) };
+    });
+    const reasonDefs = ['หมดอายุ', 'ชำรุด/ตกแตก', 'ปนเปื้อน', 'อื่น ๆ'];
+    const reasons = reasonDefs.map(r => {
+      const on = st.damageReason === r;
+      return { label: r, onTap: () => this.setReason(r), color: on ? '#fff' : '#4a4f57', bg: on ? RED : '#fff', border: on ? RED : '#eceef1' };
+    });
+    const damageReady = !!st.damageSel && !!st.damageReason;
+
+    const moreItems = [
+      { label: 'นับสต็อก (Stock Count)', icon: ic(this.ICONS.count), onTap: () => this.push('count') },
+      { label: 'แจ้งของเสีย (Damage)', icon: ic(this.ICONS.damage), onTap: () => this.push('damage') },
+      { label: 'รับเข้าสินค้า (Inbound)', icon: ic(this.ICONS.inbound), onTap: () => this.push('inbound') },
+      { label: 'ผู้จัดส่ง (Suppliers)', icon: ic(this.ICONS.supplier), onTap: () => this.toastMsg('เปิดผู้จัดส่ง') },
+      { label: 'สาขา / คลังสินค้า', icon: ic(this.ICONS.branch), onTap: () => this.toastMsg('เปิดสาขา/คลัง') },
+      { label: 'สูตรการผลิต (BOM)', icon: ic(this.ICONS.bom), onTap: () => this.toastMsg('เปิด BOM') },
+      { label: 'รายงาน (Reports)', icon: ic(this.ICONS.report), onTap: () => this.toastMsg('เปิดรายงาน') },
+      { label: 'ตั้งค่า', icon: ic(this.ICONS.settings), onTap: () => this.toastMsg('เปิดตั้งค่า') },
+    ];
+
+    const subTitles = { sku: 'รายละเอียดสินค้า', inbound: 'รับเข้าสินค้า', reqCreate: 'สร้างใบเบิก / โอน', count: 'นับสต็อก', damage: 'แจ้งของเสีย', more: 'เพิ่มเติม' };
+    const isSub = ['sku', 'inbound', 'reqCreate', 'count', 'damage', 'more'].includes(s);
+    const scanCtxMode = (s === 'inbound') ? 'inbound' : (s === 'count') ? 'count' : 'lookup';
+
+    const sr = st.scanResult;
+    const sheetLabels = { lookup: 'ดูรายละเอียด', inbound: 'เพิ่มเข้ารายการรับ', count: 'บันทึกจำนวนนับ' };
+
+    return {
+      isScan: s === 'scan', notScan: s !== 'scan',
+      isHome: s === 'home', isStock: s === 'stock', isSku: s === 'sku',
+      isInbound: s === 'inbound', isReq: s === 'req', isReqCreate: s === 'reqCreate',
+      isCount: s === 'count', isDamage: s === 'damage', isMore: s === 'more',
+      isSub, subTitle: subTitles[s] || '', subActionScan: ['inbound', 'count'].includes(s),
+
+      navHome: navActive(['home']), navStock: navActive(['stock', 'sku']),
+      navReq: navActive(['req', 'reqCreate']), navMore: navActive(['more', 'inbound', 'count', 'damage']),
+
+      goHome: () => this.go('home'), goStock: () => this.go('stock'),
+      goReq: () => this.go('req'), goMore: () => this.go('more'),
+      goReqCreate: () => this.push('reqCreate'), goInbound: () => this.push('inbound'),
+      back: this.back, ping: () => this.toastMsg('ไม่มีการแจ้งเตือนใหม่'),
+
+      openScanCenter: () => this.openScan('lookup'),
+      openScanCtx: () => this.openScan(scanCtxMode),
+      openInboundScan: () => this.openScan('inbound'),
+      closeScan: this.closeScan, doScan: this.doScan, scanning: st.scanning,
+      scanTitle: st.scanMode === 'inbound' ? 'สแกนรับเข้า' : st.scanMode === 'count' ? 'สแกนเพื่อนับ' : 'สแกนบาร์โค้ด',
+      scanHint: st.scanning ? 'กำลังอ่านบาร์โค้ด…' : 'เล็งบาร์โค้ดให้อยู่ในกรอบ แล้วกดปุ่ม',
+      hasRecent: st.recent.length > 0, recent: st.recent,
+      hasResult: !!sr,
+      resultName: sr ? sr.name : '', resultCode: sr ? sr.code : '', resultCat: sr ? sr.cat : '',
+      resultLoc: sr ? sr.loc : '', resultStock: sr ? (this.fmt(sr.stock) + ' ' + sr.unit) : '',
+      resultMin: sr ? (this.fmt(sr.min) + ' ' + sr.unit) : '',
+      sheetPrimary: this.sheetPrimary, closeSheet: this.closeSheet,
+      sheetPrimaryLabel: sheetLabels[st.scanMode] || 'ดูรายละเอียด',
+
+      products, filters, alerts, quickActions, activity, sku,
+      query: st.query, onQuery: (e) => this.setState({ query: e.target.value }),
+
+      inboundCart, cartCount, cartEmpty: cartCount === 0, cartHas: cartCount > 0,
+      confirmInbound: this.confirmInbound,
+
+      requisitions, reqItems, reqTotal,
+      reqSubmitBg: reqTotal > 0 ? RED : '#cfd3d8',
+      reqSubmitShadow: reqTotal > 0 ? '0 12px 26px -10px rgba(225,29,42,.85)' : 'none',
+      submitReq: this.submitReq,
+
+      countItems, countDone, countTotal: this.PRODUCTS.length, submitCount: this.submitCount,
+
+      damageItems, reasons, damageQty: st.damageQty,
+      damageInc: () => this.changeDamage(1), damageDec: () => this.changeDamage(-1),
+      damageSubmitBg: damageReady ? RED : '#cfd3d8',
+      damageSubmitShadow: damageReady ? '0 12px 26px -10px rgba(225,29,42,.85)' : 'none',
+      submitDamage: this.submitDamage,
+
+      moreItems,
+      hasToast: !!st.toast, toast: st.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

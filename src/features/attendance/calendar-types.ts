@@ -20,6 +20,8 @@ export type AttendanceDayCell = {
   retroExpired: boolean
   deadline: string | null
   attendanceId: string | null
+  /** HR manually marked this date as a day off via date override */
+  isDateOverride: boolean
 }
 
 import type { ShiftSchedule } from "@/lib/attendance/retro-limit"

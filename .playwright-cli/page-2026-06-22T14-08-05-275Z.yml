@@ -1,0 +1,161 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+          - generic [ref=e1722]:
+            - link "Alerts" [ref=e1723] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - button "ปิดแท็บ Alerts" [ref=e1724]:
+              - img [ref=e1725]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [active] [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1728]:
+          - generic [ref=e1730]:
+            - heading "Inventory Alerts" [level=1] [ref=e1732]
+            - generic [ref=e1733]: แจ้งเตือน expiry, low stock และ anomaly พร้อมลิงก์ไปหน้าที่เกี่ยวข้อง
+          - generic [ref=e1735]:
+            - generic [ref=e1736]:
+              - generic [ref=e1737]:
+                - generic [ref=e1738]:
+                  - paragraph [ref=e1739]: แจ้งเตือนทั้งหมด
+                  - img [ref=e1740]
+                - paragraph [ref=e1745]: "0"
+              - generic [ref=e1746]:
+                - generic [ref=e1747]:
+                  - paragraph [ref=e1748]: ใกล้หมดอายุ
+                  - img [ref=e1749]
+                - paragraph [ref=e1752]: "0"
+              - generic [ref=e1753]:
+                - generic [ref=e1754]:
+                  - paragraph [ref=e1755]: สต็อกต่ำ
+                  - img [ref=e1756]
+                - paragraph [ref=e1758]: "0"
+              - generic [ref=e1759]:
+                - generic [ref=e1760]:
+                  - paragraph [ref=e1761]: ระดับสูง
+                  - img [ref=e1762]
+                - paragraph [ref=e1764]: "0"
+            - generic [ref=e1765]:
+              - generic [ref=e1766]:
+                - generic [ref=e1767]: สาขา
+                - combobox "สาขา" [ref=e1768]:
+                  - option "ทั้งหมด" [selected]
+                  - option "Bang Na"
+              - generic [ref=e1769]:
+                - generic [ref=e1770]: คลัง
+                - combobox "คลัง" [ref=e1771]:
+                  - option "ทั้งหมด" [selected]
+                  - option "Bang Na"
+              - generic [ref=e1772]:
+                - generic [ref=e1773]: ประเภทแจ้งเตือน
+                - combobox "ประเภทแจ้งเตือน" [ref=e1774]:
+                  - option "ทั้งหมด" [selected]
+                  - option "ใกล้หมดอายุ"
+                  - option "สต็อกต่ำ"
+                  - option "ผิดปกติ"
+              - button "ล้างตัวกรอง" [ref=e1775]
+            - generic [ref=e1776]:
+              - generic [ref=e1778]:
+                - heading "Alert inbox" [level=2] [ref=e1779]
+                - paragraph [ref=e1780]: เปิดจากรายการนี้เพื่อไล่ตัดสินใจเรื่อง expiry, reorder และรายการผิดปกติ
+              - table [ref=e1783]:
+                - rowgroup [ref=e1784]:
+                  - row "ประเภท รายละเอียด สาขา คลัง ระดับ ไปยังหน้า" [ref=e1785]:
+                    - columnheader "ประเภท" [ref=e1786]
+                    - columnheader "รายละเอียด" [ref=e1787]
+                    - columnheader "สาขา" [ref=e1788]
+                    - columnheader "คลัง" [ref=e1789]
+                    - columnheader "ระดับ" [ref=e1790]
+                    - columnheader "ไปยังหน้า" [ref=e1791]
+                - rowgroup [ref=e1792]:
+                  - row "ยังไม่มี alerts" [ref=e1793]:
+                    - cell "ยังไม่มี alerts" [ref=e1794]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

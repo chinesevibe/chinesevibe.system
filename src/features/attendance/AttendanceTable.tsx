@@ -45,6 +45,13 @@ function formatHours(hours: number | null): string {
   return Number.isInteger(hours) ? String(hours) : hours.toFixed(1)
 }
 
+/** 2026-06-23 → 23.6.2026 */
+function formatShortDate(date: string): string {
+  const [y, m, d] = date.split("-")
+  if (!y || !m || !d) return date
+  return `${Number(d)}.${Number(m)}.${y}`
+}
+
 function rowMeta(row: AttendanceRow): string {
   return [row.branchName, row.department].filter(Boolean).join(" • ") || "—"
 }
@@ -106,7 +113,7 @@ function MobileRowCard({
         <div className="min-w-0">
           {employeeView ? (
             <>
-              <p className="text-sm font-semibold tabular-nums text-foreground">{row.date}</p>
+              <p className="text-sm font-semibold tabular-nums text-foreground">{formatShortDate(row.date)}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {row.status === "in_progress" ? "เปิดรอบอยู่" : "ปิดรอบแล้ว"}
               </p>
@@ -146,7 +153,7 @@ function MobileRowCard({
         <div className="rounded-xl bg-muted/30 px-3 py-2">
           <p className="text-xs text-muted-foreground">{employeeView ? "สถานะรอบ" : "วันที่"}</p>
           <p className="font-medium tabular-nums text-foreground">
-            {employeeView ? (row.status === "in_progress" ? "เปิดรอบอยู่" : "ปิดรอบแล้ว") : row.date}
+            {employeeView ? (row.status === "in_progress" ? "เปิดรอบอยู่" : "ปิดรอบแล้ว") : formatShortDate(row.date)}
           </p>
         </div>
         <div className="rounded-xl bg-muted/30 px-3 py-2">
@@ -396,7 +403,7 @@ export function AttendanceTable({
             >
               <TableCell className="whitespace-nowrap font-medium tabular-nums text-foreground">
                 <div className="space-y-1">
-                  <p className="font-semibold tabular-nums text-foreground">{row.date}</p>
+                  <p className="font-semibold tabular-nums text-foreground">{formatShortDate(row.date)}</p>
                   <p className="text-xs text-muted-foreground">{row.status === "in_progress" ? "เปิดรอบอยู่" : "ปิดรอบแล้ว"}</p>
                 </div>
               </TableCell>
@@ -423,14 +430,11 @@ export function AttendanceTable({
                 </div>
               </TableCell>
             ) : null}
-              <TableCell className="min-w-[12rem]">
-                <div className="space-y-1">
-                  <p className="font-medium text-foreground">{row.shiftName ?? "—"}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {row.shiftTimeText ?? "ยังไม่กำหนดเวลา"}
-                    {row.shiftCrossesMidnight ? " • ข้ามวัน" : ""}
-                  </p>
-                </div>
+              <TableCell className="whitespace-nowrap tabular-nums">
+                <p className="font-medium text-foreground">
+                  {row.shiftTimeText ?? "—"}
+                  {row.shiftCrossesMidnight ? " ✦" : ""}
+                </p>
               </TableCell>
               <TableCell className="font-medium tabular-nums">{row.checkInText}</TableCell>
               <TableCell className="font-medium tabular-nums">{row.checkOutText}</TableCell>

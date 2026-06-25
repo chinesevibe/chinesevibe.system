@@ -1,0 +1,324 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [active] [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+          - generic [ref=e1639]:
+            - link "Stock Count" [ref=e1640] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - button "ปิดแท็บ Stock Count" [ref=e1641]:
+              - img [ref=e1642]
+          - generic [ref=e1722]:
+            - link "Alerts" [ref=e1723] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - button "ปิดแท็บ Alerts" [ref=e1724]:
+              - img [ref=e1725]
+          - generic [ref=e1795]:
+            - link "Reports" [ref=e1796] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - button "ปิดแท็บ Reports" [ref=e1797]:
+              - img [ref=e1798]
+          - generic [ref=e1904]:
+            - link "Stock" [ref=e1905] [cursor=pointer]:
+              - /url: /admin/inventory/reports/stock
+            - button "ปิดแท็บ Stock" [ref=e1906]:
+              - img [ref=e1907]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1956]:
+          - generic [ref=e1958]:
+            - heading "Inventory Workspace" [level=1] [ref=e1960]
+            - generic [ref=e1961]: พื้นที่ทำงานหลักของคลังสินค้า ดูงานด่วนวันนี้ เปิดงานประจำ และเข้าถึงข้อมูลหลักจากจุดเดียว
+          - generic [ref=e1963]:
+            - generic [ref=e1964]:
+              - generic [ref=e1965]:
+                - paragraph [ref=e1966]: ศูนย์ควบคุมคลังสินค้า
+                - paragraph [ref=e1967]: เริ่มจากงานด่วนของวันนี้ แล้วค่อยเข้า workspace รายประเภทเมื่อพร้อมตรวจรับ เบิก โอน หรือตรวจนับ
+              - generic [ref=e1968]:
+                - link "คู่มือ & Checklist UAT" [ref=e1969] [cursor=pointer]:
+                  - /url: /docs/INVENTORY_HANDOFF.html
+                  - generic [ref=e1970]: คู่มือ & Checklist UAT
+                  - img [ref=e1971]
+                - link "แดชบอร์ด" [ref=e1975] [cursor=pointer]:
+                  - /url: /admin/inventory/dashboard
+                  - img [ref=e1976]
+                  - generic [ref=e1981]: แดชบอร์ด
+                - link "Alerts" [ref=e1982] [cursor=pointer]:
+                  - /url: /admin/inventory/alerts
+                  - img [ref=e1983]
+                  - generic [ref=e1986]: Alerts
+            - generic [ref=e1987]:
+              - generic [ref=e1989]:
+                - heading "ภาพรวมงานวันนี้" [level=2] [ref=e1990]
+                - paragraph [ref=e1991]: โฟกัสงานที่ต้องลงมือก่อน แล้วค่อยเปิดหน้าวิเคราะห์เชิงลึก
+              - generic [ref=e1992]:
+                - generic [ref=e1993]:
+                  - generic [ref=e1994]:
+                    - generic [ref=e1995]:
+                      - paragraph [ref=e1996]: Alerts ค้างตรวจ
+                      - paragraph [ref=e1997]: "0"
+                    - img [ref=e1999]
+                  - paragraph [ref=e2001]: รวม low stock, expiry และ anomaly ที่ควรเปิดดูต่อ
+                - generic [ref=e2002]:
+                  - generic [ref=e2003]:
+                    - generic [ref=e2004]:
+                      - paragraph [ref=e2005]: Workflow หลัก
+                      - paragraph [ref=e2006]: "7"
+                    - img [ref=e2008]
+                  - paragraph [ref=e2011]: รับเข้า เบิก โอน ตรวจนับ ใช้จริง และเสียหาย อยู่ใน workspace เดียวกัน
+                - generic [ref=e2012]:
+                  - generic [ref=e2013]:
+                    - generic [ref=e2014]:
+                      - paragraph [ref=e2015]: Quick actions
+                      - paragraph [ref=e2016]: "5"
+                    - img [ref=e2018]
+                  - paragraph [ref=e2021]: เปิดงานประจำที่ใช้บ่อยโดยไม่ต้องไล่จากเมนูย่อย
+                - generic [ref=e2022]:
+                  - generic [ref=e2023]:
+                    - generic [ref=e2024]:
+                      - paragraph [ref=e2025]: โหมดการดูแล
+                      - paragraph [ref=e2026]: Admin
+                    - img [ref=e2028]
+                  - paragraph [ref=e2033]: เข้าถึงทั้ง workspace และข้อมูลหลักของคลัง
+            - generic [ref=e2034]:
+              - generic [ref=e2035]:
+                - generic [ref=e2036]:
+                  - heading "Quick actions" [level=2] [ref=e2037]
+                  - paragraph [ref=e2038]: ทางลัดสำหรับงานที่มักต้องเปิดก่อนในแต่ละวัน
+                - generic [ref=e2039]: 5 รายการ
+              - generic [ref=e2040]:
+                - link "รับเข้า สร้างใบรับและสแกน LIFF" [ref=e2041] [cursor=pointer]:
+                  - /url: /admin/inventory/inbound
+                  - generic [ref=e2042]:
+                    - img [ref=e2044]
+                    - img [ref=e2048]
+                  - generic [ref=e2050]:
+                    - paragraph [ref=e2051]: รับเข้า
+                    - paragraph [ref=e2052]: สร้างใบรับและสแกน LIFF
+                - link "ใบเบิก เบิกวัตถุดิบออกจากคลัง" [ref=e2053] [cursor=pointer]:
+                  - /url: /admin/inventory/requisition
+                  - generic [ref=e2054]:
+                    - img [ref=e2056]
+                    - img [ref=e2059]
+                  - generic [ref=e2061]:
+                    - paragraph [ref=e2062]: ใบเบิก
+                    - paragraph [ref=e2063]: เบิกวัตถุดิบออกจากคลัง
+                - link "โอนสินค้า ย้ายสต็อกระหว่างคลัง" [ref=e2064] [cursor=pointer]:
+                  - /url: /admin/inventory/transfer
+                  - generic [ref=e2065]:
+                    - img [ref=e2067]
+                    - img [ref=e2072]
+                  - generic [ref=e2074]:
+                    - paragraph [ref=e2075]: โอนสินค้า
+                    - paragraph [ref=e2076]: ย้ายสต็อกระหว่างคลัง
+                - link "ตรวจนับสต็อก นับจริงเทียบยอดระบบ" [ref=e2077] [cursor=pointer]:
+                  - /url: /admin/inventory/stock-count
+                  - generic [ref=e2078]:
+                    - img [ref=e2080]
+                    - img [ref=e2087]
+                  - generic [ref=e2089]:
+                    - paragraph [ref=e2090]: ตรวจนับสต็อก
+                    - paragraph [ref=e2091]: นับจริงเทียบยอดระบบ
+                - link "เสียหาย แจ้งของเสียหายหรือสูญหาย" [ref=e2092] [cursor=pointer]:
+                  - /url: /admin/inventory/damage
+                  - generic [ref=e2093]:
+                    - img [ref=e2095]
+                    - img [ref=e2101]
+                  - generic [ref=e2103]:
+                    - paragraph [ref=e2104]: เสียหาย
+                    - paragraph [ref=e2105]: แจ้งของเสียหายหรือสูญหาย
+            - generic [ref=e2106]:
+              - generic [ref=e2107]:
+                - generic [ref=e2108]:
+                  - heading "Alert / Action inbox" [level=2] [ref=e2109]
+                  - paragraph [ref=e2110]: เรียงงานที่ควรตรวจต่อก่อน แล้วค่อยเปิดหน้าเฉพาะงาน
+                - link "เปิด alerts ทั้งหมด" [ref=e2111] [cursor=pointer]:
+                  - /url: /admin/inventory/alerts
+                  - img [ref=e2112]
+                  - generic [ref=e2115]: เปิด alerts ทั้งหมด
+              - generic [ref=e2116]: ยังไม่มี alert ค้างในตอนนี้ เปิดหน้าสต็อกหรือรับเข้าเพื่อเริ่มงานประจำวันได้เลย
+            - generic [ref=e2117]:
+              - generic [ref=e2118]:
+                - generic [ref=e2119]:
+                  - heading "All workspaces" [level=2] [ref=e2120]
+                  - paragraph [ref=e2121]: workspace หลักของคลังสำหรับเปิดดูงานตามหมวด เมื่อพ้นขั้นคัดกรองเบื้องต้นแล้ว
+                - generic [ref=e2122]: 7 รายการ
+              - generic [ref=e2123]:
+                - link "รับเข้า สร้างใบรับและสแกน LIFF" [ref=e2124] [cursor=pointer]:
+                  - /url: /admin/inventory/inbound
+                  - generic [ref=e2125]:
+                    - img [ref=e2127]
+                    - img [ref=e2131]
+                  - generic [ref=e2133]:
+                    - paragraph [ref=e2134]: รับเข้า
+                    - paragraph [ref=e2135]: สร้างใบรับและสแกน LIFF
+                - link "สต็อก คงเหลือตามคลังและสาขา" [ref=e2136] [cursor=pointer]:
+                  - /url: /admin/inventory/stock
+                  - generic [ref=e2137]:
+                    - img [ref=e2139]
+                    - img [ref=e2141]
+                  - generic [ref=e2143]:
+                    - paragraph [ref=e2144]: สต็อก
+                    - paragraph [ref=e2145]: คงเหลือตามคลังและสาขา
+                - link "ใบเบิก เบิกวัตถุดิบออกจากคลัง" [ref=e2146] [cursor=pointer]:
+                  - /url: /admin/inventory/requisition
+                  - generic [ref=e2147]:
+                    - img [ref=e2149]
+                    - img [ref=e2152]
+                  - generic [ref=e2154]:
+                    - paragraph [ref=e2155]: ใบเบิก
+                    - paragraph [ref=e2156]: เบิกวัตถุดิบออกจากคลัง
+                - link "โอนสินค้า ย้ายสต็อกระหว่างคลัง" [ref=e2157] [cursor=pointer]:
+                  - /url: /admin/inventory/transfer
+                  - generic [ref=e2158]:
+                    - img [ref=e2160]
+                    - img [ref=e2165]
+                  - generic [ref=e2167]:
+                    - paragraph [ref=e2168]: โอนสินค้า
+                    - paragraph [ref=e2169]: ย้ายสต็อกระหว่างคลัง
+                - link "ตรวจนับสต็อก นับจริงเทียบยอดระบบ" [ref=e2170] [cursor=pointer]:
+                  - /url: /admin/inventory/stock-count
+                  - generic [ref=e2171]:
+                    - img [ref=e2173]
+                    - img [ref=e2180]
+                  - generic [ref=e2182]:
+                    - paragraph [ref=e2183]: ตรวจนับสต็อก
+                    - paragraph [ref=e2184]: นับจริงเทียบยอดระบบ
+                - link "ใช้จริง บันทึกการใช้งานจริง" [ref=e2185] [cursor=pointer]:
+                  - /url: /admin/inventory/consumption
+                  - generic [ref=e2186]:
+                    - img [ref=e2188]
+                    - img [ref=e2192]
+                  - generic [ref=e2194]:
+                    - paragraph [ref=e2195]: ใช้จริง
+                    - paragraph [ref=e2196]: บันทึกการใช้งานจริง
+                - link "เสียหาย แจ้งของเสียหายหรือสูญหาย" [ref=e2197] [cursor=pointer]:
+                  - /url: /admin/inventory/damage
+                  - generic [ref=e2198]:
+                    - img [ref=e2200]
+                    - img [ref=e2206]
+                  - generic [ref=e2208]:
+                    - paragraph [ref=e2209]: เสียหาย
+                    - paragraph [ref=e2210]: แจ้งของเสียหายหรือสูญหาย
+            - generic [ref=e2211]:
+              - generic [ref=e2212]:
+                - generic [ref=e2213]:
+                  - heading "ข้อมูลหลัก" [level=2] [ref=e2214]
+                  - paragraph [ref=e2215]: ตั้งค่าก่อนเริ่มใช้งานคลัง — แยกจากข้อมูลสาขา HR
+                - generic [ref=e2216]: 4 รายการ
+              - generic [ref=e2217]:
+                - link "SKU รหัสสินค้า หน่วย Min/Max" [ref=e2218] [cursor=pointer]:
+                  - /url: /admin/inventory/sku
+                  - generic [ref=e2219]:
+                    - img [ref=e2221]
+                    - img [ref=e2225]
+                  - generic [ref=e2227]:
+                    - paragraph [ref=e2228]: SKU
+                    - paragraph [ref=e2229]: รหัสสินค้า หน่วย Min/Max
+                - link "Supplier ผู้จำหน่ายและติดต่อ" [ref=e2230] [cursor=pointer]:
+                  - /url: /admin/inventory/suppliers
+                  - generic [ref=e2231]:
+                    - img [ref=e2233]
+                    - img [ref=e2238]
+                  - generic [ref=e2240]:
+                    - paragraph [ref=e2241]: Supplier
+                    - paragraph [ref=e2242]: ผู้จำหน่ายและติดต่อ
+                - link "สาขา (คลัง) สาขาระบบคลังแยกจาก HR" [ref=e2243] [cursor=pointer]:
+                  - /url: /admin/inventory/branches
+                  - generic [ref=e2244]:
+                    - img [ref=e2246]
+                    - img [ref=e2250]
+                  - generic [ref=e2252]:
+                    - paragraph [ref=e2253]: สาขา (คลัง)
+                    - paragraph [ref=e2254]: สาขาระบบคลังแยกจาก HR
+                - link "คลังสินค้า คลังย่อยในแต่ละสาขา" [ref=e2255] [cursor=pointer]:
+                  - /url: /admin/inventory/warehouses
+                  - generic [ref=e2256]:
+                    - img [ref=e2258]
+                    - img [ref=e2261]
+                  - generic [ref=e2263]:
+                    - paragraph [ref=e2264]: คลังสินค้า
+                    - paragraph [ref=e2265]: คลังย่อยในแต่ละสาขา
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"

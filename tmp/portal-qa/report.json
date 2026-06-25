@@ -1,0 +1,155 @@
+[
+  {
+    "route": "/portal/inventory",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=9Q6WwKNkWDKyvzPg-z4zq' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inventory-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/inventory",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=-YGzA_CfAGAK2OkfkULeI' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inventory-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/inventory",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inventory",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=jLb7Rf_wd4fIyGFE2GI2w' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inventory-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=qkkQeExuiRAYraTh94RbM' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_stock-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=8HFk63FjSvOHEEBZWzf0D' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_stock-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/stock",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/stock",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=OBtYkHa6Zfgvgix_NemAA' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_stock-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 375,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=gjVahXCYFCgGgF-I69ozX' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inbound-375.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 430,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=7sJIaauS_qPdmaPceW-c-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inbound-430.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  },
+  {
+    "route": "/portal/inbound",
+    "width": 768,
+    "status": 200,
+    "finalUrl": "https://127.0.0.1:3001/portal/inbound",
+    "consoleMessages": [
+      "error: WebSocket connection to 'wss://127.0.0.1:3001/_next/webpack-hmr?id=sX2LZrekjnhY8DzIRV89A' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    "pageErrors": [],
+    "screenshotPath": "/Users/jakarinosk/HEAD-OFFICE/PROJECTS/hr-payroll-client/hr-app/tmp/portal-qa/portal_inbound-768.png",
+    "title": "CNV WorkHub — HR Admin",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "overflowX": 0,
+    "bodyText": "CNV WorkHub\n\nHR & PAYROLL\n\nหน้าหลัก\nโปรไฟล์\nการเข้างาน\nตารางงาน\nขอลา\nเอกสาร\nประกาศ\nสลิปเงินเดือน\nคลังสินค้า\n\nYour HR\nat Your\nFingertips\n\n© 2025 Zhongguomingtang\nAll rights reserved.\n\nEmployee Portal\n\n",
+    "offenders": []
+  }
+]

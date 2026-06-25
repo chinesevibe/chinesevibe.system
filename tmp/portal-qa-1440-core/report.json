@@ -1,0 +1,18 @@
+[
+  {
+    "route": "/portal/inventory",
+    "error": "Error: page.goto: net::ERR_TIMED_OUT at https://127.0.0.1:3001/portal/inventory\nCall log:\n\u001b[2m  - navigating to \"https://127.0.0.1:3001/portal/inventory\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "route": "/portal/stock",
+    "error": "Error: page.goto: net::ERR_TIMED_OUT at https://127.0.0.1:3001/portal/stock\nCall log:\n\u001b[2m  - navigating to \"https://127.0.0.1:3001/portal/stock\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "route": "/portal/inbound",
+    "error": "TimeoutError: page.goto: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://127.0.0.1:3001/portal/inbound\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "route": "/portal/alerts",
+    "error": "TimeoutError: page.goto: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://127.0.0.1:3001/portal/alerts\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  }
+]

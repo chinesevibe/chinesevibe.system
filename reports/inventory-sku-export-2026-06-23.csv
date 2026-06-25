@@ -1,0 +1,3 @@
+id,code,name,category,unit,barcode,min_stock,max_stock,status
+1e56fae8-c7e8-465f-9236-3cc9a76c5556,BEV-BEERCHANG-620-1,BEER CHANG,เครื่องดื่ม,ml,8851993616011,0,200,active
+234fd439-945a-48e8-a9d5-bf84b5eddb3e,BEV-WAHAHA-WATER,Wahaha Mineral Water,BEV,ml,,70,100,active

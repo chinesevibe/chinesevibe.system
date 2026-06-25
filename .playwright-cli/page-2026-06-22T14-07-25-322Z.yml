@@ -1,0 +1,146 @@
+- generic [ref=e1]:
+  - generic [ref=e149]:
+    - banner [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - button "เปิดเมนู" [ref=e393]:
+            - img
+            - generic [ref=e394]: เปิดเมนู
+          - generic [ref=e155]:
+            - button "สลับมุมมอง Dev" [ref=e157]:
+              - img
+            - button "การแจ้งเตือน — รออนุมัติ 8 รายการ" [ref=e160]:
+              - img [ref=e161]
+              - generic [ref=e164]: "8"
+        - generic [ref=e519]:
+          - generic [ref=e520]:
+            - link "Dashboard" [ref=e521] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - button "ปิดแท็บ Dashboard" [ref=e522]:
+              - img [ref=e523]
+          - generic [ref=e650]:
+            - link "Inventory" [ref=e651] [cursor=pointer]:
+              - /url: /admin/inventory
+            - button "ปิดแท็บ Inventory" [ref=e652]:
+              - img [ref=e653]
+          - generic [ref=e1254]:
+            - link "Stock" [ref=e1255] [cursor=pointer]:
+              - /url: /admin/inventory/stock?below_min=1
+            - button "ปิดแท็บ Stock" [ref=e1256]:
+              - img [ref=e1257]
+          - generic [ref=e1383]:
+            - link "Inbound" [ref=e1384] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - button "ปิดแท็บ Inbound" [ref=e1385]:
+              - img [ref=e1386]
+          - generic [ref=e1469]:
+            - link "Requisition" [ref=e1470] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - button "ปิดแท็บ Requisition" [ref=e1471]:
+              - img [ref=e1472]
+          - generic [ref=e1558]:
+            - link "Transfer" [ref=e1559] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - button "ปิดแท็บ Transfer" [ref=e1560]:
+              - img [ref=e1561]
+    - main [ref=e174]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - paragraph [ref=e178]: เมนูคลังสินค้า — สลับหน้างานได้จากแถบด้านล่าง
+            - 'button "โหมดแนะนำ: เปิด" [pressed] [ref=e179]':
+              - img [ref=e180]
+              - text: "โหมดแนะนำ: เปิด"
+          - navigation [ref=e182]:
+            - link "ภาพรวม" [ref=e183] [cursor=pointer]:
+              - /url: /admin/inventory
+            - link "แดชบอร์ด" [ref=e184] [cursor=pointer]:
+              - /url: /admin/inventory/dashboard
+            - link "Alerts" [ref=e185] [cursor=pointer]:
+              - /url: /admin/inventory/alerts
+            - link "Reports" [ref=e186] [cursor=pointer]:
+              - /url: /admin/inventory/reports
+            - link "สต็อก" [ref=e187] [cursor=pointer]:
+              - /url: /admin/inventory/stock
+            - link "รับเข้า" [ref=e188] [cursor=pointer]:
+              - /url: /admin/inventory/inbound
+            - link "ใบเบิก" [ref=e189] [cursor=pointer]:
+              - /url: /admin/inventory/requisition
+            - link "โอนสินค้า" [active] [ref=e190] [cursor=pointer]:
+              - /url: /admin/inventory/transfer
+            - link "บันทึกใช้" [ref=e191] [cursor=pointer]:
+              - /url: /admin/inventory/consumption
+            - link "แจ้งเสียหาย" [ref=e192] [cursor=pointer]:
+              - /url: /admin/inventory/damage
+            - link "นับสต็อก" [ref=e193] [cursor=pointer]:
+              - /url: /admin/inventory/stock-count
+            - link "SKU" [ref=e194] [cursor=pointer]:
+              - /url: /admin/inventory/sku
+            - link "Supplier" [ref=e195] [cursor=pointer]:
+              - /url: /admin/inventory/suppliers
+            - link "สาขา (คลัง)" [ref=e196] [cursor=pointer]:
+              - /url: /admin/inventory/branches
+            - link "คลังสินค้า" [ref=e197] [cursor=pointer]:
+              - /url: /admin/inventory/warehouses
+            - link "BOM" [ref=e198] [cursor=pointer]:
+              - /url: /admin/inventory/bom
+        - generic [ref=e1564]:
+          - generic [ref=e1565]:
+            - generic [ref=e1566]:
+              - heading "โอนสินค้า" [level=1] [ref=e1568]
+              - generic [ref=e1569]: โอนระหว่างสาขา ส่งออกจากต้นทางก่อน แล้วคลังปลายทางค่อยยืนยันรับ
+            - link "+ สร้างใบโอน" [ref=e1571] [cursor=pointer]:
+              - /url: /admin/inventory/transfer/create
+          - generic [ref=e1572]:
+            - generic [ref=e1573]:
+              - generic [ref=e1574]:
+                - generic [ref=e1575]:
+                  - generic [ref=e1576]:
+                    - paragraph [ref=e1577]: ใบโอนทั้งหมด
+                    - paragraph [ref=e1578]: "0"
+                  - img [ref=e1580]
+                - paragraph [ref=e1585]: รวมรายการโอนระหว่างสาขาและคลัง
+              - generic [ref=e1586]:
+                - generic [ref=e1587]:
+                  - generic [ref=e1588]:
+                    - paragraph [ref=e1589]: แบบร่าง
+                    - paragraph [ref=e1590]: "0"
+                  - img [ref=e1592]
+                - paragraph [ref=e1595]: ใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง
+              - generic [ref=e1596]:
+                - generic [ref=e1597]:
+                  - generic [ref=e1598]:
+                    - paragraph [ref=e1599]: กำลังโอน
+                    - paragraph [ref=e1600]: "0"
+                  - img [ref=e1602]
+                - paragraph [ref=e1605]: ใบโอนที่หัก stock ต้นทางแล้วและรอปลายทางยืนยันรับ
+              - generic [ref=e1606]:
+                - generic [ref=e1607]:
+                  - generic [ref=e1608]:
+                    - paragraph [ref=e1609]: รับแล้ว
+                    - paragraph [ref=e1610]: "0"
+                  - img [ref=e1612]
+                - paragraph [ref=e1617]: รวม 0 รายการสินค้าในทุกใบโอน
+            - generic [ref=e1618]:
+              - generic [ref=e1619]:
+                - generic [ref=e1620]:
+                  - heading "Transfer queue" [level=2] [ref=e1621]
+                  - paragraph [ref=e1622]: ใช้ดูว่ารายการไหนยังเป็น draft รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว
+                - generic [ref=e1623]: Draft 0 · In transit 0
+              - table [ref=e1626]:
+                - rowgroup [ref=e1627]:
+                  - row "เลขที่ ต้นทาง ปลายทาง ผู้สร้าง สถานะ สร้างเมื่อ รายการ" [ref=e1628]:
+                    - columnheader "เลขที่" [ref=e1629]
+                    - columnheader "ต้นทาง" [ref=e1630]
+                    - columnheader "ปลายทาง" [ref=e1631]
+                    - columnheader "ผู้สร้าง" [ref=e1632]
+                    - columnheader "สถานะ" [ref=e1633]
+                    - columnheader "สร้างเมื่อ" [ref=e1634]
+                    - columnheader "รายการ" [ref=e1635]
+                - rowgroup [ref=e1636]:
+                  - row "ยังไม่มีใบโอนสินค้า" [ref=e1637]:
+                    - cell "ยังไม่มีใบโอนสินค้า" [ref=e1638]
+  - button "Open Next.js Dev Tools" [ref=e512] [cursor=pointer]:
+    - img [ref=e513]
+  - alert [ref=e516]
+  - generic [ref=e517]: "12"
