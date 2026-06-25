@@ -129,7 +129,7 @@ export function LeaveForm() {
           onClick={() => setSuccess(false)}
           className="mt-3 text-sm text-gray-400 underline"
         >
-          ยื่นคำขอใหม่
+          {tx("leave.form.submitAgain")}
         </button>
       </div>
     )
@@ -153,7 +153,7 @@ export function LeaveForm() {
                   : "border-gray-200 bg-white text-gray-600 active:bg-gray-50"
               }`}
             >
-              {LEAVE_TYPE_LABELS[t]}
+              {tx(leaveTypeKey(t))}
             </button>
           ))}
         </div>

@@ -10,10 +10,10 @@ import type { MessageKey } from "@/lib/i18n/translate"
 
 type OtType = "normal" | "holiday_weekly" | "holiday_public"
 
-const OT_TYPES: { value: OtType; label: string; multiplier: number }[] = [
-  { value: "normal", label: "วันทำงานปกติ", multiplier: 1.5 },
-  { value: "holiday_weekly", label: "วันหยุดประจำสัปดาห์", multiplier: 2 },
-  { value: "holiday_public", label: "วันหยุดนักขัตฤกษ์", multiplier: 3 },
+const OT_TYPE_VALUES: { value: OtType; multiplier: number }[] = [
+  { value: "normal", multiplier: 1.5 },
+  { value: "holiday_weekly", multiplier: 2 },
+  { value: "holiday_public", multiplier: 3 },
 ]
 
 const inputCls =
@@ -67,7 +67,7 @@ export function OvertimeForm() {
   const startTime = watch("startTime")
   const endTime = watch("endTime")
   const otHours = calcHours(startTime, endTime)
-  const currentOt = OT_TYPES.find((o) => o.value === otType)!
+  const currentOt = OT_TYPE_VALUES.find((o) => o.value === otType)!
 
   function formatOvertimeApiError(body: { error?: string } | null): string {
     const code = body?.error
@@ -107,7 +107,7 @@ export function OvertimeForm() {
         <p className="text-2xl">✅</p>
         <p className="mt-2 font-medium text-green-700">{tx("ot.form.success")}</p>
         <button onClick={() => setSuccess(false)} className="mt-3 text-sm text-gray-400 underline">
-          ยื่นคำขอใหม่
+          {tx("ot.form.submitAgain")}
         </button>
       </div>
     )
@@ -118,9 +118,9 @@ export function OvertimeForm() {
 
       {/* ── OT type pills ── */}
       <div>
-        <p className="mb-2 text-sm font-medium text-gray-700">ประเภท OT</p>
+        <p className="mb-2 text-sm font-medium text-gray-700">{tx("ot.page.typeLabel")}</p>
         <div className="flex flex-col gap-2">
-          {OT_TYPES.map((ot) => (
+          {OT_TYPE_VALUES.map((ot) => (
             <button
               key={ot.value}
               type="button"
@@ -131,7 +131,7 @@ export function OvertimeForm() {
                   : "border-gray-200 bg-white text-gray-600"
               }`}
             >
-              <span className="font-medium">{ot.label}</span>
+              <span className="font-medium">{tx(`ot.type.${ot.value}` as MessageKey)}</span>
               <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
                 otType === ot.value ? "bg-[#E80012] text-white" : "bg-gray-100 text-gray-500"
               }`}>
@@ -179,7 +179,7 @@ export function OvertimeForm() {
             </p>
           </div>
           <div className="rounded-full bg-[#F5F5F5] px-3 py-1 text-xs font-medium text-gray-600">
-            {currentOt.label}
+            {tx(`ot.type.${currentOt.value}` as MessageKey)}
           </div>
         </div>
       )}

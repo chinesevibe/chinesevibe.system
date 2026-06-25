@@ -815,6 +815,7 @@ const th: MessageCatalog = {
     "ลาป่วยแบบชั่วโมงต้องแนบใบรับรองแพทย์",
   "leave.form.fileSelected": "เลือกไฟล์แล้ว: {name}",
   "leave.form.submit": "ส่งใบลา",
+  "leave.form.submitAgain": "ยื่นคำขอใหม่",
   "leave.form.success": "ส่งคำขอลาแล้ว — รอ HR อนุมัติ (ภายใน 48 ชม.)",
   "leave.form.submitFailed": "ส่งใบลาไม่สำเร็จ",
   "leave.form.validation.type": "เลือกประเภทการลา",
@@ -824,6 +825,12 @@ const th: MessageCatalog = {
   "leave.form.validation.endBeforeStart": "วันสิ้นสุดต้องไม่อยู่ก่อนวันเริ่มลา",
   "leave.form.validation.fileType": "รองรับเฉพาะไฟล์ JPEG, PNG หรือ PDF",
   "leave.form.validation.fileSize": "ไฟล์ต้องมีขนาดไม่เกิน 5MB",
+
+  "ot.type.normal": "วันทำงานปกติ",
+  "ot.type.holiday_weekly": "วันหยุดประจำสัปดาห์",
+  "ot.type.holiday_public": "วันหยุดนักขัตฤกษ์",
+  "ot.page.typeLabel": "ประเภท OT",
+  "ot.form.submitAgain": "ยื่นคำขอใหม่",
 
   "ot.page.title": "ขอทำ OT",
   "ot.page.subtitle": "{name} — ยื่นแล้วแจ้ง HR ทาง LINE Group รออนุมัติ",
@@ -1708,6 +1715,7 @@ const en: MessageCatalog = {
     "Hourly sick leave requires a medical certificate",
   "leave.form.fileSelected": "File selected: {name}",
   "leave.form.submit": "Submit leave",
+  "leave.form.submitAgain": "Submit another request",
   "leave.form.success": "Leave submitted — HR will approve within 48 hours",
   "leave.form.submitFailed": "Failed to submit leave",
   "leave.form.validation.type": "Select leave type",
@@ -1717,6 +1725,12 @@ const en: MessageCatalog = {
   "leave.form.validation.endBeforeStart": "End date cannot be before start date",
   "leave.form.validation.fileType": "Only JPEG, PNG, or PDF files are supported",
   "leave.form.validation.fileSize": "File must be 5MB or smaller",
+
+  "ot.type.normal": "Regular workday",
+  "ot.type.holiday_weekly": "Weekly day off",
+  "ot.type.holiday_public": "Public holiday",
+  "ot.page.typeLabel": "OT type",
+  "ot.form.submitAgain": "Submit another request",
 
   "ot.page.title": "Request OT",
   "ot.page.subtitle": "{name} — submitted; HR notified via LINE Group, awaiting approval",
