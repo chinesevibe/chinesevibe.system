@@ -50,6 +50,7 @@ export function CalendarHrWrapper({
         onDayClick={handleDayClick}
         hrMode
         compact
+        showLegend={false}
       />
       {activeCell ? (
         <CalendarDayOffModal

@@ -270,80 +270,65 @@ export function AttendanceTable({
 
   return (
     <DataTableShell>
-      <div className="border-b border-border/70 bg-gradient-to-br from-background via-background to-muted/20">
-        <div className="flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-5">
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-foreground">
-              {employeeView ? "ประวัติการเข้างานย้อนหลัง" : "Attendance audit ledger"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {employeeView
-                ? "ใช้ส่วนนี้ไล่ย้อนดูประวัติของพนักงานคนเดิม โดยเน้นวันที่ผิดปกติและรายการที่ต้องแก้ไข"
-                : "เรียงจากวันที่ล่าสุดก่อน พร้อมเน้นรายการผิดปกติให้สแกนได้เร็วกว่าเดิม"}
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span
-              className={cn(
-                "rounded-full border border-border/80 bg-background font-medium text-foreground",
-                employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-              )}
-            >
-              ทั้งหมด {rows.length} รายการ
-            </span>
-            <span
-              className={cn(
-                "rounded-full border border-amber-200 bg-amber-50 font-medium text-amber-800",
-                employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-              )}
-            >
-              มาสาย {summary.late}
-            </span>
-            <span
-              className={cn(
-                "rounded-full border border-sky-200 bg-sky-50 font-medium text-sky-800",
-                employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-              )}
-            >
-              ยังไม่เช็คออก {summary.inProgress}
-            </span>
-            <span
-              className={cn(
-                "rounded-full border border-violet-200 bg-violet-50 font-medium text-violet-700",
-                employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-              )}
-            >
-              ต้องจับตา {summary.flagged}
-            </span>
+      {/* ── employeeView: compact single-row header ── */}
+      {employeeView ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 bg-gradient-to-br from-background to-muted/20 px-3 py-2.5">
+          <p className="text-xs font-semibold text-foreground">ประวัติการเข้างานย้อนหลัง</p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { label: `${rows.length} รายการ`, cls: "border-border/80 bg-background text-foreground" },
+              { label: `มาสาย ${summary.late}`, cls: "border-amber-200 bg-amber-50 text-amber-800" },
+              { label: `ไม่เช็คออก ${summary.inProgress}`, cls: "border-sky-200 bg-sky-50 text-sky-800" },
+              { label: `จับตา ${summary.flagged}`, cls: "border-violet-200 bg-violet-50 text-violet-700" },
+              { label: `ตรวจพิกัด ${summary.pendingReview}`, cls: "border-rose-200 bg-rose-50 text-rose-700" },
+            ].map(({ label, cls }) => (
+              <span key={label} className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", cls)}>
+                {label}
+              </span>
+            ))}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-0 md:px-5">
-          <span
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 font-medium text-rose-700",
-              employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-            )}
-          >
-            <AlertTriangle className="size-3.5" />
-            รอตรวจพิกัด {summary.pendingReview}
-          </span>
-          <span
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 font-medium text-sky-700",
-              employeeView ? "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs" : "px-2.5 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs"
-            )}
-          >
-            <Clock3 className="size-3.5" />
-            เปิดรอบอยู่ {rows.filter((row) => row.status === "in_progress").length}
-          </span>
-          {!employeeView ? (
+      ) : (
+        /* ── full mode: original 2-row header ── */
+        <div className="border-b border-border/70 bg-gradient-to-br from-background via-background to-muted/20">
+          <div className="flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-5">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-foreground">Attendance audit ledger</p>
+              <p className="text-xs text-muted-foreground">
+                เรียงจากวันที่ล่าสุดก่อน พร้อมเน้นรายการผิดปกติให้สแกนได้เร็วกว่าเดิม
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[11px] font-medium text-foreground md:px-3 md:py-1.5 md:text-xs">
+                ทั้งหมด {rows.length} รายการ
+              </span>
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-800 md:px-3 md:py-1.5 md:text-xs">
+                มาสาย {summary.late}
+              </span>
+              <span className="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-800 md:px-3 md:py-1.5 md:text-xs">
+                ยังไม่เช็คออก {summary.inProgress}
+              </span>
+              <span className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700 md:px-3 md:py-1.5 md:text-xs">
+                ต้องจับตา {summary.flagged}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-0 md:px-5">
+            <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700 md:px-3 md:py-1.5 md:text-xs">
+              <AlertTriangle className="size-3.5" />
+              รอตรวจพิกัด {summary.pendingReview}
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-700 md:px-3 md:py-1.5 md:text-xs">
+              <Clock3 className="size-3.5" />
+              เปิดรอบอยู่ {rows.filter((row) => row.status === "in_progress").length}
+            </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground md:px-3 md:py-1.5 md:text-xs">
               <MapPinned className="size-3.5" />
               location review แสดงคู่กับรายการทันที
             </span>
-          ) : null}
+          </div>
         </div>
-      </div>
+      )}
       <div className="grid gap-3 p-3 lg:hidden">
         {rows.map((row) => (
           <MobileRowCard

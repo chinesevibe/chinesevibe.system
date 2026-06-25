@@ -459,7 +459,7 @@ export function AttendanceCalendar({
           const style = STATUS[status]
           const isToday = cell.date === today
           const clickable = Boolean(
-            day && onDayClick && (day.retroEligible || (hrMode && status !== "future"))
+            day && onDayClick && (day.retroEligible || hrMode)
           )
           const linkable = Boolean(day && linkDays && status !== "future")
           const isSelected = selectedDate === cell.date
