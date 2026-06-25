@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { FilterX, Search } from "lucide-react"
+import { ArrowUpDown, FilterX, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { BranchFilterOption } from "@/features/employees/data"
@@ -92,83 +92,98 @@ export function EmployeeFilters({
             aria-label="ค้นหาชื่อหรือรหัสพนักงาน"
           />
         </div>
-        <select
-          value={sortValue}
-          onChange={(e) => {
-            const [sort, dir] = e.target.value.split(":")
-            push({ sort, dir })
-          }}
-          className={cn(inputClass, "w-full")}
-          aria-label="เรียงลำดับ"
-        >
-          <option value="name:asc">ชื่อ ก→ฮ</option>
-          <option value="name:desc">ชื่อ ฮ→ก</option>
-          <option value="contract_start:asc">เริ่มงาน เก่า→ใหม่</option>
-          <option value="contract_start:desc">เริ่มงาน ใหม่→เก่า</option>
-        </select>
+        <div className="relative">
+          <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <select
+            value={sortValue}
+            onChange={(e) => {
+              const [sort, dir] = e.target.value.split(":")
+              push({ sort, dir })
+            }}
+            className={cn(inputClass, "w-full pl-8")}
+            aria-label="เรียงลำดับ"
+          >
+            <option value="name:asc">เรียง: ชื่อ ก→ฮ</option>
+            <option value="name:desc">เรียง: ชื่อ ฮ→ก</option>
+            <option value="contract_start:asc">เรียง: เริ่มงาน เก่า→ใหม่</option>
+            <option value="contract_start:desc">เรียง: เริ่มงาน ใหม่→เก่า</option>
+          </select>
+        </div>
         {hasFilters ? (
           <Button type="button" variant="outline" size="sm" onClick={resetFilters} className="h-9 px-3">
             <FilterX className="size-3.5" />
             ล้าง
           </Button>
-        ) : <div />}
+        ) : null}
       </div>
 
-      {/* Row 2: 4 dropdowns */}
-      <div className="grid gap-2 p-2.5 sm:grid-cols-2 xl:grid-cols-4">
-        <select
-          value={status}
-          onChange={(e) => push({ status: e.target.value })}
-          className={inputClass}
-          aria-label="กรองตามสถานะ"
-        >
-          <option value="">ทุกสถานะ</option>
-          <option value="active">Active</option>
-          <option value="probation">Probation</option>
-          <option value="inactive">Inactive</option>
-          <option value="onboarding">รออนุมัติ / กำหนดสาขา</option>
-        </select>
-        <select
-          value={branchId}
-          onChange={(e) => push({ branch_id: e.target.value })}
-          className={cn(inputClass, "w-full")}
-          aria-label="กรองตามสาขา"
-        >
-          <option value="">ทุกสาขา</option>
-          <option value="__none__">รอกำหนดสาขา</option>
-          {branches.map((branch) => (
-            <option key={branch.id} value={branch.id}>
-              {branch.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={department}
-          onChange={(e) => push({ dept: e.target.value })}
-          className={cn(inputClass, "w-full")}
-          aria-label="กรองตามแผนก"
-        >
-          <option value="">ทุกแผนก</option>
-          {departments.map((dept) => (
-            <option key={dept} value={dept}>
-              {dept}
-            </option>
-          ))}
-        </select>
-        <select
-          value={shiftId}
-          onChange={(e) => push({ work_shift_id: e.target.value, shift_id: "" })}
-          className={cn(inputClass, "w-full")}
-          aria-label="กรองตามกะ"
-        >
-          <option value="">ทุกกะ</option>
-          <option value="__none__">ยังไม่กำหนดกะ</option>
-          {workShifts.map((shift) => (
-            <option key={shift.id} value={shift.id}>
-              {`${shift.name} (${formatShiftTimeRange(shift)})`}
-            </option>
-          ))}
-        </select>
+      {/* Row 2: 4 dropdowns with visible labels */}
+      <div className="grid gap-x-2 gap-y-1.5 p-2.5 sm:grid-cols-2 xl:grid-cols-4">
+        <label className="flex flex-col gap-0.5">
+          <span className="pl-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">สถานะ</span>
+          <select
+            value={status}
+            onChange={(e) => push({ status: e.target.value })}
+            className={inputClass}
+            aria-label="กรองตามสถานะ"
+          >
+            <option value="">ทั้งหมด</option>
+            <option value="active">Active</option>
+            <option value="probation">Probation</option>
+            <option value="inactive">Inactive</option>
+            <option value="onboarding">รออนุมัติ / กำหนดสาขา</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-0.5">
+          <span className="pl-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">สาขา</span>
+          <select
+            value={branchId}
+            onChange={(e) => push({ branch_id: e.target.value })}
+            className={cn(inputClass, "w-full")}
+            aria-label="กรองตามสาขา"
+          >
+            <option value="">ทั้งหมด</option>
+            <option value="__none__">รอกำหนดสาขา</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-0.5">
+          <span className="pl-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">แผนก</span>
+          <select
+            value={department}
+            onChange={(e) => push({ dept: e.target.value })}
+            className={cn(inputClass, "w-full")}
+            aria-label="กรองตามแผนก"
+          >
+            <option value="">ทั้งหมด</option>
+            {departments.map((dept) => (
+              <option key={dept} value={dept}>
+                {dept}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-0.5">
+          <span className="pl-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">กะงาน</span>
+          <select
+            value={shiftId}
+            onChange={(e) => push({ work_shift_id: e.target.value, shift_id: "" })}
+            className={cn(inputClass, "w-full")}
+            aria-label="กรองตามกะ"
+          >
+            <option value="">ทั้งหมด</option>
+            <option value="__none__">ยังไม่กำหนดกะ</option>
+            {workShifts.map((shift) => (
+              <option key={shift.id} value={shift.id}>
+                {`${shift.name} (${formatShiftTimeRange(shift)})`}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {activeFilters.length > 0 ? (

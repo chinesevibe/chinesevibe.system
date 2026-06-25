@@ -324,10 +324,6 @@ export function EmployeeTable({
         scrollable && "overflow-auto"
       )}
     >
-      <div className="flex items-center border-b border-border/60 px-3 py-2">
-        <p className="text-xs font-semibold text-foreground">รายการพนักงาน</p>
-      </div>
-
       <div className="grid gap-3 p-3 xl:hidden">
         {employees.map((e) => (
           <EmployeeMobileCard
