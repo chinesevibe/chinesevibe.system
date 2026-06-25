@@ -1,5 +1,7 @@
 import Link from "next/link"
 
+import { MobileLanguageSwitcher } from "@/components/mobile/MobileLanguageSwitcher"
+
 // CNV Brand color
 const RED = "#E11D2A"
 
@@ -92,7 +94,8 @@ function HomeHeader({ branchName }: { branchName?: string | null }) {
           <p className="text-base font-bold text-white leading-tight">WORK HUB</p>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <MobileLanguageSwitcher />
         {branchName && (
           <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-medium text-white">
             📍 {branchName}

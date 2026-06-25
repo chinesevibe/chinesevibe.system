@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 
+import { LocaleProvider } from "@/features/portal/LocaleProvider"
 import { canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
 
@@ -19,7 +20,7 @@ export default async function MobileInventoryLayout({
   }
 
   return (
-    <>
+    <LocaleProvider initialLocale={employee.preferred_locale ?? "th"}>
       <head>
         <link rel="manifest" href="/m/inventory/manifest.json" />
         <meta name="theme-color" content="#E11D2A" />
@@ -27,7 +28,7 @@ export default async function MobileInventoryLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       {children}
-    </>
+    </LocaleProvider>
   )
 }
 
