@@ -12,6 +12,7 @@ import { getCurrentEmployee } from "@/lib/auth/session"
 import { normalizeTimeToHHMM } from "@/lib/datetime/time-input"
 import { t } from "@/lib/i18n/translate"
 import { liffHref } from "@/lib/i18n/liff-url"
+import { canAccessPortalInventoryWorkspace } from "@/lib/auth/roles"
 import { coerceLocale } from "@/lib/i18n/types"
 import { createClient } from "@/lib/supabase/server"
 
@@ -121,6 +122,13 @@ export default async function LiffHomePage({
     { href: liff("/liff/documents"), icon: "📄", label: tx("portal.home.shortcutDoc"),       sub: tx("liff.home.docDesc"),        bg: "bg-blue-50"   },
     { href: liff("/liff/complaint"), icon: "📢", label: tx("portal.home.shortcutComplaint"), sub: tx("liff.home.complaintDesc"),  bg: "bg-green-50"  },
   ]
+
+  if (canAccessPortalInventoryWorkspace(employee)) {
+    MENU.push(
+      { href: liff("/portal/inventory"), icon: "📦", label: tx("portal.home.shortcutStock"), sub: tx("liff.home.stockDesc"), bg: "bg-emerald-50" },
+      { href: liff("/liff/inbound-scan"), icon: "🔍", label: tx("portal.home.shortcutInbound"), sub: tx("liff.home.inboundDesc"), bg: "bg-red-50" }
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5]">

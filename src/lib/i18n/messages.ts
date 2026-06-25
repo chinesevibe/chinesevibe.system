@@ -895,6 +895,8 @@ const th: MessageCatalog = {
   "liff.home.otDesc": "ทำงานล่วงเวลา",
   "liff.home.docDesc": "หนังสือรับรอง/Payslip",
   "liff.home.complaintDesc": "แจ้งปัญหา (ปิดบัง)",
+  "liff.home.stockDesc": "เช็คสต็อก / งานคลัง",
+  "liff.home.inboundDesc": "สแกนรับเข้า",
 }
 
 const en: MessageCatalog = {
@@ -1786,6 +1788,8 @@ const en: MessageCatalog = {
   "liff.home.otDesc": "Overtime work",
   "liff.home.docDesc": "Certificate/Payslip",
   "liff.home.complaintDesc": "Report issue (anonymous)",
+  "liff.home.stockDesc": "Check stock / inventory",
+  "liff.home.inboundDesc": "Scan inbound",
 }
 
 const zh: MessageCatalog = {
