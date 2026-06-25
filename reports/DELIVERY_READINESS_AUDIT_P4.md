@@ -1,7 +1,7 @@
 # Delivery Readiness Audit — Phase 4
 
 **Date:** 2026-06-10  
-**Production:** https://hr-app-two-iota.vercel.app  
+**Production:** https://hr-app-rho-blush.vercel.app  
 **Scope:** T61–T75 — Production excellence & PRD polish
 
 ## Verdict: READY FOR CLIENT REVIEW

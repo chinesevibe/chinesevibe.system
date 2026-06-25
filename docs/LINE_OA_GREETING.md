@@ -37,7 +37,7 @@ cd hr-app && node scripts/line-oa-greeting-setup.mjs
    - เปิดใช้งาน
    - วางข้อความจากสคริปต์ → **Save**
 3. (Optional) แนบรูปใน Console จาก URL:
-   - `https://hr-app-two-iota.vercel.app/line/register-guides/guide-th.jpg`
+   - `https://hr-app-rho-blush.vercel.app/line/register-guides/guide-th.jpg`
    - `.../guide-zh.jpg`
    - `.../guide-my.jpg`
 

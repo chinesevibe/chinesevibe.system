@@ -318,7 +318,7 @@
     </div>
     <div class="topbar-actions">
       <a class="btn btn-outline" href="CLIENT_HANDOFF_P5.md">Markdown</a>
-      <a class="btn btn-primary" href="https://hr-app-two-iota.vercel.app/login" target="_blank" rel="noopener">เปิด Production →</a>
+      <a class="btn btn-primary" href="https://hr-app-rho-blush.vercel.app/login" target="_blank" rel="noopener">เปิด Production →</a>
     </div>
   </header>
 
@@ -361,7 +361,7 @@
       <div class="kpi-row">
         <div class="kpi">
           <div class="kpi-label">Production</div>
-          <div class="kpi-value" style="font-size:0.85rem">hr-app-two-iota</div>
+          <div class="kpi-value" style="font-size:0.85rem">hr-app-rho-blush</div>
           <div class="kpi-sub">Vercel</div>
         </div>
         <div class="kpi">
@@ -457,26 +457,26 @@
             <ul class="link-list">
               <li>
                 <strong>Web login (LINE)</strong>
-                <a href="https://hr-app-two-iota.vercel.app/login" target="_blank" rel="noopener">/login</a>
+                <a href="https://hr-app-rho-blush.vercel.app/login" target="_blank" rel="noopener">/login</a>
               </li>
               <li>
                 <div>
                   <strong>ลงทะเบียนพนักงานใหม่</strong>
                   <div class="hint">หลัง LINE login ครั้งแรก redirect อัตโนมัติ</div>
                 </div>
-                <a href="https://hr-app-two-iota.vercel.app/register" target="_blank" rel="noopener">/register</a>
+                <a href="https://hr-app-rho-blush.vercel.app/register" target="_blank" rel="noopener">/register</a>
               </li>
               <li>
                 <strong>HR / Admin home</strong>
-                <a href="https://hr-app-two-iota.vercel.app/admin" target="_blank" rel="noopener">/admin</a>
+                <a href="https://hr-app-rho-blush.vercel.app/admin" target="_blank" rel="noopener">/admin</a>
               </li>
               <li>
                 <strong>CEO dashboard</strong>
-                <a href="https://hr-app-two-iota.vercel.app/admin/ceo" target="_blank" rel="noopener">/admin/ceo</a>
+                <a href="https://hr-app-rho-blush.vercel.app/admin/ceo" target="_blank" rel="noopener">/admin/ceo</a>
               </li>
               <li>
                 <strong>Branch Manager home</strong>
-                <a href="https://hr-app-two-iota.vercel.app/admin/branch" target="_blank" rel="noopener">/admin/branch</a>
+                <a href="https://hr-app-rho-blush.vercel.app/admin/branch" target="_blank" rel="noopener">/admin/branch</a>
               </li>
               <li><span>BM — อนุมัติลงเวลา</span><code>/admin/branch/attendance</code></li>
               <li><span>BM — อนุมัติลา</span><code>/admin/branch/leaves</code></li>
@@ -484,14 +484,14 @@
               <li><span>BM — ทีมสาขา</span><code>/admin/branch/team</code></li>
               <li>
                 <strong>จัดการสาขา (HR)</strong>
-                <a href="https://hr-app-two-iota.vercel.app/admin/branches" target="_blank" rel="noopener">/admin/branches</a>
+                <a href="https://hr-app-rho-blush.vercel.app/admin/branches" target="_blank" rel="noopener">/admin/branches</a>
               </li>
               <li><span>LIFF — ขอลา</span><code>/liff/leave</code></li>
               <li><span>LIFF — ยื่นสรุปวัน</span><code>/liff/attendance</code></li>
               <li><span>LIFF — OT</span><code>/liff/overtime</code></li>
               <li>
                 <strong>LINE Webhook (Messaging API)</strong>
-                <code>https://hr-app-two-iota.vercel.app/api/line/webhook</code>
+                <code>https://hr-app-rho-blush.vercel.app/api/line/webhook</code>
               </li>
             </ul>
           </div>
@@ -632,9 +632,9 @@ Content-Type: application/json
             <table>
               <thead><tr><th>รายการ</th><th>ค่า</th></tr></thead>
               <tbody>
-                <tr><td>Webhook URL</td><td><code>https://hr-app-two-iota.vercel.app/api/line/webhook</code></td></tr>
-                <tr><td>LIFF endpoint (leave)</td><td><code>https://hr-app-two-iota.vercel.app/liff/leave</code></td></tr>
-                <tr><td>LIFF endpoint (attendance)</td><td><code>https://hr-app-two-iota.vercel.app/liff/attendance</code></td></tr>
+                <tr><td>Webhook URL</td><td><code>https://hr-app-rho-blush.vercel.app/api/line/webhook</code></td></tr>
+                <tr><td>LIFF endpoint (leave)</td><td><code>https://hr-app-rho-blush.vercel.app/liff/leave</code></td></tr>
+                <tr><td>LIFF endpoint (attendance)</td><td><code>https://hr-app-rho-blush.vercel.app/liff/attendance</code></td></tr>
               </tbody>
             </table>
             <div style="padding:1rem 1.25rem;border-top:1px solid var(--border)">
@@ -646,7 +646,7 @@ Content-Type: application/json
                 <li><code>LINE_CHANNEL_ACCESS_TOKEN</code>, <code>LINE_CHANNEL_SECRET</code></li>
                 <li><code>NEXT_PUBLIC_LINE_LIFF_ID</code> (และ LIFF แยกตาม flow ถ้ามี)</li>
                 <li><code>LINE_LOGIN_CHANNEL_ID</code>, <code>LINE_LOGIN_CHANNEL_SECRET</code></li>
-                <li><code>NEXT_PUBLIC_BASE_URL</code> = <code>https://hr-app-two-iota.vercel.app</code></li>
+                <li><code>NEXT_PUBLIC_BASE_URL</code> = <code>https://hr-app-rho-blush.vercel.app</code></li>
               </ul>
             </div>
           </div>
@@ -754,7 +754,7 @@ select name from vault.secrets where name in ('project_url', 'secret_key');</pre
 
       <p class="footer">
         HEAD-OFFICE · CNV WorkHub &amp; Payroll · Phase 5 Handoff<br />
-        <a href="https://hr-app-two-iota.vercel.app">hr-app-two-iota.vercel.app</a>
+        <a href="https://hr-app-rho-blush.vercel.app">hr-app-rho-blush.vercel.app</a>
       </p>
 
     </main>

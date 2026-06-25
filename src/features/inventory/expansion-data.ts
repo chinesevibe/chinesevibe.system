@@ -94,6 +94,13 @@ function stockExpiryHref(branchId?: string, warehouseId?: string) {
   return `/admin/inventory/stock?${params.toString()}#lot-workspace`
 }
 
+function lowStockHref(branchId?: string, warehouseId?: string) {
+  const params = new URLSearchParams({ below_min: "1" })
+  if (branchId) params.set("branch_id", branchId)
+  if (warehouseId) params.set("warehouse_id", warehouseId)
+  return `/admin/inventory/stock?${params.toString()}`
+}
+
 async function latestCostBySkuIds(skuIds: string[]): Promise<CostMap> {
   const supabase = await createClient()
   const entries = await Promise.all(
@@ -218,7 +225,7 @@ export async function getInventoryAlerts(filters: InventoryReportFilters & { typ
         detail: `${row.skuName} คงเหลือ ${row.quantity} ต่ำกว่า Min ${row.minStock}`,
         branchName: row.branchName,
         warehouseName: row.warehouseName,
-        href: "/admin/inventory/stock?below_min=1",
+        href: lowStockHref(row.branchId, row.warehouseId),
         qty: row.quantity,
       })
     }

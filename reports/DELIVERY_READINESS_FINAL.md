@@ -34,7 +34,7 @@
 | Smoke routes | ✅ |
 | Security P6 | ✅ no critical |
 | Client UAT checklist | ✅ automated routes PASS; LINE OAuth manual optional |
-| Production deploy (post lint fix) | ✅ 2026-06-10 `hr-app-two-iota.vercel.app` |
+| Production deploy (post lint fix) | ✅ 2026-06-10 `hr-app-rho-blush.vercel.app` |
 | Portal + lite routes (12) | ✅ all 307/200, no 5xx |
 
 ## Remaining (optional / client)

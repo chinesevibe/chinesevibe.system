@@ -205,7 +205,7 @@ export function OvertimeForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-[#E80012] py-3.5 text-sm font-semibold text-white disabled:opacity-50 active:opacity-80"
+        className="w-full rounded-2xl bg-[#E80012] py-4 text-sm font-semibold text-white disabled:opacity-50 active:opacity-80"
       >
         {submitting ? tx("liff.common.submitting") : tx("ot.form.submit")}
       </button>

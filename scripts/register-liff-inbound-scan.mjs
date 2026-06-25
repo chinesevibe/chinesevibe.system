@@ -4,7 +4,7 @@
  *
  * Usage (prefer LINE Login channel — LIFF lives on login channel, not Messaging API bot):
  *   LINE_LOGIN_CHANNEL_ID=... LINE_LOGIN_CHANNEL_SECRET=... \
- *   NEXT_PUBLIC_BASE_URL=https://hr-app-two-iota.vercel.app \
+ *   NEXT_PUBLIC_BASE_URL=https://hr-app-rho-blush.vercel.app \
  *     node scripts/register-liff-inbound-scan.mjs
  *
  * Or pass LINE_CHANNEL_ACCESS_TOKEN for the login channel directly.
@@ -40,7 +40,7 @@ async function resolveToken() {
 }
 
 const baseUrl = (
-  process.env.NEXT_PUBLIC_BASE_URL || "https://hr-app-two-iota.vercel.app"
+  process.env.NEXT_PUBLIC_BASE_URL || "https://hr-app-rho-blush.vercel.app"
 ).replace(/\/$/, "")
 
 const endpoint = `${baseUrl}/liff/inbound-scan`

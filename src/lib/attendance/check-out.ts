@@ -13,6 +13,7 @@ import {
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import {
   autoCloseOpenAttendanceSessions,
+  isMissingCheckoutRecord,
   isCheckoutStillInActiveCycle,
   sessionCycleStartUtc,
 } from "@/lib/attendance/session-cycle"
@@ -84,17 +85,17 @@ export async function checkOut({
     .eq("employee_id", employee.id)
     .is("check_out_at", null)
     .order("check_in_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
+    .limit(5)
 
   if (openRecordError) throw openRecordError
 
-  let record: typeof openRecord = openRecord
+  let record =
+    (openRecord ?? []).find(
+      (row) =>
+        !isMissingCheckoutRecord(row.location_review_flags as string[] | null | undefined)
+    ) ?? null
   if (!record) {
-    const cycleStart = sessionCycleStartUtc(
-      now,
-      (employee.default_check_in_time as string | null) ?? null
-    )
+    const cycleStart = sessionCycleStartUtc(now)
     const { data: cycleRecord, error: cycleRecordError } = await admin
       .from("hr_attendance")
       .select("id, check_in_at, check_out_at, location_review_status, location_review_flags, shift_date")
@@ -102,11 +103,14 @@ export async function checkOut({
       .gte("check_in_at", cycleStart.toISOString())
       .lte("check_in_at", now.toISOString())
       .order("check_in_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
+      .limit(5)
 
     if (cycleRecordError) throw cycleRecordError
-    record = cycleRecord
+    record =
+      (cycleRecord ?? []).find(
+        (row) =>
+          !isMissingCheckoutRecord(row.location_review_flags as string[] | null | undefined)
+      ) ?? null
   }
 
   if (!record) return { status: "not_checked_in" }

@@ -17,6 +17,11 @@ type PageProps = {
   }>
 }
 
+function transferHref(status?: "draft" | "in_transit" | "received" | "cancelled") {
+  if (!status) return "/portal/transfer"
+  return `/portal/transfer?status=${status}`
+}
+
 function SummaryCard({
   icon: Icon,
   label,
@@ -61,6 +66,7 @@ export default async function PortalTransferPage({ searchParams }: PageProps) {
   const draftCount = rows.filter((row) => row.status === "draft").length
   const inTransitCount = rows.filter((row) => row.status === "in_transit").length
   const receivedCount = rows.filter((row) => row.status === "received").length
+  const cancelledCount = rows.filter((row) => row.status === "cancelled").length
   const totalItems = rows.reduce((sum, row) => sum + row.item_count, 0)
 
   return (
@@ -86,34 +92,67 @@ export default async function PortalTransferPage({ searchParams }: PageProps) {
         />
         <SummaryCard
           icon={ClipboardList}
-          label="แบบร่าง"
+          label="รอส่งออก"
           value={draftCount}
           hint="ใบโอนที่ยังต้องตรวจรายการหรือเตรียมส่งออกจากต้นทาง"
         />
         <SummaryCard
           icon={Send}
-          label="กำลังโอน"
+          label="รอปลายทางรับ"
           value={inTransitCount}
           hint="ใบโอนที่หักสต็อกจากต้นทางแล้วและรอปลายทางยืนยันรับ"
         />
         <SummaryCard
           icon={PackageCheck}
-          label="รับแล้ว"
+          label="รับครบแล้ว"
           value={receivedCount}
-          hint={`รวม ${totalItems.toLocaleString("th-TH")} รายการสินค้าในทุกใบโอน`}
+          hint={`ยกเลิก ${cancelledCount.toLocaleString("th-TH")} · รวม ${totalItems.toLocaleString("th-TH")} รายการ`}
         />
       </div>
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        <Link
+          href={transferHref()}
+          className={cn(buttonVariants({ size: "sm", variant: !params?.status ? "default" : "outline" }))}
+        >
+          ทั้งหมด
+        </Link>
+        <Link
+          href={transferHref("draft")}
+          className={cn(buttonVariants({ size: "sm", variant: params?.status === "draft" ? "default" : "outline" }))}
+        >
+          รอส่งออก {draftCount}
+        </Link>
+        <Link
+          href={transferHref("in_transit")}
+          className={cn(buttonVariants({ size: "sm", variant: params?.status === "in_transit" ? "default" : "outline" }))}
+        >
+          รอรับ {inTransitCount}
+        </Link>
+        <Link
+          href={transferHref("received")}
+          className={cn(buttonVariants({ size: "sm", variant: params?.status === "received" ? "default" : "outline" }))}
+        >
+          รับครบ {receivedCount}
+        </Link>
+      </div>
+
+      {params?.status && !loadError ? (
+        <div className="mb-4 rounded-xl border border-border/70 bg-muted/15 p-3 text-sm text-muted-foreground">
+          ดูสถานะ {params.status === "draft" ? "รอส่งออก" : params.status === "in_transit" ? "รอปลายทางรับ" : params.status === "received" ? "รับครบแล้ว" : "ยกเลิก"} · {rows.length.toLocaleString("th-TH")} ใบ
+        </div>
+      ) : null}
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
           <div>
             <h2 className="text-base font-semibold">คิวใบโอนระหว่างสาขา</h2>
             <p className="text-xs text-muted-foreground">
-              ใช้ดูว่ารายการไหนยังเป็นแบบร่าง รายการไหนส่งแล้ว และรายการไหนปลายทางรับครบแล้ว
+              เปิดคิวที่ค้างก่อน แล้วค่อยเข้าไปส่งออกจากต้นทางหรือยืนยันรับที่ปลายทาง
             </p>
           </div>
           <div className="text-xs text-muted-foreground">
-            ร่าง {draftCount.toLocaleString("th-TH")} · กำลังโอน {inTransitCount.toLocaleString("th-TH")}
+            รอส่งออก {draftCount.toLocaleString("th-TH")} · รอรับ {inTransitCount.toLocaleString("th-TH")}
           </div>
         </div>
         <TransferListTable rows={rows} detailBasePath="/portal/transfer" />

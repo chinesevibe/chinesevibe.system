@@ -1,7 +1,7 @@
 # E2E / Smoke — Phase 5.1 (T76)
 
 **Date:** 2026-06-11  
-**Base URL:** https://hr-app-two-iota.vercel.app
+**Base URL:** https://hr-app-rho-blush.vercel.app
 
 ## smoke-role-routes.mjs
 

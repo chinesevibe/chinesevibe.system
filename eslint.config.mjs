@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // ponytail: static design artifact folder, not application source
+    "ระบบจัดการคลังสินค้าร้านอาหาร/**",
   ]),
 ]);
 

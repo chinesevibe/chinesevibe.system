@@ -4,7 +4,7 @@
  * Usage: node scripts/e2e/smoke-role-routes.mjs [baseUrl]
  */
 
-const BASE = process.argv[2] ?? process.env.SMOKE_BASE_URL ?? "https://hr-app-two-iota.vercel.app"
+const BASE = process.argv[2] ?? process.env.SMOKE_BASE_URL ?? "https://hr-app-rho-blush.vercel.app"
 
 const ROUTES = [
   "/login",

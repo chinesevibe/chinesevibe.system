@@ -1,8 +1,11 @@
-import { notFound } from "next/navigation"
+import Link from "next/link"
 
+import { LiffPageShell } from "@/components/liff/LiffPageShell"
 import { getInvRequisitionDetail } from "@/features/inventory/actions/requisition"
 import { RequisitionDetailView } from "@/features/inventory/RequisitionDetailView"
+import { buttonVariants } from "@/components/ui/button"
 import { requireRole } from "@/lib/auth/require-role"
+import { cn } from "@/lib/utils"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -12,14 +15,35 @@ export default async function LiffInventoryRequisitionReceivePage({ params }: Pa
   await requireRole("employee", "branch_manager", "hr", "inventory", "dev")
   const { id } = await params
   const detail = await getInvRequisitionDetail(id)
-  if (!detail) notFound()
+  if (!detail) {
+    return (
+      <LiffPageShell title="ยืนยันรับใบเบิก" backHref="/portal/inventory">
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <h1 className="text-lg font-semibold">ไม่พบใบเบิก</h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              ใบเบิกนี้อาจถูกลบ ไม่มีสิทธิ์เข้าถึง หรือยังไม่มีข้อมูลให้ยืนยันรับ
+            </p>
+            <Link
+              href="/portal/inventory"
+              className={cn(buttonVariants({ variant: "outline" }), "mt-4 w-full")}
+            >
+              กลับหน้าคลังสินค้า
+            </Link>
+          </div>
+        </div>
+      </LiffPageShell>
+    )
+  }
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-background p-4">
-      <div>
-        <h1 className="text-lg font-semibold">ยืนยันรับใบเบิก</h1>
-        <p className="text-sm text-muted-foreground">{detail.branch_name} · {detail.warehouse_name}</p>
+    <LiffPageShell
+      title="ยืนยันรับใบเบิก"
+      subtitle={`${detail.branch_name} · ${detail.warehouse_name}`}
+      backHref="/portal/inventory"
+    >
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <RequisitionDetailView detail={detail} canManage={false} canSubmit={false} canReceive />
       </div>
-      <RequisitionDetailView detail={detail} canManage={false} canSubmit={false} canReceive />
-    </main>
+    </LiffPageShell>
   )
 }

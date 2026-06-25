@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CNV WorkHub Inventory — คู่มือเริ่มต้นใช้งาน</title>
+  <link rel="icon" href="/brand/mascot.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --card: #ffffff;
+      --text: #1d1b19;
+      --muted: #675f57;
+      --line: #e7dfd5;
+      --brand: #b71f34;
+      --brand-dark: #7f1323;
+      --brand-soft: #fbecef;
+      --green: #156f46;
+      --green-soft: #edf9f1;
+      --blue: #1c5a8c;
+      --blue-soft: #eef6fd;
+      --amber: #946200;
+      --amber-soft: #fff7df;
+      --radius: 16px;
+      --shadow: 0 2px 10px rgba(0, 0, 0, .05), 0 18px 40px rgba(0, 0, 0, .04);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Sarabun", "IBM Plex Sans Thai", system-ui, sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--blue); }
+    header {
+      background: linear-gradient(135deg, #7f1323 0%, #b71f34 50%, #d94f56 100%);
+      color: #fff;
+      padding: 2.6rem 1.4rem 2rem;
+    }
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .hero img {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      padding: 8px;
+      background: rgba(255,255,255,.14);
+    }
+    h1 {
+      margin: 0 0 .4rem;
+      font-size: clamp(1.65rem, 3vw, 2.2rem);
+      line-height: 1.2;
+    }
+    .lead {
+      margin: 0;
+      max-width: 58rem;
+      opacity: .95;
+      font-size: 1rem;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 1.2rem;
+    }
+    .meta a, .meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .45rem .8rem;
+      border-radius: 999px;
+      font-size: .88rem;
+      text-decoration: none;
+      background: rgba(255,255,255,.14);
+      color: #fff;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(246,243,238,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap {
+      display: flex;
+      gap: .35rem;
+      overflow-x: auto;
+      padding: .7rem 0;
+      white-space: nowrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--brand-dark);
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: .42rem .75rem;
+      border-radius: 999px;
+      font-size: .88rem;
+    }
+    main {
+      padding: 1.4rem 0 4rem;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      margin: 0 0 .9rem;
+      color: var(--brand);
+      font-size: 1.25rem;
+    }
+    h3 {
+      margin: 1.1rem 0 .55rem;
+      font-size: 1rem;
+    }
+    p { margin: 0 0 .85rem; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.2rem; }
+    li { margin-bottom: .35rem; }
+    .muted { color: var(--muted); }
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: .9rem;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      background: #fcfbf8;
+    }
+    .mini-card strong {
+      display: block;
+      margin-bottom: .35rem;
+      font-size: .98rem;
+    }
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+      border-radius: 0 12px 12px 0;
+      padding: .85rem 1rem;
+      margin: 1rem 0;
+    }
+    .callout.ok {
+      border-left-color: var(--green);
+      background: var(--green-soft);
+    }
+    .callout.warn {
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: .94rem;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: .68rem .72rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f7f2eb;
+      font-weight: 700;
+    }
+    .route {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .9rem;
+      color: var(--brand-dark);
+      word-break: break-all;
+    }
+    .checklist label {
+      display: flex;
+      gap: .7rem;
+      align-items: flex-start;
+      padding: .55rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .checklist label:last-child { border-bottom: none; }
+    .checklist input {
+      margin-top: .25rem;
+      accent-color: var(--brand);
+      width: 1.05rem;
+      height: 1.05rem;
+      flex: 0 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      padding: .18rem .55rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+    .badge-green { background: var(--green-soft); color: var(--green); }
+    .badge-blue { background: var(--blue-soft); color: var(--blue); }
+    .badge-amber { background: var(--amber-soft); color: var(--amber); }
+    @media (max-width: 860px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero img { width: 60px; height: 60px; }
+    }
+    @media print {
+      nav { display: none; }
+      section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <img src="/brand/mascot.svg" alt="CNV WorkHub" />
+        <div>
+          <h1>คู่มือเริ่มต้นใช้งาน Inventory</h1>
+          <p class="lead">
+            เอกสารนี้สรุปการใช้งานโมดูลคลังสินค้าใน CNV WorkHub สำหรับผู้ดูแลระบบ, HR, Inventory,
+            ผู้จัดการสาขา และทีมปฏิบัติการที่ต้องเริ่มใช้งานคลังแบบหลายสาขาให้เป็นระบบเดียวกัน
+          </p>
+          <div class="meta">
+            <span>อัปเดตตามโครงสร้างระบบปัจจุบัน</span>
+            <a href="https://hr-app-rho-blush.vercel.app/admin/inventory" target="_blank" rel="noopener">เปิด Inventory Workspace ↗</a>
+            <a href="https://hr-app-rho-blush.vercel.app/admin/inventory/dashboard" target="_blank" rel="noopener">เปิด Dashboard ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="wrap">
+      <a href="#overview">ภาพรวม</a>
+      <a href="#access">สิทธิ์เข้าใช้</a>
+      <a href="#setup">ลำดับตั้งค่า</a>
+      <a href="#routes">เมนูหลัก</a>
+      <a href="#daily">งานประจำวัน</a>
+      <a href="#master-data">ข้อมูลหลัก</a>
+      <a href="#reports">รายงาน</a>
+      <a href="#mistakes">ข้อควรระวัง</a>
+      <a href="#checklist">Checklist เริ่มต้น</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="overview">
+      <h2>1. ภาพรวม Inventory ในระบบนี้</h2>
+      <p>
+        โมดูล Inventory ในระบบนี้ออกแบบสำหรับร้านอาหารและหลายสาขา โดยแยกการทำงานเป็น 2 ชั้น:
+      </p>
+      <div class="grid-2">
+        <div class="mini-card">
+          <strong>ชั้นงานปฏิบัติการ</strong>
+          <p class="muted">รับเข้า, ใบเบิก, โอนสินค้า, บันทึกใช้จริง, แจ้งเสียหาย, นับสต็อก, ติดตาม alert และรายงานการเคลื่อนไหว</p>
+        </div>
+        <div class="mini-card">
+          <strong>ชั้นข้อมูลหลัก</strong>
+          <p class="muted">SKU, Supplier, สาขา inventory, คลังสินค้า และ BOM ซึ่งเป็นฐานข้อมูลให้ทุก flow ใช้งานร่วมกัน</p>
+        </div>
+      </div>
+      <div class="callout ok">
+        <strong>แนวคิดหลัก:</strong> เริ่มจากข้อมูลหลักให้ถูกก่อน แล้วค่อยใช้งาน flow รับเข้า → เบิก → โอน → ใช้จริง → ตรวจนับ → รายงาน
+      </div>
+    </section>
+
+    <section id="access">
+      <h2>2. ใครควรใช้เมนูไหน</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>บทบาท</th>
+            <th>งานที่ควรทำ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Inventory / Dev / CEO</td>
+            <td>ใช้งานได้ครบทั้งงานปฏิบัติการและข้อมูลหลัก</td>
+            <td>เหมาะกับผู้คุมระบบคลังรวม</td>
+          </tr>
+          <tr>
+            <td>HR / ผู้ดูแลระบบ</td>
+            <td>ดูภาพรวม, รายงาน, alert, master data ที่เกี่ยวข้อง</td>
+            <td>ใช้ดูการควบคุมและตรวจสอบ</td>
+          </tr>
+          <tr>
+            <td>Branch Manager / พนักงานสาขา</td>
+            <td>ใบเบิก, รับเข้าเฉพาะที่เกี่ยวข้อง, บันทึกใช้จริง, ตรวจนับ</td>
+            <td>ไม่ควรเริ่มจากแก้ master data โดยไม่มีผู้คุมคลังกลาง</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="muted">
+        เมนู Inventory ถูกแยกสิทธิ์สำหรับงานปฏิบัติการกับข้อมูลหลักอยู่แล้ว ถ้าบางหน้ามองไม่เห็น มักเกิดจาก role ที่ไม่เปิดสิทธิ์ส่วนนั้น
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>3. ลำดับตั้งค่าก่อนเริ่มใช้งานจริง</h2>
+      <p>ถ้ายังไม่เคยใช้โมดูลนี้ ให้เริ่มตามลำดับนี้เสมอ:</p>
+      <ol>
+        <li>สร้างหรือทบทวน <strong>สาขา inventory</strong> ให้ครบ</li>
+        <li>สร้าง <strong>คลังสินค้า</strong> ของแต่ละสาขา เช่น Main, Sub, Receiving</li>
+        <li>สร้าง <strong>Supplier</strong> ที่ใช้งานจริง</li>
+        <li>สร้าง <strong>SKU / สินค้า / วัตถุดิบ</strong> พร้อมหน่วยนับและ min/max stock</li>
+        <li>ถ้ามีการแปรรูปหรือสูตร ให้ตั้ง <strong>BOM</strong></li>
+        <li>เริ่มรับเข้าสินค้าล็อตแรก เพื่อให้ stock on hand มีฐานเริ่มต้น</li>
+      </ol>
+      <div class="callout warn">
+        อย่าเริ่มจาก “เบิก” หรือ “โอน” ก่อนที่ SKU, warehouse และ stock ตั้งต้นจะครบ เพราะจะทำให้รายงานและ stock movement เพี้ยนตั้งแต่วันแรก
+      </div>
+    </section>
+
+    <section id="routes">
+      <h2>4. เมนูหลักที่ควรรู้</h2>
+      <div class="grid-3">
+        <div class="mini-card">
+          <strong>Workspace / Dashboard</strong>
+          <p class="route">/admin/inventory</p>
+          <p class="route">/admin/inventory/dashboard</p>
+        </div>
+        <div class="mini-card">
+          <strong>งานปฏิบัติการ</strong>
+          <p class="route">/admin/inventory/stock</p>
+          <p class="route">/admin/inventory/inbound</p>
+          <p class="route">/admin/inventory/requisition</p>
+          <p class="route">/admin/inventory/transfer</p>
+        </div>
+        <div class="mini-card">
+          <strong>ควบคุม / ตรวจสอบ</strong>
+          <p class="route">/admin/inventory/consumption</p>
+          <p class="route">/admin/inventory/damage</p>
+          <p class="route">/admin/inventory/stock-count</p>
+          <p class="route">/admin/inventory/alerts</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>เมนู</th>
+            <th>ใช้ทำอะไร</th>
+            <th>เหมาะกับใคร</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="route">/admin/inventory</span></td>
+            <td>หน้าเริ่มต้นของคลัง ดูงานด่วนวันนี้และเข้า flow หลักจากจุดเดียว</td>
+            <td>ทุกคนที่ทำงาน inventory</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/dashboard</span></td>
+            <td>ดูภาพรวมเชิงบริหาร แยกตามสาขา คลัง และ alert</td>
+            <td>ผู้จัดการ, HR, Inventory lead, CEO</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/stock</span></td>
+            <td>ดู stock on hand, lot, expiry, สถานะคงเหลือ</td>
+            <td>คลังกลาง, สาขา, ผู้ตรวจสอบ</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/inbound</span></td>
+            <td>สร้างใบรับเข้า, รับสินค้าเข้าคลัง, บันทึก lot และจำนวน</td>
+            <td>ฝ่ายคลัง / ฝ่ายรับสินค้า</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/requisition</span></td>
+            <td>สร้างและติดตามใบเบิกจากสาขาหรือครัว</td>
+            <td>สาขา, ครัว, Inventory</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/transfer</span></td>
+            <td>โอนสินค้าระหว่างคลังหรือระหว่างสาขา</td>
+            <td>คลังกลาง, ผู้จัดการสาขา</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/consumption</span></td>
+            <td>บันทึกการใช้จริงและตัด stock ตามเหตุผลที่กำหนด</td>
+            <td>ครัว, ผู้จัดการสาขา, Inventory</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/damage</span></td>
+            <td>บันทึกของเสีย, แตกหัก, หมดอายุ หรือเสียหาย</td>
+            <td>คลัง, สาขา, ผู้ตรวจสอบ</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/stock-count</span></td>
+            <td>ตรวจนับ stock จริงและเปรียบเทียบกับระบบ</td>
+            <td>คลัง, สาขา, Audit</td>
+          </tr>
+          <tr>
+            <td><span class="route">/admin/inventory/reports</span></td>
+            <td>ดูรายงาน stock, movement, variance, inbound, requisition, transfer, damage, audit trail</td>
+            <td>ผู้คุมงานและผู้บริหาร</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="daily">
+      <h2>5. วิธีใช้งานแบบวันต่อวัน</h2>
+
+      <h3>5.1 เปิดวันทำงาน</h3>
+      <ol>
+        <li>เข้า <span class="route">/admin/inventory</span> หรือ <span class="route">/admin/inventory/dashboard</span></li>
+        <li>ดู alert ว่ามี <span class="badge badge-amber">low stock</span>, expiry, หรือรายการค้างรับ/ค้างโอนหรือไม่</li>
+        <li>เลือกสาขาหรือคลังที่ต้องดูเป็นพิเศษก่อนเริ่มงาน</li>
+      </ol>
+
+      <h3>5.2 รับสินค้าเข้า</h3>
+      <ol>
+        <li>สร้างใบรับเข้าที่ <span class="route">/admin/inventory/inbound/new</span></li>
+        <li>เลือก supplier และคลังรับเข้า</li>
+        <li>เพิ่มรายการสินค้า, จำนวน, หน่วย, lot และ expiry ถ้ามี</li>
+        <li>บันทึกรับเข้า แล้วกลับมาตรวจ stock ว่าจำนวนเข้าแล้วจริง</li>
+      </ol>
+
+      <h3>5.3 เบิกสินค้าให้ครัวหรือสาขา</h3>
+      <ol>
+        <li>สร้างใบเบิกที่ <span class="route">/admin/inventory/requisition/create</span></li>
+        <li>เลือกสาขา/คลังที่ขอเบิก</li>
+        <li>เพิ่มรายการและจำนวนที่ต้องการ</li>
+        <li>ผู้เกี่ยวข้องตรวจสถานะว่าเป็น draft, pending, issued หรือ completed</li>
+      </ol>
+
+      <h3>5.4 โอนสินค้าระหว่างคลังหรือสาขา</h3>
+      <ol>
+        <li>เข้า <span class="route">/admin/inventory/transfer/create</span></li>
+        <li>เลือกคลังต้นทางและปลายทางให้ถูก</li>
+        <li>เลือก lot ให้ชัดเมื่อสินค้ามีหลาย lot หรือมี expiry ต่างกัน</li>
+        <li>ยืนยันโอนและติดตามรายการที่ปลายทางต้องรับให้ครบ</li>
+      </ol>
+
+      <h3>5.5 บันทึกใช้จริง / ของเสีย / ตรวจนับ</h3>
+      <div class="grid-3">
+        <div class="mini-card">
+          <strong>Consumption</strong>
+          <p>ใช้เมื่อสินค้าถูกใช้งานจริงและต้องตัด stock ตามเหตุผลที่ระบุ</p>
+        </div>
+        <div class="mini-card">
+          <strong>Damage</strong>
+          <p>ใช้เมื่อสินค้าหมดอายุ ชำรุด เสียหาย หรือใช้ต่อไม่ได้</p>
+        </div>
+        <div class="mini-card">
+          <strong>Stock Count</strong>
+          <p>ใช้เมื่อมีการตรวจนับจริงเพื่อตรวจหาส่วนต่างและปิดรอบตรวจนับ</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="master-data">
+      <h2>6. ข้อมูลหลักที่ต้องดูแล</h2>
+
+      <h3>6.1 SKU</h3>
+      <p>
+        เมนู <span class="route">/admin/inventory/sku</span> ใช้เก็บรายการสินค้า/วัตถุดิบทั้งหมด
+        ควรมี code, ชื่อ, หน่วยนับ, min/max stock และสถานะใช้งาน
+      </p>
+
+      <h3>6.2 Supplier</h3>
+      <p>
+        เมนู <span class="route">/admin/inventory/suppliers</span> ใช้เก็บผู้จำหน่าย,
+        ข้อมูลติดต่อ และสถานะการใช้งาน เพื่ออ้างอิงตอนรับเข้า
+      </p>
+
+      <h3>6.3 สาขา inventory และคลังสินค้า</h3>
+      <p>
+        เมนู <span class="route">/admin/inventory/branches</span> และ
+        <span class="route"> /admin/inventory/warehouses</span> ต้องตั้งให้ตรงกับโครงสร้างจริง
+        เช่น สาขา A มีคลัง Main, Receiving, Kitchen เป็นต้น
+      </p>
+
+      <h3>6.4 BOM</h3>
+      <p>
+        เมนู <span class="route">/admin/inventory/bom</span> ใช้เมื่อสินค้าหนึ่งรายการถูกสร้างจากหลายวัตถุดิบ
+        เช่น เมนูอาหารหรือชุดประกอบ เพื่อรองรับการคำนวณการใช้จริงในรอบถัดไป
+      </p>
+    </section>
+
+    <section id="reports">
+      <h2>7. รายงานที่ควรใช้ประจำ</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>รายงาน</th>
+            <th>เอาไว้ตอบคำถามอะไร</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stock On Hand</td>
+            <td>ตอนนี้ของคงเหลือจริงในแต่ละคลังเท่าไร</td>
+          </tr>
+          <tr>
+            <td>Inbound</td>
+            <td>ช่วงนี้รับของอะไรเข้าเท่าไร จาก supplier ไหน</td>
+          </tr>
+          <tr>
+            <td>Requisition</td>
+            <td>สาขาหรือครัวเบิกอะไรไปบ้าง และค้างสถานะอะไร</td>
+          </tr>
+          <tr>
+            <td>Transfer</td>
+            <td>มีของถูกโอนจากคลังไหนไปคลังไหน และปลายทางรับครบหรือยัง</td>
+          </tr>
+          <tr>
+            <td>Consumption</td>
+            <td>ใช้ของอะไรไปเท่าไร และตัด stock ด้วยเหตุผลใด</td>
+          </tr>
+          <tr>
+            <td>Damage</td>
+            <td>ของเสียเกิดจากอะไร จุดไหนเสียบ่อย และมูลค่าความเสียหายเป็นเท่าไร</td>
+          </tr>
+          <tr>
+            <td>Variance / Audit Trail</td>
+            <td>ระบบกับของจริงต่างกันตรงไหน และใครเป็นคนแก้ไขรายการ</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        จุดเริ่มต้นของรายงานอยู่ที่ <span class="route">/admin/inventory/reports</span>
+      </p>
+    </section>
+
+    <section id="mistakes">
+      <h2>8. ข้อผิดพลาดที่มักเจอเมื่อเริ่มใช้</h2>
+      <div class="grid-2">
+        <div class="mini-card">
+          <strong>เลือกคลังผิด</strong>
+          <p class="muted">ทำให้รับเข้า, โอน, หรือบันทึกใช้ไปลง warehouse ผิด และรายงานคงเหลือเพี้ยน</p>
+        </div>
+        <div class="mini-card">
+          <strong>สร้าง SKU ซ้ำ</strong>
+          <p class="muted">ของชนิดเดียวกันแต่คนละ code ทำให้รวมยอดและตรวจนับลำบาก</p>
+        </div>
+        <div class="mini-card">
+          <strong>ไม่กำหนด lot / expiry</strong>
+          <p class="muted">ถ้าสินค้ามีวันหมดอายุ จะตาม FEFO และ expiry alert ได้ไม่เต็ม</p>
+        </div>
+        <div class="mini-card">
+          <strong>ตัด stock ข้าม flow</strong>
+          <p class="muted">ใช้ damage หรือ consumption ผิดบริบท จะทำให้ audit trail อ่านยาก</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        ถ้าเป้าหมายคือ “ใช้งานให้ถูกตั้งแต่วันแรก” ให้มีคนกลาง 1 คนตรวจว่า branch, warehouse, supplier, sku และหน่วยนับถูกต้องก่อนเปิดให้หลายคนใช้งานพร้อมกัน
+      </div>
+    </section>
+
+    <section id="checklist">
+      <h2>9. Checklist สำหรับเริ่มใช้จริง</h2>
+      <div class="checklist">
+        <label><input type="checkbox" /> <span>กำหนดสิทธิ์ผู้ใช้งานว่าใครดูเฉพาะงานปฏิบัติการ และใครแก้ข้อมูลหลักได้</span></label>
+        <label><input type="checkbox" /> <span>สร้าง branch inventory และ warehouse ของแต่ละสาขาครบแล้ว</span></label>
+        <label><input type="checkbox" /> <span>สร้าง supplier หลักที่ใช้งานจริงแล้ว</span></label>
+        <label><input type="checkbox" /> <span>สร้าง SKU พร้อมหน่วยนับ, min stock, max stock แล้ว</span></label>
+        <label><input type="checkbox" /> <span>มี stock ตั้งต้นหรือมี inbound รอบแรกเข้าแล้ว</span></label>
+        <label><input type="checkbox" /> <span>ทีมทดสอบ flow รับเข้า, เบิก, โอน, ใช้จริง, เสียหาย และ stock count อย่างน้อยอย่างละ 1 รอบ</span></label>
+        <label><input type="checkbox" /> <span>ตรวจรายงาน stock, requisition, transfer, damage และ audit trail ว่าตรงกับรายการทดสอบ</span></label>
+        <label><input type="checkbox" /> <span>กำหนดผู้รับผิดชอบรายวันว่าใครปิดรายการค้างและดู alert</span></label>
+      </div>
+      <div class="callout ok">
+        เมื่อ checklist นี้ครบ ระบบ inventory จะพร้อมสำหรับการ demo, handoff หรือเริ่มใช้จริงแบบมีวินัยมากขึ้น
+      </div>
+    </section>
+  </main>
+</body>
+</html>

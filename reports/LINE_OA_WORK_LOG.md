@@ -1,7 +1,7 @@
 # CNV WorkHub — บันทึกความคืบหน้างาน (Work Log)
 
 > **อัปเดตล่าสุด:** 2026-06-16 (session ค่ำ)  
-> **Production:** https://hr-app-two-iota.vercel.app  
+> **Production:** https://hr-app-rho-blush.vercel.app  
 > **Supabase:** `oouswalwqhojpzqwwdvs` (Singapore)  
 > **Product name:** CNV WorkHub  
 > **Deploy ล่าสุด:** `7ed00ad` → `dpl_7FX2MHdWUiUf3hBVdY39DFWy1hZd` (2026-06-16)

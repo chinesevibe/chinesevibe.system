@@ -139,7 +139,7 @@ async function main() {
   const indexPath = path.join(outDir, "index.html")
   await writeFile(indexPath, html, "utf8")
   console.log(`✓ ${indexPath}`)
-  console.log("\nOpen: /test-barcodes/  (local) or https://hr-app-two-iota.vercel.app/test-barcodes/")
+  console.log("\nOpen: /test-barcodes/  (local) or https://hr-app-rho-blush.vercel.app/test-barcodes/")
 }
 
 main().catch((err) => {

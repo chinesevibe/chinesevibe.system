@@ -29,6 +29,10 @@ function asUuid(value?: string) {
     : ""
 }
 
+function formatQuantity(value: number) {
+  return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(6)))
+}
+
 export default async function PortalStockPage({ searchParams }: PageProps) {
   const employee = await getCurrentEmployee()
   if (!employee || !canAccessPortalInventoryWorkspace(employee)) {
@@ -108,6 +112,19 @@ export default async function PortalStockPage({ searchParams }: PageProps) {
       tone: "text-emerald-700",
       cardTone: "border-emerald-200 bg-emerald-50/40",
     }
+  }
+
+  function stockGapCopy(row: (typeof rows)[number]) {
+    if (row.quantity === 0 && row.minStock > 0) {
+      return `ขาดอีก ${formatQuantity(row.minStock)} เพื่อกลับถึงขั้นต่ำ`
+    }
+    if (row.belowMin) {
+      return `ขาดอีก ${formatQuantity(row.minStock - row.quantity)} เพื่อกลับถึงขั้นต่ำ`
+    }
+    if (row.minStock > 0) {
+      return `สูงกว่าขั้นต่ำ ${formatQuantity(row.quantity - row.minStock)}`
+    }
+    return "รายการนี้ยังไม่ได้ตั้งขั้นต่ำ"
   }
 
   return (
@@ -246,11 +263,19 @@ export default async function PortalStockPage({ searchParams }: PageProps) {
       {belowMinCount > 0 ? (
         <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-sm text-amber-900">
           <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-          <p>
-            มี {visibleBelowMinCount} รายการที่ต่ำกว่าขั้นต่ำ
-            {visibleZeroCount > 0 ? ` และ ${visibleZeroCount} รายการหมดสต็อก` : ""}
-            {normalCount > 0 ? ` · ปกติ ${normalCount} รายการ` : ""}
-          </p>
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              มี {visibleBelowMinCount} รายการที่ต่ำกว่าขั้นต่ำ
+              {visibleZeroCount > 0 ? ` และ ${visibleZeroCount} รายการหมดสต็อก` : ""}
+              {normalCount > 0 ? ` · ปกติ ${normalCount} รายการ` : ""}
+            </p>
+            <Link
+              href="/portal/inbound"
+              className={cn(buttonVariants({ size: "sm", variant: "outline" }), "border-amber-300 bg-white/80 text-amber-900")}
+            >
+              ไปงานรับเข้า
+            </Link>
+          </div>
         </div>
       ) : null}
 
@@ -272,6 +297,10 @@ export default async function PortalStockPage({ searchParams }: PageProps) {
         <ul className="flex flex-col gap-3">
           {filteredRows.map((row) => (
             <li key={row.id} className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm">
+              {(() => {
+                const meta = statusMeta(row)
+                return (
+                  <>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -279,29 +308,37 @@ export default async function PortalStockPage({ searchParams }: PageProps) {
                   </p>
                   <p className="mt-1 text-base font-semibold leading-tight">{row.skuName}</p>
                 </div>
-                <StatusPill
-                  label={statusMeta(row).label}
-                  variant={statusMeta(row).variant}
-                />
+                <div className="flex shrink-0 items-center gap-2">
+                  {!row.isActive ? (
+                    <span className="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                      ปิดใช้งาน
+                    </span>
+                  ) : null}
+                  <StatusPill label={meta.label} variant={meta.variant} />
+                </div>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className={`rounded-xl border px-3 py-3 ${statusMeta(row).cardTone}`}>
+                <div className={`rounded-xl border px-3 py-3 ${meta.cardTone}`}>
                   <p className="text-[11px] text-muted-foreground">คงเหลือจริง</p>
-                  <p className={`mt-1 text-2xl font-bold tabular-nums ${statusMeta(row).tone}`}>
-                    {row.quantity}
+                  <p className={`mt-1 text-2xl font-bold tabular-nums ${meta.tone}`}>
+                    {formatQuantity(row.quantity)}
                   </p>
                 </div>
                 <div className="rounded-xl border border-border/80 bg-muted/20 px-3 py-3">
                   <p className="text-[11px] text-muted-foreground">ขั้นต่ำ</p>
                   <p className="mt-1 text-2xl font-semibold tabular-nums">
-                    {row.minStock > 0 ? row.minStock : "—"}
+                    {row.minStock > 0 ? formatQuantity(row.minStock) : "—"}
                   </p>
                 </div>
               </div>
 
+              <div className={cn("mt-3 rounded-xl border px-3 py-2 text-sm", meta.cardTone)}>
+                <p className="font-medium">{stockGapCopy(row)}</p>
+              </div>
+
               <div className="mt-3 space-y-2 rounded-xl border border-border/70 bg-muted/15 p-3">
-                  <div className="flex items-start gap-2 text-sm">
+                <div className="flex items-start gap-2 text-sm">
                   <Warehouse className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0">
                     <p className="font-medium">{row.branchName}</p>
@@ -318,6 +355,9 @@ export default async function PortalStockPage({ searchParams }: PageProps) {
                   </div>
                 ) : null}
               </div>
+                  </>
+                )
+              })()}
             </li>
           ))}
         </ul>

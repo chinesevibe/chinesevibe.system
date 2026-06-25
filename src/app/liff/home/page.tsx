@@ -70,7 +70,7 @@ export default async function LiffHomePage({
 
   const now = new Date()
   await autoCloseOpenAttendanceSessions({ employeeId: employee.id, now })
-  const cycleStart = sessionCycleStartUtc(now, defaultCheckInTime)
+  const cycleStart = sessionCycleStartUtc(now)
 
   const { data: attendance } = await supabase
     .from("hr_attendance")

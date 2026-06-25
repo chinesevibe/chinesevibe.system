@@ -6,7 +6,7 @@
  *
  * Usage:
  *   node scripts/e2e/flow-onboarding.mjs
- *   BASE_URL=https://hr-app-two-iota.vercel.app node scripts/e2e/flow-onboarding.mjs
+ *   BASE_URL=https://hr-app-rho-blush.vercel.app node scripts/e2e/flow-onboarding.mjs
  */
 
 const base = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "")

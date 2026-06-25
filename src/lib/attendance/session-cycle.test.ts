@@ -2,6 +2,9 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import {
+  hasAttendanceFlag,
+  isMissingCheckoutRecord,
+  MISSING_CHECKOUT_FLAG,
   isRecheckinBlockedAfterCheckout,
   recheckinAvailableAt,
   isCheckoutStillInActiveCycle,
@@ -12,6 +15,20 @@ import {
 // Pure session model — no ICT-day boundary, no timezone arithmetic.
 
 describe("session-cycle", () => {
+  describe("missing checkout flags", () => {
+    it("treats missing-checkout rows as non-open sessions", () => {
+      assert.equal(
+        isMissingCheckoutRecord([MISSING_CHECKOUT_FLAG]),
+        true
+      )
+      assert.equal(
+        hasAttendanceFlag(["outside_geofence", MISSING_CHECKOUT_FLAG], MISSING_CHECKOUT_FLAG),
+        true
+      )
+      assert.equal(isMissingCheckoutRecord(["outside_geofence"]), false)
+    })
+  })
+
   describe("sessionCutoffUtcForCheckIn", () => {
     it("cuts off a session 24h after check-in (14:00 ICT shift)", () => {
       // 14:00 ICT = 07:00 UTC
@@ -49,10 +66,10 @@ describe("session-cycle", () => {
       )
     })
 
-    it("ignores the defaultCheckInTime param (pure session model)", () => {
+    it("stays a pure rolling 24h window", () => {
       const now = new Date("2026-06-20T07:00:00.000Z") // 14:00 ICT
       assert.equal(
-        sessionCycleStartUtc(now, "14:00").toISOString(),
+        sessionCycleStartUtc(now).toISOString(),
         sessionCycleStartUtc(now).toISOString()
       )
     })

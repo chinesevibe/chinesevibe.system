@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-11  
 **Project:** CNV WorkHub (`hr-app`)  
-**Production:** https://hr-app-two-iota.vercel.app  
+**Production:** https://hr-app-rho-blush.vercel.app  
 **Auditor:** Cursor (`/goal` skill)
 
 ## Verdict
@@ -81,7 +81,7 @@ Phase 1 core (F1–F6) ครบและ deploy production แล้ว — bui
 | Step | Actor | Action | URL / Surface |
 |------|-------|--------|---------------|
 | 1 | Employee | เช็คอิน LINE (Rich Menu หรือ QR) | CNV WorkHub |
-| 2 | HR | ดู Dashboard KPI + widgets | https://hr-app-two-iota.vercel.app/admin |
+| 2 | HR | ดู Dashboard KPI + widgets | https://hr-app-rho-blush.vercel.app/admin |
 | 3 | Employee + HR | ขอลา LIFF → HR อนุมัติ | `/liff/leave` → `/admin/leaves` |
 | 4 | HR | ดู Alerts (probation/visa) | `/admin/alerts` |
 

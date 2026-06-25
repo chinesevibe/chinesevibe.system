@@ -1,7 +1,7 @@
 # Cursor Handoff — CNV WorkHub i18n (2026-06-15)
 
 > **Orchestrator:** Cursor  
-> **Production:** https://hr-app-two-iota.vercel.app  
+> **Production:** https://hr-app-rho-blush.vercel.app  
 > **Branch:** `cursor/p1-04-extract-prd-components`  
 > **Supabase prod:** `oouswalwqhojpzqwwdvs` (ไม่ใช่ `cpyuibcrpfslgcazozid`)
 

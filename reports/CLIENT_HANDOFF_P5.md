@@ -4,7 +4,7 @@
 
 **Project:** CNV WorkHub  
 **Date:** 2026-06-11  
-**Production:** https://hr-app-two-iota.vercel.app  
+**Production:** https://hr-app-rho-blush.vercel.app  
 **Supabase project:** `oouswalwqhojpzqwwdvs` (hr-payroll, Singapore)
 
 ---
@@ -65,11 +65,11 @@ Smoke routes: `reports/E2E_P5_1_RESULTS.md`
 
 | จุดเข้าใช้ | URL |
 |------------|-----|
-| **Web login (LINE)** | https://hr-app-two-iota.vercel.app/login |
-| **ลงทะเบียนพนักงานใหม่** | https://hr-app-two-iota.vercel.app/register *(หลัง LINE login ครั้งแรก redirect อัตโนมัติ)* |
-| **HR / Admin home** | https://hr-app-two-iota.vercel.app/admin |
-| **CEO dashboard** | https://hr-app-two-iota.vercel.app/admin/ceo |
-| **Branch Manager home** | https://hr-app-two-iota.vercel.app/admin/branch |
+| **Web login (LINE)** | https://hr-app-rho-blush.vercel.app/login |
+| **ลงทะเบียนพนักงานใหม่** | https://hr-app-rho-blush.vercel.app/register *(หลัง LINE login ครั้งแรก redirect อัตโนมัติ)* |
+| **HR / Admin home** | https://hr-app-rho-blush.vercel.app/admin |
+| **CEO dashboard** | https://hr-app-rho-blush.vercel.app/admin/ceo |
+| **Branch Manager home** | https://hr-app-rho-blush.vercel.app/admin/branch |
 | BM — อนุมัติลงเวลา | `/admin/branch/attendance` |
 | BM — อนุมัติลา | `/admin/branch/leaves` |
 | BM — อนุมัติ OT | `/admin/branch/overtime` |
@@ -80,7 +80,7 @@ Smoke routes: `reports/E2E_P5_1_RESULTS.md`
 | LIFF — OT | `/liff/overtime` |
 
 LINE Webhook (Messaging API):  
-`https://hr-app-two-iota.vercel.app/api/line/webhook`
+`https://hr-app-rho-blush.vercel.app/api/line/webhook`
 
 ---
 
@@ -170,9 +170,9 @@ Content-Type: application/json
 
 | รายการ | ค่า |
 |--------|-----|
-| Webhook URL | `https://hr-app-two-iota.vercel.app/api/line/webhook` |
-| LIFF endpoint (leave) | `https://hr-app-two-iota.vercel.app/liff/leave` |
-| LIFF endpoint (attendance) | `https://hr-app-two-iota.vercel.app/liff/attendance` |
+| Webhook URL | `https://hr-app-rho-blush.vercel.app/api/line/webhook` |
+| LIFF endpoint (leave) | `https://hr-app-rho-blush.vercel.app/liff/leave` |
+| LIFF endpoint (attendance) | `https://hr-app-rho-blush.vercel.app/liff/attendance` |
 
 **Vercel env ที่ต้องมี (Production):**
 
@@ -182,7 +182,7 @@ Content-Type: application/json
 - `LINE_CHANNEL_ACCESS_TOKEN`, `LINE_CHANNEL_SECRET`
 - `NEXT_PUBLIC_LINE_LIFF_ID` (และ LIFF แยกตาม flow ถ้ามี)
 - `LINE_LOGIN_CHANNEL_ID`, `LINE_LOGIN_CHANNEL_SECRET`
-- `NEXT_PUBLIC_BASE_URL` = `https://hr-app-two-iota.vercel.app`
+- `NEXT_PUBLIC_BASE_URL` = `https://hr-app-rho-blush.vercel.app`
 
 ---
 

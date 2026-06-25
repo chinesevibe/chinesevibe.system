@@ -3633,24 +3633,24 @@ INSERT INTO hr_attendance (check_in_at, check_in_location, check_out_at, created
 -- Table: hr_announcements
 INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('ขั้นตอนการ Register 
 ลิงก์ ลงทะเบียนพนักงาน (Production):
-https://hr-app-two-iota.vercel.app/register
+https://hr-app-rho-blush.vercel.app/register
 
 วิธีใช้ (พนักงานใหม่):
-เปิด https://hr-app-two-iota.vercel.app/login
+เปิด https://hr-app-rho-blush.vercel.app/login
 กด เข้าสู่ระบบด้วย LINE
 ถ้ายังไม่มีในระบบ ระบบจะพาไป /register อัตโนมัติ
 กรอกข้อมูล → รอ HR อนุมัติที่ /admin/employees', '2026-06-12 09:14:41.286499+00', 'b7d62088-6d9e-42b2-880a-3a84df0ac2af', '4cf153ca-53be-4b5a-a9ec-512f5cc74347', NULL, NULL, '2026-06-12 09:14:41.159+00', 'sent', 'all', NULL, 'ขั้นตอนการ Register');
-INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-two-iota.vercel.app/login
+INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-rho-blush.vercel.app/login
 2️⃣ กด เข้าสู่ระบบด้วย LINE
 3️⃣ กรอกข้อมูล → รอ HR อนุมัติ ✅
 
 #สอบถามเพิ่มเติมติดต่อ ฝ่าย HR', '2026-06-12 09:24:03.930644+00', 'b7d62088-6d9e-42b2-880a-3a84df0ac2af', 'e38b9be3-0900-4e5c-b50e-9e3d0b290bbd', 'e38b9be3-0900-4e5c-b50e-9e3d0b290bbd/1781256244095_test_______.png', NULL, '2026-06-12 09:24:03.779+00', 'sent', 'all', NULL, '📌 ขั้นตอนการ Register');
-INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-two-iota.vercel.app/login
+INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-rho-blush.vercel.app/login
 2️⃣ กด เข้าสู่ระบบด้วย LINE
 3️⃣ กรอกข้อมูล → รอ HR อนุมัติ ✅
 
 #สอบถามเพิ่มเติมติดต่อ ฝ่าย HR', '2026-06-12 09:25:38.717774+00', 'b7d62088-6d9e-42b2-880a-3a84df0ac2af', '1df81be1-c484-4e46-9802-37c795d7dd43', '1df81be1-c484-4e46-9802-37c795d7dd43/1781256338876_register_guide_under_5mb.jpg', NULL, '2026-06-12 09:25:38.564+00', 'sent', 'all', NULL, '📌 ขั้นตอนการ Register');
-INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-two-iota.vercel.app/login
+INSERT INTO hr_announcements (body, created_at, created_by, id, image_path, scheduled_at, sent_at, status, target_type, target_value, title) VALUES ('1️⃣ เปิด https://hr-app-rho-blush.vercel.app/login
 2️⃣ กด เข้าสู่ระบบด้วย LINE
 3️⃣ กรอกข้อมูล → รอ HR อนุมัติ ✅
 

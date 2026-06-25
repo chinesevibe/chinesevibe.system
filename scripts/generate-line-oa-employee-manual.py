@@ -212,7 +212,7 @@ def build_story(styles) -> list:
     story.append(Spacer(1, 0.6 * cm))
     story.append(
         Paragraph(
-            f"Production: https://hr-app-two-iota.vercel.app<br/>"
+            f"Production: https://hr-app-rho-blush.vercel.app<br/>"
             f"จัดทำ: {date.today().strftime('%d/%m/%Y')}",
             styles["subtitle"],
         )
@@ -287,7 +287,7 @@ def build_story(styles) -> list:
             2,
             "เปิดหน้า Login จริง",
             "เปิดเบราว์เซอร์ไปที่ "
-            "<b>https://hr-app-two-iota.vercel.app/login</b> "
+            "<b>https://hr-app-rho-blush.vercel.app/login</b> "
             "แล้วกดปุ่มสีเขียว <b>เข้าสู่ระบบด้วย LINE</b>",
             styles,
         )
@@ -489,7 +489,7 @@ def build_story(styles) -> list:
     story.append(
         Paragraph(
             "หลัง HR อนุมัติแล้ว Login ที่ /login จะเข้า "
-            "<b>https://hr-app-two-iota.vercel.app/portal</b> ได้",
+            "<b>https://hr-app-rho-blush.vercel.app/portal</b> ได้",
             styles["body"],
         )
     )
@@ -583,13 +583,13 @@ def build_story(styles) -> list:
     # Appendix
     story.extend(section_title("ภาคผนวก — URL สำคัญ", styles))
     urls = [
-        ("Login", "https://hr-app-two-iota.vercel.app/login"),
-        ("ลงทะเบียน", "https://hr-app-two-iota.vercel.app/register"),
-        ("Portal", "https://hr-app-two-iota.vercel.app/portal"),
-        ("LIFF ขอลา", "https://hr-app-two-iota.vercel.app/liff/leave"),
-        ("LIFF OT", "https://hr-app-two-iota.vercel.app/liff/overtime"),
-        ("LIFF เอกสาร", "https://hr-app-two-iota.vercel.app/liff/documents"),
-        ("LIFF ร้องเรียน", "https://hr-app-two-iota.vercel.app/liff/complaint"),
+        ("Login", "https://hr-app-rho-blush.vercel.app/login"),
+        ("ลงทะเบียน", "https://hr-app-rho-blush.vercel.app/register"),
+        ("Portal", "https://hr-app-rho-blush.vercel.app/portal"),
+        ("LIFF ขอลา", "https://hr-app-rho-blush.vercel.app/liff/leave"),
+        ("LIFF OT", "https://hr-app-rho-blush.vercel.app/liff/overtime"),
+        ("LIFF เอกสาร", "https://hr-app-rho-blush.vercel.app/liff/documents"),
+        ("LIFF ร้องเรียน", "https://hr-app-rho-blush.vercel.app/liff/complaint"),
     ]
     url_table = [["หน้า", "URL"]] + urls
     ut = Table(url_table, colWidths=[3.5 * cm, 11.5 * cm])

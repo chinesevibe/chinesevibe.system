@@ -33,6 +33,23 @@ function statusVariant(status: InvRequisitionStatus) {
   return "neutral" as const
 }
 
+function nextStepCopy(status: InvRequisitionStatus) {
+  if (status === "draft") return "ยังไม่ส่งเข้า workflow"
+  if (status === "pending") return "รอคลังตรวจและอนุมัติ"
+  if (status === "approved") return "รอจัดของและตัดสต็อก"
+  if (status === "issued") return "รอปลายทางยืนยันรับ"
+  if (status === "completed") return "ปิดงานแล้ว"
+  return "ใบนี้ถูกปฏิเสธแล้ว"
+}
+
+function actionLabel(status: InvRequisitionStatus) {
+  if (status === "pending") return "อนุมัติ/ปฏิเสธ"
+  if (status === "approved") return "จ่ายของ"
+  if (status === "issued") return "ยืนยันรับ"
+  if (status === "draft") return "ตรวจแบบร่าง"
+  return "ดูงาน"
+}
+
 export function RequisitionListTable({
   requisitions,
   detailBasePath = "/admin/inventory/requisition",
@@ -68,6 +85,12 @@ export function RequisitionListTable({
                   <p className="text-lg font-semibold tabular-nums">{row.item_count}</p>
                 </div>
               </div>
+              <div className="mt-3 rounded-lg border border-border/70 bg-muted/15 p-3 text-sm">
+                <p className="font-medium">{nextStepCopy(row.status)}</p>
+                {row.notes ? (
+                  <p className="mt-1 line-clamp-2 text-muted-foreground">{row.notes}</p>
+                ) : null}
+              </div>
               <div className="mt-3 flex justify-end">
                 <Link
                   href={`${detailBasePath}/${row.id}`}
@@ -76,7 +99,7 @@ export function RequisitionListTable({
                     "inline-flex items-center gap-1"
                   )}
                 >
-                  ดูงาน
+                  {actionLabel(row.status)}
                   <ArrowUpRight className="size-3.5" aria-hidden />
                 </Link>
               </div>

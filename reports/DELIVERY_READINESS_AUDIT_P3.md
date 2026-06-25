@@ -1,7 +1,7 @@
 # Delivery Readiness Audit — Phase 3
 
 **Date:** 2026-06-10  
-**Production:** https://hr-app-two-iota.vercel.app
+**Production:** https://hr-app-rho-blush.vercel.app
 
 ## Milestones
 

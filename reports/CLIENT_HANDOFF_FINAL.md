@@ -2,7 +2,7 @@
 
 **Project:** CNV WorkHub  
 **Date:** 2026-06-11  
-**Production:** https://hr-app-two-iota.vercel.app
+**Production:** https://hr-app-rho-blush.vercel.app
 
 ## What's new since Phase 5 handoff
 

@@ -12,6 +12,7 @@ import {
 } from "@/lib/attendance/location-security"
 import {
   autoCloseOpenAttendanceSessions,
+  isMissingCheckoutRecord,
   isRecheckinBlockedAfterCheckout,
   recheckinAvailableAt,
   sessionCutoffUtcForCheckIn,
@@ -80,16 +81,19 @@ export async function checkIn({
 
   const { data: openRecord, error: openRecordError } = await admin
     .from("hr_attendance")
-    .select("check_in_at")
+    .select("check_in_at, location_review_flags")
     .eq("employee_id", employee.id)
     .is("check_out_at", null)
     .order("check_in_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
+    .limit(5)
 
   if (openRecordError) throw openRecordError
-  if (openRecord) {
-    const checkInAt = new Date(openRecord.check_in_at)
+  const activeOpenRecord = (openRecord ?? []).find(
+    (record) =>
+      !isMissingCheckoutRecord(record.location_review_flags as string[] | null | undefined)
+  )
+  if (activeOpenRecord) {
+    const checkInAt = new Date(activeOpenRecord.check_in_at)
     return {
       status: "requires_retro_checkout",
       checkInAt,
@@ -163,16 +167,19 @@ export async function checkIn({
     if (String(insertError.message ?? "").includes("open attendance record")) {
       const { data: currentOpen, error: currentOpenError } = await admin
         .from("hr_attendance")
-        .select("check_in_at")
+        .select("check_in_at, location_review_flags")
         .eq("employee_id", employee.id)
         .is("check_out_at", null)
         .order("check_in_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
+        .limit(5)
 
       if (currentOpenError) throw currentOpenError
-      if (currentOpen) {
-        const checkInAt = new Date(currentOpen.check_in_at)
+      const currentActiveOpen = (currentOpen ?? []).find(
+        (record) =>
+          !isMissingCheckoutRecord(record.location_review_flags as string[] | null | undefined)
+      )
+      if (currentActiveOpen) {
+        const checkInAt = new Date(currentActiveOpen.check_in_at)
         return {
           status: "requires_retro_checkout",
           checkInAt,

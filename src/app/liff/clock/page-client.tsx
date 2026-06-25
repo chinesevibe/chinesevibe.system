@@ -199,8 +199,8 @@ const CLOCK_COPY: Record<
     connectError: "ไม่สามารถเชื่อมต่อได้",
     staleSessionTitle: "มี session ค้าง",
     staleSessionDetailWithTime: (time) =>
-      `พบการเข้างานค้างตั้งแต่ ${time} กรุณาเช็คออกย้อนหลังหรือรอระบบปิดอัตโนมัติ 06:00 น.`,
-    staleSessionDetail: "กรุณาเช็คออกย้อนหลังหรือรอระบบปิดอัตโนมัติ 06:00 น.",
+      `พบการเข้างานค้างตั้งแต่ ${time} กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์หลัง 06:00 น.`,
+    staleSessionDetail: "กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์หลัง 06:00 น.",
     tooSoonTitle: "ยังเช็คอินใหม่ไม่ได้",
     tooSoonDetail: (time) => `เช็คอินใหม่ได้หลัง ${time} น.`,
     locating: "กำลังหาพิกัด...",
@@ -244,8 +244,8 @@ const CLOCK_COPY: Record<
     connectError: "Unable to connect",
     staleSessionTitle: "Open session found",
     staleSessionDetailWithTime: (time) =>
-      `An earlier session has been open since ${time}. Please submit a retro checkout or wait for auto-close at 06:00.`,
-    staleSessionDetail: "Please submit a retro checkout or wait for auto-close at 06:00.",
+      `An earlier session has been open since ${time}. Please submit a retro checkout or it will stay marked as missing checkout after 06:00.`,
+    staleSessionDetail: "Please submit a retro checkout or it will stay marked as missing checkout after 06:00.",
     tooSoonTitle: "Too soon to clock in again",
     tooSoonDetail: (time) => `Next clock-in available after ${time}`,
     locating: "Getting location...",
@@ -289,8 +289,8 @@ const CLOCK_COPY: Record<
     connectError: "无法连接",
     staleSessionTitle: "发现未结束的 session",
     staleSessionDetailWithTime: (time) =>
-      `发现从 ${time} 开始的未结束 session，请先补签下班或等待系统于 06:00 自动关闭。`,
-    staleSessionDetail: "请先补签下班或等待系统于 06:00 自动关闭。",
+      `发现从 ${time} 开始的未结束 session，请先补签下班，否则 06:00 后会保留为未打下班。`,
+    staleSessionDetail: "请先补签下班，否则 06:00 后会保留为未打下班。",
     tooSoonTitle: "尚未到可打卡时间",
     tooSoonDetail: (time) => `可于 ${time} 后重新打卡`,
     locating: "正在定位...",
@@ -334,8 +334,8 @@ const CLOCK_COPY: Record<
     connectError: "ချိတ်ဆက်၍ မရပါ",
     staleSessionTitle: "မပြီးသေးသော session တွေ့ရှိသည်",
     staleSessionDetailWithTime: (time) =>
-      `${time} ကတည်းက ဖွင့်ထားသော session ရှိနေသည်။ နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ သို့မဟုတ် 06:00 အလိုအလျောက်ပိတ်ချိန်ကို စောင့်ပါ။`,
-    staleSessionDetail: "နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ သို့မဟုတ် 06:00 အလိုအလျောက်ပိတ်ချိန်ကို စောင့်ပါ။",
+      `${time} ကတည်းက ဖွင့်ထားသော session ရှိနေသည်။ နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက 06:00 နောက်ပိုင်း missing checkout အဖြစ်ကျန်နေမည်။`,
+    staleSessionDetail: "နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက 06:00 နောက်ပိုင်း missing checkout အဖြစ်ကျန်နေမည်။",
     tooSoonTitle: "ပြန်မဝင်နိုင်သေးပါ",
     tooSoonDetail: (time) => `${time} နောက်မှ ပြန်ဝင်နိုင်သည်`,
     locating: "တည်နေရာ ရှာနေသည်...",

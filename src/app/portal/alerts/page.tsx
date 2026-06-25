@@ -70,6 +70,19 @@ function SummaryCard({
   )
 }
 
+function alertsHref(filters: {
+  type?: "" | "expiry" | "low_stock" | "anomaly"
+  branchId?: string
+  warehouseId?: string
+}) {
+  const params = new URLSearchParams()
+  if (filters.type) params.set("type", filters.type)
+  if (filters.branchId) params.set("branch_id", filters.branchId)
+  if (filters.warehouseId) params.set("warehouse_id", filters.warehouseId)
+  const value = params.toString()
+  return value ? `/portal/alerts?${value}` : "/portal/alerts"
+}
+
 export default async function PortalAlertsPage({ searchParams }: PageProps) {
   await requireManagedInventoryPortal()
 
@@ -84,6 +97,8 @@ export default async function PortalAlertsPage({ searchParams }: PageProps) {
   const anomalyCount = rows.filter((row) => row.type === "anomaly").length
   const highSeverityCount = rows.filter((row) => row.severity === "high").length
   const portalRows = rows.map((row) => ({ ...row, href: toPortalAlertHref(row.href) }))
+  const branchId = filters.branchId
+  const warehouseId = filters.warehouseId
 
   return (
     <AdminPageShell
@@ -113,7 +128,47 @@ export default async function PortalAlertsPage({ searchParams }: PageProps) {
           </ul>
         </div>
 
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={alertsHref({ branchId, warehouseId })}
+            className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-2 text-sm hover:bg-muted/40"
+          >
+            ทั้งหมด {rows.length}
+          </a>
+          <a
+            href={alertsHref({ type: "anomaly", branchId, warehouseId })}
+            className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-2 text-sm hover:bg-muted/40"
+          >
+            ผิดปกติ {anomalyCount}
+          </a>
+          <a
+            href={alertsHref({ type: "expiry", branchId, warehouseId })}
+            className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-2 text-sm hover:bg-muted/40"
+          >
+            ใกล้หมดอายุ {expiryCount}
+          </a>
+          <a
+            href={alertsHref({ type: "low_stock", branchId, warehouseId })}
+            className="inline-flex items-center rounded-full border border-border/80 bg-background px-3 py-2 text-sm hover:bg-muted/40"
+          >
+            สต็อกต่ำ {lowStockCount}
+          </a>
+        </div>
+
         <InventoryFilterBar options={options} showType />
+
+        {(filters.type || filters.branchId || filters.warehouseId) ? (
+          <div className="rounded-xl border border-border/70 bg-muted/15 p-3 text-sm text-muted-foreground">
+            {filters.type === "anomaly"
+              ? "กำลังดู: ผิดปกติ"
+              : filters.type === "expiry"
+                ? "กำลังดู: ใกล้หมดอายุ"
+                : filters.type === "low_stock"
+                  ? "กำลังดู: สต็อกต่ำ"
+                  : "กำลังดู: ทุกประเภท"}
+            {` · ${rows.length} รายการ`}
+          </div>
+        ) : null}
 
         <section className="space-y-3">
           <div>

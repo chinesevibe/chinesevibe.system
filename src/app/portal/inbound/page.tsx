@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { AlertTriangle, Barcode, ExternalLink, PackageSearch, Truck } from "lucide-react"
 
@@ -9,7 +10,7 @@ import { canAccessPortalInventoryWorkspace, canManageInventory } from "@/lib/aut
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { formatThaiDate } from "@/lib/datetime/thailand"
 import { t } from "@/lib/i18n/translate"
-import { inboundScanHref } from "@/lib/line/inbound-scan-url"
+import { inboundScanHref, inboundScanPath } from "@/lib/line/inbound-scan-url"
 import { cn } from "@/lib/utils"
 
 export default async function PortalInboundPage() {
@@ -169,16 +170,27 @@ export default async function PortalInboundPage() {
                 ) : null}
 
                 <div className="mt-3">
-                  <a
-                    href={inboundScanHref(order.id, locale)}
-                    className={cn(
-                      buttonVariants({ size: "sm" }),
-                      "inline-flex w-full items-center justify-center gap-1.5"
-                    )}
-                  >
-                    {t("liff.inbound.scanTab", locale)}
-                    <ExternalLink className="size-3.5" />
-                  </a>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Link
+                      href={inboundScanPath(order.id, locale)}
+                      className={cn(
+                        buttonVariants({ size: "sm" }),
+                        "inline-flex flex-1 items-center justify-center gap-1.5"
+                      )}
+                    >
+                      สแกนในหน้านี้
+                    </Link>
+                    <a
+                      href={inboundScanHref(order.id, locale)}
+                      className={cn(
+                        buttonVariants({ size: "sm", variant: "outline" }),
+                        "inline-flex flex-1 items-center justify-center gap-1.5"
+                      )}
+                    >
+                      เปิดใน LINE
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                  </div>
                 </div>
               </li>
             ))}

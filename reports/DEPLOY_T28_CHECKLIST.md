@@ -4,7 +4,7 @@
 
 | Service | URL |
 |---------|-----|
-| **Vercel (production)** | https://hr-app-two-iota.vercel.app |
+| **Vercel (production)** | https://hr-app-rho-blush.vercel.app |
 | **Supabase project** | https://oouswalwqhojpzqwwdvs.supabase.co |
 | **Supabase dashboard** | https://supabase.com/dashboard/project/oouswalwqhojpzqwwdvs |
 | **Vercel dashboard** | https://vercel.com/latinzx-8395s-projects/hr-app |
@@ -39,7 +39,7 @@
 - [x] `NEXT_PUBLIC_LINE_LIFF_ID`
 - [x] `LINE_LOGIN_CHANNEL_ID`
 - [x] `LINE_LOGIN_CHANNEL_SECRET`
-- [x] `NEXT_PUBLIC_BASE_URL` → `https://hr-app-two-iota.vercel.app`
+- [x] `NEXT_PUBLIC_BASE_URL` → `https://hr-app-rho-blush.vercel.app`
 - [x] `LINE_USER_CHAT_ENABLED`, `WORK_START_HOUR`, `WORK_START_MINUTE`
 
 ## Gate 5 — Edge Functions (Supabase)
@@ -67,15 +67,15 @@
 Update these in [LINE Developers Console](https://developers.line.biz/):
 
 ### Messaging API channel
-- **Webhook URL:** `https://hr-app-two-iota.vercel.app/api/line/webhook`
+- **Webhook URL:** `https://hr-app-rho-blush.vercel.app/api/line/webhook`
 - Enable **Use webhook**
 - Click **Verify** (expect 200)
 
 ### LINE Login channel
-- **Callback URL:** `https://hr-app-two-iota.vercel.app/api/auth/line/callback`
+- **Callback URL:** `https://hr-app-rho-blush.vercel.app/api/auth/line/callback`
 
 ### LIFF app (`2010360838-EqD4V9Xa`)
-- **Endpoint URL:** `https://hr-app-two-iota.vercel.app/liff/leave` ✅ (updated via LIFF API 2026-06-11)
+- **Endpoint URL:** `https://hr-app-rho-blush.vercel.app/liff/leave` ✅ (updated via LIFF API 2026-06-11)
 - Check-in QR ใช้ direct URL `/liff/checkin?token=...` ไม่ผ่าน LIFF endpoint
 
 ## Rollback Plan

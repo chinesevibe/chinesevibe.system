@@ -29,6 +29,19 @@ const STATUS_LABELS: Record<InvTransferRow["status"], string> = {
   cancelled: "ยกเลิก",
 }
 
+function nextStepCopy(status: InvTransferRow["status"]) {
+  if (status === "draft") return "รอตรวจรายการและส่งออกจากต้นทาง"
+  if (status === "in_transit") return "รอปลายทางตรวจของและยืนยันรับ"
+  if (status === "received") return "ปิดงานแล้ว"
+  return "ใบโอนนี้ถูกยกเลิกแล้ว"
+}
+
+function actionLabel(status: InvTransferRow["status"]) {
+  if (status === "draft") return "ส่งออก"
+  if (status === "in_transit") return "ยืนยันรับ"
+  return "ดูงาน"
+}
+
 export function TransferListTable({
   rows,
   detailBasePath = "/admin/inventory/transfer",
@@ -72,12 +85,18 @@ export function TransferListTable({
                   <p className="text-lg font-semibold tabular-nums">{row.item_count}</p>
                 </div>
               </div>
+              <div className="mt-3 rounded-lg border border-border/70 bg-muted/15 p-3 text-sm">
+                <p className="font-medium">{nextStepCopy(row.status)}</p>
+                {row.notes ? (
+                  <p className="mt-1 line-clamp-2 text-muted-foreground">{row.notes}</p>
+                ) : null}
+              </div>
               <div className="mt-3 flex justify-end">
                 <Link
                   href={`${detailBasePath}/${row.id}`}
                   className="inline-flex items-center gap-1 font-medium text-brand-red hover:underline"
                 >
-                  ดูงาน
+                  {actionLabel(row.status)}
                   <ArrowUpRight className="size-3.5" aria-hidden />
                 </Link>
               </div>

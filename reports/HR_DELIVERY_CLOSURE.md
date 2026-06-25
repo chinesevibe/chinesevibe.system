@@ -1,7 +1,7 @@
 # HR Delivery Closure — ส่งมอบครบ (เหลือ Payroll บาท onsite)
 
 **Client goal:** 2026-06-12 — ปิด HR ครบที่ส่งมอบจริง → เหลือ **M39 Payroll บาท** ไปคุย HR + Accounting หน้างาน  
-**Production:** https://hr-app-two-iota.vercel.app  
+**Production:** https://hr-app-rho-blush.vercel.app  
 **Target tag:** `hr-payroll-v1.1` (หลัง M38 sign-off)
 
 ---

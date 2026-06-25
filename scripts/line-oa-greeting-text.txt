@@ -11,4 +11,4 @@
 🔗 ลิงก์ลงทะเบียนสำหรับพนักงานใหม่
 (新员工注册链接)
 
-https://hr-app-two-iota.vercel.app/register
+https://hr-app-rho-blush.vercel.app/register

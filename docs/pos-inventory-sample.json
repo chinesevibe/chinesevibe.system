@@ -1,0 +1,16 @@
+{
+  "source_system": "pos",
+  "event_type": "sale",
+  "external_ref": "POS-ORDER-20260625-0001",
+  "branch_code": "001",
+  "warehouse_code": "001",
+  "sold_at": "2026-06-25T13:00:00+07:00",
+  "notes": "โต๊ะ A12",
+  "items": [
+    {
+      "sku_code": "BEV-BEERCHANG-620-1",
+      "qty": 2,
+      "consumption_type": "production"
+    }
+  ]
+}

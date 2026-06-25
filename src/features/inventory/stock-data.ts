@@ -8,8 +8,10 @@ export type InvStockRow = {
   minStock: number
   barcode: string | null
   isActive: boolean
+  warehouseId: string
   warehouseCode: string
   warehouseName: string
+  branchId: string
   branchName: string
   belowMin: boolean
 }
@@ -41,6 +43,7 @@ export async function listInvStockRows(
     .select(
       `
       id,
+      warehouse_id,
       quantity,
       inv_skus!inner(code, name, min_stock, barcode, is_active),
       inv_warehouses!inner(
@@ -115,8 +118,10 @@ export async function listInvStockRows(
       minStock,
       barcode: sku.barcode,
       isActive: sku.is_active,
+      warehouseId: (row.warehouse_id as string) ?? "",
       warehouseCode: warehouse.code,
       warehouseName: warehouse.name,
+      branchId: warehouse.branch_id,
       branchName: relationName(warehouse.inv_branches),
       belowMin,
     })

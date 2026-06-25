@@ -33,7 +33,7 @@ loadEnvLocal()
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN
 const PRODUCTION_BASE =
   process.env.LINE_OA_PRODUCTION_BASE_URL?.replace(/\/$/, "") ??
-  "https://hr-app-two-iota.vercel.app"
+  "https://hr-app-rho-blush.vercel.app"
 
 /** Console greeting must use public HTTPS URLs (not ngrok). */
 const consoleBaseUrl = PRODUCTION_BASE
@@ -62,7 +62,7 @@ if (!token) {
 }
 
 console.log("--- ข้อความ Greeting ( copy ไปวางใน Console ) ---\n")
-console.log(greetingText.replace("https://hr-app-two-iota.vercel.app/register", registerUrl))
+console.log(greetingText.replace("https://hr-app-rho-blush.vercel.app/register", registerUrl))
 console.log("\n--- ขั้นตอนใน LINE Official Account Manager ---\n")
 console.log(`1. เปิด https://manager.line.biz/ และ login
 2. เลือก OA ของ CNV WorkHub

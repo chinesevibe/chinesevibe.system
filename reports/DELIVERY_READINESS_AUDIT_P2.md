@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-11 (UAT updated)  
 **Verdict:** 🟢 **READY** (1:1 LINE) / 🟡 group HR caveat  
-**Production:** https://hr-app-two-iota.vercel.app
+**Production:** https://hr-app-rho-blush.vercel.app
 
 ## Build Gates
 

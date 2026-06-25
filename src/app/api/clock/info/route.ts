@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 
-import { autoCloseOpenAttendanceSessions } from "@/lib/attendance/session-cycle"
+import {
+  autoCloseOpenAttendanceSessions,
+  isMissingCheckoutRecord,
+} from "@/lib/attendance/session-cycle"
 import { getCurrentEmployee } from "@/lib/auth/session"
 import { isRealLineId } from "@/lib/auth/line-user-id"
 import { getAdminClient } from "@/lib/auth/admin-client"
@@ -74,7 +77,7 @@ export async function GET() {
 
   // ── Current session ────────────────────────────────────────────────────
   // Pure session model: open record = active session; no ICT-day window.
-  // Auto-close stale open records older than 24h (forgot to check out).
+  // Stale open records are marked as missing checkout and no longer block a new session.
   const now = new Date()
   await autoCloseOpenAttendanceSessions({
     admin,
@@ -89,19 +92,23 @@ export async function GET() {
 
   const { data: recentRecord } = await admin
     .from("hr_attendance")
-    .select("check_in_at, check_out_at")
+    .select("check_in_at, check_out_at, location_review_flags")
     .eq("employee_id", employee.id)
     .or(`check_out_at.is.null,check_out_at.gte.${displaySince.toISOString()}`)
     .order("check_in_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
+    .limit(5)
 
   let checkInAt: string | null = null
   let checkOutAt: string | null = null
-  if (recentRecord?.check_in_at) {
-    checkInAt = new Date(recentRecord.check_in_at as string).toISOString()
-    checkOutAt = recentRecord.check_out_at
-      ? new Date(recentRecord.check_out_at as string).toISOString()
+  const displayRecord =
+    (recentRecord ?? []).find(
+      (record) =>
+        !isMissingCheckoutRecord(record.location_review_flags as string[] | null | undefined)
+    ) ?? null
+  if (displayRecord?.check_in_at) {
+    checkInAt = new Date(displayRecord.check_in_at as string).toISOString()
+    checkOutAt = displayRecord.check_out_at
+      ? new Date(displayRecord.check_out_at as string).toISOString()
       : null
   }
 

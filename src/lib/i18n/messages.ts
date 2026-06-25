@@ -102,7 +102,7 @@ const th: MessageCatalog = {
   "auth.register.lineLinked": "✅ ผูกบัญชี LINE กับ {name} แล้ว",
   "auth.register.lineLinkedPending": "✅ ผูกบัญชี LINE แล้ว — ส่งคำขอลงทะเบียนต่อได้",
 
-  "portal.title": "Employee Portal",
+  "portal.title": "พอร์ทัลพนักงาน",
   "portal.logout": "ออกจากระบบ",
   "portal.nav.home": "หน้าหลัก",
   "portal.nav.profile": "โปรไฟล์",

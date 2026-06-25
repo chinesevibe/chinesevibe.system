@@ -35,6 +35,17 @@ function parseStatus(status?: string): InvRequisitionStatus | undefined {
     : undefined
 }
 
+function requisitionHref(filters: {
+  status?: InvRequisitionStatus
+  branchId?: string
+}) {
+  const query = new URLSearchParams()
+  if (filters.status) query.set("status", filters.status)
+  if (filters.branchId) query.set("branch_id", filters.branchId)
+  const value = query.toString()
+  return value ? `/portal/requisition?${value}` : "/portal/requisition"
+}
+
 function SummaryCard({
   icon: Icon,
   label,
@@ -87,8 +98,12 @@ export default async function PortalRequisitionPage({ searchParams }: PageProps)
 
   const draftCount = requisitions.filter((item) => item.status === "draft").length
   const pendingCount = requisitions.filter((item) => item.status === "pending").length
+  const approvedCount = requisitions.filter((item) => item.status === "approved").length
   const issuedCount = requisitions.filter((item) => item.status === "issued").length
   const completedCount = requisitions.filter((item) => item.status === "completed").length
+  const selectedBranchName = branchId
+    ? options.branches.find((branch) => branch.id === branchId)?.name ?? null
+    : null
 
   return (
     <AdminPageShell
@@ -117,15 +132,15 @@ export default async function PortalRequisitionPage({ searchParams }: PageProps)
         />
         <SummaryCard
           icon={Store}
-          label="จ่ายของแล้ว"
-          value={issuedCount}
-          hint="คำขอที่คลังจ่ายแล้วและรอปลายทางยืนยันรับ"
+          label="รอจ่ายของ"
+          value={approvedCount}
+          hint="ใบที่อนุมัติแล้ว เหลือจัดของและตัดสต็อก"
         />
         <SummaryCard
           icon={PackageCheck}
-          label="รับครบแล้ว"
-          value={completedCount}
-          hint={`แบบร่าง ${draftCount.toLocaleString("th-TH")} ใบยังรอส่งเข้ากระบวนการ`}
+          label="รอยืนยันรับ"
+          value={issuedCount}
+          hint={`รับครบแล้ว ${completedCount.toLocaleString("th-TH")} · แบบร่าง ${draftCount.toLocaleString("th-TH")}`}
         />
       </div>
 
@@ -168,6 +183,41 @@ export default async function PortalRequisitionPage({ searchParams }: PageProps)
         </Link>
       </form>
 
+      <div className="mb-4 flex flex-wrap gap-2">
+        <Link
+          href={requisitionHref({ branchId })}
+          className={cn(buttonVariants({ size: "sm", variant: !status ? "default" : "outline" }))}
+        >
+          ทั้งหมด
+        </Link>
+        <Link
+          href={requisitionHref({ status: "pending", branchId })}
+          className={cn(buttonVariants({ size: "sm", variant: status === "pending" ? "default" : "outline" }))}
+        >
+          รออนุมัติ {pendingCount}
+        </Link>
+        <Link
+          href={requisitionHref({ status: "approved", branchId })}
+          className={cn(buttonVariants({ size: "sm", variant: status === "approved" ? "default" : "outline" }))}
+        >
+          รอจ่าย {approvedCount}
+        </Link>
+        <Link
+          href={requisitionHref({ status: "issued", branchId })}
+          className={cn(buttonVariants({ size: "sm", variant: status === "issued" ? "default" : "outline" }))}
+        >
+          รอรับ {issuedCount}
+        </Link>
+      </div>
+
+      {(status || branchId) && !loadError ? (
+        <div className="mb-4 rounded-xl border border-border/70 bg-muted/15 p-3 text-sm text-muted-foreground">
+          {status ? `สถานะ ${REQUISITION_STATUS_LABELS[status]}` : "ทุกสถานะ"}
+          {selectedBranchName ? ` · สาขา ${selectedBranchName}` : ""}
+          {` · ${requisitions.length.toLocaleString("th-TH")} ใบ`}
+        </div>
+      ) : null}
+
       {loadError ? (
         <p className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
           {loadError}
@@ -179,11 +229,11 @@ export default async function PortalRequisitionPage({ searchParams }: PageProps)
           <div>
             <h2 className="text-base font-semibold">คิวใบเบิกครัว</h2>
             <p className="text-xs text-muted-foreground">
-              ใช้ดูว่าคำขอไหนยังรออนุมัติ รอจ่าย หรือรอยืนยันรับ โดยแยกตามสาขาและคลัง
+              เปิดคิวที่ค้างก่อน แล้วค่อยเข้าไปอนุมัติ จ่ายของ หรือยืนยันรับในรายละเอียดแต่ละใบ
             </p>
           </div>
           <div className="text-xs text-muted-foreground">
-            รออนุมัติ {pendingCount.toLocaleString("th-TH")} · จ่ายแล้ว {issuedCount.toLocaleString("th-TH")}
+            รออนุมัติ {pendingCount.toLocaleString("th-TH")} · รอจ่าย {approvedCount.toLocaleString("th-TH")} · รอรับ {issuedCount.toLocaleString("th-TH")}
           </div>
         </div>
         <RequisitionListTable requisitions={requisitions} detailBasePath="/portal/requisition" />

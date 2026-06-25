@@ -2,7 +2,7 @@
 
 **จาก:** `oouswalwqhojpzqwwdvs` (prod ปัจจุบัน)  
 **ไป:** `cpyuibcrpfslgcazozid` (เป้าหมาย)  
-**แอป:** https://hr-app-two-iota.vercel.app
+**แอป:** https://hr-app-rho-blush.vercel.app
 
 > บันทึก: CLI ในเครื่องนี้ login org `tlhyrwhqlqkajlawrkel` — เห็นแค่ `oouswal...` + `myqthx...`  
 > **ไม่เห็น** `cpyuib...` → ต้อง login Supabase ด้วยบัญชีที่เป็น owner ของ project เป้าหมายก่อนรัน cleanup/restore
@@ -100,8 +100,8 @@ SELECT count(*) FROM hr_overtime_requests;
 
 ### Auth
 
-- [ ] Site URL = `https://hr-app-two-iota.vercel.app`
-- [ ] Redirect URLs รวม `https://hr-app-two-iota.vercel.app/api/auth/line/callback`
+- [ ] Site URL = `https://hr-app-rho-blush.vercel.app`
+- [ ] Redirect URLs รวม `https://hr-app-rho-blush.vercel.app/api/auth/line/callback`
 - [ ] LINE Login provider (Client ID / Secret จาก LINE Developers)
 
 ### Storage
