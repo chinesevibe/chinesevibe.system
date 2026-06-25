@@ -210,15 +210,16 @@ export default async function EmployeeAttendancePage({
             </div>
           </div>
 
-          {/* ── KPI Row ── */}
+          {/* ── KPI Strip ── */}
           <AttendanceSummaryCard
             summary={attendanceSummary}
             pendingReviewCount={pendingReviewCount}
             flaggedCount={flaggedCount}
+            strip
           />
 
           {/* ── 2-col Main ── */}
-          <div className="grid h-full min-h-0 gap-3 overflow-hidden xl:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)]">
+          <div className="grid h-full min-h-0 gap-3 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] xl:grid-cols-[minmax(0,1.3fr)_minmax(280px,340px)]">
             {/* Left: filter + table */}
             <div className="order-1 flex min-h-0 flex-col gap-2.5 overflow-hidden lg:gap-3">
               <Suspense fallback={null}>

@@ -13,12 +13,41 @@ export function AttendanceSummaryCard({
   pendingReviewCount = 0,
   flaggedCount = 0,
   compact = false,
+  strip = false,
 }: {
   summary: AttendanceSummary
   pendingReviewCount?: number
   flaggedCount?: number
   compact?: boolean
+  /** Micro-height horizontal strip — fits 7 KPIs in one row on desktop */
+  strip?: boolean
 }) {
+  // ── Strip layout (micro cards, no decorative wrappers) ──
+  if (strip) {
+    const hasSalary = summary.estimatedEarnings != null
+    return (
+      <div
+        className={cn(
+          "grid gap-2",
+          hasSalary
+            ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-7"
+            : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+        )}
+      >
+        <KpiCard micro label="วันทำงาน" value={summary.workDays} icon={CalendarDays} />
+        <KpiCard micro label="ชั่วโมงรวม" value={formatHours(summary.totalHours)} icon={Clock} accent="success" />
+        <KpiCard micro label="มาสาย" value={summary.lateCount} icon={AlertTriangle} accent="warning" />
+        <KpiCard micro label="ยังไม่เช็คออก" value={summary.inProgressCount} icon={LogOut} accent="info" />
+        <KpiCard micro label="รอตรวจพิกัด" value={pendingReviewCount} icon={MapPinned} accent="warning" />
+        <KpiCard micro label="ต้องจับตา" value={flaggedCount} icon={ShieldAlert} accent="purple" />
+        {hasSalary ? (
+          <KpiCard micro label="ยอดประมาณ" value={summary.estimatedEarnings!} icon={Wallet} accent="purple" />
+        ) : null}
+      </div>
+    )
+  }
+
+  // ── Full / compact layout ──
   return (
     <div
       className={cn(

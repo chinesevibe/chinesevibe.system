@@ -10,6 +10,7 @@ export function KpiCard({
   icon: Icon,
   accent = "default",
   compact = false,
+  micro = false,
   iconSize = "default",
 }: {
   label: string
@@ -19,8 +20,36 @@ export function KpiCard({
   icon?: LucideIcon
   accent?: "default" | "warning" | "success" | "info" | "purple"
   compact?: boolean
+  /** Minimal strip card — tiny padding, no detail text */
+  micro?: boolean
   iconSize?: "default" | "lg"
 }) {
+  const accentClass = cn(
+    accent === "warning" && "bg-amber-100 text-amber-700",
+    accent === "success" && "bg-emerald-100 text-emerald-700",
+    accent === "info" && "bg-sky-100 text-sky-700",
+    accent === "purple" && "bg-violet-100 text-violet-700",
+    accent === "default" && "bg-brand-red/10 text-brand-red"
+  )
+
+  if (micro) {
+    return (
+      <div className="rounded-lg border border-border/70 bg-card px-2.5 py-2 shadow-sm">
+        <div className="flex items-center justify-between gap-1.5">
+          <p className="truncate text-[10px] font-medium text-muted-foreground">{label}</p>
+          {Icon ? (
+            <span className={cn("inline-flex shrink-0 items-center justify-center rounded p-1", accentClass)}>
+              <Icon className="size-2.5" strokeWidth={2} />
+            </span>
+          ) : null}
+        </div>
+        <p className="mt-1 text-base font-bold tabular-nums tracking-tight text-foreground">
+          {value}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
@@ -41,11 +70,7 @@ export function KpiCard({
                 : compact
                   ? "rounded-md p-1.5"
                   : "rounded-lg p-2",
-              accent === "warning" && "bg-amber-100 text-amber-700",
-              accent === "success" && "bg-emerald-100 text-emerald-700",
-              accent === "info" && "bg-sky-100 text-sky-700",
-              accent === "purple" && "bg-violet-100 text-violet-700",
-              accent === "default" && "bg-brand-red/10 text-brand-red"
+              accentClass
             )}
           >
             <Icon
