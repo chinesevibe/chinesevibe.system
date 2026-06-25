@@ -1,5 +1,14 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import {
+  Package,
+  Truck,
+  AlertTriangle,
+  ArrowLeftRight,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+} from "lucide-react"
 
 import { MobileShell } from "@/components/mobile/MobileShell"
 import {
@@ -84,41 +93,33 @@ export default async function MobileInventoryHub() {
             {formatBaht(kpis.totalStockValue)}
           </p>
 
-          <div className="mt-4 grid grid-cols-3 gap-3">
+
+          <div className="mt-3 pt-3 border-t border-white/20 grid grid-cols-3 gap-3">
             <KpiChip label="SKU" value={kpis.skuCount} />
             <KpiChip label="ต้องสั่ง" value={kpis.belowMinCount} danger />
             <KpiChip label="รออนุมัติ" value={kpis.pendingRequisitions} />
-          </div>
-
-          <div className="mt-3 pt-3 border-t border-white/20 grid grid-cols-3 gap-3 text-center text-xs text-white/70">
-            <div>
-              <p className="font-semibold text-white text-sm">
-                {formatBaht(kpis.inboundValueMtd)}
-              </p>
-              <p>รับเข้า/ด.</p>
-            </div>
-            <div>
-              <p className="font-semibold text-white text-sm">
-                {formatBaht(kpis.consumptionValueMtd)}
-              </p>
-              <p>เบิกใช้/ด.</p>
-            </div>
-            <div>
-              <p className="font-semibold text-white text-sm">
-                {formatBaht(kpis.damageValueMtd)}
-              </p>
-              <p>เสียหาย/ด.</p>
-            </div>
           </div>
         </div>
 
         {/* Quick Actions 4-col grid */}
         <div className="grid grid-cols-4 gap-2">
-          <QuickAction href="/m/inventory/stock" icon="📦" label="สต็อก" />
-          <QuickAction href="/liff/inbound-scan" icon="🚚" label="รับเข้า" />
-          <QuickAction href="/portal/damage" icon="⚠️" label="เสียหาย" />
-          <QuickAction href="/portal/transfer" icon="🔄" label="โอน" />
+          <QuickAction href="/m/inventory/stock" icon={Package} label="สต็อก" color="#fef2f2" />
+          <QuickAction href="/m/inventory/inbound" icon={Truck} label="รับเข้า" color="#f0fdf4" />
+          <QuickAction href="/m/inventory/damage" icon={AlertTriangle} label="เสียหาย" color="#fffbeb" />
+          <QuickAction href="/m/inventory/transfer" icon={ArrowLeftRight} label="โอน" color="#eff6ff" />
         </div>
+
+        {/* Monthly Stats Section */}
+        <section>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#16181d]/50 mb-2">
+            สถิติเดือนนี้
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <StatCard label="รับเข้า" value={formatBaht(kpis.inboundValueMtd)} icon={TrendingUp} />
+            <StatCard label="เบิกใช้" value={formatBaht(kpis.consumptionValueMtd)} icon={TrendingDown} />
+            <StatCard label="เสียหาย" value={formatBaht(kpis.damageValueMtd)} icon={AlertTriangle} />
+          </div>
+        </section>
 
         {/* Stock Alerts */}
         {topAlerts.length > 0 && (
@@ -161,8 +162,10 @@ export default async function MobileInventoryHub() {
             กิจกรรมล่าสุด
           </p>
           {!recentMovements || recentMovements.length === 0 ? (
-            <div className="rounded-xl border border-[#eceef1] bg-white px-4 py-6 text-center">
-              <p className="text-sm text-gray-400">ยังไม่มีกิจกรรม</p>
+            <div className="rounded-xl border border-[#eceef1] bg-white px-4 py-8 text-center">
+              <Activity size={28} className="mx-auto mb-2 text-gray-200" />
+              <p className="text-sm font-medium text-gray-400">ยังไม่มีกิจกรรม</p>
+              <p className="text-xs text-gray-300 mt-0.5">การเคลื่อนไหวสต็อกจะแสดงที่นี่</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -240,15 +243,48 @@ function KpiChip({
   )
 }
 
-function QuickAction({ href, icon, label }: { href: string; icon: string; label: string }) {
+function QuickAction({
+  href,
+  icon: Icon,
+  label,
+  color,
+}: {
+  href: string
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>
+  label: string
+  color?: string
+}) {
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-1.5 rounded-2xl border border-[#eceef1] bg-white p-3 shadow-sm active:bg-gray-50"
+      className="flex flex-col items-center gap-2 rounded-2xl border border-[#eceef1] bg-white p-3 shadow-sm active:bg-gray-50"
     >
-      <span className="text-2xl">{icon}</span>
+      <div
+        className="flex h-11 w-11 items-center justify-center rounded-xl"
+        style={{ background: color ?? "#f4f5f7" }}
+      >
+        <Icon size={22} strokeWidth={1.8} />
+      </div>
       <span className="text-[11px] font-medium text-[#16181d]">{label}</span>
     </Link>
+  )
+}
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string
+  value: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
+}) {
+  return (
+    <div className="rounded-xl border border-[#eceef1] bg-white p-3 text-center shadow-sm">
+      <Icon size={14} className="mx-auto mb-1 text-gray-400" />
+      <p className="text-xs font-bold text-[#16181d]">{value}</p>
+      <p className="text-[10px] text-gray-400 mt-0.5">{label}</p>
+    </div>
   )
 }
 

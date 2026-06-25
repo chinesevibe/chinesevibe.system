@@ -20,8 +20,8 @@ interface MobileShellProps {
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: HomeIcon, href: "/m/inventory" },
   { key: "stock", label: "สต็อก", icon: BoxIcon, href: "/m/inventory/stock" },
-  { key: "inbound", label: "รับเข้า", icon: TruckIcon, href: "/liff/inbound-scan" },
-  { key: "damage", label: "เสียหาย", icon: AlertIcon, href: "/portal/damage" },
+  { key: "inbound", label: "รับเข้า", icon: TruckIcon, href: "/m/inventory/inbound" },
+  { key: "damage", label: "เสียหาย", icon: AlertIcon, href: "/m/inventory/damage" },
   { key: "menu", label: "เมนู", icon: MenuIcon, href: "/portal/inventory" },
 ] as const
 
