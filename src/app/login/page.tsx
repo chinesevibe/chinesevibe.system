@@ -66,7 +66,7 @@ export default async function LoginPage({
     dashboardPath &&
     (!officerPasswordRequired || officerPasswordVerified)
   ) {
-    redirect(dashboardPath)
+    redirect(nextPath ?? dashboardPath)
   }
 
   const errorMessageKey = error
