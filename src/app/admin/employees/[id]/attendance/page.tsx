@@ -219,7 +219,7 @@ export default async function EmployeeAttendancePage({
         }
       >
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
-          <div className="grid gap-3 2xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
             <EmployeeAttendanceHeader
               employeeName={profile.name}
               employeeCode={employeeCode}
@@ -239,7 +239,7 @@ export default async function EmployeeAttendancePage({
             />
           </div>
 
-          <div className="grid gap-3 2xl:grid-cols-[minmax(0,1.12fr)_minmax(280px,0.88fr)]">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.12fr)_minmax(280px,0.88fr)]">
             <EmployeeAttendanceDiagnosisPanel
               selectedDateLabel={formatDateLabel(selectedDate)}
               shiftDetail={shiftDetail}
@@ -255,7 +255,7 @@ export default async function EmployeeAttendancePage({
             <EmployeeAttendanceAnomalySummary attendanceSummary={attendanceSummary} />
           </div>
 
-          <div className="grid h-full min-h-0 gap-3 overflow-hidden 2xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
+          <div className="grid h-full min-h-0 gap-3 overflow-hidden xl:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
             <div className="order-1 flex min-h-0 flex-col gap-2.5 overflow-hidden lg:gap-3">
               <Suspense fallback={null}>
                 <AttendanceFilters
