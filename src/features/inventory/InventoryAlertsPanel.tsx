@@ -18,10 +18,35 @@ function severityVariant(severity: InventoryAlertRow["severity"]) {
   return "neutral" as const
 }
 
+function severityLabel(severity: InventoryAlertRow["severity"]) {
+  if (severity === "high") return "สูง"
+  if (severity === "medium") return "กลาง"
+  return "ทั่วไป"
+}
+
 const TYPE_LABELS: Record<InventoryAlertRow["type"], string> = {
   expiry: "ใกล้หมดอายุ",
   low_stock: "สต็อกต่ำ",
   anomaly: "ผิดปกติ",
+}
+
+function actionLabel(type: InventoryAlertRow["type"]) {
+  if (type === "expiry") return "ดูล็อต"
+  if (type === "low_stock") return "ดูสต็อก"
+  return "ดูสาเหตุ"
+}
+
+function metricLabel(row: InventoryAlertRow) {
+  if (row.type === "expiry" && row.daysLeft != null) {
+    return `เหลือ ${row.daysLeft} วัน`
+  }
+  if (row.type === "low_stock" && row.qty != null) {
+    return `คงเหลือ ${row.qty}`
+  }
+  if (row.type === "anomaly" && row.value != null) {
+    return `${new Intl.NumberFormat("th-TH").format(row.value)} บาท`
+  }
+  return ""
 }
 
 export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
@@ -36,9 +61,16 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
                   <p className="text-sm font-semibold text-foreground">{TYPE_LABELS[row.type]}</p>
                   <p className="mt-1 text-sm text-foreground">{row.title}</p>
                 </div>
-                <StatusPill label={row.severity} variant={severityVariant(row.severity)} />
+                <StatusPill label={severityLabel(row.severity)} variant={severityVariant(row.severity)} />
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{row.detail}</p>
+              {metricLabel(row) ? (
+                <div className="mt-3">
+                  <span className="rounded-full border border-border/80 bg-muted/20 px-2.5 py-1 text-xs text-foreground">
+                    {metricLabel(row)}
+                  </span>
+                </div>
+              ) : null}
               <div className="mt-3 space-y-1 text-sm">
                 <p>
                   <span className="text-muted-foreground">สาขา:</span> {row.branchName}
@@ -49,7 +81,7 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
               </div>
               <div className="mt-3 flex justify-end">
                 <Link href={row.href} className="inline-flex items-center gap-1 text-brand-red hover:underline">
-                  เปิดดู
+                  {actionLabel(row.type)}
                   <ArrowUpRight className="size-3.5" />
                 </Link>
               </div>
@@ -57,7 +89,7 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
           ))
         ) : (
           <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
-            ยังไม่มี alerts
+            ยังไม่มีรายการเตือน
           </div>
         )}
       </div>
@@ -86,11 +118,16 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
                   <TableCell>{row.branchName}</TableCell>
                   <TableCell>{row.warehouseName ?? "—"}</TableCell>
                   <TableCell>
-                    <StatusPill label={row.severity} variant={severityVariant(row.severity)} />
+                    <div className="flex flex-col gap-1">
+                      <StatusPill label={severityLabel(row.severity)} variant={severityVariant(row.severity)} />
+                      {metricLabel(row) ? (
+                        <span className="text-xs text-muted-foreground">{metricLabel(row)}</span>
+                      ) : null}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Link href={row.href} className="inline-flex items-center gap-1 text-brand-red hover:underline">
-                      เปิดดู
+                      {actionLabel(row.type)}
                       <ArrowUpRight className="size-3.5" />
                     </Link>
                   </TableCell>
@@ -99,7 +136,7 @@ export function InventoryAlertsPanel({ rows }: { rows: InventoryAlertRow[] }) {
             ) : (
               <TableRow>
                 <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
-                  ยังไม่มี alerts
+                  ยังไม่มีรายการเตือน
                 </TableCell>
               </TableRow>
             )}

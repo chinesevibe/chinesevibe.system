@@ -34,7 +34,13 @@ function unitLabel(sku: InvInventoryCreateOptions["skus"][number]) {
   return sku.unit_abbreviation ? `${sku.unit_name} (${sku.unit_abbreviation})` : sku.unit_name
 }
 
-export function TransferCreateForm({ options }: { options: InvInventoryCreateOptions }) {
+export function TransferCreateForm({
+  options,
+  successBasePath = "/admin/inventory/transfer",
+}: {
+  options: InvInventoryCreateOptions
+  successBasePath?: string
+}) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [fromBranchId, setFromBranchId] = useState("")
@@ -80,7 +86,7 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
         })),
       })
       if (result.success && result.id) {
-        router.push(`/admin/inventory/transfer/${result.id}`)
+        router.push(`${successBasePath}/${result.id}`)
         router.refresh()
       } else {
         setError(result.error ?? "สร้างใบโอนไม่สำเร็จ")
@@ -142,7 +148,7 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
           const sku = skuById.get(item.sku_id)
           return (
             <div key={item.key} className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_220px_auto]">
-              <InventoryFormField label={`SKU #${index + 1}`}>
+              <InventoryFormField label={`สินค้า #${index + 1}`}>
                 <select value={item.sku_id} className={invInputClass} onChange={(e) => updateItem(item.key, { sku_id: e.target.value, lot_id: "", lot_number: "" })}>
                   <option value="" disabled>เลือก SKU</option>
                   {options.skus.map((option) => (
@@ -154,7 +160,7 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
               <InventoryFormField label="จำนวนส่ง">
                 <input type="number" min={0.001} step="any" value={item.qty_sent} className={invInputClass} onChange={(e) => updateItem(item.key, { qty_sent: e.target.value })} />
               </InventoryFormField>
-              <InventoryFormField label="Lot">
+              <InventoryFormField label="ล็อต">
                 <InventoryLotPicker
                   skuId={item.sku_id}
                   warehouseId={fromWarehouseId}
@@ -178,7 +184,7 @@ export function TransferCreateForm({ options }: { options: InvInventoryCreateOpt
       </div>
 
       <div className="flex justify-end">
-        <Button type="button" disabled={pending} onClick={submit}>
+        <Button type="button" className="w-full sm:w-auto" disabled={pending} onClick={submit}>
           {pending ? "กำลังบันทึก..." : "สร้างใบโอน"}
         </Button>
       </div>

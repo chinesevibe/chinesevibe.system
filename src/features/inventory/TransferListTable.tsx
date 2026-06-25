@@ -29,7 +29,13 @@ const STATUS_LABELS: Record<InvTransferRow["status"], string> = {
   cancelled: "ยกเลิก",
 }
 
-export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
+export function TransferListTable({
+  rows,
+  detailBasePath = "/admin/inventory/transfer",
+}: {
+  rows: InvTransferRow[]
+  detailBasePath?: string
+}) {
   return (
     <>
       <div className="grid gap-3 md:hidden">
@@ -39,7 +45,7 @@ export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Link
-                    href={`/admin/inventory/transfer/${row.id}`}
+                    href={`${detailBasePath}/${row.id}`}
                     className="text-sm font-semibold text-brand-red hover:underline"
                   >
                     {row.id.slice(0, 8).toUpperCase()}
@@ -68,7 +74,7 @@ export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
               </div>
               <div className="mt-3 flex justify-end">
                 <Link
-                  href={`/admin/inventory/transfer/${row.id}`}
+                  href={`${detailBasePath}/${row.id}`}
                   className="inline-flex items-center gap-1 font-medium text-brand-red hover:underline"
                 >
                   ดูงาน
@@ -102,7 +108,7 @@ export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
               rows.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/admin/inventory/transfer/${row.id}`} className="text-brand-red hover:underline">
+                    <Link href={`${detailBasePath}/${row.id}`} className="text-brand-red hover:underline">
                       {row.id.slice(0, 8).toUpperCase()}
                     </Link>
                   </TableCell>
@@ -115,7 +121,7 @@ export function TransferListTable({ rows }: { rows: InvTransferRow[] }) {
                   <TableCell>{formatThaiDate(row.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <Link
-                      href={`/admin/inventory/transfer/${row.id}`}
+                      href={`${detailBasePath}/${row.id}`}
                       className="inline-flex items-center gap-1 font-medium text-brand-red hover:underline"
                     >
                       {row.item_count} รายการ

@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import {
   canAccessInventoryPortal,
@@ -19,6 +19,17 @@ export async function requireInventoryPortal(): Promise<Employee> {
   }
   if (employee.role !== "dev" && !canAccessInventoryPortal(employee)) {
     redirect("/login?error=forbidden")
+  }
+
+  return employee
+}
+
+/** Manager mobile inventory workspace (requisition, transfer, alerts, stock count). */
+export async function requireManagedInventoryPortal(): Promise<Employee> {
+  const employee = await requireInventoryPortal()
+
+  if (!canManageInventory(employee) && !isCeo(employee.role)) {
+    notFound()
   }
 
   return employee

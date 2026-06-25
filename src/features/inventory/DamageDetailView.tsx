@@ -41,6 +41,35 @@ function unitLabel(detail: InvDamageDetail) {
     : detail.unit_name
 }
 
+function nextStepCopy(
+  status: InvDamageDetail["status"],
+  canApprove: boolean,
+  canReject: boolean
+) {
+  if (status === "pending") {
+    return {
+      title: "ขั้นตอนถัดไป",
+      body:
+        canApprove || canReject
+          ? "ตรวจรูป เหตุผล จำนวน และมูลค่าก่อนตัดสิน อนุมัติแล้วระบบจะตัดสต็อกทันที"
+          : "รายการนี้ยังรอผู้มีสิทธิตัดสินก่อน จึงยังไม่ตัดสต็อก",
+      tone: "border-amber-200 bg-amber-50/80 text-amber-900",
+    }
+  }
+  if (status === "approved") {
+    return {
+      title: "รายการนี้ปิดแล้ว",
+      body: "ระบบตัดสต็อกและบันทึก movement แล้ว ใช้หน้านี้เพื่อตรวจย้อนหลังหรือเทียบหลักฐาน",
+      tone: "border-emerald-200 bg-emerald-50/70 text-emerald-900",
+    }
+  }
+  return {
+    title: "รายการนี้ถูกปฏิเสธ",
+    body: "หากข้อมูลยังไม่ครบหรือผิด ให้กลับไปสร้างรายการใหม่พร้อมเหตุผลหรือหลักฐานที่ชัดกว่าเดิม",
+    tone: "border-rose-200 bg-rose-50/80 text-rose-900",
+  }
+}
+
 function SummaryCard({
   icon: Icon,
   label,
@@ -81,6 +110,7 @@ export function DamageDetailView({
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [rejectReason, setRejectReason] = useState("")
+  const nextStep = nextStepCopy(detail.status, canApprove, canReject)
 
   function runAction(action: () => Promise<{ success: boolean; error?: string }>) {
     setError(null)
@@ -101,13 +131,13 @@ export function DamageDetailView({
           icon={ClipboardList}
           label="สถานะรายงาน"
           value={DAMAGE_STATUS_LABELS[detail.status]}
-          hint="ใช้ดูว่าเคสนี้ยังรอตัดสิน หรือถูก apply ไปแล้ว"
+          hint="ใช้ดูว่าเคสนี้ยังรอตัดสิน หรือระบบตัดรายการแล้ว"
         />
         <SummaryCard
           icon={ShieldAlert}
           label="ระดับอนุมัติ"
           value={DAMAGE_APPROVAL_ROLE_LABELS[detail.approval_required_role]}
-          hint="บอกว่ารายการนี้ต้องผ่านใครก่อนตัด stock"
+          hint="บอกว่ารายการนี้ต้องผ่านใครก่อนตัดสต็อก"
         />
         <SummaryCard
           icon={PackageCheck}
@@ -137,6 +167,11 @@ export function DamageDetailView({
             ? ` · ปฏิเสธ ${formatThaiDate(detail.rejected_at)}`
             : ""}
         </span>
+      </div>
+
+      <div className={`rounded-xl border p-4 text-sm ${nextStep.tone}`}>
+        <p className="font-semibold">{nextStep.title}</p>
+        <p className="mt-1">{nextStep.body}</p>
       </div>
 
       <div className="grid gap-2 rounded-xl border border-border p-4 text-sm md:grid-cols-2">
@@ -174,7 +209,7 @@ export function DamageDetailView({
           {DAMAGE_APPROVAL_ROLE_LABELS[detail.approval_required_role]}
         </p>
         <p>
-          <span className="font-medium">Auto-approved:</span>{" "}
+          <span className="font-medium">อนุมัติอัตโนมัติ:</span>{" "}
           {detail.auto_approved ? "ใช่" : "ไม่ใช่"}
         </p>
         <p className="md:col-span-2">
@@ -187,7 +222,7 @@ export function DamageDetailView({
         ) : null}
         {detail.rejection_reason ? (
           <p className="md:col-span-2 text-destructive">
-            <span className="font-medium">เหตุผล Reject:</span>{" "}
+            <span className="font-medium">เหตุผลปฏิเสธ:</span>{" "}
             {detail.rejection_reason}
           </p>
         ) : null}
@@ -199,7 +234,7 @@ export function DamageDetailView({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={detail.photo_signed_url}
-            alt="Damage evidence"
+            alt="หลักฐานความเสียหาย"
             className="mt-3 max-h-96 rounded-lg border border-border object-contain"
           />
         </div>
@@ -220,7 +255,7 @@ export function DamageDetailView({
           <div>
             <h2 className="text-sm font-semibold">ตัดสินรายงาน</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              อนุมัติแล้วระบบจะตัดสต็อกและบันทึก movement ทันที
+              อนุมัติแล้วระบบจะตัดสต็อกและบันทึกการเคลื่อนไหวทันที
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -239,7 +274,7 @@ export function DamageDetailView({
           {canReject ? (
             <div className="grid gap-2 border-t border-border pt-4">
               <label className="grid gap-1 text-sm">
-                <span className="font-medium">เหตุผล Reject</span>
+                <span className="font-medium">เหตุผลปฏิเสธ</span>
                 <textarea
                   rows={3}
                   className="rounded-lg border border-input px-3 py-2 text-sm"
@@ -258,7 +293,7 @@ export function DamageDetailView({
                   )
                 }
               >
-                Reject
+                ปฏิเสธ
               </Button>
             </div>
           ) : null}

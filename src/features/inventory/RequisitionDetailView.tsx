@@ -47,6 +47,62 @@ function statusVariant(status: InvRequisitionDetail["requisition"]["status"]) {
   return "neutral" as const
 }
 
+function nextStepCopy(
+  status: InvRequisitionDetail["requisition"]["status"],
+  canManage: boolean,
+  canSubmit: boolean,
+  canReceive: boolean
+) {
+  if (status === "draft") {
+    return {
+      title: "ขั้นตอนถัดไป",
+      body: canSubmit
+        ? "ตรวจรายการและกดส่งใบเบิก เพื่อให้คลังเริ่มอนุมัติได้"
+        : "ใบนี้ยังเป็นแบบร่าง ต้องให้ผู้สร้างส่งเข้า workflow ก่อน",
+      tone: "border-sky-200 bg-sky-50/70 text-sky-900",
+    }
+  }
+  if (status === "pending") {
+    return {
+      title: "รออนุมัติ",
+      body: canManage
+        ? "กำหนดจำนวนที่อนุมัติหรือปฏิเสธทั้งใบ จากนั้นใบจะรอจ่ายสินค้า"
+        : "ตอนนี้ใบกำลังรอคลังอนุมัติ ยังไม่มีการตัดสต็อก",
+      tone: "border-amber-200 bg-amber-50/80 text-amber-900",
+    }
+  }
+  if (status === "approved") {
+    return {
+      title: "รอจ่ายสินค้า",
+      body: canManage
+        ? "ตรวจ FEFO และจำนวนที่จะจ่ายให้ครบ ก่อนยืนยันจ่ายออกจากคลัง"
+        : "ใบนี้อนุมัติแล้วและกำลังรอคลังจ่ายสินค้า",
+      tone: "border-violet-200 bg-violet-50/80 text-violet-900",
+    }
+  }
+  if (status === "issued") {
+    return {
+      title: "รอยืนยันรับ",
+      body: canReceive
+        ? "ปลายทางต้องยืนยันจำนวนที่รับจริง เพื่อปิดใบเบิกนี้ให้ครบ"
+        : "คลังจ่ายของแล้ว เหลือรอปลายทางยืนยันรับ",
+      tone: "border-emerald-200 bg-emerald-50/70 text-emerald-900",
+    }
+  }
+  if (status === "completed") {
+    return {
+      title: "งานนี้เสร็จแล้ว",
+      body: "ตรวจย้อนหลังได้จากรายการด้านล่าง ถ้าตัวเลขไม่ตรงค่อยทำรายการใหม่หรือแก้ตามสิทธิ",
+      tone: "border-emerald-200 bg-emerald-50/70 text-emerald-900",
+    }
+  }
+  return {
+    title: "ใบเบิกถูกปิด",
+    body: "ใบนี้ถูกปฏิเสธแล้ว ถ้าจะเดินงานต่อให้กลับไปสร้างหรือส่งใบใหม่",
+    tone: "border-rose-200 bg-rose-50/80 text-rose-900",
+  }
+}
+
 function SummaryCard({
   icon: Icon,
   label,
@@ -152,6 +208,12 @@ export function RequisitionDetailView({
     () => detail.items.reduce((sum, item) => sum + item.qty_issued, 0),
     [detail.items]
   )
+  const nextStep = nextStepCopy(
+    detail.requisition.status,
+    canManage,
+    canSubmit,
+    canReceive
+  )
 
   function runAction(action: () => Promise<{ success: boolean; error?: string }>) {
     setError(null)
@@ -213,6 +275,11 @@ export function RequisitionDetailView({
         </span>
       </div>
 
+      <div className={`rounded-xl border p-4 text-sm ${nextStep.tone}`}>
+        <p className="font-semibold">{nextStep.title}</p>
+        <p className="mt-1">{nextStep.body}</p>
+      </div>
+
       <div className="grid gap-2 rounded-xl border border-border p-4 text-sm md:grid-cols-2">
         <p>
           <span className="font-medium">ผู้ขอ:</span> {detail.requester_name}
@@ -231,7 +298,7 @@ export function RequisitionDetailView({
         ) : null}
         {detail.requisition.rejection_reason ? (
           <p className="md:col-span-2 text-destructive">
-            <span className="font-medium">เหตุผล Reject:</span>{" "}
+            <span className="font-medium">เหตุผลการปฏิเสธ:</span>{" "}
             {detail.requisition.rejection_reason}
           </p>
         ) : null}
@@ -255,7 +322,61 @@ export function RequisitionDetailView({
             {detail.items.length.toLocaleString("th-TH")} รายการ
           </div>
         </div>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="grid gap-3 md:hidden">
+          {detail.items.map((item) => {
+            const variance = item.qty_issued - item.qty_received
+            return (
+              <div key={item.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{item.sku_code}</p>
+                    <p className="text-sm text-muted-foreground">{item.sku_name}</p>
+                  </div>
+                  {variance > 0 ? (
+                    <StatusPill label={`ค้าง ${formatQuantity(variance)}`} variant="pending" />
+                  ) : (
+                    <StatusPill label="ครบ" variant="approved" />
+                  )}
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">ขอ</p>
+                    <p className="text-base font-semibold tabular-nums">
+                      {formatQuantity(item.qty_requested)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">อนุมัติ</p>
+                    <p className="text-base font-semibold tabular-nums">
+                      {formatQuantity(item.qty_approved)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">จ่าย</p>
+                    <p className="text-base font-semibold tabular-nums">
+                      {formatQuantity(item.qty_issued)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">รับ</p>
+                    <p className="text-base font-semibold tabular-nums">
+                      {formatQuantity(item.qty_received)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 text-sm">
+                  <p>
+                    <span className="text-muted-foreground">หน่วย:</span> {unitLabel(item) || "—"}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">ล็อต:</span> {item.lot_number || "—"}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <div className="hidden overflow-hidden rounded-xl border border-border md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -265,7 +386,7 @@ export function RequisitionDetailView({
               <TableHead>อนุมัติ</TableHead>
               <TableHead>จ่าย</TableHead>
               <TableHead>รับ</TableHead>
-              <TableHead>Lot</TableHead>
+              <TableHead>ล็อต</TableHead>
               <TableHead>ต่าง</TableHead>
             </TableRow>
           </TableHeader>
@@ -302,7 +423,7 @@ export function RequisitionDetailView({
           </p>
           <Button
             type="button"
-            className="mt-3"
+            className="mt-3 w-full md:w-auto"
             disabled={pending}
             onClick={() =>
               runAction(() => submitRequisition(detail.requisition.id))
@@ -318,7 +439,7 @@ export function RequisitionDetailView({
           <div>
             <h2 className="text-sm font-semibold">อนุมัติรายการ</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              ใส่ 0 เพื่อไม่อนุมัติบางรายการ ถ้าไม่อนุมัติทั้งหมดให้ใช้ Reject
+              ใส่ 0 เพื่อไม่อนุมัติบางรายการ ถ้าไม่อนุมัติทั้งหมดให้ใช้ปุ่มปฏิเสธ
             </p>
           </div>
           <div className="grid gap-3">
@@ -351,6 +472,7 @@ export function RequisitionDetailView({
           <div className="flex flex-wrap gap-2">
             <Button
               type="button"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() =>
                 runAction(() =>
@@ -369,7 +491,7 @@ export function RequisitionDetailView({
           </div>
           <div className="grid gap-2 border-t border-border pt-4">
             <label className="grid gap-1 text-sm">
-              <span className="font-medium">เหตุผล Reject</span>
+              <span className="font-medium">เหตุผลการปฏิเสธ</span>
               <textarea
                 rows={3}
                 className="rounded-lg border border-input px-3 py-2 text-sm"
@@ -380,7 +502,7 @@ export function RequisitionDetailView({
             <Button
               type="button"
               variant="outline"
-              className="w-fit text-destructive"
+              className="w-full sm:w-fit text-destructive"
               disabled={pending}
               onClick={() =>
                 runAction(() =>
@@ -391,7 +513,7 @@ export function RequisitionDetailView({
                 )
               }
             >
-              Reject ใบเบิก
+              ปฏิเสธใบเบิก
             </Button>
           </div>
         </section>
@@ -402,7 +524,7 @@ export function RequisitionDetailView({
           <div>
             <h2 className="text-sm font-semibold">จ่ายสินค้า</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              ระบบจัด Lot อัตโนมัติตาม FEFO (หมดอายุก่อน) — ไม่ต้องกรอก Lot ยกเว้น SKU ตั้งค่า manual
+              ระบบจัดล็อตอัตโนมัติตาม FEFO (หมดอายุก่อน) — ไม่ต้องกรอกล็อต ยกเว้น SKU ที่ตั้งค่าให้กรอกเอง
             </p>
           </div>
           {approvedItems.map((item) => (
@@ -430,7 +552,7 @@ export function RequisitionDetailView({
                   }
                 />
                 <input
-                  placeholder="Lot (manual SKU เท่านั้น)"
+                  placeholder="ล็อต (เฉพาะ SKU ที่ตั้งค่าให้กรอกเอง)"
                   className="h-10 rounded-lg border border-input px-3 text-sm"
                   value={lotNumbers[item.id] ?? ""}
                   onChange={(event) =>
@@ -469,6 +591,7 @@ export function RequisitionDetailView({
           ))}
           <Button
             type="button"
+            className="w-full md:w-auto"
             disabled={pending || approvedItems.length === 0}
             onClick={() =>
               runAction(() =>
@@ -498,32 +621,54 @@ export function RequisitionDetailView({
             </p>
           </div>
           {issuedItems.map((item) => (
-            <label
+            <div
               key={item.id}
-              className="grid gap-1 text-sm md:grid-cols-[1fr_180px]"
+              className="grid gap-3 rounded-xl border border-border/70 bg-muted/10 p-3 md:grid-cols-[1fr_180px]"
             >
-              <span>
-                {item.sku_code} — จ่าย {formatQuantity(item.qty_issued)}{" "}
-                {unitLabel(item)}
-              </span>
-              <input
-                type="number"
-                min={0}
-                max={item.qty_issued}
-                step="any"
-                className="h-10 rounded-lg border border-input px-3 text-sm"
-                value={receivedQty[item.id] ?? "0"}
-                onChange={(event) =>
-                  setReceivedQty((current) => ({
-                    ...current,
-                    [item.id]: event.target.value,
-                  }))
-                }
-              />
-            </label>
+              <div className="min-w-0">
+                <p className="text-sm font-medium">
+                  {item.sku_code} — {item.sku_name}
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                  <div className="rounded-lg bg-background p-2">
+                    <p className="text-[11px] text-muted-foreground">จ่าย</p>
+                    <p className="font-semibold tabular-nums">
+                      {formatQuantity(item.qty_issued)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-background p-2">
+                    <p className="text-[11px] text-muted-foreground">รับแล้ว</p>
+                    <p className="font-semibold tabular-nums">
+                      {formatQuantity(item.qty_received)}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  หน่วย {unitLabel(item) || "—"} · ล็อต {item.lot_number || "—"}
+                </p>
+              </div>
+              <label className="grid gap-1 text-sm">
+                <span className="text-muted-foreground">จำนวนที่รับครั้งนี้</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={item.qty_issued}
+                  step="any"
+                  className="h-10 rounded-lg border border-input px-3 text-sm"
+                  value={receivedQty[item.id] ?? "0"}
+                  onChange={(event) =>
+                    setReceivedQty((current) => ({
+                      ...current,
+                      [item.id]: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
           ))}
           <Button
             type="button"
+            className="w-full md:w-auto"
             disabled={pending || issuedItems.length === 0}
             onClick={() =>
               runAction(() =>

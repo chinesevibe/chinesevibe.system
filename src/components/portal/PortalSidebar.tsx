@@ -21,11 +21,11 @@ function SidebarPromo() {
       />
       <div className="relative flex items-end justify-between gap-2">
         <p className="max-w-[11rem] text-left text-[17px] font-bold leading-[1.25] text-brand-red">
-          Your HR
+          HR ของคุณ
           <br />
-          at Your
+          พร้อมใช้
           <br />
-          Fingertips
+          ทุกวัน
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -102,7 +102,7 @@ export function PortalSidebar({ items }: { items: AdminNavItem[] }) {
       <p className="px-4 pb-4 text-center text-[10px] leading-relaxed text-muted-foreground">
         © 2025 Zhongguomingtang
         <br />
-        All rights reserved.
+        สงวนลิขสิทธิ์
       </p>
     </aside>
   )

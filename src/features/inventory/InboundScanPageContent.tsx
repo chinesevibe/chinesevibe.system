@@ -90,8 +90,21 @@ function useInboundOrderId(pathOrderId?: string): {
 } {
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  const [orderId, setOrderId] = useState(pathOrderId?.trim() ?? "")
-  const [resolving, setResolving] = useState(!pathOrderId)
+  const initialPathOrderId = pathOrderId?.trim() ?? ""
+  const initialClientOrderId =
+    typeof window === "undefined"
+      ? ""
+      : readInboundOrderId(window.location.search, window.location.pathname)
+  const [orderId, setOrderId] = useState(
+    initialPathOrderId || initialClientOrderId
+  )
+  const [resolving, setResolving] = useState(
+    initialPathOrderId || initialClientOrderId
+      ? false
+      : typeof window === "undefined"
+        ? true
+        : isLikelyLineBrowser()
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -114,8 +127,19 @@ function useInboundOrderId(pathOrderId?: string): {
       let id =
         readInboundOrderId(searchParams.toString(), pathname) || read()
 
+      if (!id && !isLikelyLineBrowser()) {
+        if (!cancelled) {
+          setOrderId("")
+          setResolving(false)
+        }
+        return
+      }
+
       if (!id && isLikelyLineBrowser()) {
-        await initInboundScanLiff()
+        await Promise.race([
+          initInboundScanLiff(),
+          new Promise((resolveTimeout) => window.setTimeout(resolveTimeout, 1500)),
+        ])
         id = read()
       }
 

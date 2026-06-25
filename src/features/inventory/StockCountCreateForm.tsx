@@ -41,8 +41,10 @@ function SummaryCard({
 
 export function StockCountCreateForm({
   options,
+  successBasePath = "/admin/inventory/stock-count",
 }: {
   options: InvStockCountCreateOptions
+  successBasePath?: string
 }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
@@ -68,7 +70,7 @@ export function StockCountCreateForm({
         notes: notes || undefined,
       })
       if (result.success && result.id) {
-        router.push(`/admin/inventory/stock-count/${result.id}`)
+        router.push(`${successBasePath}/${result.id}`)
         router.refresh()
       } else {
         setError(result.error ?? "สร้างแผนตรวจนับไม่สำเร็จ")
@@ -84,18 +86,22 @@ export function StockCountCreateForm({
         </p>
       ) : null}
 
+      <div className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+        ใช้หน้านี้ตอนเริ่มรอบตรวจนับ: เลือกสาขา เลือกคลัง กำหนดวัน แล้วค่อยสร้างรอบเพื่อให้ทีมเริ่มนับจากข้อมูลตั้งต้นเดียวกัน
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
           icon={ClipboardList}
           label="ขอบเขต"
-          value="All stock rows"
-          hint="snapshot ทุก SKU ที่มี stock balance row ในคลังที่เลือก"
+          value="ทุกรายการสต็อก"
+          hint="ดึงทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือกมาเป็นข้อมูลตั้งต้น"
         />
         <SummaryCard
           icon={Warehouse}
           label="สาขา / คลัง"
           value={branchId && warehouseId ? "เลือกแล้ว" : "รอเลือก"}
-          hint="เลือกให้ครบก่อนสร้าง cycle เพื่อ lock scope ของการนับ"
+          hint="เลือกให้ครบก่อนสร้างรอบเพื่อล็อกขอบเขตของการนับ"
         />
         <SummaryCard
           icon={CalendarClock}
@@ -105,9 +111,9 @@ export function StockCountCreateForm({
         />
         <SummaryCard
           icon={PackageCheck}
-          label="ผลลัพธ์หลัง finalize"
-          value="Adjustments"
-          hint="variance จะถูกสร้างเป็น stock adjustment หลังปิดรอบ"
+          label="ผลลัพธ์หลังปิดรอบ"
+          value="รายการปรับสต็อก"
+          hint="ส่วนต่างจะถูกสร้างเป็นรายการปรับสต็อกหลังปิดรอบ"
         />
       </div>
 
@@ -150,7 +156,7 @@ export function StockCountCreateForm({
         </InventoryFormField>
 
         <InventoryFormField label="ขอบเขต">
-          <input className={invInputClass} value="ทุก SKU ที่มี stock balance row" readOnly />
+          <input className={invInputClass} value="ทุก SKU ที่มีข้อมูลคงเหลือในคลังที่เลือก" readOnly />
         </InventoryFormField>
 
         <InventoryFormField label="วันที่วางแผน">
@@ -173,12 +179,27 @@ export function StockCountCreateForm({
         </InventoryFormField>
       </div>
 
+      <div className="grid gap-2 rounded-xl border border-border/80 bg-card p-4 text-sm md:grid-cols-2">
+        <p>
+          <span className="font-medium">สาขาที่เลือก:</span>{" "}
+          {branchId
+            ? options.branches.find((branch) => branch.id === branchId)?.name ?? "—"
+            : "ยังไม่ได้เลือก"}
+        </p>
+        <p>
+          <span className="font-medium">คลังที่เลือก:</span>{" "}
+          {warehouseId
+            ? warehouses.find((warehouse) => warehouse.id === warehouseId)?.name ?? "—"
+            : "ยังไม่ได้เลือก"}
+        </p>
+      </div>
+
       <div className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
-        รอบ v1 จะ snapshot เฉพาะ SKU ที่มี `inv_stock_balances` อยู่แล้วในคลังที่เลือก และจะสร้าง adjustment ตอน finalize เท่านั้น
+        รอบนี้จะใช้เฉพาะ SKU ที่มีข้อมูลคงเหลืออยู่แล้วในคลังที่เลือก และจะสร้างรายการปรับสต็อกตอนปิดรอบเท่านั้น
       </div>
 
       <div className="flex justify-end">
-        <Button type="button" disabled={pending} onClick={submit}>
+        <Button type="button" className="w-full md:w-auto" disabled={pending} onClick={submit}>
           {pending ? "กำลังสร้าง..." : "สร้างแผนตรวจนับ"}
         </Button>
       </div>

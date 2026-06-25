@@ -13,6 +13,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const showSpeedInsights = Boolean(process.env.VERCEL_URL?.trim())
+
   return (
     <html lang="th" className="h-full antialiased">
       <body
@@ -23,7 +25,7 @@ export default function RootLayout({
         }}
       >
         {children}
-        <SpeedInsights />
+        {showSpeedInsights ? <SpeedInsights /> : null}
       </body>
     </html>
   )

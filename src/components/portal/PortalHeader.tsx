@@ -8,8 +8,16 @@ import { PortalMobileNav } from "@/components/portal/PortalMobileNav"
 import { EmployeeAvatar } from "@/components/brand/EmployeeAvatar"
 import { Button } from "@/components/ui/button"
 import { useLocale } from "@/features/portal/LocaleProvider"
-import { roleDisplayLabel } from "@/lib/auth/labels"
 import type { EmployeeUserChip } from "@/lib/auth/session"
+
+function portalRoleLabel(role: EmployeeUserChip["role"]) {
+  if (role === "dev") return "ทีมพัฒนา"
+  if (role === "inventory") return "คลังสินค้า"
+  if (role === "branch_manager") return "ผู้จัดการสาขา"
+  if (role === "hr") return "HR"
+  if (role === "ceo") return "CEO"
+  return "พนักงาน"
+}
 
 export function PortalHeader({
   user,
@@ -29,7 +37,7 @@ export function PortalHeader({
             {tx("portal.title")}
           </p>
           <p className="truncate text-xs text-muted-foreground">
-            {user.position ?? roleDisplayLabel(user.role)}
+            {user.position ?? portalRoleLabel(user.role)}
           </p>
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
@@ -44,7 +52,7 @@ export function PortalHeader({
             <div className="hidden min-w-0 lg:block">
               <p className="truncate text-sm font-medium leading-tight">{user.name}</p>
               <p className="text-xs text-muted-foreground">
-                {roleDisplayLabel(user.role)}
+                {portalRoleLabel(user.role)}
               </p>
             </div>
           </div>

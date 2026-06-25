@@ -47,6 +47,42 @@ const STATUS_LABELS: Record<InvStockCountDetail["count"]["status"], string> = {
   cancelled: "ยกเลิก",
 }
 
+function nextStepCopy(
+  status: InvStockCountDetail["count"]["status"],
+  canManage: boolean
+) {
+  if (status === "draft") {
+    return {
+      title: "ขั้นตอนถัดไป",
+      body: canManage
+        ? "ตรวจสาขา คลัง และวันนัดก่อน แล้วกดเริ่มนับเพื่อเปิดให้ทีมกรอกจำนวนจริง"
+        : "รอผู้มีสิทธิเริ่มรอบนี้ก่อน จึงจะกรอกจำนวนจริงได้",
+      tone: "border-sky-200 bg-sky-50/70 text-sky-900",
+    }
+  }
+  if (status === "counting") {
+    return {
+      title: "กำลังนับจริง",
+      body: canManage
+        ? "กรอกจำนวนจริงให้ครบทุก SKU แล้วบันทึกซ้ำได้หลายครั้ง ก่อนปิดรอบสร้างรายการปรับสต็อก"
+        : "รอทีมที่มีสิทธิบันทึกจำนวนจริงและปิดรอบนี้",
+      tone: "border-amber-200 bg-amber-50/80 text-amber-900",
+    }
+  }
+  if (status === "completed") {
+    return {
+      title: "ปิดรอบแล้ว",
+      body: "ใช้หน้านี้ตรวจส่วนต่างย้อนหลังและเทียบว่ารายการปรับสต็อกตรงกับผลนับจริงหรือไม่",
+      tone: "border-emerald-200 bg-emerald-50/70 text-emerald-900",
+    }
+  }
+  return {
+    title: "รอบนี้ถูกยกเลิก",
+    body: "ถ้าจะตรวจนับใหม่ให้สร้างรอบใหม่แทน เพื่อแยกหลักฐานและเวลาการนับให้ชัดเจน",
+    tone: "border-rose-200 bg-rose-50/80 text-rose-900",
+  }
+}
+
 function SummaryCard({
   icon: Icon,
   label,
@@ -107,6 +143,7 @@ export function StockCountDetailView({
       detail.items.filter((item) => item.physical_qty != null && item.physical_qty !== item.system_qty).length,
     [detail.items],
   )
+  const nextStep = nextStepCopy(detail.count.status, canManage)
 
   function buildSavePayload() {
     return detail.items.map((item) => {
@@ -162,25 +199,25 @@ export function StockCountDetailView({
           icon={ClipboardList}
           label="สถานะรอบนับ"
           value={STATUS_LABELS[detail.count.status]}
-          hint="ไหลจาก draft → counting → completed"
+          hint="ไหลจากแบบร่าง → กำลังนับ → เสร็จสิ้น"
         />
         <SummaryCard
           icon={ScanSearch}
           label="กรอกแล้ว"
           value={`${countedItems} / ${detail.items.length}`}
-          hint="ใช้ดูความคืบหน้าของ physical qty ในรอบนี้"
+          hint="ใช้ดูความคืบหน้าของจำนวนจริงในรอบนี้"
         />
         <SummaryCard
           icon={TriangleAlert}
-          label="Variance ชั่วคราว"
+          label="ส่วนต่างชั่วคราว"
           value={String(detail.count.status === "completed" ? completedVarianceCount : varianceItems)}
-          hint="จำนวน SKU ที่ physical ไม่เท่ากับ system"
+          hint="จำนวน SKU ที่จำนวนจริงไม่เท่ากับจำนวนในระบบ"
         />
         <SummaryCard
           icon={PackageCheck}
           label="ขอบเขต"
           value={detail.count.warehouse_name}
-          hint={`สาขา ${detail.count.branch_name} · ทุก SKU ที่มี stock balance row`}
+          hint={`สาขา ${detail.count.branch_name} · ทุก SKU ที่มีข้อมูลคงเหลือในคลัง`}
         />
       </div>
 
@@ -194,6 +231,11 @@ export function StockCountDetailView({
         </span>
       </div>
 
+      <div className={`rounded-xl border p-4 text-sm ${nextStep.tone}`}>
+        <p className="font-semibold">{nextStep.title}</p>
+        <p className="mt-1">{nextStep.body}</p>
+      </div>
+
       <div className="grid gap-2 rounded-xl border border-border p-4 text-sm md:grid-cols-2">
         <p>
           <span className="font-medium">สาขา:</span> {detail.count.branch_name}
@@ -205,7 +247,7 @@ export function StockCountDetailView({
           <span className="font-medium">ผู้สร้าง:</span> {detail.count.created_by_name}
         </p>
         <p>
-          <span className="font-medium">ขอบเขต:</span> ทุก SKU ที่มี stock balance row
+          <span className="font-medium">ขอบเขต:</span> ทุก SKU ที่มีข้อมูลคงเหลือในคลัง
         </p>
         <p>
           <span className="font-medium">รายการทั้งหมด:</span> {detail.items.length}
@@ -231,23 +273,85 @@ export function StockCountDetailView({
           <div>
             <h2 className="text-sm font-semibold">รายการตรวจนับ</h2>
             <p className="text-sm text-muted-foreground">
-              ระหว่างนับสามารถบันทึกซ้ำได้หลายครั้ง และ finalize ได้เมื่อกรอกครบทุก SKU
+              ระหว่างนับสามารถบันทึกซ้ำได้หลายครั้ง และปิดรอบได้เมื่อกรอกครบทุก SKU
             </p>
           </div>
           <div className="text-sm text-muted-foreground">
-            Variance ชั่วคราว: {detail.count.status === "completed" ? completedVarianceCount : varianceItems} รายการ
+            ส่วนต่างชั่วคราว: {detail.count.status === "completed" ? completedVarianceCount : varianceItems} รายการ
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="grid gap-3 md:hidden">
+          {detail.items.map((item) => {
+            const raw = physicalQty[item.id] ?? ""
+            const physical = raw.trim() === "" ? null : Number(raw)
+            const variance = physical == null ? null : physical - item.system_qty
+
+            return (
+              <div key={item.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{item.sku_code}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{item.sku_name}</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 px-2 py-1 text-xs font-medium">
+                    {variance == null ? "ยังไม่กรอก" : `ส่วนต่าง ${formatQuantity(variance)}`}
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">จำนวนในระบบ</p>
+                    <p className="text-sm font-semibold">
+                      {formatQuantity(item.system_qty)} {unitLabel(item)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">ผู้บันทึก</p>
+                    <p className="text-sm font-semibold">{item.counted_by_name ?? "—"}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <p className="mb-2 text-[11px] text-muted-foreground">จำนวนที่นับจริง</p>
+                  {detail.count.status === "counting" && canManage ? (
+                    <input
+                      type="number"
+                      min={0}
+                      step="any"
+                      className="h-10 w-full rounded-lg border border-input px-3 text-sm"
+                      value={raw}
+                      onChange={(e) =>
+                        setPhysicalQty((current) => ({
+                          ...current,
+                          [item.id]: e.target.value,
+                        }))
+                      }
+                    />
+                  ) : (
+                    <div className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
+                      {formatQuantity(item.physical_qty)}
+                    </div>
+                  )}
+                </div>
+
+                <p className="mt-3 text-xs text-muted-foreground">
+                  เวลา {item.counted_at ? formatThaiDateTime(item.counted_at) : "—"}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="hidden overflow-hidden rounded-xl border border-border md:block">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>SKU</TableHead>
                 <TableHead>ชื่อ</TableHead>
-                <TableHead>System</TableHead>
-                <TableHead>Physical</TableHead>
-                <TableHead>Variance</TableHead>
+                <TableHead>จำนวนในระบบ</TableHead>
+                <TableHead>จำนวนที่นับจริง</TableHead>
+                <TableHead>ส่วนต่าง</TableHead>
                 <TableHead>ผู้บันทึก</TableHead>
                 <TableHead>เวลา</TableHead>
               </TableRow>
@@ -302,12 +406,13 @@ export function StockCountDetailView({
             เมื่อเริ่มแล้วสถานะจะเปลี่ยนเป็นกำลังนับ และทีมสามารถกรอกจำนวนจริงได้
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button type="button" disabled={pending} onClick={() => runAction(() => startStockCount({ count_id: detail.count.id }))}>
+            <Button type="button" className="w-full sm:w-auto" disabled={pending} onClick={() => runAction(() => startStockCount({ count_id: detail.count.id }))}>
               เริ่มนับ
             </Button>
             <Button
               type="button"
               variant="outline"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() => runAction(() => cancelStockCount({ count_id: detail.count.id }))}
             >
@@ -321,23 +426,25 @@ export function StockCountDetailView({
         <section className="rounded-xl border border-border p-4">
           <h2 className="text-sm font-semibold">บันทึกผลนับจริง</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            กดบันทึกเพื่อเก็บความคืบหน้า หรือ finalize เพื่อสร้าง adjustment และอัปเดต stock movement
+            กดบันทึกเพื่อเก็บความคืบหน้า หรือปิดรอบเพื่อสร้างรายการปรับสต็อกและอัปเดตการเคลื่อนไหวสต็อก
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button type="button" disabled={pending || countedItems === 0} onClick={saveDraftCounts}>
+            <Button type="button" className="w-full sm:w-auto" disabled={pending || countedItems === 0} onClick={saveDraftCounts}>
               บันทึกความคืบหน้า
             </Button>
             <Button
               type="button"
               variant="outline"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={finalizeWithLatestValues}
             >
-              Finalize รอบตรวจนับ
+              ปิดรอบตรวจนับ
             </Button>
             <Button
               type="button"
               variant="ghost"
+              className="w-full sm:w-auto"
               disabled={pending}
               onClick={() => runAction(() => cancelStockCount({ count_id: detail.count.id }))}
             >
@@ -350,27 +457,55 @@ export function StockCountDetailView({
       {detail.count.status === "completed" ? (
         <section className="space-y-3 rounded-xl border border-border p-4">
           <div>
-            <h2 className="text-sm font-semibold">Adjustment ที่สร้างแล้ว</h2>
+            <h2 className="text-sm font-semibold">รายการปรับสต็อกที่สร้างแล้ว</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              แสดงเฉพาะ SKU ที่มี variance ไม่เท่ากับ 0 หลัง finalize
+              แสดงเฉพาะ SKU ที่มีส่วนต่างไม่เท่ากับ 0 หลังปิดรอบ
             </p>
           </div>
-          <div className="overflow-hidden rounded-xl border border-border">
+          <div className="grid gap-3 md:hidden">
+            {detail.adjustments.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                ไม่มีส่วนต่างในรอบนี้
+              </div>
+            ) : (
+              detail.adjustments.map((item) => (
+                <div key={item.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">{item.sku_code}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{item.sku_name}</p>
+                    </div>
+                    <div className="rounded-lg bg-muted/30 px-2 py-1 text-xs font-medium">
+                      {item.status === "applied" ? "ปรับแล้ว" : item.status}
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm font-semibold">
+                    {formatQuantity(item.qty_delta)} {unitLabel(item)}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    เวลาปรับ {item.applied_at ? formatThaiDateTime(item.applied_at) : "—"}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="hidden overflow-hidden rounded-xl border border-border md:block">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>SKU</TableHead>
                   <TableHead>ชื่อ</TableHead>
-                  <TableHead>Delta</TableHead>
+                  <TableHead>จำนวนปรับ</TableHead>
                   <TableHead>สถานะ</TableHead>
-                  <TableHead>เวลา apply</TableHead>
+                  <TableHead>เวลาปรับ</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {detail.adjustments.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      ไม่มี variance ในรอบนี้
+                      ไม่มีส่วนต่างในรอบนี้
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -381,7 +516,7 @@ export function StockCountDetailView({
                       <TableCell>
                         {formatQuantity(item.qty_delta)} {unitLabel(item)}
                       </TableCell>
-                      <TableCell>{item.status === "applied" ? "Applied" : item.status}</TableCell>
+                      <TableCell>{item.status === "applied" ? "ปรับแล้ว" : item.status}</TableCell>
                       <TableCell>{item.applied_at ? formatThaiDateTime(item.applied_at) : "—"}</TableCell>
                     </TableRow>
                   ))

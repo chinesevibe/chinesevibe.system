@@ -59,7 +59,13 @@ function unitLabel(row: InvDamageRow) {
     : row.unit_name
 }
 
-export function DamageListTable({ damages }: { damages: InvDamageRow[] }) {
+export function DamageListTable({
+  damages,
+  detailBasePath = "/admin/inventory/damage",
+}: {
+  damages: InvDamageRow[]
+  detailBasePath?: string
+}) {
   return (
     <>
       <div className="grid gap-3 md:hidden">
@@ -109,7 +115,7 @@ export function DamageListTable({ damages }: { damages: InvDamageRow[] }) {
               </div>
               <div className="mt-3 flex justify-end">
                 <Link
-                  href={`/admin/inventory/damage/${row.id}`}
+                  href={`${detailBasePath}/${row.id}`}
                   className={cn(
                     buttonVariants({ size: "sm", variant: "outline" }),
                     "inline-flex items-center gap-1"
@@ -177,7 +183,7 @@ export function DamageListTable({ damages }: { damages: InvDamageRow[] }) {
                     </TableCell>
                     <TableCell className="text-right">
                       <Link
-                        href={`/admin/inventory/damage/${row.id}`}
+                        href={`${detailBasePath}/${row.id}`}
                         className={cn(
                           buttonVariants({ size: "sm", variant: "outline" }),
                           "inline-flex items-center gap-1"

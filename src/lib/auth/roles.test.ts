@@ -37,7 +37,7 @@ test("canAccessPortalInventoryWorkspace allows inventory workers and blocks unre
   )
 })
 
-test("canAccessPortalInventoryWorkspace keeps inventory managers on admin inventory", () => {
+test("canAccessPortalInventoryWorkspace allows inventory managers into the mobile workspace", () => {
   assert.equal(
     canAccessPortalInventoryWorkspace(
       employee({
@@ -46,7 +46,7 @@ test("canAccessPortalInventoryWorkspace keeps inventory managers on admin invent
         role: "employee",
       })
     ),
-    false
+    true
   )
   assert.equal(
     canAccessPortalInventoryWorkspace(
@@ -56,7 +56,7 @@ test("canAccessPortalInventoryWorkspace keeps inventory managers on admin invent
         role: "inventory",
       })
     ),
-    false
+    true
   )
 })
 

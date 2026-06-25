@@ -35,6 +35,24 @@ export function InventoryFilterBar({
     if (!branchId) return options.warehouses
     return options.warehouses.filter((warehouse) => warehouse.branch_id === branchId)
   }, [branchId, options.warehouses])
+  const branchLabel = options.branches.find((branch) => branch.id === branchId)?.name ?? ""
+  const warehouseLabel =
+    options.warehouses.find((warehouse) => warehouse.id === warehouseId)?.name ?? ""
+  const alertTypeLabel =
+    alertType === "expiry"
+      ? "ใกล้หมดอายุ"
+      : alertType === "low_stock"
+        ? "สต็อกต่ำ"
+        : alertType === "anomaly"
+          ? "ผิดปกติ"
+          : ""
+  const activeFilters = [
+    branchLabel ? `สาขา ${branchLabel}` : "",
+    warehouseLabel ? `คลัง ${warehouseLabel}` : "",
+    alertTypeLabel ? `ประเภท ${alertTypeLabel}` : "",
+    dateFrom ? `ตั้งแต่ ${dateFrom}` : "",
+    dateTo ? `ถึง ${dateTo}` : "",
+  ].filter(Boolean)
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -52,7 +70,35 @@ export function InventoryFilterBar({
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-muted/20 p-4">
+    <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold">ตัวกรอง</p>
+          <p className="text-xs text-muted-foreground">
+            เลือกสาขา คลัง และช่วงข้อมูลที่ต้องการดู
+          </p>
+        </div>
+        {activeFilters.length > 0 ? (
+          <div className="rounded-full bg-background px-3 py-1 text-xs text-muted-foreground">
+            ใช้งานอยู่ {activeFilters.length} ตัว
+          </div>
+        ) : null}
+      </div>
+
+      {activeFilters.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {activeFilters.map((label) => (
+            <span
+              key={label}
+              className="rounded-full border border-border/80 bg-background px-2.5 py-1 text-xs text-foreground"
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm">
         <span className="text-muted-foreground">สาขา</span>
         <select
@@ -132,6 +178,7 @@ export function InventoryFilterBar({
       <Button type="button" variant="outline" size="sm" disabled={pending} onClick={clearFilters}>
         ล้างตัวกรอง
       </Button>
+      </div>
     </div>
   )
 }

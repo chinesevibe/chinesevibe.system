@@ -1,0 +1,223 @@
+import Link from "next/link"
+import { ClipboardList, PackageCheck, ScanSearch, TimerReset } from "lucide-react"
+
+import { AdminPageShell } from "@/components/brand/AdminPageShell"
+import { PortalInventoryTaskNav } from "@/components/portal/PortalInventoryTaskNav"
+import { StatusPill } from "@/components/brand/StatusPill"
+import { buttonVariants } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { InventoryLoadError } from "@/features/inventory/InventorySearchBar"
+import { listStockCounts } from "@/features/inventory/actions/stock-count"
+import { requireManagedInventoryPortal } from "@/lib/auth/require-inventory-portal"
+import { formatThaiDate, formatThaiDateTime } from "@/lib/datetime/thailand"
+import { cn } from "@/lib/utils"
+
+function statusVariant(status: "draft" | "counting" | "completed" | "cancelled") {
+  if (status === "completed") return "approved" as const
+  if (status === "counting") return "pending" as const
+  if (status === "cancelled") return "rejected" as const
+  return "neutral" as const
+}
+
+const STATUS_LABELS = {
+  draft: "ร่าง",
+  counting: "กำลังนับ",
+  completed: "เสร็จสิ้น",
+  cancelled: "ยกเลิก",
+} as const
+
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof ScanSearch
+  label: string
+  value: number
+  hint: string
+}) {
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/10 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{value.toLocaleString("th-TH")}</p>
+        </div>
+        <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-brand-red">
+          <Icon className="size-5" aria-hidden />
+        </div>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+    </div>
+  )
+}
+
+export default async function PortalStockCountPage() {
+  await requireManagedInventoryPortal()
+
+  let rows: Awaited<ReturnType<typeof listStockCounts>> = []
+  let loadError: string | null = null
+
+  try {
+    rows = await listStockCounts()
+  } catch (error) {
+    loadError = error instanceof Error ? error.message : "โหลดรอบตรวจนับไม่สำเร็จ"
+  }
+
+  const draftCount = rows.filter((row) => row.status === "draft").length
+  const countingCount = rows.filter((row) => row.status === "counting").length
+  const completedCount = rows.filter((row) => row.status === "completed").length
+  const totalPendingItems = rows.reduce((sum, row) => sum + Math.max(0, row.item_count - row.counted_count), 0)
+
+  return (
+    <AdminPageShell
+      title="ตรวจนับสต๊อก"
+      description="คิวรอบตรวจนับบนมือถือ ใช้เริ่มรอบใหม่ เปิดรอบค้าง และตามส่วนต่างต่อได้จากจุดเดียว"
+      action={
+        <Link href="/portal/stock-count/create" className={cn(buttonVariants({ size: "sm" }))}>
+          + สร้างรอบตรวจนับ
+        </Link>
+      }
+    >
+      <PortalInventoryTaskNav current="stock-count" showManagerLinks />
+
+      {loadError ? <InventoryLoadError message={loadError} /> : null}
+
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          icon={ScanSearch}
+          label="รอบตรวจนับทั้งหมด"
+          value={rows.length}
+          hint="รวมทุกรอบที่สร้างในงานตรวจนับนี้"
+        />
+        <SummaryCard
+          icon={ClipboardList}
+          label="แบบร่าง"
+          value={draftCount}
+          hint="รอบที่สร้างแล้วแต่ยังไม่เริ่มนับจริง"
+        />
+        <SummaryCard
+          icon={TimerReset}
+          label="กำลังนับ"
+          value={countingCount}
+          hint="รอบที่ทีมยังกรอกจำนวนจริงไม่ครบ"
+        />
+        <SummaryCard
+          icon={PackageCheck}
+          label="เสร็จสิ้น"
+          value={completedCount}
+          hint={`ยังเหลือ ${totalPendingItems.toLocaleString("th-TH")} รายการที่ยังไม่ถูกกรอกในรอบที่ค้างอยู่`}
+        />
+      </div>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-base font-semibold">คิวรอบตรวจนับ</h2>
+            <p className="text-xs text-muted-foreground">
+              ใช้เปิดรอบแบบร่าง กลับเข้ารอบที่กำลังนับ และดูรอบที่ปิดแล้วจากมือถือ
+            </p>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            แบบร่าง {draftCount.toLocaleString("th-TH")} · กำลังนับ {countingCount.toLocaleString("th-TH")}
+          </div>
+        </div>
+        <div className="grid gap-3 md:hidden">
+          {rows.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+              ยังไม่มีรอบตรวจนับ
+            </div>
+          ) : (
+            rows.map((row) => (
+              <div key={row.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/portal/stock-count/${row.id}`}
+                      className="text-sm font-semibold text-brand-red hover:underline"
+                    >
+                      {row.id.slice(0, 8)}
+                    </Link>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {row.branch_name} · {row.warehouse_name}
+                    </p>
+                  </div>
+                  <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">วันที่วางแผน</p>
+                    <p className="text-sm font-semibold">
+                      {row.planned_at ? formatThaiDate(row.planned_at) : "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground">ความคืบหน้า</p>
+                    <p className="text-lg font-semibold tabular-nums">
+                      {row.counted_count} / {row.item_count}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  สร้างเมื่อ {formatThaiDateTime(row.created_at)}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="hidden overflow-hidden rounded-xl border border-border md:block">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>รหัส</TableHead>
+                <TableHead>สาขา</TableHead>
+                <TableHead>คลัง</TableHead>
+                <TableHead>สถานะ</TableHead>
+                <TableHead>วันที่วางแผน</TableHead>
+                <TableHead>ความคืบหน้า</TableHead>
+                <TableHead>สร้างเมื่อ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                    ยังไม่มีรอบตรวจนับ
+                  </TableCell>
+                </TableRow>
+              ) : (
+                rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="font-medium">
+                      <Link href={`/portal/stock-count/${row.id}`} className="text-brand-red hover:underline">
+                        {row.id.slice(0, 8)}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{row.branch_name}</TableCell>
+                    <TableCell>{row.warehouse_name}</TableCell>
+                    <TableCell>
+                      <StatusPill label={STATUS_LABELS[row.status]} variant={statusVariant(row.status)} />
+                    </TableCell>
+                    <TableCell>{row.planned_at ? formatThaiDate(row.planned_at) : "—"}</TableCell>
+                    <TableCell>
+                      {row.counted_count} / {row.item_count}
+                    </TableCell>
+                    <TableCell>{formatThaiDateTime(row.created_at)}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+    </AdminPageShell>
+  )
+}

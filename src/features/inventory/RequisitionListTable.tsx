@@ -35,8 +35,10 @@ function statusVariant(status: InvRequisitionStatus) {
 
 export function RequisitionListTable({
   requisitions,
+  detailBasePath = "/admin/inventory/requisition",
 }: {
   requisitions: InvRequisitionRow[]
+  detailBasePath?: string
 }) {
   return (
     <>
@@ -68,7 +70,7 @@ export function RequisitionListTable({
               </div>
               <div className="mt-3 flex justify-end">
                 <Link
-                  href={`/admin/inventory/requisition/${row.id}`}
+                  href={`${detailBasePath}/${row.id}`}
                   className={cn(
                     buttonVariants({ size: "sm", variant: "outline" }),
                     "inline-flex items-center gap-1"
@@ -118,7 +120,7 @@ export function RequisitionListTable({
                     </TableCell>
                     <TableCell className="text-right">
                       <Link
-                        href={`/admin/inventory/requisition/${row.id}`}
+                        href={`${detailBasePath}/${row.id}`}
                         className={cn(
                           buttonVariants({ size: "sm", variant: "outline" }),
                           "inline-flex items-center gap-1"

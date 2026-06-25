@@ -35,8 +35,12 @@ function unitLabel(sku: InvRequisitionCreateOptions["skus"][number]) {
 
 export function RequisitionCreateForm({
   options,
+  successBasePath = "/admin/inventory/requisition",
+  cancelPath = "/admin/inventory/requisition",
 }: {
   options: InvRequisitionCreateOptions
+  successBasePath?: string
+  cancelPath?: string
 }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
@@ -83,7 +87,7 @@ export function RequisitionCreateForm({
     startTransition(async () => {
       const result = await createRequisition(payload)
       if (result.success && result.id) {
-        router.push(`/admin/inventory/requisition/${result.id}`)
+        router.push(`${successBasePath}/${result.id}`)
         router.refresh()
       } else {
         setError(result.error ?? "สร้างใบเบิกไม่สำเร็จ")
@@ -180,7 +184,7 @@ export function RequisitionCreateForm({
                 key={item.key}
                 className="grid gap-3 rounded-lg border border-border p-3 md:grid-cols-[1fr_160px_1fr_auto]"
               >
-                <InventoryFormField label={`SKU #${index + 1}`}>
+                <InventoryFormField label={`สินค้า #${index + 1}`}>
                   <select
                     value={item.sku_id}
                     required
@@ -250,14 +254,15 @@ export function RequisitionCreateForm({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button type="button" disabled={pending} onClick={submit}>
+        <Button type="button" className="w-full sm:w-auto" disabled={pending} onClick={submit}>
           {pending ? "กำลังสร้าง…" : "สร้างใบเบิก"}
         </Button>
         <Button
           type="button"
           variant="outline"
+          className="w-full sm:w-auto"
           disabled={pending}
-          onClick={() => router.push("/admin/inventory/requisition")}
+          onClick={() => router.push(cancelPath)}
         >
           ยกเลิก
         </Button>

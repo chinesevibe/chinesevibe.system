@@ -74,8 +74,10 @@ function thresholdLabel(value: number | null) {
 
 export function DamageCreateForm({
   options,
+  successBasePath = "/admin/inventory/damage",
 }: {
   options: InvInventoryCreateOptions
+  successBasePath?: string
 }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
@@ -151,7 +153,7 @@ export function DamageCreateForm({
       })
 
       if (result.success && result.id) {
-        router.push(`/admin/inventory/damage/${result.id}`)
+        router.push(`${successBasePath}/${result.id}`)
         router.refresh()
       } else {
         setError(result.error ?? "สร้างรายงานความเสียหายไม่สำเร็จ")
@@ -166,6 +168,10 @@ export function DamageCreateForm({
           {error}
         </p>
       ) : null}
+
+      <div className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+        เลือกสาขาและคลังให้ตรงก่อน แล้วเพิ่มรายการเสียหายทีละรายการพร้อมเหตุผลและรูปถ่ายถ้ามี
+      </div>
 
       <div className="grid gap-4 rounded-xl border border-border p-4 md:grid-cols-2">
         <InventoryFormField label="สาขา" htmlFor="branch_id">
@@ -246,9 +252,23 @@ export function DamageCreateForm({
           return (
             <div
               key={item.key}
-              className="grid gap-3 rounded-lg border border-border p-3 lg:grid-cols-[1fr_130px_180px_200px_1fr_220px_auto]"
+              className="grid gap-3 rounded-xl border border-border p-3 xl:grid-cols-[1fr_130px_180px_200px_1fr_220px_auto]"
             >
-              <InventoryFormField label={`SKU #${index + 1}`}>
+              <div className="flex items-center justify-between gap-3 xl:hidden">
+                <p className="text-sm font-semibold">รายการ #{index + 1}</p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="text-destructive"
+                  disabled={items.length === 1}
+                  onClick={() => removeItem(item.key)}
+                >
+                  <Trash2 className="size-4" />
+                  ลบ
+                </Button>
+              </div>
+              <InventoryFormField label={`สินค้า #${index + 1}`}>
                 <select
                   value={item.sku_id}
                   className={invInputClass}
@@ -313,7 +333,7 @@ export function DamageCreateForm({
                 </p>
               </InventoryFormField>
 
-              <InventoryFormField label="Lot">
+              <InventoryFormField label="ล็อต">
                 <InventoryLotPicker
                   skuId={item.sku_id}
                   warehouseId={warehouseId}
@@ -351,13 +371,13 @@ export function DamageCreateForm({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={item.previewUrl}
-                    alt="Damage preview"
+                    alt="ตัวอย่างรูปความเสียหาย"
                     className="mt-2 h-24 w-24 rounded-lg border border-border object-cover"
                   />
                 ) : null}
               </InventoryFormField>
 
-              <div className="flex items-end">
+              <div className="hidden items-end xl:flex">
                 <Button
                   type="button"
                   size="sm"
@@ -375,7 +395,7 @@ export function DamageCreateForm({
         })}
       </div>
 
-      <Button type="button" disabled={pending} onClick={submit}>
+      <Button type="button" className="w-full md:w-auto" disabled={pending} onClick={submit}>
         {pending ? "กำลังบันทึก…" : "ส่งรายงานความเสียหาย"}
       </Button>
     </div>

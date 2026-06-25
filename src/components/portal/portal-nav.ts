@@ -29,15 +29,6 @@ export const PORTAL_WORKER_NAV_ITEMS: AdminNavItem[] = [
   { label: "คลังสินค้า", href: "/portal/inventory", icon: "inventory" },
 ]
 
-export const INVENTORY_ADMIN_NAV_ITEM: AdminNavItem = {
-  label: "คลังสินค้า (Admin)",
-  href: "/admin/inventory",
-  icon: "inventory",
-}
-
 export function isPortalNavActive(pathname: string, href: string): boolean {
-  if (href === "/admin/inventory") {
-    return pathname === "/admin/inventory" || pathname.startsWith("/admin/inventory/")
-  }
   return href === "/portal" ? pathname === "/portal" : pathname.startsWith(href)
 }
