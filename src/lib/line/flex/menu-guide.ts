@@ -249,6 +249,7 @@ export function attendancePickerFlex(
 export function checkinGuideFlex(
   locale: AppLocale = DEFAULT_LOCALE
 ): messagingApi.FlexMessage {
+  const clockUrl = buildLiffUrl("/liff/clock", locale) ?? "/liff/clock"
   return guide(t("line.checkinGuide.alt", locale), {
     emoji: "🟢",
     title: t("line.checkinGuide.title", locale),
@@ -261,12 +262,17 @@ export function checkinGuideFlex(
       t("line.checkinGuide.step3", locale),
     ],
     tip: t("line.checkinGuide.tip", locale),
+    button: {
+      label: t("line.checkinGuide.liffButton", locale),
+      uri: clockUrl,
+    },
   }, locale)
 }
 
 export function checkoutGuideFlex(
   locale: AppLocale = DEFAULT_LOCALE
 ): messagingApi.FlexMessage {
+  const clockUrl = buildLiffUrl("/liff/clock", locale) ?? "/liff/clock"
   return guide(t("line.checkoutGuide.alt", locale), {
     emoji: "🔴",
     title: t("line.checkoutGuide.title", locale),
@@ -279,6 +285,10 @@ export function checkoutGuideFlex(
       t("line.checkoutGuide.step3", locale),
     ],
     tip: t("line.checkoutGuide.tip", locale),
+    button: {
+      label: t("line.checkoutGuide.liffButton", locale),
+      uri: clockUrl,
+    },
   }, locale)
 }
 
