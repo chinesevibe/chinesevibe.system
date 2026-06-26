@@ -29,8 +29,9 @@ Font.register({
 // Helpers
 // ---------------------------------------------------------------------------
 function fontFamily(lang: PdfLang): string {
-  if (lang === "en") return "NotoSans"
-  return "NotoSansSC"
+  if (lang === "zh") return "NotoSansSC"
+  // th and en use Latin font (no Thai font bundled — th payslip uses English labels)
+  return "NotoSans"
 }
 
 function fmt(n: number): string {

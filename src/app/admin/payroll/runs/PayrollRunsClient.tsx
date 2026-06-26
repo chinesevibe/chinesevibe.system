@@ -70,7 +70,7 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
   const [netOverrides, setNetOverrides] = useState<Record<string, number>>({})
 
   // PDF language selector (global)
-  const [pdfLang, setPdfLang] = useState<"zh" | "th" | "en">("zh")
+  const [pdfLang, setPdfLang] = useState<"zh" | "en">("zh")
 
   const period = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}`
 
@@ -457,11 +457,10 @@ export function PayrollRunsClient({ defaultCutoffDay, initialPeriod }: Props) {
                               onClick={(e) => e.stopPropagation()}
                               onChange={(e) => {
                                 e.stopPropagation()
-                                setPdfLang(e.target.value as "zh" | "th" | "en")
+                                setPdfLang(e.target.value as "zh" | "en")
                               }}
                             >
                               <option value="zh">中文</option>
-                              <option value="th">ภาษาไทย</option>
                               <option value="en">English</option>
                             </select>
                             <button
