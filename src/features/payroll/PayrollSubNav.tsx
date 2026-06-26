@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 const LINKS = [
   { href: "/admin/payroll", label: "Hub", exact: true },
   { href: "/admin/payroll/runs", label: "คำนวณเงินเดือน" },
+  { href: "/admin/payroll/advances", label: "เงินล่วงหน้า" },
   { href: "/admin/payroll/settings", label: "ตั้งค่าเงินเดือน" },
 ] as const
 

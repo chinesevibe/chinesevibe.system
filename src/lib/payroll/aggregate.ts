@@ -83,6 +83,16 @@ export async function aggregatePayrollPeriod(
     throw new Error(`Failed to fetch overtime: ${overtimeError.message}`)
   }
 
+  const { data: advances, error: advancesError } = await supabase
+    .from("hr_salary_advances")
+    .select("employee_id, amount")
+    .eq("deduct_period", period)
+    .eq("status", "pending")
+
+  if (advancesError) {
+    throw new Error(`Failed to fetch salary advances: ${advancesError.message}`)
+  }
+
   const { data: leaves, error: leavesError } = await supabase
     .from("hr_leaves")
     .select("employee_id, type, start_date, end_date, leave_hours, status")
@@ -111,6 +121,7 @@ export async function aggregatePayrollPeriod(
       sick_leave_hours: 0,
       annual_leave_hours: 0,
       unpaid_leave_hours: 0,
+      advance_amount: 0,
     })
     paymentDates.set(emp.id, computePaymentDate(period, payDay))
   }
@@ -145,6 +156,12 @@ export async function aggregatePayrollPeriod(
         data.unpaid_leave_hours += roundPayrollHours(Number(leave.leave_hours))
       }
     })
+  }
+
+  for (const adv of advances ?? []) {
+    const data = summaries.get(adv.employee_id as string)
+    if (!data) continue
+    data.advance_amount += Math.round(Number(adv.amount ?? 0) * 100) / 100
   }
 
   return { summaries, paymentDates, skipped: [] }

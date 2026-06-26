@@ -70,13 +70,18 @@ export function calculatePayslip(
     }
   }
 
+  const advanceDeduction = Math.round((summary.advance_amount ?? 0) * 100) / 100
+  if (advanceDeduction > 0) {
+    lines.push({ code: "ADVANCE_DEDUCT", label: "หักเบิกล่วงหน้า", amount: -advanceDeduction, sort_order: 87 })
+  }
+
   const ssoEnabled = options.ssoEnabled ?? false
   const taxEnabled = options.taxEnabled ?? false
   const taxRate = options.taxRate ?? 0
   const ssoDeduction = ssoEnabled ? round2(Math.min(config.sso_cap, gross * config.sso_rate)) : 0
   const taxDeduction = taxEnabled ? round2(gross * taxRate) : 0
   const otherDeductions = 0
-  const netAmount = round2(gross - ssoDeduction - taxDeduction - otherDeductions)
+  const netAmount = round2(gross - ssoDeduction - taxDeduction - otherDeductions - advanceDeduction)
 
   if (ssoDeduction > 0) {
     lines.push({ code: "SSO", label: "ประกันสังคม", amount: -ssoDeduction, sort_order: 90 })

@@ -192,6 +192,20 @@ export async function lockRun(runId: string, lockedBy: string): Promise<PayrollR
 
   await admin.from("hr_payslips").update({ status: "final" }).eq("run_id", runId)
 
+  // Mark all pending advances for this period as deducted
+  const { data: runData } = await admin
+    .from("hr_payroll_runs")
+    .select("period")
+    .eq("id", runId)
+    .single()
+  if (runData?.period) {
+    await admin
+      .from("hr_salary_advances")
+      .update({ status: "deducted", updated_at: new Date().toISOString() })
+      .eq("deduct_period", runData.period)
+      .eq("status", "pending")
+  }
+
   const updated = await getRunWithPayslips(runId)
   if (!updated) throw new Error("Failed to load payroll run")
   return updated

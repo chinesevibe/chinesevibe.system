@@ -16,6 +16,7 @@ export interface PayrollSummary {
   sick_leave_hours: number
   annual_leave_hours: number
   unpaid_leave_hours: number
+  advance_amount: number
 }
 
 export interface PayslipLineInput {

@@ -1,3 +1,6 @@
+// ---------------------------------------------------------------------------
+// Legacy pdf-lib based generator (used by /api/payroll/runs/[id]/generate-pdf)
+// ---------------------------------------------------------------------------
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib"
 
 export interface PayslipPdfInput {
@@ -84,3 +87,10 @@ export const PAYROLL_PDF_BUCKET = "payroll-payslips"
 export function payslipStoragePath(employeeId: string, runId: string): string {
   return `${employeeId}/${runId}.pdf`
 }
+
+// ---------------------------------------------------------------------------
+// New @react-pdf/renderer based component (used by /api/payroll/payslips/[id]/pdf)
+// Re-exported here so TypeScript resolves it when importing from "@/lib/payroll/payslip-pdf"
+// (.ts takes precedence over .tsx in module resolution)
+// ---------------------------------------------------------------------------
+export { PayslipPdf } from "./payslip-pdf-renderer"
