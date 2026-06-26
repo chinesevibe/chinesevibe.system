@@ -580,9 +580,27 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     }
   })
 
+  // Fetch HR-set day-off overrides in the same date range to include their hours in the summary
+  const PAID_DAY_OFF_HOURS = 12
+  let dateOverrideQuery = supabase
+    .from("hr_employee_date_overrides")
+    .select("employee_id, date")
+    .gte("date", params.from)
+    .lte("date", params.to)
+  if (employeeIds) {
+    dateOverrideQuery = dateOverrideQuery.in("employee_id", employeeIds)
+  } else if (params.employee) {
+    dateOverrideQuery = dateOverrideQuery.eq("employee_id", params.employee)
+  }
+  const { data: dateOverrides } = await dateOverrideQuery
+
+  const dateOverrideCount = (dateOverrides ?? []).length
+
   const summary: AttendanceSummary = {
-    workDays: (summaryRows ?? []).length,
-    totalHours: resolvedSummaryRows.reduce((sum, row) => sum + (row.workHours ?? 0), 0),
+    workDays: (summaryRows ?? []).length + dateOverrideCount,
+    totalHours:
+      resolvedSummaryRows.reduce((sum, row) => sum + (row.workHours ?? 0), 0) +
+      dateOverrideCount * PAID_DAY_OFF_HOURS,
     lateCount: resolvedSummaryRows.filter((row) => row.isLate).length,
     inProgressCount: ((summaryRows ?? []) as SummaryRow[]).filter(
       (row) =>
