@@ -1,7 +1,7 @@
 import { getAdminClient } from "@/lib/auth/admin-client"
 import { roundPayrollHours } from "@/lib/payroll/hour-policy"
 
-type LineType = "regular" | "overtime" | "sick_hourly"
+type LineType = "regular" | "overtime" | "sick_hourly" | "paid_day_off"
 
 async function getOrCreatePeriod(
   workDate: string,

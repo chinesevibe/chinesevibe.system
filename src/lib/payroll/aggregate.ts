@@ -119,6 +119,7 @@ export async function aggregatePayrollPeriod(
     if (!data) continue
     const h = roundPayrollHours(Number(line.hours))
     if (line.line_type === "regular") data.worked_hours += h
+    if (line.line_type === "paid_day_off") data.worked_hours += h
     if (line.line_type === "overtime") data.overtime_hours += h
     if (line.line_type === "sick_hourly") data.sick_leave_hours += h
   }

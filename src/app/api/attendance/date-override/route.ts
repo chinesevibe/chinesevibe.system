@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server"
 
+import { getAdminClient } from "@/lib/auth/admin-client"
 import { canManageHr } from "@/lib/auth/roles"
 import { getCurrentEmployee } from "@/lib/auth/session"
+import { recordPayrollHours } from "@/lib/approval/payroll-ledger"
 import { createClient } from "@/lib/supabase/server"
+
+/** 12 paid hours credited for every HR-set day-off / public holiday */
+const PAID_DAY_OFF_HOURS = 12
+
+function dateOverrideSourceId(employeeId: string, date: string) {
+  return `${employeeId}_${date}`
+}
 
 export async function POST(request: Request) {
   const caller = await getCurrentEmployee()
@@ -36,6 +45,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "db_error" }, { status: 500 })
   }
 
+  // Fetch employee branch for payroll period bucketing
+  const { data: emp } = await supabase
+    .from("hr_employees")
+    .select("branch_id")
+    .eq("id", employeeId)
+    .maybeSingle()
+
+  // Record 12 paid hours — upsert is idempotent via source_type+source_id
+  await recordPayrollHours({
+    employeeId,
+    branchId: (emp?.branch_id as string | null) ?? null,
+    workDate: date,
+    hours: PAID_DAY_OFF_HOURS,
+    lineType: "paid_day_off",
+    sourceType: "date_override",
+    sourceId: dateOverrideSourceId(employeeId, date),
+  })
+
   return NextResponse.json({ ok: true })
 }
 
@@ -68,6 +95,14 @@ export async function DELETE(request: Request) {
     console.error("date-override DELETE error", error)
     return NextResponse.json({ error: "db_error" }, { status: 500 })
   }
+
+  // Remove the corresponding payroll hour line
+  const admin = getAdminClient()
+  await admin
+    .from("hr_payroll_hour_lines")
+    .delete()
+    .eq("source_type", "date_override")
+    .eq("source_id", dateOverrideSourceId(employeeId, date))
 
   return NextResponse.json({ ok: true })
 }
