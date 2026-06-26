@@ -150,7 +150,7 @@ function resolvePaidWorkHours({
   // Prefer the stored value: it was computed with correct business logic at checkout
   // (resolveRegularWorkHours rounds to whole hours). Apply Math.round to normalise
   // any legacy fractional values (e.g. 12.20 stored before the rounding was added).
-  if (storedWorkHours != null) return Math.round(storedWorkHours)
+  if (storedWorkHours != null) return Math.min(Math.round(storedWorkHours), 12)
 
   const checkIn = new Date(checkInAt)
   const checkOut = new Date(checkOutAt)
