@@ -147,6 +147,11 @@ function resolvePaidWorkHours({
 }): number | null {
   if (!checkOutAt) return storedWorkHours
 
+  // Prefer the stored value: it was computed with correct business logic at checkout
+  // (resolveRegularWorkHours rounds to whole hours). Apply Math.round to normalise
+  // any legacy fractional values (e.g. 12.20 stored before the rounding was added).
+  if (storedWorkHours != null) return Math.round(storedWorkHours)
+
   const checkIn = new Date(checkInAt)
   const checkOut = new Date(checkOutAt)
   if (!Number.isFinite(checkIn.getTime()) || !Number.isFinite(checkOut.getTime())) {
@@ -178,7 +183,7 @@ function resolvePaidWorkHours({
     defaultCheckOutTime,
   })
 
-  return Number.isFinite(computed.paidHours) ? computed.paidHours : storedWorkHours
+  return Number.isFinite(computed.paidHours) ? Math.round(computed.paidHours) : storedWorkHours
 }
 
 const EMPLOYEE_SCHEDULE_EMBED =
