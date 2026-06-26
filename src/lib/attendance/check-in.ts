@@ -49,6 +49,8 @@ export type CheckInResult =
     }
   | { status: "pending_approval" }
   | { status: "not_registered" }
+  | { status: "on_leave"; endDate: string }
+  | { status: "blocked_location_source"; employeeName: string }
 
 export async function checkIn({
   lineUserId,
@@ -72,6 +74,36 @@ export async function checkIn({
   if (row.status !== "active") return { status: "pending_approval" }
 
   const employee = row
+
+  // Block LINE location message — pin can be forged; require real LIFF GPS
+  if (location.source === "line_location_message") {
+    void (async () => {
+      const { notifyHr } = await import("@/lib/line/notify-hr")
+      await notifyHr([
+        {
+          type: "text",
+          text: `🚨 ป้องกันการปลอมพิกัด\n${employee.name} พยายามเช็คอินผ่าน LINE location message (ไม่ใช่ GPS จริง)\nระบบบล็อกแล้ว — กรุณาตรวจสอบ`,
+        },
+      ])
+    })().catch((err) => console.error("notify blocked_location_source failed:", err))
+    return { status: "blocked_location_source", employeeName: employee.name as string }
+  }
+
+  // Block check-in if employee has an approved leave covering today (ICT)
+  const todayIct = ictDateFromUtc(now)
+  const { data: activeLeave } = await admin
+    .from("hr_leaves")
+    .select("end_date")
+    .eq("employee_id", employee.id)
+    .eq("status", "approved")
+    .lte("start_date", todayIct)
+    .gte("end_date", todayIct)
+    .limit(1)
+    .maybeSingle()
+
+  if (activeLeave) {
+    return { status: "on_leave", endDate: activeLeave.end_date as string }
+  }
 
   await autoCloseOpenAttendanceSessions({
     admin,

@@ -96,6 +96,24 @@ function checkInMessages(
           text: result.message,
         },
       ]
+    case "on_leave":
+      return [
+        {
+          type: "text",
+          text: locale === "th"
+            ? `คุณมีการลาที่ได้รับอนุมัติถึงวันที่ ${result.endDate} — ไม่สามารถเช็คอินระหว่างลาได้`
+            : `You have approved leave until ${result.endDate}. Check-in is not allowed during leave.`,
+        } satisfies messagingApi.TextMessage,
+      ]
+    case "blocked_location_source":
+      return [
+        {
+          type: "text",
+          text: locale === "th"
+            ? `❌ ไม่สามารถเช็คอินผ่าน LINE location message ได้\nกรุณาเปิด LIFF app เพื่อเช็คอินด้วย GPS จริง`
+            : `❌ Check-in via LINE location message is not allowed.\nPlease use the LIFF app to check in with real GPS.`,
+        } satisfies messagingApi.TextMessage,
+      ]
     case "pending_approval":
       return [pendingApprovalFlex(locale)]
     case "not_registered":
