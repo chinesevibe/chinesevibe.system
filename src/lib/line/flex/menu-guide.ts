@@ -262,10 +262,6 @@ export function checkinGuideFlex(
       t("line.checkinGuide.step3", locale),
     ],
     tip: t("line.checkinGuide.tip", locale),
-    button: {
-      label: t("line.checkinGuide.liffButton", locale),
-      uri: clockUrl,
-    },
   }, locale)
 }
 
@@ -285,10 +281,6 @@ export function checkoutGuideFlex(
       t("line.checkoutGuide.step3", locale),
     ],
     tip: t("line.checkoutGuide.tip", locale),
-    button: {
-      label: t("line.checkoutGuide.liffButton", locale),
-      uri: clockUrl,
-    },
   }, locale)
 }
 
