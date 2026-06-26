@@ -342,12 +342,8 @@ export async function deleteAttendanceByHr(
   if (loadError) throw loadError
   if (!existing) throw new Error("ไม่พบรายการเข้างาน")
 
-  const { error } = await supabase
-    .from("hr_attendance")
-    .delete()
-    .eq("id", attendanceId)
-
-  if (error) throw error
+  // Log BEFORE delete — FK on hr_attendance_adjustments.attendance_id
+  // requires the row to still exist at insert time.
   await recordAttendanceAdjustment({
     attendanceId,
     actorEmployeeId: options?.actorEmployeeId ?? null,
@@ -358,4 +354,11 @@ export async function deleteAttendanceByHr(
     after: null,
     metadata: {},
   })
+
+  const { error } = await supabase
+    .from("hr_attendance")
+    .delete()
+    .eq("id", attendanceId)
+
+  if (error) throw error
 }
