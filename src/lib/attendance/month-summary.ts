@@ -16,16 +16,68 @@ function currentMonthBounds(now: Date) {
   return {
     start: ictLocalToUtc(monthStart, "00:00"),
     end: ictLocalToUtc(nextMonthStart, "00:00"),
+    monthStart,
+    nextMonthStart,
+  }
+}
+
+function parseTimeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number)
+  return h * 60 + m
+}
+
+/**
+ * monthly employees: ชั่วโมงสะสม = OT ที่ HR อนุมัติแล้วเท่านั้น
+ */
+async function getMonthlyOtSummary(
+  employeeId: string,
+  monthStart: string,
+  nextMonthStart: string
+): Promise<AttendanceMonthSummary> {
+  const admin = getAdminClient()
+
+  const { data, error } = await admin
+    .from("hr_overtime_requests")
+    .select("work_date, start_time, end_time")
+    .eq("employee_id", employeeId)
+    .eq("approval_status", "approved")
+    .gte("work_date", monthStart)
+    .lt("work_date", nextMonthStart)
+
+  if (error) throw error
+
+  const rows = (data ?? []) as Array<{
+    work_date: string
+    start_time: string
+    end_time: string
+  }>
+
+  const totalHours = rows.reduce((sum, row) => {
+    const startMin = parseTimeToMinutes(row.start_time)
+    const endMin = parseTimeToMinutes(row.end_time)
+    return sum + Math.max(0, (endMin - startMin) / 60)
+  }, 0)
+
+  return {
+    workDays: rows.length,
+    totalHours: Math.round(totalHours * 10) / 10,
   }
 }
 
 export async function getAttendanceMonthSummary(
   employeeId: string,
-  now = new Date()
+  now = new Date(),
+  payType?: string | null
 ): Promise<AttendanceMonthSummary> {
-  const admin = getAdminClient()
-  const { start, end } = currentMonthBounds(now)
+  const { start, end, monthStart, nextMonthStart } = currentMonthBounds(now)
 
+  // monthly (เงินเดือน): แสดงเฉพาะ OT ที่ HR อนุมัติแล้ว
+  if (payType === "monthly") {
+    return getMonthlyOtSummary(employeeId, monthStart, nextMonthStart)
+  }
+
+  // hourly (รายชั่วโมง): นับจาก work_hours ใน hr_attendance
+  const admin = getAdminClient()
   const { data, error } = await admin
     .from("hr_attendance")
     .select("work_hours")

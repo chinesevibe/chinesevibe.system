@@ -222,7 +222,7 @@ export async function checkOut({
     }
   }
 
-  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
+  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now, payType)
   const shouldPushReceipt = shouldPushClockReceipt(location?.source)
   let lineNotified = !shouldPushReceipt
   if (shouldPushReceipt) {

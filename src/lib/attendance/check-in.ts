@@ -64,7 +64,7 @@ export async function checkIn({
 
   const { data: row, error: employeeError } = await admin
     .from("hr_employees")
-    .select("id, name, status, branch_id, default_check_in_time, preferred_locale")
+    .select("id, name, status, branch_id, pay_type, default_check_in_time, preferred_locale")
     .eq("line_user_id", lineUserId)
     .maybeSingle()
 
@@ -221,7 +221,7 @@ export async function checkIn({
     }
   }
 
-  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now)
+  const monthSummary = await getAttendanceMonthSummary(employee.id as string, now, employee.pay_type as string | null)
   const shouldPushReceipt = shouldPushClockReceipt(location.source)
   let lineNotified = !shouldPushReceipt
   if (shouldPushReceipt) {
