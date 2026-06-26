@@ -23,28 +23,36 @@ function summaryLabels(locale: AppLocale) {
       return {
         month: "This month summary",
         days: "Worked days",
+        otDays: "OT days",
         hours: "Total hours",
+        otHours: "Approved OT",
         hoursUnit: "hrs",
       }
     case "zh":
       return {
         month: "本月汇总",
         days: "出勤天数",
+        otDays: "加班天数",
         hours: "累计工时",
+        otHours: "已批加班",
         hoursUnit: "小时",
       }
     case "my":
       return {
         month: "ဤလအကျဉ်းချုပ်",
         days: "အလုပ်ဆင်းရက်",
+        otDays: "OT ရက်",
         hours: "စုစုပေါင်းနာရီ",
+        otHours: "OT ခွင့်ပြု",
         hoursUnit: "နာရီ",
       }
     default:
       return {
         month: "สรุปเดือนนี้",
-        days: "จำนวนวันที่ทำ",
+        days: "วันทำงาน",
+        otDays: "วัน OT",
         hours: "ชั่วโมงสะสม",
+        otHours: "OT อนุมัติ",
         hoursUnit: "ชม.",
       }
   }
@@ -225,13 +233,25 @@ export function checkoutSummaryFlex({
               type: "box",
               layout: "horizontal",
               spacing: "sm",
-              contents: [
-                statCard(labels.days, String(monthSummary.workDays)),
-                statCard(
-                  labels.hours,
-                  `${monthSummary.totalHours.toFixed(1)} ${labels.hoursUnit}`
-                ),
-              ],
+              contents: !showWorkDuration && monthSummary.otDays !== undefined
+                // monthly: 3 stat — วันทำงาน / วัน OT / OT อนุมัติ
+                ? [
+                    statCard(labels.days, String(monthSummary.workDays)),
+                    statCard(labels.otDays, String(monthSummary.otDays), "blue"),
+                    statCard(
+                      labels.otHours,
+                      `${monthSummary.totalHours.toFixed(1)} ${labels.hoursUnit}`,
+                      "green"
+                    ),
+                  ]
+                // hourly: 2 stat เดิม
+                : [
+                    statCard(labels.days, String(monthSummary.workDays)),
+                    statCard(
+                      labels.hours,
+                      `${monthSummary.totalHours.toFixed(1)} ${labels.hoursUnit}`
+                    ),
+                  ],
             },
           ],
         },

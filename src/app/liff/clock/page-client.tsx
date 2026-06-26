@@ -178,6 +178,8 @@ const CLOCK_COPY: Record<
     dateTimePrefix: string
     autoTrack: string
     workDaysLabel: string
+    otDaysLabel: string
+    otHoursLabel: string
     monthHoursLabel: string
     lateLabel: string
     workDurationLabel: string
@@ -238,6 +240,8 @@ const CLOCK_COPY: Record<
     dateTimePrefix: "เวลา",
     autoTrack: "🛡 ระบบบันทึกพิกัดอัตโนมัติ",
     workDaysLabel: "วันทำงานเดือนนี้",
+    otDaysLabel: "วัน OT",
+    otHoursLabel: "OT อนุมัติ",
     monthHoursLabel: "ชั่วโมงสะสมเดือนนี้",
     lateLabel: "มาสายวันนี้",
     workDurationLabel: "เวลาทำงานวันนี้",
@@ -297,6 +301,8 @@ const CLOCK_COPY: Record<
     dateTimePrefix: "Time",
     autoTrack: "🛡 Location is recorded automatically",
     workDaysLabel: "Work days this month",
+    otDaysLabel: "OT days",
+    otHoursLabel: "Approved OT",
     monthHoursLabel: "Hours this month",
     lateLabel: "Late today",
     workDurationLabel: "Work duration today",
@@ -356,6 +362,8 @@ const CLOCK_COPY: Record<
     dateTimePrefix: "时间",
     autoTrack: "🛡 系统会自动记录定位",
     workDaysLabel: "本月出勤天数",
+    otDaysLabel: "加班天数",
+    otHoursLabel: "已批加班",
     monthHoursLabel: "本月累计工时",
     lateLabel: "今日迟到",
     workDurationLabel: "今日工作时长",
@@ -415,6 +423,8 @@ const CLOCK_COPY: Record<
     dateTimePrefix: "အချိန်",
     autoTrack: "🛡 တည်နေရာကို အလိုအလျောက် မှတ်တမ်းတင်သည်",
     workDaysLabel: "ဤလ အလုပ်လာသောနေ့",
+    otDaysLabel: "OT ရက်",
+    otHoursLabel: "OT ခွင့်ပြု",
     monthHoursLabel: "ဤလ စုစုပေါင်းနာရီ",
     lateLabel: "ယနေ့ နောက်ကျချိန်",
     workDurationLabel: "ယနေ့ အလုပ်ချိန်",
@@ -849,20 +859,45 @@ export default function ClockPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
-                      <p className="text-xs text-gray-500">{copy.workDaysLabel}</p>
-                      <p className="mt-1 text-2xl font-black text-gray-900">
-                        {successResult.monthSummary?.workDays ?? 0}
-                      </p>
+                  {successResult.monthSummary?.otDays !== undefined ? (
+                    // monthly: 3 stat — วันทำงาน / วัน OT / OT อนุมัติ
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="rounded-2xl border border-gray-100 bg-white px-3 py-3">
+                        <p className="text-xs text-gray-500">{copy.workDaysLabel}</p>
+                        <p className="mt-1 text-xl font-black text-gray-900">
+                          {successResult.monthSummary.workDays}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 px-3 py-3">
+                        <p className="text-xs text-blue-600">{copy.otDaysLabel}</p>
+                        <p className="mt-1 text-xl font-black text-blue-800">
+                          {successResult.monthSummary.otDays}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-green-100 bg-green-50 px-3 py-3">
+                        <p className="text-xs text-green-600">{copy.otHoursLabel}</p>
+                        <p className="mt-1 text-xl font-black text-green-800">
+                          {monthTotals ? copy.monthTotalsDisplay(monthTotals.hours, monthTotals.minutes) : copy.monthTotalsDisplay(0, 0)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
-                      <p className="text-xs text-gray-500">{copy.monthHoursLabel}</p>
-                      <p className="mt-1 text-2xl font-black text-gray-900">
-                        {monthTotals ? copy.monthTotalsDisplay(monthTotals.hours, monthTotals.minutes) : copy.monthTotalsDisplay(0, 0)}
-                      </p>
+                  ) : (
+                    // hourly: 2 stat เดิม
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
+                        <p className="text-xs text-gray-500">{copy.workDaysLabel}</p>
+                        <p className="mt-1 text-2xl font-black text-gray-900">
+                          {successResult.monthSummary?.workDays ?? 0}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
+                        <p className="text-xs text-gray-500">{copy.monthHoursLabel}</p>
+                        <p className="mt-1 text-2xl font-black text-gray-900">
+                          {monthTotals ? copy.monthTotalsDisplay(monthTotals.hours, monthTotals.minutes) : copy.monthTotalsDisplay(0, 0)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3">
