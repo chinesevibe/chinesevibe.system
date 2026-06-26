@@ -109,11 +109,6 @@ export async function POST(request: NextRequest) {
           { error: "on_leave", endDate: result.endDate },
           { status: 403 }
         )
-      case "blocked_location_source":
-        return NextResponse.json(
-          { error: "blocked_location_source" },
-          { status: 403 }
-        )
       case "pending_approval":
         return NextResponse.json({ error: "pending_approval" }, { status: 403 })
       case "not_registered":

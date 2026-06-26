@@ -177,6 +177,20 @@ const CLOCK_COPY: Record<
     checkOutLabel: string
     dateTimePrefix: string
     autoTrack: string
+    workDaysLabel: string
+    monthHoursLabel: string
+    lateLabel: string
+    workDurationLabel: string
+    workDurationPending: string
+    monthTotalsDisplay: (hours: number, minutes: number) => string
+    workDurationDisplay: (hours: number, minutes: number) => string
+    lateMinutesDisplay: (minutes: number) => string
+    dataRecorded: string
+    backToHome: string
+    viewAttendance: string
+    contactHrNote: string
+    receiptSentNote: string
+    receiptFailNote: (msg: string) => string
   }
 > = {
   th: {
@@ -223,6 +237,20 @@ const CLOCK_COPY: Record<
     checkOutLabel: "ออกงาน",
     dateTimePrefix: "เวลา",
     autoTrack: "🛡 ระบบบันทึกพิกัดอัตโนมัติ",
+    workDaysLabel: "วันทำงานเดือนนี้",
+    monthHoursLabel: "ชั่วโมงสะสมเดือนนี้",
+    lateLabel: "มาสายวันนี้",
+    workDurationLabel: "เวลาทำงานวันนี้",
+    workDurationPending: "รอสรุปตอนออกงาน",
+    monthTotalsDisplay: (h, m) => `${h}ชม ${m}น`,
+    workDurationDisplay: (h, m) => `${h}ชม ${m}น`,
+    lateMinutesDisplay: (m) => `${m} นาที`,
+    dataRecorded: "ข้อมูลวันนี้ถูกบันทึกเข้าระบบแล้ว สามารถตรวจสอบประวัติและสรุปเวลาได้ด้านล่าง",
+    backToHome: "กลับหน้าหลัก",
+    viewAttendance: "ดูประวัติการเข้างาน",
+    contactHrNote: "หากเวลาผิดปกติ กรุณาติดต่อ HR พร้อมแจ้งวันและเวลาที่ทำรายการ",
+    receiptSentNote: "ส่งสรุปกลับเข้า LINE แชตแล้ว",
+    receiptFailNote: (msg) => `ยังส่งสรุปเข้า LINE ไม่ได้: ${msg}`,
   },
   en: {
     title: "Clock in / Clock out",
@@ -268,6 +296,20 @@ const CLOCK_COPY: Record<
     checkOutLabel: "Check out",
     dateTimePrefix: "Time",
     autoTrack: "🛡 Location is recorded automatically",
+    workDaysLabel: "Work days this month",
+    monthHoursLabel: "Hours this month",
+    lateLabel: "Late today",
+    workDurationLabel: "Work duration today",
+    workDurationPending: "Pending checkout",
+    monthTotalsDisplay: (h, m) => `${h}h ${m}m`,
+    workDurationDisplay: (h, m) => `${h}h ${m}m`,
+    lateMinutesDisplay: (m) => `${m} min`,
+    dataRecorded: "Today's data has been recorded. Check your history and summary below.",
+    backToHome: "Back to home",
+    viewAttendance: "View attendance",
+    contactHrNote: "If the time looks wrong, contact HR with the date and time of the transaction.",
+    receiptSentNote: "Summary sent to LINE chat",
+    receiptFailNote: (msg) => `Could not send LINE receipt: ${msg}`,
   },
   zh: {
     title: "上班 / 下班打卡",
@@ -313,6 +355,20 @@ const CLOCK_COPY: Record<
     checkOutLabel: "下班",
     dateTimePrefix: "时间",
     autoTrack: "🛡 系统会自动记录定位",
+    workDaysLabel: "本月出勤天数",
+    monthHoursLabel: "本月累计工时",
+    lateLabel: "今日迟到",
+    workDurationLabel: "今日工作时长",
+    workDurationPending: "等待下班打卡后结算",
+    monthTotalsDisplay: (h, m) => `${h}小时 ${m}分`,
+    workDurationDisplay: (h, m) => `${h}小时 ${m}分`,
+    lateMinutesDisplay: (m) => `${m} 分钟`,
+    dataRecorded: "今日数据已记录，可在下方查看历史和工时汇总。",
+    backToHome: "返回主页",
+    viewAttendance: "查看考勤记录",
+    contactHrNote: "如时间有误，请联系 HR 并说明日期与操作时间。",
+    receiptSentNote: "摘要已发送至 LINE 聊天",
+    receiptFailNote: (msg) => `无法发送 LINE 收据：${msg}`,
   },
   my: {
     title: "အလုပ်ဝင် / အလုပ်ဆင်း မှတ်တမ်း",
@@ -358,6 +414,20 @@ const CLOCK_COPY: Record<
     checkOutLabel: "အလုပ်ဆင်း",
     dateTimePrefix: "အချိန်",
     autoTrack: "🛡 တည်နေရာကို အလိုအလျောက် မှတ်တမ်းတင်သည်",
+    workDaysLabel: "ဤလ အလုပ်လာသောနေ့",
+    monthHoursLabel: "ဤလ စုစုပေါင်းနာရီ",
+    lateLabel: "ယနေ့ နောက်ကျချိန်",
+    workDurationLabel: "ယနေ့ အလုပ်ချိန်",
+    workDurationPending: "အလုပ်ဆင်းပြီးမှ ကြည့်ရမည်",
+    monthTotalsDisplay: (h, m) => `${h}နာရီ ${m}မိနစ်`,
+    workDurationDisplay: (h, m) => `${h}နာရီ ${m}မိနစ်`,
+    lateMinutesDisplay: (m) => `${m} မိနစ်`,
+    dataRecorded: "ယနေ့ ဒေတာကို မှတ်တမ်းတင်ပြီးဖြစ်သည်။ အောက်တွင် မှတ်တမ်းနှင့် အချိန်ချုပ် ကြည့်နိုင်သည်။",
+    backToHome: "မူလစာမျက်နှာ",
+    viewAttendance: "တက်ရောက်မှု မှတ်တမ်း",
+    contactHrNote: "အချိန် မှားယွင်းနေပါက HR ထံ ရက်နှင့် ဆောင်ရွက်ချိန်ကို အသိပေးပါ။",
+    receiptSentNote: "LINE chat သို့ အကျဉ်းချုပ် ပို့ပြီးဖြစ်သည်",
+    receiptFailNote: (msg) => `LINE ပြေစာ မပို့နိုင်ပါ: ${msg}`,
   },
 }
 
@@ -581,13 +651,13 @@ export default function ClockPage() {
               longitude: pos.coords.longitude,
             })
             receiptSent = true
-            receiptNote = "ส่งสรุปกลับเข้า LINE แชตแล้ว"
+            receiptNote = copy.receiptSentNote
           } catch (error) {
             console.error("LIFF receipt send failed:", error)
             receiptNote =
               error instanceof Error
-                ? `ยังส่งสรุปเข้า LINE ไม่ได้: ${error.message}`
-                : "ยังส่งสรุปเข้า LINE ไม่ได้"
+                ? copy.receiptFailNote(error.message)
+                : copy.receiptFailNote("")
           }
         }
 
@@ -781,30 +851,30 @@ export default function ClockPage() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
-                      <p className="text-xs text-gray-500">วันทำงานเดือนนี้</p>
+                      <p className="text-xs text-gray-500">{copy.workDaysLabel}</p>
                       <p className="mt-1 text-2xl font-black text-gray-900">
                         {successResult.monthSummary?.workDays ?? 0}
                       </p>
                     </div>
                     <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3">
-                      <p className="text-xs text-gray-500">ชั่วโมงสะสมเดือนนี้</p>
+                      <p className="text-xs text-gray-500">{copy.monthHoursLabel}</p>
                       <p className="mt-1 text-2xl font-black text-gray-900">
-                        {monthTotals ? `${monthTotals.hours}ชม ${monthTotals.minutes}น` : "0ชม 0น"}
+                        {monthTotals ? copy.monthTotalsDisplay(monthTotals.hours, monthTotals.minutes) : copy.monthTotalsDisplay(0, 0)}
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3">
-                      <p className="text-xs text-amber-700">มาสายวันนี้</p>
+                      <p className="text-xs text-amber-700">{copy.lateLabel}</p>
                       <p className="mt-1 text-lg font-bold text-amber-900">
-                        {successResult.lateMinutes ?? 0} นาที
+                        {copy.lateMinutesDisplay(successResult.lateMinutes ?? 0)}
                       </p>
                     </div>
                     <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                      <p className="text-xs text-slate-600">เวลาทำงานวันนี้</p>
+                      <p className="text-xs text-slate-600">{copy.workDurationLabel}</p>
                       <p className="mt-1 text-lg font-bold text-slate-900">
-                        {workDuration ? `${workDuration.hours}ชม ${workDuration.minutes}น` : "รอสรุปตอนออกงาน"}
+                        {workDuration ? copy.workDurationDisplay(workDuration.hours, workDuration.minutes) : copy.workDurationPending}
                       </p>
                     </div>
                   </div>
@@ -818,7 +888,7 @@ export default function ClockPage() {
                       <p className="font-medium">{successResult.receiptNote}</p>
                     ) : null}
                     <p className={successResult.receiptNote ? "mt-1" : ""}>
-                    ข้อมูลวันนี้ถูกบันทึกเข้าระบบแล้ว สามารถตรวจสอบประวัติและสรุปเวลาได้ด้านล่าง
+                      {copy.dataRecorded}
                     </p>
                   </div>
                 </div>
@@ -829,18 +899,18 @@ export default function ClockPage() {
                   onClick={() => window.location.assign(`/liff/home?lang=${locale}`)}
                   className="rounded-2xl bg-gray-900 px-4 py-3 text-sm font-bold text-white"
                 >
-                  กลับหน้าหลัก
+                  {copy.backToHome}
                 </button>
                 <button
                   onClick={() => window.location.assign(`/liff/attendance?lang=${locale}`)}
                   className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-900"
                 >
-                  ดูประวัติการเข้างาน
+                  {copy.viewAttendance}
                 </button>
               </div>
 
               <p className="text-center text-xs text-gray-400">
-                หากเวลาผิดปกติ กรุณาติดต่อ HR พร้อมแจ้งวันและเวลาที่ทำรายการ
+                {copy.contactHrNote}
               </p>
             </div>
         ) : result ? (
