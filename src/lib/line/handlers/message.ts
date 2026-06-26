@@ -10,6 +10,7 @@ import {
   parseLocaleSlashCommand,
 } from "@/lib/i18n/locale-slash-command"
 import { t } from "@/lib/i18n/translate"
+import { liffUrl } from "@/lib/i18n/liff-url"
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n/types"
 import { getLineClient } from "@/lib/line/client"
 import { checkinConfirmFlex } from "@/lib/line/flex/checkin"
@@ -17,6 +18,7 @@ import { checkoutSummaryFlex } from "@/lib/line/flex/checkout"
 import {
   alreadyCheckedInFlex,
   alreadyCheckedOutFlex,
+  checkinGuideFlex,
   notCheckedInFlex,
   notRegisteredFlex,
   outsideGeofenceFlex,
@@ -105,15 +107,18 @@ function checkInMessages(
             : `You have approved leave until ${result.endDate}. Check-in is not allowed during leave.`,
         } satisfies messagingApi.TextMessage,
       ]
-    case "blocked_location_source":
+    case "blocked_location_source": {
+      const blockText: Record<AppLocale, string> = {
+        th: "❌ ไม่รองรับการเช็คอินผ่าน LINE location pin\nกดปุ่มด้านล่างเพื่อเช็คอินด้วย GPS จริง",
+        en: "❌ Check-in via LINE location pin is not allowed.\nTap the button below to clock in with real GPS.",
+        zh: "❌ 不支持通过 LINE 位置消息签到\n请点击下方按钮使用 GPS 签到",
+        my: "❌ LINE location pin ဖြင့် မှတ်တမ်းတင်၍မရပါ\nအောက်ရှိ GPS ခလုတ်ကို နှိပ်ပါ",
+      }
       return [
-        {
-          type: "text",
-          text: locale === "th"
-            ? `❌ ไม่สามารถเช็คอินผ่าน LINE location message ได้\nกรุณาเปิด LIFF app เพื่อเช็คอินด้วย GPS จริง`
-            : `❌ Check-in via LINE location message is not allowed.\nPlease use the LIFF app to check in with real GPS.`,
-        } satisfies messagingApi.TextMessage,
+        { type: "text", text: blockText[locale] } satisfies messagingApi.TextMessage,
+        checkinGuideFlex(locale),
       ]
+    }
     case "pending_approval":
       return [pendingApprovalFlex(locale)]
     case "not_registered":
