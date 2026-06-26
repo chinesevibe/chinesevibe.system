@@ -15,6 +15,7 @@ export interface PayrollSummary {
   overtime_hours: number
   sick_leave_hours: number
   annual_leave_hours: number
+  unpaid_leave_hours: number
 }
 
 export interface PayslipLineInput {
@@ -35,6 +36,7 @@ export interface PayslipCalculation {
   ot_hours: number
   sick_hours: number
   annual_hours: number
+  unpaid_hours: number
   base_rate: number | null
   monthly_salary: number | null
 }
@@ -81,6 +83,7 @@ export interface PayslipRow {
   ot_hours: number
   sick_hours: number
   annual_hours: number
+  unpaid_hours: number
   base_rate: number | null
   monthly_salary: number | null
 }

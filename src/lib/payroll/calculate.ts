@@ -27,6 +27,7 @@ export function calculatePayslip(
   const overtimeHours = roundPayrollHours(summary.overtime_hours)
   const sickHours = roundPayrollHours(summary.sick_leave_hours)
   const annualHours = roundPayrollHours(summary.annual_leave_hours)
+  const unpaidHours = roundPayrollHours(summary.unpaid_leave_hours)
 
   let gross = 0
   let baseRate: number | null = null
@@ -49,7 +50,8 @@ export function calculatePayslip(
     const hourlyRate = salary / config.monthly_std_hours
     baseRate = round2(hourlyRate)
     const otPay = round2(hourlyRate * config.ot_multiplier * overtimeHours)
-    gross = round2(salary + housingAllowance + otPay)
+    const unpaidDeduction = unpaidHours > 0 ? round2(hourlyRate * unpaidHours) : 0
+    gross = round2(salary + housingAllowance + otPay - unpaidDeduction)
 
     lines.push({ code: "BASIC", label: "เงินเดือน", amount: salary, sort_order: 10 })
     if (housingAllowance > 0) {
@@ -62,6 +64,9 @@ export function calculatePayslip(
     }
     if (otPay > 0) {
       lines.push({ code: "OT", label: "ค่าล่วงเวลา", amount: otPay, sort_order: 20 })
+    }
+    if (unpaidDeduction > 0) {
+      lines.push({ code: "UNPAID_DEDUCT", label: "หักลาไม่รับค่าจ้าง", amount: -unpaidDeduction, sort_order: 85 })
     }
   }
 
@@ -91,6 +96,7 @@ export function calculatePayslip(
     ot_hours: overtimeHours,
     sick_hours: sickHours,
     annual_hours: annualHours,
+    unpaid_hours: unpaidHours,
     base_rate: baseRate,
     monthly_salary: monthlySalary,
   }

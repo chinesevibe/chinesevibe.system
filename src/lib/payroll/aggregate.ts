@@ -110,6 +110,7 @@ export async function aggregatePayrollPeriod(
       overtime_hours: 0,
       sick_leave_hours: 0,
       annual_leave_hours: 0,
+      unpaid_leave_hours: 0,
     })
     paymentDates.set(emp.id, computePaymentDate(period, payDay))
   }
@@ -140,6 +141,8 @@ export async function aggregatePayrollPeriod(
         data.sick_leave_hours += roundPayrollHours(Number(leave.leave_hours))
       } else if (leave.type === "annual" && leave.leave_hours) {
         data.annual_leave_hours += roundPayrollHours(Number(leave.leave_hours))
+      } else if (leave.type === "unpaid" && leave.leave_hours) {
+        data.unpaid_leave_hours += roundPayrollHours(Number(leave.leave_hours))
       }
     })
   }

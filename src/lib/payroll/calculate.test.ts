@@ -34,6 +34,7 @@ describe("calculatePayslip", () => {
       overtime_hours: 10.4,
       sick_leave_hours: 0,
       annual_leave_hours: 0,
+      unpaid_leave_hours: 0,
     }
     const result = calculatePayslip(summary, baseConfig)!
     assert.equal(result.gross_amount, 17500)
@@ -56,6 +57,7 @@ describe("calculatePayslip", () => {
       overtime_hours: 8,
       sick_leave_hours: 0,
       annual_leave_hours: 0,
+      unpaid_leave_hours: 0,
     }
     const result = calculatePayslip(summary, baseConfig)!
     const otPay = (22000 / 176) * 1.5 * 8
@@ -76,6 +78,7 @@ describe("calculatePayslip", () => {
       overtime_hours: 0,
       sick_leave_hours: 0,
       annual_leave_hours: 0,
+      unpaid_leave_hours: 0,
     }
     const result = calculatePayslip(summary, baseConfig, { taxEnabled: true, taxRate: 0.1, ssoEnabled: true })!
     assert.equal(result.sso_deduction, 500)

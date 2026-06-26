@@ -123,6 +123,7 @@ export async function createOrRefreshRun(
         ot_hours: calc.ot_hours,
         sick_hours: calc.sick_hours,
         annual_hours: calc.annual_hours,
+        unpaid_hours: calc.unpaid_hours,
         base_rate: calc.base_rate,
         monthly_salary: calc.monthly_salary,
       })
@@ -216,6 +217,7 @@ function mapPayslipRow(row: Record<string, unknown>, employeeName?: string): Pay
     ot_hours: Number(row.ot_hours),
     sick_hours: Number(row.sick_hours),
     annual_hours: Number(row.annual_hours),
+    unpaid_hours: Number(row.unpaid_hours ?? 0),
     base_rate: row.base_rate != null ? Number(row.base_rate) : null,
     monthly_salary: row.monthly_salary != null ? Number(row.monthly_salary) : null,
   }
