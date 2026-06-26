@@ -35,8 +35,12 @@ export async function getAttendanceMonthSummary(
 
   if (error) throw error
 
+  const MAX_HOURS_PER_DAY = 12
   const rows = (data ?? []) as Array<{ work_hours: number | null }>
-  const totalHours = rows.reduce((sum, row) => sum + Number(row.work_hours ?? 0), 0)
+  const totalHours = rows.reduce(
+    (sum, row) => sum + Math.min(Number(row.work_hours ?? 0), MAX_HOURS_PER_DAY),
+    0
+  )
 
   return {
     workDays: rows.length,
