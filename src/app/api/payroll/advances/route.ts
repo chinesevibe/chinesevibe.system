@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { getCurrentEmployee } from "@/lib/auth/session"
+
+function canManagePayroll(role: string): boolean {
+  return ["hr", "dev"].includes(role)
+}
 
 /** GET /api/payroll/advances — list all salary advances */
 export async function GET(_req: NextRequest) {
+  const caller = await getCurrentEmployee()
+  if (!caller || !canManagePayroll(caller.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   const admin = getAdminClient()
 
   const { data, error } = await admin
@@ -22,6 +32,11 @@ export async function GET(_req: NextRequest) {
 
 /** POST /api/payroll/advances — create a new salary advance */
 export async function POST(req: NextRequest) {
+  const caller = await getCurrentEmployee()
+  if (!caller || !canManagePayroll(caller.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   const admin = getAdminClient()
 
   const body = await req.json()
@@ -50,6 +65,7 @@ export async function POST(req: NextRequest) {
       deduct_period,
       note: note ?? null,
       status: "pending",
+      created_by: caller.id,
     })
     .select(
       `id, employee_id, amount, advance_date, deduct_period, note, status, created_at,

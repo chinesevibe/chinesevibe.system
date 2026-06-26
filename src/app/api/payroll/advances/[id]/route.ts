@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminClient } from "@/lib/auth/admin-client"
+import { getCurrentEmployee } from "@/lib/auth/session"
+
+function canManagePayroll(role: string): boolean {
+  return ["hr", "dev"].includes(role)
+}
 
 type Params = { params: Promise<{ id: string }> }
 
 /** PATCH /api/payroll/advances/[id] — cancel a pending advance */
 export async function PATCH(req: NextRequest, { params }: Params) {
+  const caller = await getCurrentEmployee()
+  if (!caller || !canManagePayroll(caller.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   const { id } = await params
   const admin = getAdminClient()
 

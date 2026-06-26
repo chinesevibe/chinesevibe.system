@@ -21,7 +21,19 @@ export async function GET(_req: NextRequest, { params }: Params) {
   return NextResponse.json({ lines: lines ?? [] })
 }
 
-/** Recalculate net_amount from all lines for a payslip and update hr_payslips */
+/**
+ * Recalculate net_amount from payslip columns + line items.
+ *
+ * net = gross_amount
+ *     + Σ manual lines          (HR-added bonus/deduct, already signed)
+ *     + Σ system extra lines    (ADVANCE_DEDUCT, UNPAID_DEDUCT — stored as negative amounts,
+ *                                NOT captured in sso_deduction / tax_deduction columns)
+ *     - sso_deduction
+ *     - tax_deduction
+ *
+ * System lines excluded from extra: BASIC, OT, HOUSING (already in gross_amount),
+ * SSO, TAX (already in the dedicated columns).
+ */
 async function recalculateNet(payslipId: string): Promise<void> {
   const admin = getAdminClient()
 
@@ -33,20 +45,30 @@ async function recalculateNet(payslipId: string): Promise<void> {
 
   if (!payslip) return
 
-  const { data: manualLines } = await admin
-    .from("hr_payslip_lines")
-    .select("amount")
-    .eq("payslip_id", payslipId)
-    .eq("source", "manual")
+  // All non-income system lines that modify net outside of the stored columns
+  const SYSTEM_CODES_IN_GROSS_OR_COLS = ["BASIC", "OT", "HOUSING", "SSO", "TAX"]
 
-  const manualTotal = (manualLines ?? []).reduce(
-    (sum, l) => sum + Number(l.amount ?? 0),
-    0
-  )
+  const { data: allLines } = await admin
+    .from("hr_payslip_lines")
+    .select("amount, source, code")
+    .eq("payslip_id", payslipId)
+
+  let extraTotal = 0
+  for (const line of allLines ?? []) {
+    if (line.source === "manual") {
+      extraTotal += Number(line.amount ?? 0)
+    } else if (
+      line.source === "system" &&
+      !SYSTEM_CODES_IN_GROSS_OR_COLS.includes(line.code as string)
+    ) {
+      // e.g. ADVANCE_DEDUCT (-X), UNPAID_DEDUCT (-X)
+      extraTotal += Number(line.amount ?? 0)
+    }
+  }
 
   const net =
     Number(payslip.gross_amount) +
-    manualTotal -
+    extraTotal -
     Number(payslip.sso_deduction) -
     Number(payslip.tax_deduction)
 

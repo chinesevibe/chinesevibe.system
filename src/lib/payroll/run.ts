@@ -69,15 +69,51 @@ export async function createOrRefreshRun(
     total_net: 0,
   }
 
+  type ManualLineSnapshot = {
+    code: string
+    label: string
+    amount: number
+    sort_order: number
+    note: string | null
+  }
+
   let runId: string
+  // Manual lines added by HR that should survive a refresh (keyed by employee_id)
+  const manualLinesByEmployee = new Map<string, ManualLineSnapshot[]>()
 
   if (existingRun?.id) {
     runId = existingRun.id as string
     await admin.from("hr_payroll_runs").update(runPayload).eq("id", runId)
 
-    const { data: oldSlips } = await admin.from("hr_payslips").select("id").eq("run_id", runId)
+    // Snapshot manual lines before wiping, keyed by employee_id
+    const { data: oldSlips } = await admin
+      .from("hr_payslips")
+      .select("id, employee_id")
+      .eq("run_id", runId)
     const oldIds = (oldSlips ?? []).map((s) => s.id as string)
+
     if (oldIds.length > 0) {
+      const { data: manualLines } = await admin
+        .from("hr_payslip_lines")
+        .select("payslip_id, code, label, amount, sort_order, note")
+        .in("payslip_id", oldIds)
+        .eq("source", "manual")
+
+      for (const line of manualLines ?? []) {
+        const slip = (oldSlips ?? []).find((s) => s.id === line.payslip_id)
+        if (!slip) continue
+        const empId = slip.employee_id as string
+        const bucket = manualLinesByEmployee.get(empId) ?? []
+        bucket.push({
+          code: line.code as string,
+          label: line.label as string,
+          amount: Number(line.amount),
+          sort_order: Number(line.sort_order),
+          note: (line.note as string | null) ?? null,
+        })
+        manualLinesByEmployee.set(empId, bucket)
+      }
+
       await admin.from("hr_payslip_lines").delete().in("payslip_id", oldIds)
       await admin.from("hr_payslips").delete().eq("run_id", runId)
     }
@@ -105,6 +141,12 @@ export async function createOrRefreshRun(
     }
 
     const paymentDate = paymentDates.get(summary.employee_id)!
+
+    // Calculate net including any preserved manual lines
+    const savedManuals = manualLinesByEmployee.get(summary.employee_id) ?? []
+    const manualAdjustment = savedManuals.reduce((s, l) => s + l.amount, 0)
+    const netWithManuals = Math.round((calc.net_amount + manualAdjustment) * 100) / 100
+
     const { data: slip, error: slipError } = await admin
       .from("hr_payslips")
       .insert({
@@ -117,7 +159,7 @@ export async function createOrRefreshRun(
         sso_deduction: calc.sso_deduction,
         other_deductions: calc.other_deductions,
         tax_deduction: calc.tax_deduction,
-        net_amount: calc.net_amount,
+        net_amount: netWithManuals,
         status: "draft",
         regular_hours: calc.regular_hours,
         ot_hours: calc.ot_hours,
@@ -132,21 +174,34 @@ export async function createOrRefreshRun(
 
     if (slipError) throw new Error(slipError.message)
 
-    if (calc.lines.length > 0) {
-      const { error: linesError } = await admin.from("hr_payslip_lines").insert(
-        calc.lines.map((line) => ({
-          payslip_id: slip.id,
-          code: line.code,
-          label: line.label,
-          amount: line.amount,
-          sort_order: line.sort_order,
-        }))
-      )
+    const allLines = [
+      ...calc.lines.map((line) => ({
+        payslip_id: slip.id as string,
+        code: line.code,
+        label: line.label,
+        amount: line.amount,
+        sort_order: line.sort_order,
+        source: "system",
+        note: null as string | null,
+      })),
+      ...savedManuals.map((line) => ({
+        payslip_id: slip.id as string,
+        code: line.code,
+        label: line.label,
+        amount: line.amount,
+        sort_order: line.sort_order,
+        source: "manual",
+        note: line.note,
+      })),
+    ]
+
+    if (allLines.length > 0) {
+      const { error: linesError } = await admin.from("hr_payslip_lines").insert(allLines)
       if (linesError) throw new Error(linesError.message)
     }
 
     totalGross += calc.gross_amount
-    totalNet += calc.net_amount
+    totalNet += netWithManuals
     employeeCount += 1
   }
 
