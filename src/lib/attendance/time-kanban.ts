@@ -57,11 +57,14 @@ export function resolveTimeKanbanBucketId(input: {
   today: string
   now?: Date
 }): TimeKanbanBucketId {
-  if (input.checkedOutAt) {
-    return bucketIdFromMinutes(ictMinutesFromIso(input.checkedOutAt))
-  }
-
   if (input.checkedInAt) {
+    if (input.checkedOutAt) {
+      // Use check-in time to keep the card in the employee's original shift bucket.
+      // Using checkout time causes day-shift workers who leave at 18:xx-20:xx to
+      // incorrectly land in the "evening" column (threshold ≥ 18:00).
+      return bucketIdFromMinutes(ictMinutesFromIso(input.checkedInAt))
+    }
+
     // ponytail: active records ride the current ICT clock so cards visibly move as the day advances
     if (input.rosterDate === input.today) {
       return bucketIdFromMinutes(ictMinutesFromDate(input.now ?? new Date()))
