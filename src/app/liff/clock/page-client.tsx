@@ -50,6 +50,7 @@ type ResultState =
       monthSummary?: AttendanceMonthSummary
       receiptSent?: boolean
       receiptNote?: string
+      warning?: string
     }
   | { ok: false; title: string; detail: string }
   | null
@@ -215,8 +216,8 @@ const CLOCK_COPY: Record<
     connectError: "ไม่สามารถเชื่อมต่อได้",
     staleSessionTitle: "มี session ค้าง",
     staleSessionDetailWithTime: (time) =>
-      `พบการเข้างานค้างตั้งแต่ ${time} กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์หลัง 06:00 น.`,
-    staleSessionDetail: "กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์หลัง 06:00 น.",
+      `พบการเข้างานค้างตั้งแต่ ${time} กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์ภายใน 24 ชั่วโมงหลังเช็คอิน`,
+    staleSessionDetail: "กรุณาเช็คออกย้อนหลัง มิฉะนั้นระบบจะค้างเป็นยังไม่เช็คเอาท์ภายใน 24 ชั่วโมงหลังเช็คอิน",
     tooSoonTitle: "ยังเช็คอินใหม่ไม่ได้",
     tooSoonDetail: (time) => `เช็คอินใหม่ได้หลัง ${time} น.`,
     locating: "กำลังหาพิกัด...",
@@ -276,8 +277,8 @@ const CLOCK_COPY: Record<
     connectError: "Unable to connect",
     staleSessionTitle: "Open session found",
     staleSessionDetailWithTime: (time) =>
-      `An earlier session has been open since ${time}. Please submit a retro checkout or it will stay marked as missing checkout after 06:00.`,
-    staleSessionDetail: "Please submit a retro checkout or it will stay marked as missing checkout after 06:00.",
+      `An earlier session has been open since ${time}. Please submit a retro checkout or it will stay marked as missing checkout within 24 hours of your clock-in.`,
+    staleSessionDetail: "Please submit a retro checkout or it will stay marked as missing checkout within 24 hours of your clock-in.",
     tooSoonTitle: "Too soon to clock in again",
     tooSoonDetail: (time) => `Next clock-in available after ${time}`,
     locating: "Getting location...",
@@ -337,8 +338,8 @@ const CLOCK_COPY: Record<
     connectError: "无法连接",
     staleSessionTitle: "发现未结束的 session",
     staleSessionDetailWithTime: (time) =>
-      `发现从 ${time} 开始的未结束 session，请先补签下班，否则 06:00 后会保留为未打下班。`,
-    staleSessionDetail: "请先补签下班，否则 06:00 后会保留为未打下班。",
+      `发现从 ${time} 开始的未结束 session，请先补签下班，否则将在打卡上班后 24 小时内标记为未打下班。`,
+    staleSessionDetail: "请先补签下班，否则将在打卡上班后 24 小时内标记为未打下班。",
     tooSoonTitle: "尚未到可打卡时间",
     tooSoonDetail: (time) => `可于 ${time} 后重新打卡`,
     locating: "正在定位...",
@@ -398,8 +399,8 @@ const CLOCK_COPY: Record<
     connectError: "ချိတ်ဆက်၍ မရပါ",
     staleSessionTitle: "မပြီးသေးသော session တွေ့ရှိသည်",
     staleSessionDetailWithTime: (time) =>
-      `${time} ကတည်းက ဖွင့်ထားသော session ရှိနေသည်။ နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက 06:00 နောက်ပိုင်း missing checkout အဖြစ်ကျန်နေမည်။`,
-    staleSessionDetail: "နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက 06:00 နောက်ပိုင်း missing checkout အဖြစ်ကျန်နေမည်။",
+      `${time} ကတည်းက ဖွင့်ထားသော session ရှိနေသည်။ နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက အလုပ်ဝင်မှ 24 နာရီ အတွင်း missing checkout အဖြစ်ကျန်နေမည်။`,
+    staleSessionDetail: "နောက်ကြောင်းပြန် အလုပ်ဆင်းတင်ပါ၊ မဟုတ်ပါက အလုပ်ဝင်မှ 24 နာရီ အတွင်း missing checkout အဖြစ်ကျန်နေမည်။",
     tooSoonTitle: "ပြန်မဝင်နိုင်သေးပါ",
     tooSoonDetail: (time) => `${time} နောက်မှ ပြန်ဝင်နိုင်သည်`,
     locating: "တည်နေရာ ရှာနေသည်...",
@@ -691,6 +692,7 @@ export default function ClockPage() {
           monthSummary: data.monthSummary as AttendanceMonthSummary | undefined,
           receiptSent,
           receiptNote,
+          warning: typeof data.warning === "string" ? data.warning : undefined,
         })
         const newInfo = await fetch("/api/clock/info").then(r => r.json()).catch(() => null) as ClockInfo | null
         if (newInfo) setInfo(newInfo)
@@ -926,6 +928,23 @@ export default function ClockPage() {
                       {copy.dataRecorded}
                     </p>
                   </div>
+
+                  {successResult.warning ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm">
+                      <p className="font-semibold text-amber-800">
+                        {locale === "th" ? "⚠️ ระบบกำลังตรวจสอบตำแหน่ง" :
+                         locale === "zh" ? "⚠️ 正在核查位置信息" :
+                         locale === "my" ? "⚠️ တည်နေရာကို စစ်ဆေးနေသည်" :
+                         "⚠️ Location under review"}
+                      </p>
+                      <p className="mt-0.5 text-amber-700">
+                        {locale === "th" ? "HR จะตรวจสอบภายหลัง ไม่ต้องดำเนินการเพิ่มเติม" :
+                         locale === "zh" ? "HR 将稍后核查，无需其他操作" :
+                         locale === "my" ? "HR မှ နောက်မှ စစ်ဆေးပါမည်" :
+                         "HR will review shortly. No further action needed."}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 

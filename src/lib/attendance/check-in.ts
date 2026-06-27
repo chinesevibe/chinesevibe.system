@@ -46,6 +46,8 @@ export type CheckInResult =
       status: "suspicious_location"
       flags: string[]
       message: string
+      checkInAt: Date
+      lateMinutes: number
     }
   | { status: "pending_approval" }
   | { status: "not_registered" }
@@ -218,6 +220,8 @@ export async function checkIn({
       status: "suspicious_location",
       flags: locationDecision.flags,
       message: suspiciousLocationMessage(locationDecision.flags),
+      checkInAt: now,
+      lateMinutes: late,
     }
   }
 

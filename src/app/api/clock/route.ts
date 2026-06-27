@@ -97,9 +97,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           status: "success",
           employeeName: employee.name,
-          checkInAt: new Date().toISOString(),
-          lateMinutes: 0,
-          timeText: new Date().toLocaleTimeString("th-TH", {
+          checkInAt: result.checkInAt.toISOString(),
+          lateMinutes: result.lateMinutes,
+          timeText: result.checkInAt.toLocaleTimeString("th-TH", {
             hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
           }),
           warning: result.message,
@@ -152,9 +152,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         status: "success",
         employeeName: employee.name,
-        checkOutAt: new Date().toISOString(),
-        workMinutes: 0,
-        timeText: new Date().toLocaleTimeString("th-TH", {
+        checkInAt: result.checkInAt.toISOString(),
+        checkOutAt: result.checkOutAt.toISOString(),
+        workMinutes: result.workMinutes,
+        timeText: result.checkOutAt.toLocaleTimeString("th-TH", {
           hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
         }),
         warning: result.message,
