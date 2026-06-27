@@ -46,6 +46,22 @@ function isWorkingEmployee(employee: RosterEmployee): boolean {
   return (employee.status === "present" || employee.status === "late") && !!employee.checkedInAt
 }
 
+/** Get ICT date string (YYYY-MM-DD) from an ISO timestamp */
+function ictDateOf(iso: string): string {
+  const d = new Date(new Date(iso).getTime() + 7 * 60 * 60 * 1000)
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * For the Kanban: hide employees who already checked out from a previous-day shift.
+ * Overnight workers who are still on shift (no checkout yet) are always shown.
+ */
+function isKanbanVisible(employee: RosterEmployee, rosterDate: string): boolean {
+  if (!employee.checkedOutAt) return true                     // still working → show
+  if (!employee.checkedInAt) return false
+  return ictDateOf(employee.checkedInAt) >= rosterDate        // checked in today → show
+}
+
 function PendingEmployeeCard({
   employee,
   index,
@@ -208,15 +224,17 @@ export function AttendanceTodayRoster({
   const bucketedEmployees = TIME_KANBAN_BUCKETS.map((bucket) => ({
     ...bucket,
     employees: workingEmployees
-      .filter(({ employee }) =>
-        resolveTimeKanbanBucketId({
-          checkedInAt: employee.checkedInAt,
-          checkedOutAt: employee.checkedOutAt,
-          workTimeText: employee.workTimeText,
-          rosterDate: roster.date,
-          today: roster.today,
-          now,
-        }) === bucket.id
+      .filter(
+        ({ employee }) =>
+          isKanbanVisible(employee, roster.date) &&
+          resolveTimeKanbanBucketId({
+            checkedInAt: employee.checkedInAt,
+            checkedOutAt: employee.checkedOutAt,
+            workTimeText: employee.workTimeText,
+            rosterDate: roster.date,
+            today: roster.today,
+            now,
+          }) === bucket.id
       )
       .map(({ employee }) => employee)
       .sort(sortByCode),
