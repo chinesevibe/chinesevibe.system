@@ -42,16 +42,19 @@ export async function GET(req: NextRequest, { params }: Params) {
     .eq("payslip_id", payslipId)
     .order("sort_order", { ascending: true })
 
-  // 3. Fetch employee + branch + dept
+  // 3. Fetch employee (scalar only — no FK joins to avoid PostgREST ambiguity errors)
+  // department_id is null for all employees; use department text column directly.
   const { data: employee } = await admin
     .from("hr_employees")
-    .select(
-      `name, employee_code,
-       hr_branches(name),
-       hr_departments(name)`
-    )
+    .select("name, employee_code, department, branch_id")
     .eq("id", payslip.employee_id)
     .single()
+
+  // 3b. Fetch branch name separately
+  const empBranchId = (employee as { branch_id?: string | null } | null)?.branch_id
+  const { data: branch } = empBranchId
+    ? await admin.from("hr_branches").select("name").eq("id", empBranchId).single()
+    : { data: null }
 
   const runRaw = payslip.hr_payroll_runs
   const run = (Array.isArray(runRaw) ? runRaw[0] : runRaw) as unknown as {
@@ -77,15 +80,15 @@ export async function GET(req: NextRequest, { params }: Params) {
   const periodLabel = `${monthNames[lang][monthIdx]} ${y}`
 
   // 6. Build input
-  const branchNode = employee?.hr_branches as { name?: string } | null
-  const deptNode = employee?.hr_departments as { name?: string } | null
+  const emp = employee as { name?: string; employee_code?: string; department?: string | null } | null
+  const branchData = branch as { name?: string } | null
 
   const input: PayslipPdfInput = {
     companyName: "ChineseVibe",
-    employeeName: employee?.name ?? "-",
-    employeeCode: employee?.employee_code ?? "-",
-    branchName: branchNode?.name ?? "-",
-    departmentName: deptNode?.name ?? "-",
+    employeeName: emp?.name ?? "-",
+    employeeCode: emp?.employee_code ?? "-",
+    branchName: branchData?.name ?? "-",
+    departmentName: emp?.department ?? "-",
     payType: (payslip.pay_type as "hourly" | "monthly") ?? "hourly",
     paymentDate: payslip.payment_date,
     periodLabel,
