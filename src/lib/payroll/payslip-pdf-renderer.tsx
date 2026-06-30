@@ -8,7 +8,7 @@ import {
   View,
 } from "@react-pdf/renderer"
 import type { PayslipPdfInput, PdfLang } from "@/lib/payroll/payslip-pdf-types"
-import { LABELS } from "@/lib/payroll/payslip-pdf-types"
+import { LABELS, translateLabel } from "@/lib/payroll/payslip-pdf-types"
 
 // ---------------------------------------------------------------------------
 // Font registration
@@ -253,7 +253,7 @@ export function PayslipPdf({ input }: { input: PayslipPdfInput }) {
               ]}
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.lineLabel}>{line.label}</Text>
+                <Text style={styles.lineLabel}>{translateLabel(line.code, line.label, lang)}</Text>
                 {line.note ? <Text style={styles.lineNote}>{line.note}</Text> : null}
               </View>
               <Text style={styles.lineAmountIncome}>{fmt(line.amount)}</Text>
@@ -275,7 +275,7 @@ export function PayslipPdf({ input }: { input: PayslipPdfInput }) {
                   ]}
                 >
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.lineLabel}>{line.label}</Text>
+                    <Text style={styles.lineLabel}>{translateLabel(line.code, line.label, lang)}</Text>
                     {line.note ? <Text style={styles.lineNote}>{line.note}</Text> : null}
                   </View>
                   <Text style={styles.lineAmountDeduct}>({fmt(Math.abs(line.amount))})</Text>

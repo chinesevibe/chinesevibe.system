@@ -38,7 +38,7 @@ export async function GET(req: NextRequest, { params }: Params) {
   // 2. Fetch payslip lines
   const { data: lines } = await admin
     .from("hr_payslip_lines")
-    .select("label, amount, note, source, sort_order")
+    .select("label, code, amount, note, source, sort_order")
     .eq("payslip_id", payslipId)
     .order("sort_order", { ascending: true })
 
@@ -93,6 +93,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     periodEnd: run.period_end,
     lines: (lines ?? []).map((l) => ({
       label: l.label,
+      code: l.code ?? undefined,
       amount: Number(l.amount),
       note: l.note ?? undefined,
     })),

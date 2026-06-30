@@ -2,8 +2,41 @@ export type PdfLang = "zh" | "th" | "en"
 
 export interface PayslipPdfLine {
   label: string
+  code?: string | null
   amount: number
   note?: string | null
+}
+
+// ---------------------------------------------------------------------------
+// System line code → translated label (EN + ZH only; TH falls back to EN)
+// Manual lines (MANUAL_ADD / MANUAL_DEDUCT) are intentionally omitted so
+// the HR-entered label is used as-is.
+// ---------------------------------------------------------------------------
+const CODE_LABELS: Record<string, { en: string; zh: string }> = {
+  BASIC:          { en: "Base Salary",             zh: "基本工资" },
+  OT:             { en: "Overtime Pay",             zh: "加班费" },
+  HOUSING:        { en: "Housing Allowance",        zh: "住房补贴" },
+  UNPAID_DEDUCT:  { en: "Unpaid Leave Deduction",  zh: "无薪假扣除" },
+  ADVANCE_DEDUCT: { en: "Advance Deduction",        zh: "预支扣除" },
+  SSO:            { en: "Social Security",          zh: "社会保险" },
+  TAX:            { en: "Income Tax",               zh: "所得税" },
+}
+
+/**
+ * Translate a payslip line label.
+ * - System codes with known translations → return translated label.
+ * - Manual lines or unknown codes → return the original label unchanged.
+ */
+export function translateLabel(
+  code: string | null | undefined,
+  fallbackLabel: string,
+  lang: PdfLang
+): string {
+  if (!code) return fallbackLabel
+  const entry = CODE_LABELS[code]
+  if (!entry) return fallbackLabel
+  if (lang === "zh") return entry.zh
+  return entry.en   // en + th both use English
 }
 
 export interface PayslipPdfInput {
