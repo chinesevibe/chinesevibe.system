@@ -188,7 +188,6 @@ export function EmployeeProfileForm({
 }) {
   const router = useRouter()
   const [form, setForm] = useState<FormState>(() => toFormState(profile))
-  const [salaryRevealed, setSalaryRevealed] = useState(false)
   const [saving, setSaving] = useState(false)
   const [probationBusy, setProbationBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -234,7 +233,7 @@ export function EmployeeProfileForm({
         headers: { "content-type": "application/json" },
         body: JSON.stringify(
           buildProfilePatchBody(form, {
-            includeSalaryFields: canViewSalary && salaryRevealed,
+            includeSalaryFields: canViewSalary,
           })
         ),
       })
@@ -249,7 +248,7 @@ export function EmployeeProfileForm({
       }
       router.refresh()
     },
-    [form, profile.id, router, canViewSalary, salaryRevealed]
+    [form, profile.id, router, canViewSalary]
   )
 
   const { status: autoSaveStatus, error: autoSaveError, markSaved } =
@@ -322,12 +321,6 @@ export function EmployeeProfileForm({
       </div>
       {isPendingRegistration ? (
         <PendingRegistrationApproval employeeId={profile.id} />
-      ) : null}
-      {canViewSalary && !salaryRevealed ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-950">
-          ข้อมูลเงินเดือนถูกซ่อน — เลื่อนลงไปที่การ์ด「ข้อมูลเงินเดือนและการจ่าย」แล้วกด
-          「แสดงข้อมูลเงินเดือน」ก่อนแก้ไข
-        </div>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
         <WidgetCard title="ข้อมูลส่วนตัว">
@@ -681,8 +674,6 @@ export function EmployeeProfileForm({
         <SalarySensitiveSection
           canAccess={canViewSalary}
           className="lg:col-span-2"
-          revealed={salaryRevealed}
-          onRevealedChange={setSalaryRevealed}
         >
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="ประเภทการจ่าย">
