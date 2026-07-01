@@ -9,14 +9,10 @@ import {
   useState,
 } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
-type AdminContextTab = {
-  id: string
-  href: string
-  label: string
-  closable: boolean
-  updatedAt: number
-}
+import {
+  normalizePersistedAdminContextTabsState,
+  type AdminContextTab,
+} from "@/components/admin/admin-context-tabs-state"
 
 type AdminContextTabsState = {
   activeId: string | null
@@ -140,8 +136,9 @@ export function AdminContextTabsProvider({
           tabs?: AdminContextTab[]
           activeId?: string | null
         }
-        setTabs(Array.isArray(parsed.tabs) ? parsed.tabs : [])
-        setActiveId(parsed.activeId ?? null)
+        const normalized = normalizePersistedAdminContextTabsState(parsed, MAX_TABS)
+        setTabs(normalized.tabs)
+        setActiveId(normalized.activeId)
       } catch {
         setTabs([])
         setActiveId(null)
@@ -162,13 +159,15 @@ export function AdminContextTabsProvider({
       const now = Date.now()
       const nextTab: AdminContextTab = { ...current, updatedAt: now }
       const existingIndex = prev.findIndex((tab) => tab.id === current.id)
+      const nextTabs =
+        existingIndex === -1
+          ? [...prev, nextTab]
+          : prev.map((tab, index) => (index === existingIndex ? nextTab : tab))
 
-      if (existingIndex === -1) {
-        const appended = [...prev, nextTab]
-        return appended.length > MAX_TABS ? appended.slice(appended.length - MAX_TABS) : appended
-      }
-
-      return prev.map((tab, index) => (index === existingIndex ? nextTab : tab))
+      return normalizePersistedAdminContextTabsState(
+        { tabs: nextTabs, activeId: current.id },
+        MAX_TABS
+      ).tabs
     })
     setActiveId(current.id)
   }, [current])
@@ -176,13 +175,11 @@ export function AdminContextTabsProvider({
   useEffect(() => {
     if (!hydratedRef.current) return
     try {
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({
-          tabs,
-          activeId,
-        })
+      const normalized = normalizePersistedAdminContextTabsState(
+        { tabs, activeId },
+        MAX_TABS
       )
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized))
     } catch {
       // Ignore storage failures and keep tabs in memory.
     }
