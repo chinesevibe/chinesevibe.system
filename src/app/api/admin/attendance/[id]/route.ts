@@ -12,6 +12,7 @@ type PatchBody = {
   date?: string
   checkInTime?: string
   checkOutTime?: string | null
+  checkOutNextDay?: boolean
   workHours?: number | null
   workShiftId?: string | null
   reason?: string | null
@@ -51,6 +52,7 @@ export async function PATCH(
       date: body.date,
       checkInTime: body.checkInTime,
       checkOutTime: body.checkOutTime,
+      checkOutNextDay: body.checkOutNextDay === true,
       workHours: body.workHours,
       workShiftId:
         typeof body.workShiftId === "string" && body.workShiftId.trim() !== ""

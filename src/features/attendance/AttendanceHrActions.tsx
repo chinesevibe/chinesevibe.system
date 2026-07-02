@@ -23,6 +23,7 @@ type FormState = {
   date: string
   checkInTime: string
   checkOutTime: string
+  checkOutNextDay: boolean
   workHours: string
 }
 
@@ -36,6 +37,7 @@ function emptyForm(defaultDate?: string): FormState {
     date: defaultDate ?? "",
     checkInTime: "09:00",
     checkOutTime: "",
+    checkOutNextDay: false,
     workHours: "",
   }
 }
@@ -49,6 +51,8 @@ function formFromRow(row: AttendanceRow): FormState {
     date: ictDateFromUtc(checkIn),
     checkInTime: ictTimeFromUtc(checkIn),
     checkOutTime: checkOut ? ictTimeFromUtc(checkOut) : "",
+    checkOutNextDay:
+      checkOut != null && ictDateFromUtc(checkOut) !== ictDateFromUtc(checkIn),
     workHours: row.workHours != null ? String(row.workHours) : "",
   }
 }
@@ -149,6 +153,16 @@ function AttendanceFormFields({
         </label>
       </div>
 
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={form.checkOutNextDay}
+          onChange={(e) => setForm((f) => ({ ...f, checkOutNextDay: e.target.checked }))}
+          className="size-4 rounded border-input"
+        />
+        เวลาออกเป็นวันถัดไป
+      </label>
+
       <label className="grid gap-1 text-sm">
         <span className="font-medium">ชม.การทำงาน (ไม่บังคับ)</span>
         <input
@@ -188,6 +202,7 @@ function useAttendanceSubmit({
         date: form.date,
         checkInTime: form.checkInTime,
         checkOutTime: form.checkOutTime.trim() || null,
+        checkOutNextDay: form.checkOutNextDay,
         workHours: form.workHours.trim() ? Number(form.workHours) : null,
       }
 

@@ -441,16 +441,24 @@ function buildRetroReminderText(
   issues: Array<{ date: string; issue: "missing_checkin" | "missing_checkout" }>,
   baseUrl: string,
 ): string {
+  const hasMissingCheckin = issues.some((item) => item.issue === "missing_checkin");
+  const hasMissingCheckout = issues.some((item) => item.issue === "missing_checkout");
   const lines = issues.slice(0, 5).map((item) => {
     const label = item.issue === "missing_checkin"
       ? "ลืมเช็คเข้า"
       : "ลืมเช็คออก";
     return `• ${item.date} (${label}) → ${baseUrl}/liff/attendance?date=${item.date}`;
   });
+  const title = hasMissingCheckout && !hasMissingCheckin
+    ? "แจ้งเตือน: คุณยังไม่ได้เช็คเอาท์บางวัน — ย้อนหลังได้ภายใน 48 ชม."
+    : "แจ้งเตือน: มีวันที่ลืมลงเวลาเข้า/ออก — แก้ได้ภายใน 48 ชม.";
+  const footer = hasMissingCheckout && !hasMissingCheckin
+    ? "กดลิงก์เพื่อเช็คเอาท์ย้อนหลังหรือให้ HR ช่วยแก้เวลาออกงาน"
+    : "กดลิงก์เพื่อเลือกวันและลงเวลาย้อนหลัง";
   return [
-    "แจ้งเตือน: มีวันที่ลืมลงเวลาเข้า/ออก — แก้ได้ภายใน 48 ชม.",
+    title,
     ...lines,
-    "กดลิงก์เพื่อเลือกวันและลงเวลาย้อนหลัง",
+    footer,
   ].join("\n");
 }
 

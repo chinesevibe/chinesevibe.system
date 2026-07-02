@@ -6,6 +6,7 @@ import {
   recordAttendanceAdjustment,
   toAttendanceAuditSnapshot,
 } from "@/lib/attendance/adjustment-log"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { lateMinutesAtCheckIn } from "@/lib/attendance/late"
 import { resolveRegularWorkHours } from "@/lib/payroll/hour-policy"
@@ -13,7 +14,7 @@ import { getWorkStart } from "@/lib/runtime-config"
 import { createClient } from "@/lib/supabase/server"
 
 type HrWorkShift = {
-  id: string
+  id: string | null
   start_hour: number
   start_minute: number
   end_hour: number
@@ -29,6 +30,7 @@ export type HrAttendanceInput = {
   date: string
   checkInTime: string
   checkOutTime?: string | null
+  checkOutNextDay?: boolean
   workHours?: number | null
   workShiftId?: string | null
 }
@@ -50,15 +52,20 @@ async function resolveShift(
   if (!shiftId) {
     const { data: employee, error: employeeError } = await supabase
       .from("hr_employees")
-      .select("work_shift_id")
+      .select("work_shift_id, default_check_in_time, default_check_out_time")
       .eq("id", employeeId)
       .maybeSingle()
 
     if (employeeError) throw employeeError
     shiftId = (employee?.work_shift_id as string | null) ?? null
+    if (!shiftId) {
+      const profileShift = profileScheduleFromTimes(
+        (employee?.default_check_in_time as string | null) ?? null,
+        (employee?.default_check_out_time as string | null) ?? null
+      )
+      return profileShift ? { id: null, ...profileShift } : null
+    }
   }
-
-  if (!shiftId) return null
 
   const query = await supabase
     .from("hr_work_shifts")
@@ -73,10 +80,50 @@ async function resolveShift(
     if (resolvedRequestedShiftId) {
       throw new Error("ไม่พบกะที่เลือก")
     }
-    return null
+    const { data: employee, error: employeeError } = await supabase
+      .from("hr_employees")
+      .select("default_check_in_time, default_check_out_time")
+      .eq("id", employeeId)
+      .maybeSingle()
+    if (employeeError) throw employeeError
+    const profileShift = profileScheduleFromTimes(
+      (employee?.default_check_in_time as string | null) ?? null,
+      (employee?.default_check_out_time as string | null) ?? null
+    )
+    return profileShift ? { id: null, ...profileShift } : null
   }
 
   return query.data as HrWorkShift
+}
+
+export function resolveHrCheckOutAt(params: {
+  date: string
+  checkInTime: string
+  checkOutTime?: string | null
+  checkOutNextDay?: boolean
+  shift: Pick<HrWorkShift, "crosses_midnight"> | null
+}): Date | null {
+  const checkInAt = ictLocalToUtc(params.date, params.checkInTime)
+  let checkOutAt =
+    params.checkOutTime && params.checkOutTime.trim()
+      ? ictLocalToUtc(params.date, params.checkOutTime)
+      : null
+
+  if (!checkOutAt) return null
+
+  if (params.checkOutNextDay) {
+    checkOutAt = new Date(checkOutAt.getTime() + DAY_MS)
+  }
+
+  if (checkOutAt.getTime() <= checkInAt.getTime()) {
+    if (params.shift?.crosses_midnight) {
+      checkOutAt = new Date(checkOutAt.getTime() + DAY_MS)
+    } else {
+      throw new Error("เวลาออกต้องหลังเวลาเข้า")
+    }
+  }
+
+  return checkOutAt
 }
 
 async function resolveIsLate(
@@ -125,21 +172,13 @@ function parseInput(
   workHours: number | null
 } {
   const checkInAt = ictLocalToUtc(input.date, input.checkInTime)
-  let checkOutAt =
-    input.checkOutTime && input.checkOutTime.trim()
-      ? ictLocalToUtc(input.date, input.checkOutTime)
-      : null
-
-  if (
-    checkOutAt &&
-    checkOutAt.getTime() <= checkInAt.getTime()
-  ) {
-    if (shift?.crosses_midnight) {
-      checkOutAt = new Date(checkOutAt.getTime() + DAY_MS)
-    } else {
-      throw new Error("เวลาออกต้องหลังเวลาเข้า")
-    }
-  }
+  const checkOutAt = resolveHrCheckOutAt({
+    date: input.date,
+    checkInTime: input.checkInTime,
+    checkOutTime: input.checkOutTime,
+    checkOutNextDay: input.checkOutNextDay,
+    shift,
+  })
 
   let workHours: number | null = null
   if (input.workHours != null && String(input.workHours).trim() !== "") {
