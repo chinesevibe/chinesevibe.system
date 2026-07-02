@@ -24,13 +24,26 @@ const HEADER_ALIASES: Record<CsvHeaderKey, readonly string[]> = {
   category: ["category", "หมวด", "หมวดหมู่"],
   unit: ["unit", "unit_name", "หน่วย"],
   barcode: ["barcode", "บาร์โค้ด"],
-  min_stock: ["min_stock", "min", "minimum", "สต็อกขั้นต่ำ", "ขั้นต่ำ"],
-  max_stock: ["max_stock", "max", "maximum", "สต็อกสูงสุด", "สูงสุด"],
+  min_stock: ["min_stock", "min stock", "min", "minimum", "สต็อกขั้นต่ำ", "ขั้นต่ำ"],
+  max_stock: ["max_stock", "max stock", "max", "maximum", "สต็อกสูงสุด", "สูงสุด"],
   image_url: ["image_url", "image", "image url", "รูป", "url รูปภาพ"],
   is_active: ["is_active", "active", "status", "สถานะ", "ใช้งาน"],
   expiry_required: ["expiry_required", "require_expiry", "วันหมดอายุ", "บังคับวันหมดอายุ"],
-  lot_tracking_required: ["lot_tracking_required", "lot_tracking", "ติดตาม lot", "lot"],
-  default_issue_method: ["default_issue_method", "issue_method", "วิธีจ่าย", "วิธีจ่ายเริ่มต้น"],
+  lot_tracking_required: [
+    "lot_tracking_required",
+    "lot_tracking",
+    "lot track",
+    "lot tracking",
+    "ติดตาม lot",
+    "lot",
+  ],
+  default_issue_method: [
+    "default_issue_method",
+    "issue_method",
+    "issue method",
+    "วิธีจ่าย",
+    "วิธีจ่ายเริ่มต้น",
+  ],
   shelf_life_days: ["shelf_life_days", "shelf_life", "อายุเก็บ", "อายุเก็บวัน"],
   storage_type: ["storage_type", "storage", "ประเภทจัดเก็บ", "จัดเก็บ"],
 }
@@ -148,10 +161,10 @@ export function parseSkuCsv(text: string):
 export function parseCsvBoolean(value?: string, fallback = true): string {
   if (!value) return fallback ? "true" : "false"
   const normalized = value.trim().toLowerCase()
-  if (["true", "1", "yes", "y", "on", "active", "ใช้งาน"].includes(normalized)) {
+  if (["true", "1", "yes", "y", "on", "active", "ใช้งาน", "✓", "✔"].includes(normalized)) {
     return "true"
   }
-  if (["false", "0", "no", "n", "off", "inactive", "ปิด"].includes(normalized)) {
+  if (["false", "0", "no", "n", "off", "inactive", "ปิด", "✗", "✘"].includes(normalized)) {
     return "false"
   }
   return fallback ? "true" : "false"

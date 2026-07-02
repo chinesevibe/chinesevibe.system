@@ -32,6 +32,9 @@ import {
 import { createClient } from "@/lib/supabase/server"
 
 const LIST_PATH = "/admin/inventory/sku"
+const UNIT_LOOKUP_ALIASES: Record<string, readonly string[]> = {
+  pcs: ["piece", "pieces"],
+}
 
 async function uploadSkuImage(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -179,9 +182,16 @@ function normalizeLookup(value: string): string {
 function buildUnitLookup(units: InvUnit[]): Map<string, string> {
   const lookup = new Map<string, string>()
   for (const unit of units) {
-    lookup.set(normalizeLookup(unit.name), unit.id)
-    if (unit.abbreviation) {
-      lookup.set(normalizeLookup(unit.abbreviation), unit.id)
+    const keys = [unit.name, unit.abbreviation]
+      .filter((value): value is string => Boolean(value))
+      .map(normalizeLookup)
+
+    for (const key of keys) {
+      lookup.set(key, unit.id)
+      // ponytail: support customer CSV synonyms without adding duplicate stock units.
+      for (const alias of UNIT_LOOKUP_ALIASES[key] ?? []) {
+        lookup.set(normalizeLookup(alias), unit.id)
+      }
     }
   }
   return lookup

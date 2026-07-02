@@ -27,6 +27,12 @@ type PageProps = {
   searchParams?: Promise<{ search?: string }>
 }
 
+function formatUnitLabel(unit?: { name: string; abbreviation: string | null }) {
+  if (!unit) return "—"
+  if (!unit.abbreviation || unit.abbreviation === unit.name) return unit.name
+  return `${unit.name}/${unit.abbreviation}`
+}
+
 export default async function InventorySkuPage({ searchParams }: PageProps) {
   const employee = await requireInventoryMasterData()
   const readOnly = isCeo(employee.role) && !isDev(employee.role)
@@ -102,9 +108,7 @@ export default async function InventorySkuPage({ searchParams }: PageProps) {
                     <TableCell className="font-medium">{sku.code}</TableCell>
                     <TableCell>{sku.name}</TableCell>
                     <TableCell>{sku.category || "—"}</TableCell>
-                    <TableCell>
-                      {unit ? unit.abbreviation || unit.name : "—"}
-                    </TableCell>
+                    <TableCell>{formatUnitLabel(unit)}</TableCell>
                     <TableCell>{sku.barcode || "—"}</TableCell>
                     <TableCell className="text-right tabular-nums">
                       {sku.min_stock}
