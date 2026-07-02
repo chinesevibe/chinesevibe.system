@@ -6,7 +6,6 @@ import {
 import { computePaidWorkMinutes } from "@/lib/attendance/paid-work-time"
 import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import {
-  sessionCycleStartUtc,
   sessionCutoffUtcForCheckIn,
 } from "@/lib/attendance/session-cycle"
 import { createClient } from "@/lib/supabase/server"
@@ -61,12 +60,10 @@ function ictDateFromIso(iso: string): string {
 }
 
 function defaultRange(): { from: string; to: string } {
-  const now = new Date()
   const ICT_OFFSET_MS = 7 * 60 * 60 * 1000
-  const cycleStart = sessionCycleStartUtc(now)
-  const to = new Date(cycleStart.getTime() + ICT_OFFSET_MS).toISOString().slice(0, 10)
-  const fromDate = new Date(cycleStart.getTime() - 29 * 86_400_000 + ICT_OFFSET_MS)
-  const from = fromDate.toISOString().slice(0, 10)
+  const todayIct = new Date(Date.now() + ICT_OFFSET_MS).toISOString().slice(0, 10)
+  const from = `${todayIct.slice(0, 7)}-01`
+  const to = todayIct
   return { from, to }
 }
 
