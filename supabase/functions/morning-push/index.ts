@@ -20,7 +20,6 @@ type RuntimeConfigRow = {
 type MorningPushGroupConfig = {
   enabled: boolean;
   fallbackTime: string;
-  fallbackTime2: string;
   remindAfterMin: number;
   days: number[];
 };
@@ -56,15 +55,13 @@ type GroupResult = {
 const MORNING_PUSH_DEFAULTS: Record<MorningPushGroup, MorningPushGroupConfig> = {
   employee: {
     enabled: true,
-    fallbackTime: "09:00",
-    fallbackTime2: "11:00",
+    fallbackTime: "14:10",
     remindAfterMin: 0,
     days: [1, 2, 3, 4, 5],
   },
   officer: {
     enabled: true,
-    fallbackTime: "09:00",
-    fallbackTime2: "11:00",
+    fallbackTime: "14:10",
     remindAfterMin: 0,
     days: [1, 2, 3, 4, 5],
   },
@@ -147,16 +144,11 @@ function parseMorningPushFromRows(
   function parseGroup(group: MorningPushGroup): MorningPushGroupConfig {
     const defaults = MORNING_PUSH_DEFAULTS[group];
     const prefix = `morning_push_${group}_`;
+    const fallbackTime =
+      map.get(`${prefix}fallback_time`) ?? map.get(`${prefix}fallback_time_2`);
     return {
       enabled: parseBoolean(map.get(`${prefix}enabled`), defaults.enabled),
-      fallbackTime: parseTime(
-        map.get(`${prefix}fallback_time`),
-        defaults.fallbackTime,
-      ),
-      fallbackTime2: parseTime(
-        map.get(`${prefix}fallback_time_2`),
-        defaults.fallbackTime2,
-      ),
+      fallbackTime: parseTime(fallbackTime, defaults.fallbackTime),
       remindAfterMin: parseRemindMinutes(
         map.get(`${prefix}remind_after_min`),
         defaults.remindAfterMin,
@@ -255,18 +247,9 @@ function getDueShiftSlots(
   weekday: number,
   minuteOfDay: number,
 ): number[] {
-  const slots: number[] = [];
-  if (
-    isDueNowForFallback(config, config.fallbackTime, weekday, minuteOfDay).dueNow
-  ) {
-    slots.push(0);
-  }
-  if (
-    isDueNowForFallback(config, config.fallbackTime2, weekday, minuteOfDay).dueNow
-  ) {
-    slots.push(1);
-  }
-  return slots;
+  return isDueNowForFallback(config, config.fallbackTime, weekday, minuteOfDay).dueNow
+    ? [0, 1]
+    : [];
 }
 
 function buildShiftSlotById(shifts: WorkShiftRow[]): Map<string, number> {
@@ -358,7 +341,7 @@ function emptyGroupResult(
     dueNow: dueSlots.length > 0,
     configuredDays: config.days,
     effectiveDays: primaryState.effectiveDays,
-    dueTime: `${config.fallbackTime}, ${config.fallbackTime2}`,
+    dueTime: config.fallbackTime,
     dueMinute: primaryState.dueMinute,
     slotMinute: primaryState.slotMinute,
     targets: 0,

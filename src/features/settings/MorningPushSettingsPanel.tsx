@@ -43,8 +43,8 @@ function GroupCard({
         <div>
           <h4 className="text-sm font-semibold">{label}</h4>
           <p className="text-xs text-muted-foreground">
-            เวลาจริงใช้กะงานในโปรไฟล์พนักงานก่อน — ค่า fallback แยกกะที่ 1 และกะที่ 2
-            (เรียงตามเวลาเริ่มกะในระบบ)
+            เวลาจริงใช้กะงานในโปรไฟล์พนักงานก่อน และถ้าไม่มีให้สรุปแจ้งเตือนวันละ
+            1 รอบตามเวลานี้
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm">
@@ -57,10 +57,10 @@ function GroupCard({
         </label>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3">
         <label className="text-sm">
           <span className="mb-1 block text-muted-foreground">
-            เวลา fallback กะที่ 1 (HH:MM)
+            เวลาแจ้งเตือนรวม (HH:MM)
           </span>
           <input
             type="time"
@@ -68,20 +68,6 @@ function GroupCard({
             value={config.fallbackTime}
             onChange={(e) =>
               onChange({ ...config, fallbackTime: e.target.value })
-            }
-          />
-        </label>
-
-        <label className="text-sm">
-          <span className="mb-1 block text-muted-foreground">
-            เวลา fallback กะที่ 2 (HH:MM)
-          </span>
-          <input
-            type="time"
-            className="h-9 w-full rounded-lg border px-2"
-            value={config.fallbackTime2}
-            onChange={(e) =>
-              onChange({ ...config, fallbackTime2: e.target.value })
             }
           />
         </label>
@@ -189,7 +175,7 @@ export function MorningPushSettingsPanel({ rows }: { rows: RuntimeConfigRow[] })
         <div>
           <h3 className="text-sm font-semibold">CNV WorkHub — Morning Push</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            ตั้งค่าแยกสำหรับ Employee และ Officer ได้จากหน้าเดียว
+            ตั้งค่าเตือน LINE แยกสำหรับ Employee และ Officer วันละ 1 รอบจากหน้าเดียว
           </p>
         </div>
         <Button size="sm" disabled={busy || !hasChanges} onClick={save}>
@@ -215,8 +201,7 @@ export function MorningPushSettingsPanel({ rows }: { rows: RuntimeConfigRow[] })
 
       {!hasChanges ? (
         <p className="mt-3 text-xs text-muted-foreground">
-          ค่า default เมื่อยังไม่ตั้ง: fallback กะ 1 {MORNING_PUSH_DEFAULTS.employee.fallbackTime} ·
-          กะ 2 {MORNING_PUSH_DEFAULTS.employee.fallbackTime2} ·
+          ค่า default เมื่อยังไม่ตั้ง: แจ้งเตือน {MORNING_PUSH_DEFAULTS.employee.fallbackTime} ·
           remind {MORNING_PUSH_DEFAULTS.employee.remindAfterMin} นาที · วันทำงาน จ-ศ
         </p>
       ) : null}

@@ -1,4 +1,4 @@
-// evening-summary (T24+T25): weekday 18:00 ICT push —
+// evening-summary: weekday 14:10 ICT push —
 // HR group aggregate summary only (check-in / absent / late / on-leave)
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase, type WithSupabaseConfig } from "@supabase/server";
