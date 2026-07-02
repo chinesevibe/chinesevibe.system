@@ -21,6 +21,7 @@ import {
 } from "@/features/attendance/data"
 import { getEmployeeProfile } from "@/features/employees/profile/data"
 import { formatShiftTimeRange } from "@/features/shifts/format"
+import { profileScheduleFromTimes } from "@/lib/attendance/profile-schedule"
 import { getPayrollConfig } from "@/lib/payroll/config"
 import { canManageHr } from "@/lib/auth/roles"
 import { sanitizeReturnTo } from "@/lib/navigation/return-to"
@@ -133,10 +134,21 @@ export default async function EmployeeAttendancePage({
     profile.employee_code?.trim() || profile.id.slice(0, 8).toUpperCase()
   const basePath = `/admin/employees/${profile.id}/attendance`
   const backHref = returnTo ?? `/admin/employees/${profile.id}`
-  const shiftName = profile.workShift?.name ?? profile.workShift?.code ?? null
-  const shiftTime = profile.workShift ? formatShiftTimeRange(profile.workShift) : null
+  const profileShift = profileScheduleFromTimes(
+    profile.default_check_in_time,
+    profile.default_check_out_time
+  )
+  const shiftName =
+    profileShift == null ? profile.workShift?.name ?? profile.workShift?.code ?? null : null
+  const shiftTime = profileShift
+    ? formatShiftTimeRange(profileShift)
+    : profile.workShift
+      ? formatShiftTimeRange(profile.workShift)
+      : null
   const shiftDetail = [shiftName, shiftTime].filter(Boolean).join(" • ")
-  const isOvernightShift = Boolean(profile.workShift?.crosses_midnight)
+  const isOvernightShift = Boolean(
+    profileShift?.crosses_midnight ?? profile.workShift?.crosses_midnight
+  )
   const monthLinkQuery: Record<string, string> = {}
   if (returnTo) monthLinkQuery.returnTo = returnTo
   if (listParams.from) monthLinkQuery.from = listParams.from

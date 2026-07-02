@@ -326,6 +326,11 @@ function employeeJoin(
     emp.default_check_out_time ?? null
   )
   const shift = profileShift ?? shiftFromJoin(emp.hr_work_shifts)
+  const shiftTimeText = profileShift
+    ? formatShiftTimeRange(profileShift)
+    : rawShift
+      ? formatShiftTimeRange(rawShift)
+      : null
   return {
     name: emp.name,
     employeeCode: formatEmployeeCode(emp.id ?? "", emp.employee_code ?? null),
@@ -335,8 +340,8 @@ function employeeJoin(
     defaultCheckOutTime: emp.default_check_out_time ?? null,
     shift,
     shiftWindow: rawShift ?? profileShift,
-    shiftName: rawShift?.name ?? rawShift?.code ?? null,
-    shiftTimeText: rawShift ? formatShiftTimeRange(rawShift) : null,
+    shiftName: rawShift?.name ?? rawShift?.code ?? (profileShift ? "โปรไฟล์พนักงาน" : null),
+    shiftTimeText,
     shiftCrossesMidnight: Boolean(rawShift?.crosses_midnight ?? profileShift?.crosses_midnight),
   }
 }
