@@ -24,6 +24,8 @@ export type AttendanceRow = {
   checkInText: string
   checkOutText: string
   workHours: number | null
+  overtimeMinutes: number
+  overtimeHours: number
   status: AttendanceStatus
   statusLabel: string
   locationReviewStatus: AttendanceLocationReviewStatus
@@ -35,6 +37,8 @@ export type AttendanceRow = {
 export type AttendanceSummary = {
   workDays: number
   totalHours: number
+  overtimeMinutes: number
+  overtimeHours: number
   lateCount: number
   inProgressCount: number
   estimatedEarnings?: string | number | null

@@ -1,4 +1,4 @@
-import { Wallet, Clock, CalendarDays, AlertTriangle, LogOut, MapPinned, ShieldAlert } from "lucide-react"
+import { Wallet, Clock, Clock3, CalendarDays, AlertTriangle, LogOut, MapPinned, ShieldAlert, Timer } from "lucide-react"
 
 import { KpiCard } from "@/components/brand/KpiCard"
 import type { AttendanceSummary } from "@/features/attendance/types"
@@ -30,12 +30,14 @@ export function AttendanceSummaryCard({
         className={cn(
           "grid gap-2",
           hasSalary
-            ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-7"
-            : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+            ? "grid-cols-2 sm:grid-cols-4 xl:grid-cols-9"
+            : "grid-cols-2 sm:grid-cols-4 xl:grid-cols-8"
         )}
       >
         <KpiCard micro label="วันทำงาน" value={summary.workDays} icon={CalendarDays} />
         <KpiCard micro label="ชั่วโมงรวม" value={formatHours(summary.totalHours)} icon={Clock} accent="success" />
+        <KpiCard micro label="OT นาที" value={summary.overtimeMinutes} icon={Timer} accent="info" />
+        <KpiCard micro label="OT ชม." value={formatHours(summary.overtimeHours)} icon={Clock3} accent="purple" />
         <KpiCard micro label="มาสาย" value={summary.lateCount} icon={AlertTriangle} accent="warning" />
         <KpiCard micro label="ยังไม่เช็คออก" value={summary.inProgressCount} icon={LogOut} accent="info" />
         <KpiCard micro label="รอตรวจพิกัด" value={pendingReviewCount} icon={MapPinned} accent="warning" />
@@ -72,6 +74,26 @@ export function AttendanceSummaryCard({
           icon={Clock}
           accent="success"
           detail={compact ? undefined : "รวมจากชั่วโมงจริงหลังคำนวณตามกะ"}
+        />
+      </div>
+      <div className={cn(!compact && "rounded-[1.5rem] border border-sky-200/70 bg-gradient-to-br from-sky-50/80 to-background p-1 shadow-sm", compact && "contents")}>
+        <KpiCard
+          compact={compact}
+          label="OT นาที"
+          value={summary.overtimeMinutes}
+          icon={Timer}
+          accent="info"
+          detail={compact ? undefined : "นาทีรวมจากคำขอ OT ที่ HR อนุมัติแล้ว"}
+        />
+      </div>
+      <div className={cn(!compact && "rounded-[1.5rem] border border-violet-200/70 bg-gradient-to-br from-violet-50/80 to-background p-1 shadow-sm", compact && "contents")}>
+        <KpiCard
+          compact={compact}
+          label="OT ชั่วโมง"
+          value={formatHours(summary.overtimeHours)}
+          icon={Clock3}
+          accent="purple"
+          detail={compact ? undefined : "ชั่วโมง OT ที่แปลงจากนาทีของรายการอนุมัติ"}
         />
       </div>
       <div className={cn(!compact && "rounded-[1.5rem] border border-amber-200/70 bg-gradient-to-br from-amber-50/80 to-background p-1 shadow-sm", compact && "contents")}>

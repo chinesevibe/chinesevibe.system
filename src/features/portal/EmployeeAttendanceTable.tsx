@@ -19,6 +19,10 @@ const STATUS_VARIANT: Record<
   in_progress: "info",
 }
 
+function formatHours(hours: number): string {
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1)
+}
+
 export function EmployeeAttendanceTable({ rows }: { rows: AttendanceRow[] }) {
   if (rows.length === 0) {
     return (
@@ -37,6 +41,7 @@ export function EmployeeAttendanceTable({ rows }: { rows: AttendanceRow[] }) {
             <TableHead>เข้า</TableHead>
             <TableHead>ออก</TableHead>
             <TableHead>ชม.</TableHead>
+            <TableHead>OT</TableHead>
             <TableHead>สถานะ</TableHead>
           </TableRow>
         </TableHeader>
@@ -48,6 +53,11 @@ export function EmployeeAttendanceTable({ rows }: { rows: AttendanceRow[] }) {
               <TableCell>{row.checkOutText}</TableCell>
               <TableCell className="tabular-nums">
                 {row.workHours?.toFixed(1) ?? "—"}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {row.overtimeMinutes > 0
+                  ? `${row.overtimeMinutes} นาที / ${formatHours(row.overtimeHours)} ชม.`
+                  : "—"}
               </TableCell>
               <TableCell>
                 <StatusPill

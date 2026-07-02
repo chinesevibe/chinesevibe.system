@@ -115,6 +115,25 @@ function attendanceWorkDate(checkInAt: string, shiftDate: string | null): string
   return shiftDate ?? ictDateFromIso(checkInAt)
 }
 
+function attendanceOvertimeKey(employeeId: string, workDate: string): string {
+  return `${employeeId}:${workDate}`
+}
+
+function parseClockTimeToMinutes(value: string): number | null {
+  const [hoursText, minutesText] = value.slice(0, 5).split(":")
+  const hours = Number(hoursText)
+  const minutes = Number(minutesText)
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null
+  return hours * 60 + minutes
+}
+
+function approvedOvertimeMinutes(startTime: string, endTime: string): number {
+  const startMinutes = parseClockTimeToMinutes(startTime)
+  const endMinutes = parseClockTimeToMinutes(endTime)
+  if (startMinutes == null || endMinutes == null || endMinutes <= startMinutes) return 0
+  return endMinutes - startMinutes
+}
+
 function buildAttendanceDateFilter(
   params: Required<AttendanceListParams>,
   rangeStart: Date,
@@ -393,9 +412,56 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       return {
         rows: [] as AttendanceRow[],
         total: 0,
-        summary: { workDays: 0, totalHours: 0, lateCount: 0, inProgressCount: 0 },
+        summary: {
+          workDays: 0,
+          totalHours: 0,
+          overtimeMinutes: 0,
+          overtimeHours: 0,
+          lateCount: 0,
+          inProgressCount: 0,
+        },
       }
     }
+  }
+
+  let approvedOvertimeQuery = supabase
+    .from("hr_overtime_requests")
+    .select("employee_id, work_date, start_time, end_time")
+    .eq("approval_status", "approved")
+    .gte("work_date", params.from)
+    .lte("work_date", params.to)
+
+  if (employeeIds) {
+    approvedOvertimeQuery = approvedOvertimeQuery.in("employee_id", employeeIds)
+  }
+
+  const { data: approvedOvertimeRows, error: approvedOvertimeError } =
+    await approvedOvertimeQuery
+  if (approvedOvertimeError) throw approvedOvertimeError
+
+  const approvedOvertimeByKey = new Map<
+    string,
+    { overtimeMinutes: number; overtimeHours: number }
+  >()
+
+  for (const row of (approvedOvertimeRows ?? []) as Array<{
+    employee_id: string
+    work_date: string
+    start_time: string
+    end_time: string
+  }>) {
+    const overtimeMinutes = approvedOvertimeMinutes(row.start_time, row.end_time)
+    if (overtimeMinutes <= 0) continue
+    const key = attendanceOvertimeKey(row.employee_id, row.work_date)
+    const current = approvedOvertimeByKey.get(key) ?? {
+      overtimeMinutes: 0,
+      overtimeHours: 0,
+    }
+    const nextMinutes = current.overtimeMinutes + overtimeMinutes
+    approvedOvertimeByKey.set(key, {
+      overtimeMinutes: nextMinutes,
+      overtimeHours: nextMinutes / 60,
+    })
   }
 
   let query = supabase
@@ -469,6 +535,11 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   const rows: AttendanceRow[] = ((data ?? []) as RawRow[]).map((row) => {
     const emp = employeeJoin(row.hr_employees)
     const workDate = attendanceWorkDate(row.check_in_at, row.shift_date)
+    const overtime =
+      approvedOvertimeByKey.get(attendanceOvertimeKey(row.employee_id, workDate)) ?? {
+        overtimeMinutes: 0,
+        overtimeHours: 0,
+      }
     const isLate = effectiveAttendanceIsLate(
       row.check_in_at,
       emp.shift,
@@ -509,6 +580,8 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       checkInText: formatIctTime(new Date(row.check_in_at)),
       checkOutText: row.check_out_at ? formatIctTime(new Date(row.check_out_at)) : "—",
       workHours,
+      overtimeMinutes: overtime.overtimeMinutes,
+      overtimeHours: overtime.overtimeHours,
       status,
       statusLabel: STATUS_LABEL[status],
       locationReviewStatus: row.location_review_status ?? "clear",
@@ -545,6 +618,7 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
   if (summaryError) throw summaryError
 
   type SummaryRow = {
+    employee_id: string
     check_in_at: string
     check_out_at: string | null
     shift_date: string | null
@@ -565,7 +639,10 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
 
   const resolvedSummaryRows = ((summaryRows ?? []) as SummaryRow[]).map((row) => {
     const schedule = scheduleFromJoin(row.hr_employees)
+    const workDate = attendanceWorkDate(row.check_in_at, row.shift_date)
     return {
+      employeeId: row.employee_id,
+      workDate,
       isLate: effectiveAttendanceIsLate(
         row.check_in_at,
         schedule.shift,
@@ -584,6 +661,14 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
       }),
     }
   })
+
+  const summaryOvertimeKeys = new Set(
+    resolvedSummaryRows.map((row) => attendanceOvertimeKey(row.employeeId, row.workDate))
+  )
+  let totalOvertimeMinutes = 0
+  for (const key of summaryOvertimeKeys) {
+    totalOvertimeMinutes += approvedOvertimeByKey.get(key)?.overtimeMinutes ?? 0
+  }
 
   // Fetch HR-set day-off overrides in the same date range to include their hours in the summary
   const PAID_DAY_OFF_HOURS = 12
@@ -606,6 +691,8 @@ export async function getAttendanceRecords(params: Required<AttendanceListParams
     totalHours:
       resolvedSummaryRows.reduce((sum, row) => sum + (row.workHours ?? 0), 0) +
       dateOverrideCount * PAID_DAY_OFF_HOURS,
+    overtimeMinutes: totalOvertimeMinutes,
+    overtimeHours: totalOvertimeMinutes / 60,
     lateCount: resolvedSummaryRows.filter((row) => row.isLate).length,
     inProgressCount: ((summaryRows ?? []) as SummaryRow[]).filter(
       (row) =>

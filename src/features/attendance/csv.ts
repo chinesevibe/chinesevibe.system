@@ -9,6 +9,8 @@ export function rowsToCsv(rows: AttendanceRow[]): string {
     "เวลาเข้า",
     "เวลาออก",
     "ชั่วโมง",
+    "OT นาที",
+    "OT ชั่วโมง",
     "สถานะ",
   ]
   const lines = rows.map((r) =>
@@ -20,9 +22,11 @@ export function rowsToCsv(rows: AttendanceRow[]): string {
       r.checkInText,
       r.checkOutText,
       r.workHours?.toString() ?? "",
+      r.overtimeMinutes > 0 ? String(r.overtimeMinutes) : "",
+      r.overtimeHours > 0 ? r.overtimeHours.toFixed(1) : "",
       r.statusLabel,
     ]
-      .map((v) => `"${v.replace(/"/g, '""')}"`)
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
       .join(",")
   )
   return [header.join(","), ...lines].join("\n")

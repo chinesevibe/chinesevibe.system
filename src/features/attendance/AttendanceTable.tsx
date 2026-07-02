@@ -45,6 +45,10 @@ function formatHours(hours: number | null): string {
   return Number.isInteger(hours) ? String(hours) : hours.toFixed(1)
 }
 
+function formatOvertimeMinutes(minutes: number): string {
+  return minutes > 0 ? `${minutes} นาที` : "—"
+}
+
 /** 2026-06-23 → 23.6.2026 */
 function formatShortDate(date: string): string {
   const [y, m, d] = date.split("-")
@@ -165,6 +169,11 @@ function MobileRowCard({
         <div className="rounded-xl bg-muted/30 px-3 py-2">
           <p className="text-xs text-muted-foreground">ชั่วโมงทำงาน</p>
           <p className="font-medium tabular-nums text-foreground">{formatHours(row.workHours)}</p>
+        </div>
+        <div className="rounded-xl bg-muted/30 px-3 py-2">
+          <p className="text-xs text-muted-foreground">OT ที่อนุมัติ</p>
+          <p className="font-medium tabular-nums text-foreground">{formatOvertimeMinutes(row.overtimeMinutes)}</p>
+          <p className="text-xs text-muted-foreground">{row.overtimeMinutes > 0 ? `${formatHours(row.overtimeHours)} ชม.` : "ยังไม่มี OT"}</p>
         </div>
       </div>
 
@@ -369,6 +378,9 @@ export function AttendanceTable({
               ชม.
             </TableHead>
             <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              OT
+            </TableHead>
+            <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               สถานะ
             </TableHead>
             <TableHead className="bg-[#f7f1e8] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -429,6 +441,14 @@ export function AttendanceTable({
                   <p className="text-xs text-muted-foreground">
                     {row.workHours == null ? "รอคำนวณ" : "ชั่วโมงจริงหลังตัดกะ"}
                     {row.shiftCrossesMidnight ? " • overnight" : ""}
+                  </p>
+                </div>
+              </TableCell>
+              <TableCell className="font-semibold tabular-nums text-foreground">
+                <div className="space-y-1">
+                  <p className="font-semibold tabular-nums text-foreground">{formatOvertimeMinutes(row.overtimeMinutes)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {row.overtimeMinutes > 0 ? `${formatHours(row.overtimeHours)} ชม. ที่อนุมัติ` : "ยังไม่มี OT"}
                   </p>
                 </div>
               </TableCell>
